@@ -1,5 +1,7 @@
 ---
 layout: ddd
+up: summary.html
+next: about-ddd.html
 ---
 # 领域驱动开发实践
 
