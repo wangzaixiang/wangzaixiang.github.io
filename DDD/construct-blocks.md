@@ -1,6 +1,7 @@
 ---
 layout: ddd
 up: about-ddd.html
+next: anemia.html
 ---
 ## 领域模型之构建块
 

@@ -14,11 +14,26 @@
                     {% unless page.layout == 'front' %}
                       <ul>
                       <h1><a href="{{ site.baseurl }}/DDD/readme.html">领域驱动开发实践</a></h1>
-                        
-                          <li class="{{ current }}">
-                            <a href="/DDD/summary.html">目录</a>
+
+                        {% if page.prev != nil %}
+                          <li>
+                            <a href="{{ page.prev }}">Prev</a>
                           </li>
+                        {% endif %}
+                      
+                      
+                        {% if page.up != nil %}
+                          <li>
+                            <a href="{{ page.up }}">UP</a>
+                          </li>
+                        {% endif %}
                         
+                        {% if page.next != nil %}
+                          <li>
+                            <a href="{{ page.next }}">Next</a>
+                          </li>
+                        {% endif %}
+
                       </ul>
                     {% endunless %}
                     </nav>

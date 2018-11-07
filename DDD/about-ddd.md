@@ -1,6 +1,7 @@
 ---
 layout: ddd
 up: summary.html
+next: construct-blocks.html
 ---
 # 领域建模
 
