@@ -1,0 +1,19 @@
+# Jekyll Defaults
+title: wangzaixiang's blogs
+description: 程序人生
+baseurl: "" # the subpath of your site, e.g. /blog
+
+url: "https://wangzaixiang.github.io/"
+github: http://github.com/wangzaixiang
+highlighter: rouge
+markdown: kramdown
+# permalink: /post/:title/
+paginate: 4
+plugins: [jekyll-paginate]
+paginate_path: "/page:num"
+rss_path: /feed.xml
+navigation:
+- text: About
+  url: /about/
+- text: 领域建模
+  url: /DDD/summary.html
