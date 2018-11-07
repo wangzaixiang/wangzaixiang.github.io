@@ -17,6 +17,3 @@ navigation:
   url: /about/
 - text: 领域建模
   url: /DDD/summary.html
-dddnavigation:
-- text: 目录
-  url: /DDD/summary.html
