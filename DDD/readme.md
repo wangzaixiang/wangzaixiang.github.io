@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: ddd
 ---
 # 领域驱动开发实践
 
