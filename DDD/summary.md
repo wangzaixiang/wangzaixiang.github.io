@@ -8,7 +8,7 @@ title: 目录
 * [导言](readme.html)
 * [领域建模](about-ddd.html)
   * [领域模型的基础要素](construct-blocks.html)
-  * [贫血 vs 充血](mo-xing-zhi-zheng-ff1a-pin-xie-vs-chong-xie.md)
+  * [贫血 vs 充血](anemia.html)
   * [Entity](ling-yu-mo-xing-zhi-gou-jian-kuai/entity.md)
   * [Vaule Object](vaule-object.md)
   * [Invariants](invariants.md)
