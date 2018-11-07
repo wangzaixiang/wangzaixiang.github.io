@@ -5,7 +5,7 @@ title: 目录
 
 # Summary
 
-* [导言](README.html)
+* [导言](readme.html)
 * [领域建模](chapter1-about-ddd.md)
   * [领域模型的基础要素](ling-yu-mo-xing-de-ji-chu-yao-su.md)
   * [贫血 vs 充血](mo-xing-zhi-zheng-ff1a-pin-xie-vs-chong-xie.md)
