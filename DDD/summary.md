@@ -16,8 +16,10 @@ title: 目录
   * [Event](event.md)
   * [Package](package.md)
   * [Command](command.md)
+  * 原子操作 与 聚合操作
   * Query
   * Invariants
+  * [最终一致性](consistence.html)
 * [服务构建块](fu-wu-gou-jian-kuai.md)
   * Service
   * [Tasks](fu-wu-gou-jian-kuai/tasks.md)
