@@ -9,6 +9,7 @@ title: 目录
 * [领域建模](about-ddd.html)
   * [领域模型的基础要素](construct-blocks.html)
   * [贫血 vs 充血](anemia.html)
+  * [微服务与康为定律](microservice.html)
   * [Entity](ling-yu-mo-xing-zhi-gou-jian-kuai/entity.md)
   * [Vaule Object](vaule-object.md)
   * [Invariants](invariants.md)
