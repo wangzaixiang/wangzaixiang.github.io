@@ -4,14 +4,24 @@ prev: learn-scala-1.html
 next: learn-scala-3.html
 ---
 
-### 进阶之旅
+### Phase 2: Scala as better Java
 
-掌握了基本的scala语法，能够用scala来替代java来完成编程，虽然代码的风格还是完全Java化的，但至少可以达到或者接近你之前的编码效率。这其实是一个不难的任务，是所有Java程序员首先要达到的程度。
+在第一个阶段，基本掌握了基本的scala语法，能够用scala来替代java来完成编程，虽然代码的风格还是完全Java化的，但至少可以达到或者接近你之前的编码效率。这其实是一个不难的任务，是所有Java程序员首先要达到的程度。
 
-然后，我们将进一步的熟悉Scala的一些进阶特性，这些特性可以进一步的提升你的代码质量。
+然后，我们将进一步的熟悉Scala的一些进阶特性，开启我们学习Scala的第二阶段：作为更好的Java语言来使用。
 
 1. 使用 expression 来替代 statement。
-   在scala中，if, for, match 都是一个expression的。譬如：
+   
+   在Java中，我们更多使用 statement，所谓 statement，就是产生副作用的一个语句、操作。
+   - if/else 是分支语句，不同的分支中可以做不同的时期。
+   - for/while 是循环语句，构造一个循环块。
+   - switch 分之语句
+   - 赋值操作， 这里的副作用就是修改了变量的值。
+   - break, return, continue 是改变流程的语句。
+
+   在Scala中，更为重要的是expression，所谓 expression，就是一个表达式，会返回一个值，其重心并不是产生副作用。
+    
+   if/else可以作为表达式：
    ```scala
    val showFullName = true
    var name: String
@@ -24,7 +34,10 @@ next: learn-scala-3.html
    val name = 
       if(showFullName) firstName + " " + lastName
       else firstName
-      
+   ```
+   
+   for可以作为表达式（而不是循环语句）：
+   ```scala   
    // 将for作为statement使用
    val origin = 0 to 10
    var squres = new Array[Int](10)
@@ -34,7 +47,10 @@ next: learn-scala-3.html
    
    // 将for作为表达式使用
    val squares = for(i <- origin) yield origin(i) * origin(i)
+   ```
    
+   match 可以作为表达式：
+   ```scala
    // 将match作为statement使用
    val month = 2
    var days: Int
@@ -49,11 +65,25 @@ next: learn-scala-3.html
    val days = month match {
    case 1 => 31
    case 2 => 28
-   ......
+   ```
+   try/catch 可以作为 expression 使用：
+   ```scala
+   // 将try/catch 作为statment使用
+   var number = -1
+   try {
+     number = Integer.parseNumber(input)
    }
+   catch {
+     case ex: NumberFormatException =>
+       number = -1
+   }
+   
+   // 将try/catch作为 expr 使用
+   val number = try { Integer.parseNumber(input) }
+   catch { case ex: NumberFormatException => -1 }
    ```
    
-   其实，上面的几个例子都有一个共同点，使用expression替 statement后，都消除了var，而使用val替代。这其实是非常关键的一点。记住，**var是邪恶的**，真正的scala世界，不需要var。 
+   其实，上面的几个例子都有一个共同点，使用expression替 statement后，都消除了var，而使用val替代。这其实是非常关键的一点。记住，**在Scala中，var是邪恶的，Scala不需要var**。 
    
 2. 学习 Collection API，掌握丰富的集合操作。
    几乎所有的介绍函数式编程的语言，都会包括这样的例子：
