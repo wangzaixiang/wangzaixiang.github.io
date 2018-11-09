@@ -7,6 +7,7 @@ up: learn-scala.html
 
 1. 杨博的回答。
 2. 北南的回答
+ 
    > 链接：[https://www.zhihu.com/question/64568400/answer/222048320](https://www.zhihu.com/question/64568400/answer/222048320)
    >
    > 来源：知乎

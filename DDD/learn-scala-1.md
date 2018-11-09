@@ -30,7 +30,8 @@ Scala是复杂的，不过，我们可以先把Scala来做一个更好的Java来
    }
 
    ```
-2. break. scala中没有break关键字，虽然可以使用`scala.util.control.Breaks`替代，但尽量避免使用。
+2. 使用`classOf[String]`替代`String.class`
+3. break. scala中没有break关键字，虽然可以使用`scala.util.control.Breaks`替代，但尽量避免使用。
 3. return的使用。 在scala中尽量避免使用 return 提前从方法中返回。必要的时候采用 if/else 进行处理。
 4. scala没有 `?:` 三元操作符，需要用 `if else`替代。
 
