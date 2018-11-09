@@ -39,9 +39,10 @@ title: 目录
 * [识别伪需求引起的模型变化]
 * [应用函数式编程](ying-yong-han-shu-shi-bian-cheng.md)
   * [如何学习scala](learn-scala.html)
-  * [Scala as the better Java](learn-scala-1.html)
-  * [Scala之进阶之旅](learn-scala-2.html)
-  * [怎么避免把Scala写成Java？](learn-scala-3.html)
+  * [第一步：熟悉语法](learn-scala-1.html)
+  * [进阶2: 作为更好的Java](learn-scala-2.html)
+  * [进阶3: 挑战不变性](learn-scala-3.html)
+  * [进阶3: 隔离副作用](learn-scala-4.html)
   * [到底什么是函数式编程？](ying-yong-han-shu-shi-bian-cheng/dao-di-shi-yao-shi-han-shu-shi-bian-cheng-ff1f.md)
 * [编程风格](bian-cheng-feng-ge.md)
 * [收集箱](drafts.html)
