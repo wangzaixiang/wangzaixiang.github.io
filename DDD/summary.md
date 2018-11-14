@@ -9,7 +9,7 @@ title: 目录
 * [领域建模](about-ddd.html)
   * [领域模型的基础要素](construct-blocks.html)
   * [贫血 vs 充血](anemia.html)
-  * [微服务与康为定律](microservice.html)
+  * [微服务与康威定律](microservice.html)
   * [Entity](ling-yu-mo-xing-zhi-gou-jian-kuai/entity.md)
     * 模型一致性，统一概念模型
   * [日志模式与事件溯源](eventsourcing.html)
@@ -27,17 +27,18 @@ title: 目录
   * [MQ Receiver](fu-wu-gou-jian-kuai/mq-receiver.md)
   * EventBus
   * Data Access
-* [服务设计原则](jie-kou-she-ji-yuan-ze.md)
-  * [服务分层](jie-kou-she-ji-yuan-ze/fu-wu-fen-ceng.md)
-  * [策略分离、规则引起、流程引擎]
-  * [面向契约设计](jie-kou-she-ji-yuan-ze/mian-xiang-qi-yue-she-ji.md)
-  * [面向性能设计](jie-kou-she-ji-yuan-ze/mian-xiang-xing-neng-she-ji.md)
-  * 面向监控设计
-  * [面向柔性设计](jie-kou-she-ji-yuan-ze/rou-xing-she-ji.md)
-  * [Restful风格 vs RPC风格](jie-kou-she-ji-yuan-ze/restfulfeng-ge-vs-rpc-feng-ge.md)
-  * 服务版本升级模式
+* [服务设计原则](patterns.html)
+  * [服务分层](layer.html)
+  * [策略分离、规则引起、流程引擎](stratage.html)
+  * [面向契约设计](dbc.html)
+  * [面向性能设计](performance.html)
+  * [面向监控设计](monitor.html)
+  * [面向柔性设计](resilent.html)
+  * [Restful风格 vs RPC风格](rest-rpc.html)
+  * [服务版本升级模式](upgrade.html)
+  * [CQRS](cqrs.html)
 * [识别伪需求引起的模型变化]
-* [应用函数式编程](ying-yong-han-shu-shi-bian-cheng.md)
+* [应用函数式编程](functional.html)
   * [如何学习scala](learn-scala.html)
   * [第一步：熟悉语法](learn-scala-1.html)
   * [进阶2: 作为更好的Java](learn-scala-2.html)
