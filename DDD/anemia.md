@@ -2,6 +2,7 @@
 layout: ddd
 prev: construct-blocks.html
 up: about-ddd.html
+next: microservice.html
 ---
 ## 贫血 vs 充血
 

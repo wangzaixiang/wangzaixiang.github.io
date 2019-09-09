@@ -24,7 +24,7 @@ next: anemia.html
     * pre-condition：对实体状态的前置检查、对input参数的前置检查
     * post-condition：当前Command执行完成后，应该达成的约束。隐含的，所有的实体不变量、聚合不变量，是全局默认的，无需在每个Command中重复申明。
     * Events。 Command完成后，会产生的事件类型。   
-*  Event.
+* Event.
   * Event建模了对实体的更新类操作的结果，可以作为EventSource中的实体存储机制，也可以作为跨实体间的协调、数据一致性的通知机制，也可以作为沟通核心领域逻辑与扩展逻辑的桥梁。
   * Event 有两种传播方式，EventBus vs MessageQueue，EventBus是一种轻量级的，统一进程内、同一事务内的消息传递，用于 aggregation之间的相关实体的数据一致性协作。 MessageQueue是一种重量级的、跨进程乃至跨服务器的，也是夸数据库事务的一种协调机制。通过MQ，来实现最终一致性。 
 * package（实体包）
