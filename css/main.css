@@ -304,10 +304,10 @@ code {
 .pager .next a {
     float: right
 }
-@media (min-width: 704px) {
+@media (min-width: 900px) {
 
     #main {
-        width: 640px;
+        width: 800px;
         margin-left: auto;
         margin-right: auto;
     }
