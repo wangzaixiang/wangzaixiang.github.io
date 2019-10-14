@@ -10,7 +10,7 @@ title: 目录
   * [领域模型的基础要素](construct-blocks.html)
   * [贫血 vs 充血](anemia.html)
   * [微服务与康威定律](microservice.html)
-  * [Entity](ling-yu-mo-xing-zhi-gou-jian-kuai/entity.md)
+  * [Entity](entity.html)
     * 模型一致性，统一概念模型
   * [日志模式与事件溯源](eventsourcing.html)
   * [Vaule Object](vaule-object.md)
@@ -75,6 +75,8 @@ title: 目录
       * 双写
   * [CQRS](cqrs.html)
 * [识别伪需求引起的模型变化]
+* [中台 与 DDD]()
+* [UML 与 DDD]()
 * [应用函数式编程](functional.html)
   * [如何学习scala](learn-scala.html)
   * [第一步：熟悉语法](learn-scala-1.html)
