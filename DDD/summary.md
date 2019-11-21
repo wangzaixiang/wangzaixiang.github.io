@@ -58,7 +58,8 @@ title: 目录
   * [面向柔性设计](resilent.html)
       * 无状态设计
       * 可丢失缓存
-      * 依赖分析、限流、熔断、降级
+      * 依赖分析
+      * 限流、熔断、降级
   * [Restful风格 vs RPC风格](rest-rpc.html)
   * [一致性设计原则]()
       * 幂等性设计
@@ -83,6 +84,7 @@ title: 目录
   * [进阶2: 作为更好的Java](learn-scala-2.html)
   * [进阶3: 挑战不变性](learn-scala-3.html)
   * [进阶3: 隔离副作用](learn-scala-4.html)
-  * [到底什么是函数式编程？](ying-yong-han-shu-shi-bian-cheng/dao-di-shi-yao-shi-han-shu-shi-bian-cheng-ff1f.md)
+  * [应用函数式编程](applyfp.html)
+  * 
 * [编程风格](bian-cheng-feng-ge.md)
 * [收集箱](drafts.html)
