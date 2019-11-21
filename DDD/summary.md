@@ -85,6 +85,6 @@ title: 目录
   * [进阶3: 挑战不变性](learn-scala-3.html)
   * [进阶3: 隔离副作用](learn-scala-4.html)
   * [应用函数式编程](applyfp.html)
-  * 
+  * [6原则检查工具](applyfp-tools.html)
 * [编程风格](bian-cheng-feng-ge.md)
 * [收集箱](drafts.html)
