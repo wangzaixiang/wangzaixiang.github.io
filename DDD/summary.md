@@ -21,6 +21,7 @@ title: 目录
   * [原子操作 与 聚合操作、状态图](atomic.html)
   * Query
   * [最终一致性](consistence.html) 强事务一致性 与 最终一致性
+  * [领域建模演进与重构之路](domain-model-refactor.md)
 * [服务构建块](fu-wu-gou-jian-kuai.md)
   * Service
   * [Tasks](fu-wu-gou-jian-kuai/tasks.md)
