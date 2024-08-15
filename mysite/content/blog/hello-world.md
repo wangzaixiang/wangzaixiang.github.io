@@ -13,6 +13,8 @@ authors = ["Rustaceans"]
 lead = "This is the source code of the traditional <b>Hello World</b> program."
 +++
 
+# Modified by wangzaixiang on 2024-08-15
+
 ```rust
 // This is a comment, and is ignored by the compiler
 
