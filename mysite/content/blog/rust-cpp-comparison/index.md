@@ -8,7 +8,6 @@ template = "blog/page.html"
 [taxonomies]
 authors = ["Rust"]
 
-[extra]
 +++
 
 本文内容节选自：

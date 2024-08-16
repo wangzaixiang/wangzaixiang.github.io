@@ -13,7 +13,7 @@ lead = '本站基于 zola + AdiDoks 主题搭建，主要用于记录个人学�
 
 # Menu items
 [[extra.menu.main]]
-name = "Docs"
+name = "Projects"
 section = "docs"
 url = "/docs/getting-started/introduction/"
 weight = 10
@@ -23,6 +23,12 @@ name = "Blog"
 section = "blog"
 url = "/blog/"
 weight = 20
+
+[[extra.menu.main]]
+name = "Monthly"
+section = "monthly"
+url = "/monthly/"
+weight = 30
 
 [[extra.list]]
 title = "wsql"
