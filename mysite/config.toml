@@ -22,6 +22,7 @@ minify_html = false
 # The taxonomies to be rendered for the site and their configuration.
 taxonomies = [
   {name = "authors"}, # Basic definition: no feed or pagination
+  {name = "category" },  # project, blog, monthly, etc
 ]
 
 # Whether to build a search index to be used later on by a JavaScript library

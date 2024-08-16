@@ -1,14 +1,12 @@
 +++
 title = "Rust vs C++: A Performance Comparison"
-description = "1"
+description = "Rust vs C++: 从性能对比来看语言特性"
 date = 2024-08-15T09:19:42+00:00
 draft = false
 template = "blog/page.html"
 
 [taxonomies]
-authors = ["Rust"]
 
-[extra]
 +++
 
 本文内容节选自：
