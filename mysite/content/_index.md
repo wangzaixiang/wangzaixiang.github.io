@@ -32,14 +32,16 @@ weight = 30
 
 [[extra.list]]
 title = "wsql"
-content = """<a href='https://github.com/wangzaixiang/wsql'>wsql</a> is a diirect style Scala3 API for sql processing. 
-provide mapping for case class via macro, batch insert support, and more.
+content = """
+<a href="https://github.com/wangzaixiang/wsql"> Direct Style Scala3 SQL API</a>.
+<p>良好的 ADT 支持能力, batch API 支持</p>
 """
 
 [[extra.list]]
 title = "wjson"
-content = """<a href="https://github.com/wangzaixiang/wjson/">wjson</a> is a direct style Scala3 API for JSON processing.
-provide ADT to JSON mapping, JSON/JSON5 parsing, JSON schema generator, and a powerful JSON pattern matching DSL. 
+content = """<a href="https://github.com/wangzaixiang/wjson/">wjson</a> 一个 Direct Style Scala3 JSON 处理库。
+提供了ADT支持，JSON/JSON5 解析，JSON schema 生成，强大的模式匹配DSL语言。
+<p><a href="/wjson/index.html">查看文档</a></p>
 """
 
 [[extra.list]]
