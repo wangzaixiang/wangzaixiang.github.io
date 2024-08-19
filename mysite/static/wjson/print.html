@@ -439,7 +439,12 @@ case _ =&gt; println(&quot;not match&quot;)
 </code></pre>
 </li>
 <li>
-<p>可以使用 <code>a[ pattern ]</code> 的方式来对数组中的成员进行条件筛选。</p>
+<p>可以使用 <code>/*</code> 来匹配数组中的所有成员，等效于 <code>[ _ ]</code> 。</p>
+<pre><code class="language-json">{ users/*/name: &quot;John&quot; }
+</code></pre>
+</li>
+<li>
+<p>可以使用 <code>a[ pattern ]</code> 或者 <code>a[n]</code> 的方式来对数组中的成员进行条件筛选(或选中第n个成员)。</p>
 <pre><code class="language-json"># { users: [ { name: &quot;John&quot;, age: 20, email: &quot;john@qq.com&quot; },
 #            { name: &quot;rose“, ageL 25, email: &quot;rose@qq.com&quot; } ]  }
 { users[ {name:&quot;John&quot;} ]/email: @email } 
