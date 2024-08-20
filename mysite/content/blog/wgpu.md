@@ -20,6 +20,7 @@ template = "blog/page.html"
 
 execute_gpu_inner 这个代码的结构还是有些复杂，我对其进行了整理，形成了一个数据流图，对照这个图来看，就比较好理解 webgpu 的各个错综复杂的实体之间的关系了。
 
+{% mermaid() %}
 ```mermaid
 flowchart TD
     device
@@ -43,8 +44,10 @@ flowchart TD
     submit -.device_poll.-> poll 
     staging_buffer -.slice_bounded_receiver.-> receiver
     poll -.-> result
-    receiver -.-> result  
-```
+    receiver -.-> result
+```        
+{% end %}
+
 
 -[ ] 思考：可以进一步的抽象，提供一个更加友好的 API，屏蔽 wgpu 的内部细节。
 
