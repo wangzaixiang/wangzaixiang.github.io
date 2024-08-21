@@ -12,6 +12,7 @@ template = "blog/page.html"
    - 结构化编程 与 结构化数据流，SSA
    - 可测试性、可证明性
    - Monads, vs Direct Style
+   - ADT 建模 
 3. DDD
    - 业务中台
 4. 孙子兵法
@@ -40,3 +41,4 @@ template = "blog/page.html"
     - Pull style
     - iteration, visualization, PDCA
     - TDD 与 以迂为直
+13. Dax vs MDX vs Tableau Expression Language.

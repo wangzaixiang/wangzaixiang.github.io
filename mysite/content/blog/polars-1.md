@@ -8,16 +8,22 @@ template = "blog/page.html"
 
 # 熟悉 Polars 的概念和 API
 
-[Github源地址](https://github.com/wangzaixiang/notebooks/blob/main/polars/polars-1.ipynb)
-
-Polars DSL 中有两个核心概念： Context, Expression:
-- Context: 求值的上下文，在这个上下文中，可以对 Expression 求值。
-  - Selection Context: 
-  - Filter Context
-  - Group By(Aggregation Context)
-- Expression
-
-此外 还有Transformations。
+## 总结
+1. polars 有3种求值的上下文：
+   - Selection Context: df.select(...), df.with_columns(...)
+   - Filter Context: 对应于 df.filter(...) 
+   - Group By(Aggregation Context)：df.group_by(...).agg(...)
+2. 在这三个上下文中，每个表达式的求值结果是 Series-N 或者 Series-1。Series-N 会自动广播为 Series-N。
+   - 表达式可以是基本的 pl.col("name") 这种求值为 Series-N
+   - 表达式可以是聚合函数，例如 pl.sum("nrs")， 求值为 Series-1
+   - 可以是窗口函数，例如 pl.col("Close").last().over("YM").alias("last_close")，求值为 Series-N
+   - 表达式可以是复杂的操作 pl.col("random").filter(pl.col("names").is_not_null()) 
+3. Series-1 的求值结果会被广播为 Series-N, 所有的 Series-N 的 N 值必须与 DataFrame 的记录数相同。否则会报错。
+4. polars 不同于 SQL select 的执行流程，后者有一个严格的执行顺序定义： 
+    - from -> where -> group by -> having -> select -> window -> order by
+    - polars 中，每个操作是独立的，不同的顺序组合，会产生不同的结果。
+    - 在 polars 中, select 求值上下文中可以求值的能力，包括了 字段级、聚合级、窗口级的能力，一定程度上比 SQL 更强大。
+    - 在 filter/aggr 求值上下文中，也可以进行类似的计算。
 
 
 ## 1. Contexts
@@ -50,19 +56,12 @@ df
   white-space: pre-wrap;
 }
 </style>
-<small>shape: (5, 4)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>random</th><th>groups</th></tr><tr><td>i64</td><td>str</td><td>f64</td><td>str</td></tr></thead><tbody><tr><td>1</td><td>&quot;foo&quot;</td><td>0.155879</td><td>&quot;A&quot;</td></tr><tr><td>2</td><td>&quot;ham&quot;</td><td>0.711329</td><td>&quot;A&quot;</td></tr><tr><td>3</td><td>&quot;spam&quot;</td><td>0.511035</td><td>&quot;B&quot;</td></tr><tr><td>null</td><td>&quot;egg&quot;</td><td>0.412576</td><td>&quot;C&quot;</td></tr><tr><td>5</td><td>null</td><td>0.275478</td><td>&quot;B&quot;</td></tr></tbody></table></div>
+<small>shape: (5, 4)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>random</th><th>groups</th></tr><tr><td>i64</td><td>str</td><td>f64</td><td>str</td></tr></thead><tbody><tr><td>1</td><td>&quot;foo&quot;</td><td>0.998578</td><td>&quot;A&quot;</td></tr><tr><td>2</td><td>&quot;ham&quot;</td><td>0.061645</td><td>&quot;A&quot;</td></tr><tr><td>3</td><td>&quot;spam&quot;</td><td>0.927885</td><td>&quot;B&quot;</td></tr><tr><td>null</td><td>&quot;egg&quot;</td><td>0.412684</td><td>&quot;C&quot;</td></tr><tr><td>5</td><td>null</td><td>0.432504</td><td>&quot;B&quot;</td></tr></tbody></table></div>
 
 
 
 ### 1.1 Selection Context
 
-对应于 SQL Select 子句中的 selection part.
-
-[SELECT 语句执行流程](https://pic2.zhimg.com/80/v2-8faf44f913ce39eef7bab322e4a1b4f9_1440w.webp)
-在这个执行流程中，select 是在group by 之后执行的，如果没有 group by 子句，可以理解其执行的上下文如： `List[Row]`，而如果是 groupby 之后的话，则其上下文为：
-`List[(group_key: Tuple, records: List[Row])]`。
-
-对应到 Polars，前者可以理解为 Selection Context(`Row: List[Column]`)，后者可以理解为 Aggregation Context (`(groupKey, List[Row])`).
 
 
 #### 1) Series-N and Series-1 expression
@@ -258,7 +257,8 @@ df.filter(pl.col("nrs") > 2)
 
 
 ```python
-df.filter(pl.col("random").sum() > 1)
+# 可以在 filter 中使用聚合函数，窗口函数，其用法与 select 中一致。
+df.filter(pl.col("random").sum().over("groups") > 0.8)
 ```
 
 
@@ -271,7 +271,7 @@ df.filter(pl.col("random").sum() > 1)
   white-space: pre-wrap;
 }
 </style>
-<small>shape: (5, 4)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>random</th><th>groups</th></tr><tr><td>i64</td><td>str</td><td>f64</td><td>str</td></tr></thead><tbody><tr><td>1</td><td>&quot;foo&quot;</td><td>0.830762</td><td>&quot;A&quot;</td></tr><tr><td>2</td><td>&quot;ham&quot;</td><td>0.052124</td><td>&quot;A&quot;</td></tr><tr><td>3</td><td>&quot;spam&quot;</td><td>0.249306</td><td>&quot;B&quot;</td></tr><tr><td>null</td><td>&quot;egg&quot;</td><td>0.846002</td><td>&quot;C&quot;</td></tr><tr><td>5</td><td>null</td><td>0.252116</td><td>&quot;B&quot;</td></tr></tbody></table></div>
+<small>shape: (2, 4)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>random</th><th>groups</th></tr><tr><td>i64</td><td>str</td><td>f64</td><td>str</td></tr></thead><tbody><tr><td>1</td><td>&quot;foo&quot;</td><td>0.155879</td><td>&quot;A&quot;</td></tr><tr><td>2</td><td>&quot;ham&quot;</td><td>0.711329</td><td>&quot;A&quot;</td></tr></tbody></table></div>
 
 
 
@@ -281,6 +281,101 @@ df.filter(pl.col("random").sum() > 1)
 当结合一些复杂的表达式时，例如 a and b or c，其中 a,b, c 可能是 Series-N， 也可能是 Series-1.
 求值方式： 1. 先对所有基础的 Logic Expression 进行求值，其或者为 Series-N, 或者为 Series-1。 
 2. 广播后，再求值 Series-N
+
+问题：
+1. 在上面的例子中，select 上下文中可以使用 filter, sum, 以及窗口函数等，那么这些函数是否在 filter 中也可以使用？
+2. 如果既有 select 计算，又有 filter 计算，那么这两个计算是否有先后顺序？
+我们可以查看如下的示例：
+
+
+```python
+df1 = df.select(
+    pl.sum("nrs"),                                # Scalar
+    pl.col("names").alias("names1"),
+    pl.col("names").sort(),                       # Series[N]
+    pl.col("names").first().alias("first name"),  # Scalar
+    (pl.mean("nrs") * 10).alias("10xnrs"),        # Scalar
+) .filter(pl.col("nrs") > 2 )
+
+df2 = df.filter(pl.col("nrs") > 2).select(
+    pl.sum("nrs"),                                # Scalar
+    pl.col("names").alias("names1"),
+    pl.col("names").sort(),                       # Series[N]
+    pl.col("names").first().alias("first name"),  # Scalar
+    (pl.mean("nrs") * 10).alias("10xnrs"),        # Scalar
+)
+```
+
+    shape: (5, 5)
+    ┌─────┬────────┬───────┬────────────┬────────┐
+    │ nrs ┆ names1 ┆ names ┆ first name ┆ 10xnrs │
+    │ --- ┆ ---    ┆ ---   ┆ ---        ┆ ---    │
+    │ i64 ┆ str    ┆ str   ┆ str        ┆ f64    │
+    ╞═════╪════════╪═══════╪════════════╪════════╡
+    │ 11  ┆ foo    ┆ null  ┆ foo        ┆ 27.5   │
+    │ 11  ┆ ham    ┆ egg   ┆ foo        ┆ 27.5   │
+    │ 11  ┆ spam   ┆ foo   ┆ foo        ┆ 27.5   │
+    │ 11  ┆ egg    ┆ ham   ┆ foo        ┆ 27.5   │
+    │ 11  ┆ null   ┆ spam  ┆ foo        ┆ 27.5   │
+    └─────┴────────┴───────┴────────────┴────────┘
+    shape: (2, 5)
+    ┌─────┬────────┬───────┬────────────┬────────┐
+    │ nrs ┆ names1 ┆ names ┆ first name ┆ 10xnrs │
+    │ --- ┆ ---    ┆ ---   ┆ ---        ┆ ---    │
+    │ i64 ┆ str    ┆ str   ┆ str        ┆ f64    │
+    ╞═════╪════════╪═══════╪════════════╪════════╡
+    │ 8   ┆ spam   ┆ null  ┆ spam       ┆ 40.0   │
+    │ 8   ┆ null   ┆ spam  ┆ spam       ┆ 40.0   │
+    └─────┴────────┴───────┴────────────┴────────┘
+
+
+
+```python
+df1
+```
+
+
+
+
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 5)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names1</th><th>names</th><th>first name</th><th>10xnrs</th></tr><tr><td>i64</td><td>str</td><td>str</td><td>str</td><td>f64</td></tr></thead><tbody><tr><td>11</td><td>&quot;foo&quot;</td><td>null</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>&quot;ham&quot;</td><td>&quot;egg&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>&quot;spam&quot;</td><td>&quot;foo&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>&quot;egg&quot;</td><td>&quot;ham&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>null</td><td>&quot;spam&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr></tbody></table></div>
+
+
+
+
+```python
+df2
+```
+
+
+
+
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 5)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names1</th><th>names</th><th>first name</th><th>10xnrs</th></tr><tr><td>i64</td><td>str</td><td>str</td><td>str</td><td>f64</td></tr></thead><tbody><tr><td>8</td><td>&quot;spam&quot;</td><td>null</td><td>&quot;spam&quot;</td><td>40.0</td></tr><tr><td>8</td><td>null</td><td>&quot;spam&quot;</td><td>&quot;spam&quot;</td><td>40.0</td></tr></tbody></table></div>
+
+
+
+从上面的这个例子中， 我们可以看到 调整顺序后的两个结果是完全不一样的，这个也说明了与 SQL Select 并不一样，在 Pola RS 中，
+select 与 filter 是独立的操作，df.select(...).filter(...) 与 df.filter(...).select(...) 是不一样的。
+
+这与 SQL 中 select * from table where ... 的执行顺序是不一样的。一条SQL 语句有一个预定的执行顺序，参见：
+[SELECT 语句执行流程](https://pic2.zhimg.com/80/v2-8faf44f913ce39eef7bab322e4a1b4f9_1440w.webp)
+在这个执行流程中，select 子句是在filter 之后，然后group by，having，在 having 过滤之后执行的，但在窗口函数执行之前。
+而 polars 则完全不同，每个 data frame 操作是独立的，不同的顺序组合，会产生不同的结果。
+
+当然，在 Lazy Evaluation 中，最后执行计划会对这些操作进行优化，生成一个最优的执行计划。但逻辑上来看，这些操作是独立的。
 
 ### 1.3 Aggragation Context
 
@@ -359,6 +454,23 @@ df.group_by("groups").agg(
 这个 filter 的上下文确实非常强大，后续在阅读代码时，需要理解这个执行的逻辑。
 
 ## 2. Expressions
+
+理解了 context 之后，expression 的多样性就显得没有那么复杂了，否则的话，一大堆的 expression 会让人眼花缭乱。
+
+可以分为如下几类：
+- operators: +, -, *, / etc. 
+- column selections: p.col("name"), p.all()
+- functions, case when,
+- casting
+- strings
+- aggregations
+- missing data
+- window functions
+- folds
+- lists
+- UDF
+- struts
+
 
 
 ```python
@@ -528,16 +640,15 @@ q = (apple_stocks
 
 
 ```python
-# q.show_graph()
+q.show_graph()
 
-q.explain()
+# q.explain()
 ```
 
 
-
-
-    'SORT BY [col("YM")]\n  UNIQUE[maintain_order: false, keep_strategy: Any] BY None\n    SIMPLE_PROJECTION \n       WITH_COLUMNS:\n       [col("Close").last().over([col("YM")]).alias("last_close")], [] \n        SORT BY [col("Date")]\n           WITH_COLUMNS:\n           [col("Date").dt.to_string().alias("YM")], [] \n             SELECT [col("Date").str.strptime([String(raise)]), col("Close")], [] FROM\n\n                Csv SCAN ./apple_stock.csv\n                PROJECT 2/2 COLUMNS'
-
+    
+![svg](../output_42_0.svg)
+    
 
 
 ## 6. Operator and Functions

@@ -4,7 +4,7 @@ title = "程序人生"
 
 # The homepage contents
 [extra]
-lead = '本站基于 zola + AdiDoks 主题搭建，主要用于记录个人学习笔记。'
+lead = '本站基于 zola + AdiDoks 主题搭建，主要用于记录个人技术博客、学习笔记、胡(qi)思乱(miao)想。'
 #url = "/docs/getting-started/introduction/"
 #url_button = "Get started"
 #repo_version = "GitHub v0.1.0"
@@ -28,6 +28,12 @@ weight = 20
 name = "Monthly"
 section = "monthly"
 url = "/monthly/"
+weight = 30
+
+[[extra.menu.main]]
+name = "火花"
+section = "thoughts"
+url = "/thoughts/"
 weight = 30
 
 [[extra.list]]
