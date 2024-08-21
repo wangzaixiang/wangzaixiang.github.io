@@ -6,25 +6,35 @@ draft = false
 template = "blog/page.html"
 +++
 
-# 熟悉 Polars 的概念和 API
+## 结论先行
+本 [notebook](https://github.com/wangzaixiang/notebooks/blob/main/polars/polars-1.ipynb) 是通过 jupyter notebook 的方式，
+来学习 polars 的API，并理解其概念。
 
-## 总结
 1. polars 有3种求值的上下文：
-   - Selection Context: df.select(...), df.with_columns(...)
-   - Filter Context: 对应于 df.filter(...) 
-   - Group By(Aggregation Context)：df.group_by(...).agg(...)
+   - Selection Context: `df.select(...)`, `df.with_columns(...)`
+   - Filter Context:  `df.filter(...) `
+   - Group By(Aggregation Context)：`df.group_by(...).agg(...)`，每一个分组可以理解为一个child dataframe
+   
 2. 在这三个上下文中，每个表达式的求值结果是 Series-N 或者 Series-1。Series-N 会自动广播为 Series-N。
    - 表达式可以是基本的 pl.col("name") 这种求值为 Series-N
    - 表达式可以是聚合函数，例如 pl.sum("nrs")， 求值为 Series-1
    - 可以是窗口函数，例如 pl.col("Close").last().over("YM").alias("last_close")，求值为 Series-N
    - 表达式可以是复杂的操作 pl.col("random").filter(pl.col("names").is_not_null()) 
-3. Series-1 的求值结果会被广播为 Series-N, 所有的 Series-N 的 N 值必须与 DataFrame 的记录数相同。否则会报错。
+   - Series-1 的求值结果会被广播为 Series-N, 所有的 Series-N 的 N 值必须与 DataFrame 的记录数相同。否则会报错。
+
+3. 表达式是在 dataframe 的基础上进行求值，而不是在 row based 上进行求值。即使是 Series-1 也是 (df -> Series-1)，而非
+   ( row -> Series-1 )
+
 4. polars 不同于 SQL select 的执行流程，后者有一个严格的执行顺序定义： 
     - from -> where -> group by -> having -> select -> window -> order by
     - polars 中，每个操作是独立的，不同的顺序组合，会产生不同的结果。
     - 在 polars 中, select 求值上下文中可以求值的能力，包括了 字段级、聚合级、窗口级的能力，一定程度上比 SQL 更强大。
     - 在 filter/aggr 求值上下文中，也可以进行类似的计算。
 
+5. TODO
+   - [ ] polars 对窗口函数的求值是如何进行的？是否最优？
+   - [ ] polars 是否有对简单的 group_by sum 操作有进行优化，避免生成中间的 child dataframe?
+   - [ ] 对一个 join 后的 dataframe, 是否会有减枝的操作？及无用到的表会自动减枝？
 
 ## 1. Contexts
 
