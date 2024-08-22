@@ -42,3 +42,8 @@ template = "blog/page.html"
     - iteration, visualization, PDCA
     - TDD 与 以迂为直
 13. Dax vs MDX vs Tableau Expression Language.
+14. 理解 Rust 的语法糖
+    - for in 
+    - `x[i]`
+    - deref
+    - view HIR, MIR, LLVM-IR, ASM

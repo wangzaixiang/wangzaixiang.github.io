@@ -136,4 +136,4 @@ fn test2(n_base: u32) -> u32 {
 - SIMD 并不能适应 分支计算，而 GPU 上可以支持分支计算。类似于 case when 的计算，更适合在 GPU上完成。
 
 ## 补充
-> 2024-08-17 编写了一个 mondelbrot set 的 CPU 和 GPU 版本的性能对比 [mandelbrot-gpu](@/blog/mandelbrot-gpu.md)。
+> 2024-08-17 编写了一个 mondelbrot set 的 CPU 和 GPU 版本的性能对比 [mandelbrot-gpu](@/blog/2024-08-17-mandelbrot-gpu.md)。
