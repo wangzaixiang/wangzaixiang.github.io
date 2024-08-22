@@ -265,3 +265,76 @@ CellRequestBuffer 会按 cell 的 pattern 进行分组记录， 具备一下特�
 典型的，例如计算 `stdev` 聚合方式时，可以参照 《Efficient Processing of Window Functions in Analytical SQL Queries
 》 论文中的优化方式，极少计算量。
 
+## LoadTuples 函数定义
+多维查询时，基于事实表的 tuples 会比 crossjoin 有多个数量级上的下降，而在多事实情况下， `nonEmptyCrossJoin` 的语义并不清晰，因此，
+我设计了新的 loadTuples 语义：
+```
+loadTuples(
+  "dimension:",    [Dim1], [Dim2], [NS1],  ...,  // 元组中使用的维度，是否支持显示给定层次？
+  "showEmpty:",    true,   false,  false,  ...,  // 各个维度是否容许显示空成员，命名集也可以考虑支持 showEmpty
+  "showSubTotal:", false,  true,   false,  ...,  // 各个维度是否显示小计，命名集明确不支持小计
+  "dimensionContext": null, ([Dim1]), null, ..., // 显示空成员时维度的筛选上下文，或许可以省略，从Schema中可以获得。
+
+  "where:",        boolean-expression,           // 筛选Bool表达式
+  "sorts:",       expr1, expr2, ..., DESC|ASC|BDESC|BASC  // 排序设定
+  "viewIds:", viewId1, viewId2, ...              // 从那些事实表中加载维度组合。
+)
+```
+
+说明
+新定义的 LoadTuples 函数比较复杂，综合了如下的能力： 
+
+- 显示空成员的维度：在 showEmpty = true 中指定需要显示空成员的维度，其他为不显示空成员的维度。（目前仅支持显示空成员的维度之间的筛选，
+  不显示空成员的维度不参与显示空成员的维度的筛选）
+- 不显示空成员的维度
+- 分组小计。（对单层次维度，创建 aggreate 计算成员 或者映射到 All ， 对多层次维度，如果该维度有过滤，则使用 VisualTotal 函数）
+- 多事实表逻辑。 当选择 viewId1, viewId2 等多事实表时，维度组合符合如下逻辑：
+   - 如果 viewId1 包含的轴上维度(D_i, D_j, D_k) 与 viewId2 的轴上维度一致时， 二者是一个 union 关系（去除重复）
+   - 如果 viewId1 包含的轴上维度(D_i, D_j, Dk)是 ViewId2 (D_i, D_j, D_k, D_l)的子集时，如果 (D_i, D_j, Dk)组合在 (D_i, D_j, D_k, D_l) 中已存在，则不再重复出现。
+   - 否则同时包含viewId1的元组和viewId2的元组。
+- 筛选能力：
+  - 对维度值进行过滤的筛选条件可以直接下沉（包括WHERE区的条件）
+  - 使用基本度量作为过滤条件，与元组的部分维度相关，可以考虑使用窗口函数 + having子句进行下沉
+  - 更为复杂的计算度量暂时不能下沉，在 MDX 引擎中执行。
+- 排序能力：
+  - 可以对维度值进行过滤（下沉）
+  - 可以对基本度量（与部分维度相关），可以考虑使用窗口函数 进行下沉
+  - 更为复杂的计算度量暂时不能下称，在 MDX 引擎中执行。
+
+预期的优势：
+1. 新的 loadTuple 函数基本涵盖了目前仪表盘构建轴上元组的大部份能力（并在排序上有所超越）
+2. 对多事实的处理、筛选能力、排序能力有更好的下沉能力，可以获得更好的查询性能。
+3. 即使考虑到复杂的Where条件，loadTuple仍然有更好的下沉能力，在下沉SQL的基础上，再结合不能下沉的 filter + sort 处理，整体性能会比现有的不能下沉的场景有更好的性能。
+4. 对比现有的 crossjoin / nonEmptyCrossJoin/ dim.members，有更为清晰的查询语义，便于整个查询的质量提升
+
+Where 轴上的条件，在多事实表情况下，需要进行的处理逻辑包括：
+1. 如果 viewId1 不包含 dim1, 则在 WHERE 条件应用到 viewId1时，需要对 Bool 表达式进行如下的改写：
+   - 如果 表达式 dim1.currentMember oper literal 使用了viewId中不存在的字段，这个表达式改写为 UNUSED
+   - UNUSED and any  -->  any
+   - UNUSED or any   --> any
+   - NOT UNUSED      --> UNUSED
+   最后逐步的进行化简，如果最后化简的表达式不包含 UNUSED，则可以直接下沉。如果化简后为 UNUSED，则化简为 true.
+
+2. 计算成员
+   在不显示空成员时，如果维度有计算成员，则在 LoadTuples 中需要补充计算成员。
+   （D_1, D_2, D_3, ..., D_n）中，如果 D_2, D_3有计算成员，则需要补充成员：filter( \{ (D1, D4) \} * \{ D2.calcMembers, D2.calcMemers \},  [Measures].[Fact Count] > 0 )
+
+3. 筛选条件下沉
+   以 f1 && f2 && (f3 || f4) 为例, f1 , f2 可以独立下沉， f3 || f4 只能作为整体下沉，具备下沉的 bool 表达式 f 满足： 
+   - f 是 TOP 层的自成员，且 TOP 层的各个自成员之间是 and 关系。 
+   - f 形如 dim1.currentMember.caption operate constant 且 dim1 在不显示空成员中，则 f 可以下沉 
+   - f 形如 `[Measures].[X]` operator constant 且 X 是基本度量，则 f 可以下沉 
+   - f 形如 (`[Measures].[X], [Dim1].[All Dim1s]`) operator constant 且 X 是基本度量，则 f 可以下沉。 
+   - f 是2 AND (3 与 4的组合)，则 f 可以下沉。
+   
+   具备下沉条件的表达式将在如下环节执行： 
+   - 非空基本元组（非计算成员）在 SQL 中执行 
+   - 如果该字段有计算成员，且显示计算成员，则在补充计算成员的元组前，进行过滤。 
+   - 新增分组小计的元组，在新增前，进行过滤。
+    不具备下沉条件的表达式，统一在最后的 MDX 过滤阶段进行过滤。
+    
+4. 计算元组时，自动携带辅助的计算（可用于MDX过滤阶段、MDX排序阶段）
+    在计算元组的值时，可以附带计算用于后续处理所需的值，例如 filter, order-by。
+    在 MDX 过滤阶段，对给定元组，如果需要对特定值进行求值，可以使用 tuple.properties.get( expression ) 先获取值，如果已有值的话，则无需额外求值。
+
+{{ resize_image(path="/images/loadTuples.png", width=800, height=100, op="fit_width") }}
