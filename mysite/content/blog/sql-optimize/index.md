@@ -1,5 +1,5 @@
 +++
-title = "数据库查询优化相关技术收集..."
+title = "数据库查询优化相关技术收集 ..."
 description = "收集有关 OLAP 查询优化相关的策略、算法，为后续评估向量计算体系的优化准备素材"
 date = 2024-08-22T12:00:00+00:00
 draft = false
@@ -76,17 +76,17 @@ template = "blog/page.html"
 ## ClickHouse
 
 1. [Join 算法](https://clickhouse.com/docs/en/guides/joining-tables#optimizing-join-performance)
-   - hash 
-   - parallel hash
+   - hash, parallel hash
    - grace hash: right table 过大时，将 hashtable 拆分为多个，每次仅在内存中存放一个分区，其他放到磁盘保存。
    - full sorting merge: 左表、右表都在关联字段上排序
    - partial merge：右表在关联字段上排序。
-   - direct
+   - direct: 类似于 Hash，针对于特定的存储引擎类型。
    
    {{ resize_image(path="@/blog/sql-optimize/clickhouse-joins.png", width=600, height=400, op="fit_width") }}
    
    1. [Join Types supported in ClickHouse](https://clickhouse.com/blog/clickhouse-fully-supports-joins-part1)
    2. [Hash Join, Parallel HashJoin, Grace HashJoin](https://clickhouse.com/blog/clickhouse-fully-supports-joins-hash-joins-part2)
-   3. [Full Sort Merge, Partial Merge Join](https://clickhouse.com/blog/clickhouse-fully-supports-joins-full-sort-partial-merge-part3)
+   3. [Full Sort Merge, Partial Merge Jooin](https://clickhouse.com/blog/clickhouse-fully-supports-joins-full-sort-partial-merge-part3)
+      > 从文档上看，如果右表已经是排序的，也需要做一次排序，感觉这个是多余的
    4. [Direct Join](https://clickhouse.com/blog/clickhouse-fully-supports-joins-direct-join-part4)
 

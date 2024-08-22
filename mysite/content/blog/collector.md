@@ -1,7 +1,7 @@
 +++
-title = "收集箱"
+title = "收集箱 ..."
 description = "记录一些准备整理的主题"
-date = 2024-08-20T12:00:00+00:00
+date = 2024-12-31 
 draft = true
 template = "blog/page.html"
 +++
@@ -42,8 +42,13 @@ template = "blog/page.html"
     - iteration, visualization, PDCA
     - TDD 与 以迂为直
 13. Dax vs MDX vs Tableau Expression Language.
+    - MDX optimize 整理
 14. 理解 Rust 的语法糖
     - for in 
     - `x[i]`
     - deref
     - view HIR, MIR, LLVM-IR, ASM
+15. Signal
+    - [TC39](https://github.com/tc39/proposal-signals)
+    - [airstream](https://github.com/raquo/Airstream)
+    - 我设计的 Variable Manager 设计方案
