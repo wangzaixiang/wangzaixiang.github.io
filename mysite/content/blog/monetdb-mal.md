@@ -268,3 +268,4 @@ Pros:
 3. 建立基于向量的操作体系，包括 project, semi-join, join, select 等等，这些操作，都是向量化优化的（甚至可以直接在GPU上执行）是上层SQL 执行的基础支撑
 4. 上层应用可以基于基础向量演算，增加各种优化，例如 min-max 索引， bitmap 索引等，基于这些特定的索引，减少数据的扫描。
 5. 对于已排序的向量，提供更多的优化，例如 merge join, merge sort 等等。甚至可以将这些信息作为类型信息，直接在编译期进行优化。
+参考： [Calcite Relational Algebra](https://calcite.apache.org/docs/algebra.html)
