@@ -90,3 +90,54 @@ template = "blog/page.html"
       > 从文档上看，如果右表已经是排序的，也需要做一次排序，感觉这个是多余的
    4. [Direct Join](https://clickhouse.com/blog/clickhouse-fully-supports-joins-direct-join-part4)
 
+## Subquery 优化
+
+1. left join
+   ```sql 
+   SELECT o_orderkey, (
+    SELECT c_name
+    FROM CUSTOMER
+    WHERE c_custkey = o_custkey
+   ) AS c_name FROM ORDERS;
+
+   SELECT o_orderkey, c_name
+   FROM orders left join customers on c_custkey = o_custkey
+   ```
+2. semi join
+   ```sql
+    SELECT c_custkey
+    FROM CUSTOMER
+    WHERE c_nationkey = 86 AND EXISTS(
+        SELECT * FROM ORDERS
+        WHERE o_custkey = c_custkey
+   )
+   
+   select c_custkey from customer 
+   semi join orders on o_custkey = c_custkey 
+   where _nationkey = 86
+   ```
+3. group by
+   ```sql
+    SELECT c_custkey
+    FROM CUSTOMER
+    WHERE 1000000 < (
+      SELECT SUM(o_totalprice)
+      FROM ORDERS
+      WHERE o_custkey = c_custkey
+    );
+   
+    SELECT c_custkey, SUM(o_totalprice)
+    From customer left join orders on o_custkey = c_custkey
+    group by c_custkey
+    having 1000000 < SUM(o_totalprice)
+   ```
+   
+4. 集合比较
+   ```sql
+    SELECT c_name
+    FROM CUSTOMER
+    WHERE c_nationkey <> ALL (SELECT s_nationkey FROM SUPPLIER);
+   
+    select c_name from customer anti semi join supplier on c_nationkey = s_nationkey;
+   
+   ```
