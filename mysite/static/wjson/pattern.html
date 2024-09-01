@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="zh-CN" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="core.html"><strong aria-hidden="true">1.</strong> core</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="basic-api.html"><strong aria-hidden="true">1.1.</strong> basic</a></li><li class="chapter-item expanded "><a href="parser.html"><strong aria-hidden="true">1.2.</strong> parser</a></li><li class="chapter-item expanded "><a href="adt-mapping.html"><strong aria-hidden="true">1.3.</strong> ADT mapping</a></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">1.4.</strong> String interpolation</a></li></ol></li><li class="chapter-item expanded "><a href="pattern.html" class="active"><strong aria-hidden="true">2.</strong> pattern</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="pattern-dsl.html"><strong aria-hidden="true">2.1.</strong> pattern matching DSL</a></li></ol></li><li class="chapter-item expanded "><a href="schema.html"><strong aria-hidden="true">3.</strong> schema</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="generator.html"><strong aria-hidden="true">3.1.</strong> schema generator</a></li></ol></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">4.</strong> internal</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro.html"><strong aria-hidden="true">4.1.</strong> scala3 macro</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="core.html"><strong aria-hidden="true">1.</strong> core</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="basic-api.html"><strong aria-hidden="true">1.1.</strong> basic</a></li><li class="chapter-item expanded "><a href="parser.html"><strong aria-hidden="true">1.2.</strong> parser</a></li><li class="chapter-item expanded "><a href="adt-mapping.html"><strong aria-hidden="true">1.3.</strong> JSON/Bean mapping</a></li></ol></li><li class="chapter-item expanded "><a href="pattern.html" class="active"><strong aria-hidden="true">2.</strong> pattern</a></li><li class="chapter-item expanded "><a href="schema.html"><strong aria-hidden="true">3.</strong> JSON schema</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="schema-annotations.html"><strong aria-hidden="true">3.1.</strong> annotations</a></li><li class="chapter-item expanded "><a href="schema-adt.html"><strong aria-hidden="true">3.2.</strong> ADT support</a></li><li class="chapter-item expanded "><a href="schema-version.html"><strong aria-hidden="true">3.3.</strong> Multi-Version</a></li></ol></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">4.</strong> internal</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro.html"><strong aria-hidden="true">4.1.</strong> scala3 macro</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -142,7 +142,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="wjson-pattern-一个简单直观的scala-json库"><a class="header" href="#wjson-pattern-一个简单直观的scala-json库">wJson Pattern: 一个简单、直观的Scala JSON库</a></h1>
+                        <h1 id="wjson-pattern-一个简单直观的scala-json库"><a class="header" href="#wjson-pattern-一个简单直观的scala-json库">wjson Pattern: 一个简单、直观的Scala JSON库</a></h1>
 <p>JSON作为数据交换标准，使用越来越广泛。对输入的 JSON 进行模式匹配、信息提取，并进行进一步的加工处理，是一个非常常见的场景。</p>
 <p>应用场景：</p>
 <p>Mock Server。在Mock Server中，我们需要配置大量的 Mock 规则，在 request 匹配规则的情况下，返回相应的数据。
@@ -160,7 +160,7 @@
 <li>简单示例</li>
 </ol>
 <p>先看一个简单的 wjson pattern 示例：</p>
-<pre><code class="language-json">// JSON data: curl https://api.github.com/repos/wangzaixiang/wjson/commits?per_page=1
+<pre><code class="language-json5">// JSON data: curl https://api.github.com/repos/wangzaixiang/wjson/commits?per_page=1
 {
 &quot;sha&quot;: &quot;650e56cd380c311909cd50408bbb4884f1f5d21e&quot;,
 &quot;node_id&quot;: &quot;C_kwDOHj94ltoAKDY1MGU1NmNkMzgwYzMxMTkwOWNkNTA0MDhiYmI0ODg0ZjFmNWQyMWU&quot;,
@@ -201,7 +201,7 @@
 ]
 }
 </code></pre>
-<pre><code class="language-json">// JSON Pattern
+<pre><code class="language-jsonpattern">// JSON Pattern
 {
   sha: @sha,
   commit: { author: { name: @commit_name } }
@@ -210,7 +210,7 @@
 }
 </code></pre>
 <p>对上述的示例 JSON，我们可以使用如下的 JSON pattern 来对其进行匹配，并完成相应字段的提取：</p>
-<pre><code class="language-scala">val info = &quot;...json string...&quot; 
+<pre><code class="language-scala 3">val info = &quot;...json string...&quot; 
   info.parseJson match
       case rejson&quot;&quot;&quot;
         {
@@ -238,13 +238,13 @@
 </li>
 <li>
 <p>支持基本类型：null, boolean(true, false), number, string（'hello' or &quot;hello&quot;）</p>
-<pre><code class="language-json">     [ 1, 2.0, true, false, &quot;hello&quot;, null ]
+<pre><code class="language-jsonpattern">     [ 1, 2.0, true, false, &quot;hello&quot;, null ]
      'hello' # single quote string
 </code></pre>
 </li>
 <li>
 <p>支持复杂类型： array: <code>[ ... ]</code>, object <code>{ name: value }</code>。 在 object 中可以使用 类似于 JSON5 的语法，以增强可读性</p>
-<pre><code class="language-json">  [ 1, 2, 3] # array
+<pre><code class="language-jsonpattern">  [ 1, 2, 3]                    # array
   { &quot;name&quot;: &quot;John&quot;, &quot;age&quot;: 20 }
   { 'name': 'John', 'age': 20 }  # 与上一行等效
   { name: 'John', age: 20 }  # 与上一行等效
@@ -252,7 +252,7 @@
 </li>
 <li>
 <p>在所有可以是值的地方，可以使用 name@value 的语法，将value 的值绑定到name变量中返回。</p>
-<pre><code class="language-json"> a @ 1  # 匹配 1 且将值绑定到 a 变量
+<pre><code class="language-jsonpattern"> a @ 1  # 匹配 1 且将值绑定到 a 变量
  b @ [ 1,2,3 ] # 匹配 [1,2,3] 且将值绑定到 b 变量
  c @ { name: &quot;John&quot;, age: 20 }  # 匹配 { name: &quot;John&quot;, age: 20 } 且将值绑定到 c 变量
  [ 1, 2, x @ 3, 4 ]     # 匹配 [1,2,3,4] 且将 3绑定到 x 变量
@@ -261,20 +261,20 @@
 </li>
 <li>
 <p>类型匹配： &quot;boolean&quot;, &quot;string&quot;, &quot;number&quot;, &quot;integer&quot;, &quot;array&quot;, &quot;object&quot; 匹配对应的JS类型</p>
-<pre><code class="language-json"># input: { name: &quot;John&quot;, age: 20, leader: true }
+<pre><code class="language-jsonpattern"># input: { name: &quot;John&quot;, age: 20, leader: true }
 { name: name @ string, age: age @ number, leader: leader @ boolean }
 # 匹配成功，并将 name 绑定到 &quot;John&quot;, age 绑定到 20, leader 绑定到 true
 </code></pre>
 </li>
 <li>
 <p>&quot;_&quot; 匹配任意单值</p>
-<pre><code class="language-json">[ 1, 2, _, 4]  #  match: [ 1,2,3,4], not match: [1,2,3,5,4]
+<pre><code class="language-jsonpattern">[ 1, 2, _, 4]  #  match: [ 1,2,3,4], not match: [1,2,3,5,4]
 { name: _, age: 20 } # match { name: &quot;John&quot;, age: 20 } but not { age: 20 }
 </code></pre>
 </li>
 <li>
 <p>&quot;_*&quot; 在数组中，可以匹配 0 到多个数组成员，在对象中，可以匹配未被指定的所有其他字段。</p>
-<pre><code class="language-json">{ name: &quot;John&quot;, other@_* }
+<pre><code class="language-jsonpattern">{ name: &quot;John&quot;, other@_* }
 # match { name: &quot;Johe&quot;, age:20 , leader:true} and others := { age: 20, leader: true}
 [ 1,2, o@_*, 10 ] 
 # match [ 1,2,3,4,5,6,7,8,9,10] and o:=[3,4,5,6,7,8,9]
@@ -282,24 +282,24 @@
 </li>
 <li>
 <p>可以使用 tag&quot;content&quot;的方式扩展匹配规则，这个规则可以有用户来使用自定义的方式对值进行匹配。wjson中提供了 eval&quot;expr&quot; 和 r&quot;expr&quot; 两个参考实现，mvel使用MVEL表达式引擎来匹配一个JS值，r使用正则表达式来匹配值。</p>
-<pre><code class="language-json">{ name: &quot;John&quot;, age: eval&quot;it &gt;= 0 &amp;&amp; it &lt;= 100&quot;, email: r&quot;\w+@(\w\.)*\w&quot; }
+<pre><code class="language-jsonpattern">{ name: &quot;John&quot;, age: eval&quot;it &gt;= 0 &amp;&amp; it &lt;= 100&quot;, email: r&quot;\w+@(\w\.)*\w&quot; }
 # match { name: &quot;John&quot;, age: 20,  email: &quot;john@qq.com&quot; }
 </code></pre>
 </li>
 <li>
 <p>可以使用 a/b/c 的路径来匹配，等效于 { a : { b: {c : _ } } } 。</p>
-<pre><code class="language-json">{ a/b/c: &quot;John&quot; } 
+<pre><code class="language-jsonpattern">{ a/b/c: &quot;John&quot; } 
 # match { a: { b:  {c : &quot;John&quot; } } }
 </code></pre>
 </li>
 <li>
 <p>可以使用 <code>/*</code> 来匹配数组中的所有成员，等效于 <code>[ _ ]</code> 。</p>
-<pre><code class="language-json">{ users/*/name: &quot;John&quot; }
+<pre><code class="language-jsonpattern">{ users/*/name: &quot;John&quot; }
 </code></pre>
 </li>
 <li>
 <p>可以使用 <code>a[ pattern ]</code> 或者 <code>a[n]</code> 的方式来对数组中的成员进行条件筛选(或选中第n个成员)。</p>
-<pre><code class="language-json"># { users: [ { name: &quot;John&quot;, age: 20, email: &quot;john@qq.com&quot; },
+<pre><code class="language-jsonpattern"># { users: [ { name: &quot;John&quot;, age: 20, email: &quot;john@qq.com&quot; },
 #            { name: &quot;rose“, ageL 25, email: &quot;rose@qq.com&quot; } ]  }
 { users[ {name:&quot;John&quot;} ]/email: @email } 
 # 匹配成功，并绑定 变量 email 的值为 &quot;john@qq.com&quot;
@@ -311,11 +311,11 @@
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="internal.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="adt-mapping.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="pattern-dsl.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="schema.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -325,11 +325,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="internal.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="adt-mapping.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="pattern-dsl.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="schema.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

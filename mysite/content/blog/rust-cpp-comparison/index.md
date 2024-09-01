@@ -41,7 +41,7 @@ template = "blog/page.html"
 
 4. Struct Layout and Padding.
     - C++ 的 struct 的内存布局与字段的定义顺序有关，可能会消耗更多的内存。而 Rust 默认则最优化内存布局，
-      从而减少内存占用。
+      从而减少内存占用。(对 vec<struct> 这样的应用，会因为减少内存的占用而提高 cache 命中率，从而提高性能)
     - Rust 的 enum 类型很难在C++中表达
     - 诸如 Option<T> 这样的类型对 &T 来说是零开销的，即根本不存在 tag 的开销。这也是一个很神奇的设计，
     - 兼顾简洁和性能，堪称 Zero Cost Abstract 的典范。再看看 Scala 的 Option 瞬间就不香了。
@@ -52,4 +52,12 @@ template = "blog/page.html"
    应该说 comptime 方面，Rust 通过 const, constexp 关键字提供了简单，但并不够强大的支持。
    在这方面，C++、Zig、Scala语言都走得更远。不过，Rust 中，我们可以通过 Macro 来实现相似的功能。
    或许，在 comptime 这一块，最优特色的应该是 zig 语言了。
+   
    当然 Scala 的 Macro 也是非常完备的，不过复杂性也有些令人生畏了。
+
+   我在 wsql/wjson 这两个库的开发中，借助于 Macro 的能力，提供了用户友好的API，这些没有 macro 的助力，是不可能的。
+   - 从 ADT 类型自动提供 ResultSetMapping / JsonValueMapping 功能（在 Java 中有个 mapstruct 的框架，不够显然
+      比不上 wjson/wsql 提供的映射支持的简洁和强大）
+   - wsql 对 mysql insert batch 的自动改写
+   - wsql 中提供的 BeanBuilder 提供了类型强大的 编译期间的 BeanCopy 功能。兼顾性能与 type safe.
+   

@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="zh-CN" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>pattern matching DSL - wjson: a JSON API for scala</title>
+        <title>ADT support - wjson: a JSON API for scala</title>
 
 
         <!-- Custom HTML head -->
@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="core.html"><strong aria-hidden="true">1.</strong> core</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="basic-api.html"><strong aria-hidden="true">1.1.</strong> basic</a></li><li class="chapter-item expanded "><a href="parser.html"><strong aria-hidden="true">1.2.</strong> parser</a></li><li class="chapter-item expanded "><a href="adt-mapping.html"><strong aria-hidden="true">1.3.</strong> ADT mapping</a></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">1.4.</strong> String interpolation</a></li></ol></li><li class="chapter-item expanded "><a href="pattern.html"><strong aria-hidden="true">2.</strong> pattern</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="pattern-dsl.html" class="active"><strong aria-hidden="true">2.1.</strong> pattern matching DSL</a></li></ol></li><li class="chapter-item expanded "><a href="schema.html"><strong aria-hidden="true">3.</strong> schema</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="generator.html"><strong aria-hidden="true">3.1.</strong> schema generator</a></li></ol></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">4.</strong> internal</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro.html"><strong aria-hidden="true">4.1.</strong> scala3 macro</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="core.html"><strong aria-hidden="true">1.</strong> core</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="basic-api.html"><strong aria-hidden="true">1.1.</strong> basic</a></li><li class="chapter-item expanded "><a href="parser.html"><strong aria-hidden="true">1.2.</strong> parser</a></li><li class="chapter-item expanded "><a href="adt-mapping.html"><strong aria-hidden="true">1.3.</strong> JSON/Bean mapping</a></li></ol></li><li class="chapter-item expanded "><a href="pattern.html"><strong aria-hidden="true">2.</strong> pattern</a></li><li class="chapter-item expanded "><a href="schema.html"><strong aria-hidden="true">3.</strong> JSON schema</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="schema-annotations.html"><strong aria-hidden="true">3.1.</strong> annotations</a></li><li class="chapter-item expanded "><a href="schema-adt.html" class="active"><strong aria-hidden="true">3.2.</strong> ADT support</a></li><li class="chapter-item expanded "><a href="schema-version.html"><strong aria-hidden="true">3.3.</strong> Multi-Version</a></li></ol></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">4.</strong> internal</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro.html"><strong aria-hidden="true">4.1.</strong> scala3 macro</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -142,17 +142,110 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="pattern-matching-dsl"><a class="header" href="#pattern-matching-dsl">pattern matching DSL</a></h1>
+                        <h1 id="adt-support"><a class="header" href="#adt-support">ADT support</a></h1>
+<h2 id="primitive-types"><a class="header" href="#primitive-types">Primitive Types</a></h2>
+<h2 id="container-types"><a class="header" href="#container-types">Container Types</a></h2>
+<h2 id="product-type"><a class="header" href="#product-type">Product Type</a></h2>
+<p>wjson 支持 Product 类型的 JSON 序列化和反序列化。</p>
+<pre><code class="language-scala 3">      case class Bean(name: String, age: Int)
+</code></pre>
+<p>对应的 JSON 如下：</p>
+<pre><code class="language-json">    {
+      &quot;name&quot;: &quot;wang&quot;,
+      &quot;age&quot;: 18
+    }
+</code></pre>
+<h2 id="sum-type"><a class="header" href="#sum-type">Sum Type</a></h2>
+<p>对 enum 类型，可以自动添加 <code>$tag</code> 字段，取 case 名作为值。</p>
+<pre><code class="language-scala 3">      enum Color:
+         case Red, Green, Blue
+         case Mixed(r: Int, g: Int, b: Int, alpha: Int)
+     
+</code></pre>
+<ol>
+<li>对 simple case, 如 Red, Green, Blue，编码为 string，无需 tag</li>
+<li>对 product case， 如 Mixed，编码为：</li>
+</ol>
+<pre><code class="language-json">        {
+          &quot;$tag&quot;: &quot;Mixed&quot;,
+           &quot;r&quot;: 10, &quot;g&quot;: 20, &quot;b&quot;: 30, &quot;alpha&quot;: 255
+        }
+</code></pre>
+<ul>
+<li>读取更高版本的JSON时，可能会存在不认识的 tag, 会忽略该枚举值。</li>
+</ul>
+<h2 id="or-type"><a class="header" href="#or-type">Or Type</a></h2>
+<p>wjson 支持 <code>X | Y</code> 的 Or Type 的 JSON 序列化和反序列化。</p>
+<p>示例：</p>
+<pre><code class="language-scala 3">       case class Root(bean: Bean1 | List[Bean2] | Array[String]) 
+</code></pre>
+<p>对应的 JSON 如下：</p>
+<pre><code class="language-json">    [{
+       &quot;bean&quot;:{
+            &quot;$or&quot;:&quot;demo2.Bean1&quot;,
+            &quot;$value&quot;:{&quot;name&quot;:&quot;wang&quot;,&quot;age&quot;:18}
+       }
+    },
+    {
+      &quot;bean&quot;:{
+            &quot;$or&quot;:&quot;scala.collection.immutable.List[demo2.Bean2]&quot;,
+            &quot;$value&quot;:[ {&quot;name&quot;:&quot;zhang&quot;,&quot;age&quot;:20} ]
+      }
+    },
+    {
+      &quot;bean&quot;: {
+            &quot;$or&quot;:&quot;scala.Array[java.lang.String]&quot;,
+            &quot;$value&quot;:[&quot;hello&quot;,&quot;world&quot;]
+      }
+    }]
+</code></pre>
+<p>Or Type 的成熟度不如 enum 的支持, 其规则相对比较复杂:</p>
+<ol>
+<li><code>T | Null</code>: 理解为可以为 Null 的类型， 与 <code>Option[T]</code> 是类似的</li>
+<li>如果有多个子类型，会生成一个 <code>$or</code> 的元素，指定其实际类型，使用 <code>$value</code> 作为值。
+<ul>
+<li>基础子类型：<code>Int | Long | String | Boolean | Double ｜ Float | Null </code>，不会生成 tag</li>
+<li>对非基础类型， 取该类型的名称作为 tag
+<ol>
+<li>非容器类型(非范型)。 如 <code>demo2.Bean1</code></li>
+<li>对容器类型，如 <code>scala.collection.immutable.List[demo2.Bean2]</code></li>
+<li>需要注意，这里的 tag 与 scala 语言有绑定，未来考虑转化为一个语言中立的 tag。</li>
+</ol>
+</li>
+<li>如果只有一个子类型需要 tag, 则会优化为不生成 $or</li>
+</ul>
+</li>
+<li>不能有 <code>List[A] | List[B]</code> 这样的类型，因为Java的擦除式范型，无法通过类型检测数据的实际类型。
+<ul>
+<li>特殊支持： 可以支持 <code>Option[A] | Option[B]</code></li>
+</ul>
+</li>
+<li><code>Option[T]</code> 与 <code>Null</code> 不能同时存在。</li>
+</ol>
+<p>使用 Or Type 时，因为要考虑的情况相对复杂，建议尽可能使用 enum 来替代。</p>
+<h2 id="json-pointer-support"><a class="header" href="#json-pointer-support">JSON Pointer support</a></h2>
+<pre><code class="language-scala">case class LocalPointer[T](p: String)  // ref inside the same document
+case class GlobalPointer[T](p: String) // ref outside document
+
+case class Relation(srcView: LocalPointer[View], destView: LocalPointer[View])
+
+val relation = Relation(&quot;view1&quot;, &quot;view2&quot;)
+</code></pre>
+<pre><code class="language-json5">{ 
+  &quot;srcView&quot;: &quot;view1&quot;, 
+  &quot;destView&quot;: &quot;view2&quot;
+}
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="pattern.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="schema-annotations.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="schema.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="schema-version.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -162,11 +255,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="pattern.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="schema-annotations.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="schema.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="schema-version.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

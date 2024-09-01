@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="zh-CN" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="core.html"><strong aria-hidden="true">1.</strong> core</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="basic-api.html"><strong aria-hidden="true">1.1.</strong> basic</a></li><li class="chapter-item expanded "><a href="parser.html"><strong aria-hidden="true">1.2.</strong> parser</a></li><li class="chapter-item expanded "><a href="adt-mapping.html"><strong aria-hidden="true">1.3.</strong> ADT mapping</a></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">1.4.</strong> String interpolation</a></li></ol></li><li class="chapter-item expanded "><a href="pattern.html"><strong aria-hidden="true">2.</strong> pattern</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="pattern-dsl.html"><strong aria-hidden="true">2.1.</strong> pattern matching DSL</a></li></ol></li><li class="chapter-item expanded "><a href="schema.html"><strong aria-hidden="true">3.</strong> schema</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="generator.html"><strong aria-hidden="true">3.1.</strong> schema generator</a></li></ol></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">4.</strong> internal</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro.html"><strong aria-hidden="true">4.1.</strong> scala3 macro</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="core.html"><strong aria-hidden="true">1.</strong> core</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="basic-api.html"><strong aria-hidden="true">1.1.</strong> basic</a></li><li class="chapter-item expanded "><a href="parser.html"><strong aria-hidden="true">1.2.</strong> parser</a></li><li class="chapter-item expanded "><a href="adt-mapping.html"><strong aria-hidden="true">1.3.</strong> JSON/Bean mapping</a></li></ol></li><li class="chapter-item expanded "><a href="pattern.html"><strong aria-hidden="true">2.</strong> pattern</a></li><li class="chapter-item expanded "><a href="schema.html"><strong aria-hidden="true">3.</strong> JSON schema</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="schema-annotations.html"><strong aria-hidden="true">3.1.</strong> annotations</a></li><li class="chapter-item expanded "><a href="schema-adt.html"><strong aria-hidden="true">3.2.</strong> ADT support</a></li><li class="chapter-item expanded "><a href="schema-version.html"><strong aria-hidden="true">3.3.</strong> Multi-Version</a></li></ol></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">4.</strong> internal</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro.html"><strong aria-hidden="true">4.1.</strong> scala3 macro</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -144,88 +144,277 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="简介"><a class="header" href="#简介">简介</a></h1>
-<p>wjson 是一个 Scala 3 的 JSON 处理库，提供了基本的 JSON 构建、解析、操作的功能，并提供了对 ADT 数据类型的映射支持，很适合
-于 Scala 3 的函数式编程风格。</p>
+<p>wjson 是一个 Scala 3 的 JSON 处理库，提供了基本的 JSON 构建、解析、操作的功能，并提供了对 ADT 数据类型的 JSON 映射支持，</p>
 <ol>
 <li>wjson-core 提供了基本的 JSON 操作 API
 <ul>
-<li>JSON parer, 一个高性能的JSON解析器，支持标准的 JSON 和 JSON5 格式.</li>
-<li>基础的JSON API。</li>
-<li>ADT 支持，支持 Case Class / enum 类型的 JSON mapping. 并利用 scala3 的 Macro 生成映射代码。</li>
+<li>JsValue API： 对 JSON 数据结构的 ADT 抽象，支持 immutable 风格的 build, access, show 等操作，是 wjson 的核心数据结构。</li>
+<li>JSON parer, 一个高性能的JSON解析器，支持标准的 JSON 语法</li>
+<li>JSON5 parser, JSON5 语法解析器。<a href="https://json5.org">JSON5</a> 是 JSON 的超集，支持注释、多行字符串等特性。</li>
+<li>json&quot;...&quot; 和 json5&quot;...&quot; 字符串插值</li>
+<li>ADT 支持
+<ul>
+<li>product type (case class)</li>
+<li>sum type (enum)</li>
+<li>or type (union)</li>
 </ul>
 </li>
-<li>wjson-pattern 一个实验性的 JSON 模式匹配库，非常适合于从 JSON 中快速提取信息。</li>
-<li>wjson-schema 一个 JSON schema 生成库，可以根据 ADT 类型生成 JSON schema.</li>
+</ul>
+</li>
+<li>wjson-pattern 一个实验性的 JSON 模式匹配库，非常适合于从 JSON 中快速提取信息。
+<ul>
+<li>jsp&quot;...&quot; 提供了一个 JSON Pattern DSL 语言，可以匹配复杂的 JSON 数据结构</li>
+<li>匹配 JSON 数据结构 并 提取数据</li>
+</ul>
+</li>
+<li>wjson-schema 一个实验性的 <a href="https://json-schema.org">JSON Schema</a> support 库
+<ul>
+<li>对 ADT 类型生成 JSON Schema</li>
+<li>提供一组 annotation 用于定义 JSON Schema 的约束</li>
+</ul>
+</li>
 </ol>
 <h2 id="why-another-json-library"><a class="header" href="#why-another-json-library">why another JSON library?</a></h2>
 <ol>
 <li>更好的 ADT 支持， 相比其他的 JSON 库，几乎不用编写代码，就可以处理 Case class / enum 的 JSON 映射。
-(对比 spray-json，wjson 要简单太多)</li>
-<li>强大的 interpolation 支持，且可以在编译期完成 JSON 编译，避免运行时错误，并带来更好的运行性能。</li>
+(对比 spray-json，wjson 的 API 更简单、更强大)</li>
+<li>强大的 interpolation 支持.</li>
 <li>JSON5 支持。JSON5 是 JSON 的超集，支持注释、多行字符串等特性，更适合于配置文件等场景。</li>
+<li>JSON Schema 支持，通过 ADT 类型生成 JSON Schema，提供更好的数据校验和提示。</li>
 <li>当然，wjson 也是我学习 Scala 3 的一个练手项目，尤其是对 Scala3 的 Macro 的使用。 wjson 广泛的使用 Macro 来提供一个简单、强大的 API。</li>
 </ol>
+<h2 id="todo-list"><a class="header" href="#todo-list">TODO List</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+JsValueMapper for Tuple</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="core"><a class="header" href="#core">core</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="basic-json-api"><a class="header" href="#basic-json-api">basic JSON API</a></h1>
-<p>wJson 是一个Scala3 JSON库，它提供了一个简单的、直观的API，用于在Scala中处理JSON。</p>
+<p>wjson 是一个Scala3 JSON库，它提供了一个简单的、直观的API，用于在Scala中处理JSON。</p>
 <p>wJson的设计参考了如下的库，并试图变得提供更为 简单的API：</p>
 <ol>
-<li><a href="github.com/spray-json/spray-json">Spray JSON</a> </li>
+<li><a href="github.com/spray-json/spray-json">Spray JSON</a></li>
 <li><a href="github.com/wangzaixiang/spray-json">wangzaixiang's fork of Spray JSON</a></li>
 <li><a href="github.com/lihaoyi/ujson">ujson</a></li>
 </ol>
-<p>wJson 基于scala3，也是我学习Scala3的一个实践项目，通过 wJson，全面熟悉一下 scala3 的语法，以及新的 Macro 系统的使用。</p>
+<p>wjson-core 是 wjson 的核心模块，它提供了基本的 JSON 的核心数据结构，以及基本的 JSON 解析和序列化功能。</p>
+<ul>
+<li>JsValue API： 对 JSON 数据结构的 ADT 抽象，支持 immutable 风格的 build, access, show 等操作，是 wjson 的核心数据结构。</li>
+<li>JSON parer, 一个高性能的JSON解析器，支持标准的 JSON 语法</li>
+<li>JSON5 parser, JSON5 语法解析器。<a href="https://json5.org">JSON5</a> 是 JSON 的超集，支持注释、多行字符串等特性。</li>
+<li>json&quot;...&quot; 和 json5&quot;...&quot; 字符串插值</li>
+<li>ADT 支持</li>
+</ul>
 <h2 id="安装"><a class="header" href="#安装">安装</a></h2>
 <p>以 sbt 为例：</p>
-<pre><code>libraryDependencies += &quot;com.github.wangzaixiang&quot; %% &quot;wjson&quot; % &quot;0.1.0&quot;
+<pre><code>libraryDependencies += &quot;com.github.wangzaixiang&quot; %% &quot;wjson-core&quot; % &quot;0.5.0-RC1&quot;
 </code></pre>
 <h2 id="使用"><a class="header" href="#使用">使用</a></h2>
 <p>在使用 wjson 库之前，简单引入一下：</p>
-<pre><code class="language-scala">import wjson.*
+<pre><code class="language-scala">import wjson.{*, given}
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="basic-json-api"><a class="header" href="#basic-json-api">basic JSON API</a></h1>
 <h2 id="json-基本类型api"><a class="header" href="#json-基本类型api">JSON 基本类型API</a></h2>
-<pre><code class="language-scala">enum JsVal:
+<pre><code class="language-scala 3">enum JsVal:
     case JsNull
     case JsBoolean(value: Boolean)
     case JsNumber(value: Double)
     case JsString(value: String)
-    case JsArr(elements: List[JsVal])
-    case JsObj(fields: Map[String, JsVal])
+    case JsArray(elements: List[JsVal])
+    case JsObject(fields: Seq[String, JsVal])
 </code></pre>
-<p>使用 enum + ADT 对数据结构进行建模，是一种很简洁的实现方式。</p>
-<h2 id="解析json字符串构造jsval"><a class="header" href="#解析json字符串构造jsval">解析JSON字符串、构造JsVal</a></h2>
-<pre><code class="language-scala">val jsonStr = &quot;&quot;&quot;{&quot;name&quot;:&quot;John&quot;,&quot;age&quot;:18}&quot;&quot;&quot;
-val jsval0 = JsParser.parse( JsonInput(jsonStr) )  // 使用 JsonParser 进行 JSON 解析
-val jsval1: JsVal = JsVal.parse(jsonStr)    // 使用 JsVal.parse API
-val jsval2: JsVal = jsonStr.parseJson       // 使用扩展方法 String.parseJson
+<p>JsObject 会保留构建时字段的顺序，在格式化输出时，保留该顺序。但 equals 方法会忽略字段的顺序。</p>
+<h2 id="json对象"><a class="header" href="#json对象">JSON对象</a></h2>
+<p>wjson 提供了多种方式来构造 JSON 值。</p>
+<pre><code class="language-scala 3">import wjson.{*, given}
 
-val jsval3 = json&quot;&quot;&quot;{&quot;name&quot;:&quot;John&quot;,&quot;age&quot;:18}&quot;&quot;&quot;  // 使用 json&quot;...&quot; 字符串插值
-val jsval4 = JsObj(Map(&quot;name&quot; -&gt; JsString(&quot;John&quot;), &quot;age&quot; -&gt; JsNumber(18))) // 使用 JsObj 构造器
-val jsval5 = JsObj(&quot;name&quot; -&gt; JsString(&quot;John&quot;), &quot;age&quot; -&gt; JsNumber(18))  // 使用 JsObj 构造器
-val jsval6 = JsObj(&quot;name&quot; -&gt; &quot;John&quot;, &quot;age&quot; -&gt; 18)  // 使用 JsObj 构造器
+// JSON Object: {&quot;name&quot;:&quot;John&quot;,&quot;age&quot;:18} 下面的多种方式，都可以构造出同一个 JSON 对象
+val objStr = &quot;&quot;&quot;{&quot;name&quot;:&quot;John&quot;,&quot;age&quot;:18}&quot;&quot;&quot;
+val obj1 = JsObject(Seq(&quot;name&quot; -&gt; JsString(&quot;John&quot;), &quot;age&quot; -&gt; JsNumber(18))) // 使用 JsObject 构造器
+val obj2 = JsObject(Seq(&quot;name&quot; -&gt; &quot;John&quot;, &quot;age&quot; -&gt; 18)) // 通过隐式转换，将基本类型转换为 JsValue
+val obj3 = JsValue.obj(&quot;name&quot; -&gt; &quot;John&quot;, &quot;age&quot; -&gt; 10) // 使用 JsValue.obj 构造 JsObj, 更简洁
 
-assert( jsval1 == jsval0 &amp;&amp; jsval2 == jsval0 &amp;&amp; jsval3 == jsval0 
-  &amp;&amp; jsval4 == jsval0 &amp;&amp; jsval5 == jsval0 &amp;&amp; jsval6 == jsval0 )
+val obj4 = JsValue.parseJson(objStr)    // 作为 JSON 字符串解析
+val obj5 = JsValue.parseJson5(objStr)   // 作为 JSON5 字符串解析
+
+val obj6 = json&quot;&quot;&quot;{&quot;name&quot;:&quot;John&quot;,&quot;age&quot;:18}&quot;&quot;&quot;  // 使用 json&quot;...&quot; 字符串插值
+val obj7 = json5&quot;{name:'John', age:18 }&quot;  // 使用 json5&quot;...&quot; 字符串插值， 注意 JSON5 的语法更宽松
+
+// JSON Array: [1,2,3]
+val arr1 = JsArray(Seq( JsNumber(1), JsNumber(2), JsNumber(3) )) // 最基本的构造方式
+val arr2 = JsArray(Seq(1,2,3)) // 通过隐式转换，将基本类型转换为 JsValue
+val arr3 = JsValue.arr(1,2,3) // 使用 JsValue.arr 构造 JsArray, 更简洁
+
+val arr4 = JsValue.parseJson(&quot;[1,2,3]&quot;)    // 作为 JSON 字符串解析
+val arr5 = JsValue.parseJson5(&quot;[1,2,3, ]&quot;)   // 作为 JSON5 字符串解析， JSON5 支持末尾的逗号
+
+val arr6 = json&quot;[1,2,3]&quot;  // 使用 json&quot;...&quot; 字符串插值
+val arr7 = json5&quot;[1,2,3, ]&quot;  // 使用 json5&quot;...&quot; 字符串插值， 注意 JSON5 的语法更宽松
 </code></pre>
-<p>这7中方式，都可以解析出同一个 JSON 对象。</p>
-<h2 id="序列化与反序列化"><a class="header" href="#序列化与反序列化">序列化与反序列化</a></h2>
-<pre><code class="language-scala">case class Person(name: String, age: Int)
-val jsval = json&quot;&quot;&quot;{&quot;name&quot;:&quot;John&quot;,&quot;age&quot;:18}&quot;&quot;&quot;
-
-val person = jsval.to[Person] // jsval 具有扩展方法 to[T] 可以反序列化为 T（必须是case class）
-val jsval2 = person.toJson    // case class 具有扩展方法 toJson 可以序列化为 JsVal
-</code></pre>
-<p>wjson 的序列化和反序列化功能，它支持：</p>
+<h2 id="基本-api"><a class="header" href="#基本-api">基本 API</a></h2>
 <ol>
-<li>基本类型的序列化，包括 Byte、Short、Char、Int、Long、Float、Double、Boolean、String 的序列化
-BigInt、BigDecimal</li>
-<li>Option[T]: 其中 T 必须是可序列化的（递归游戏）</li>
-<li>List[T]、Seq[T]、Set[T]、Map[String, T], Array[T]: 其中 T 必须是可序列化的.（递归游戏）</li>
-<li>case class: 其中所有的字段必须是可序列化的（递归游戏）</li>
-<li>enum class: 其中所有的字段必须是可序列化的（递归游戏）</li>
+<li>
+<p>输出 JSON 字符串</p>
+<pre><code class="language-scala 3">  js1.show // 输出 JSON 字符串
+  js1.showPretty // 输出格式化的 JSON 字符串
+  js1.show(indent = 4) // 输出格式化的 JSON 字符串，缩进为4个空格
+</code></pre>
+</li>
+<li>
+<p>JsObject 操作</p>
+<pre><code class="language-scala 3">  obj1.field(&quot;name&quot;)  // 类似于 Map 的 apply 方法，获取字段值
+  obj1.filedOpt(&quot;name&quot;) // 类似于 Map 的 get 方法，获取字段值，返回 Option
+  obj1.contains(&quot;name&quot;) // 判断是否包含某个字段
+  obj1.keys // 获取所有的字段名
+
+  obj1 ++ obj2 // 合并两个 JsObject, 如果有重复的字段，后者覆盖前者
+  obj1 ++ Seq(&quot;name&quot; -&gt; &quot;Tom&quot;, &quot;age&quot; -&gt; 20) // 合并 JsObject 和 Map[String, Any]
+  obj1 + (&quot;name&quot; -&gt; &quot;Tom&quot;) // 添加一个字段
+
+  obj1.remove(&quot;field1&quot;, &quot;field2&quot;) // 删除字段
+</code></pre>
+</li>
+<li>
+<p>JsArray 操作</p>
+<pre><code class="language-scala 3">   arr1.elements // 获取所有的元素
+   arr1(0) // 获取第一个元素
+
+   arr1 ++ arr2 // 合并两个 JsArray
+   arr1 ++ Seq(1,2,3) // 合并 JsArray 和 Seq[T]
+   arr1 :+ 4    // 在尾部添加一个元素，返回新的 JsArray
+   0 +: arr1    // 在头部添加一个元素，返回新的 JsArray
+
+   arr1.updated(1, 100) // 更新第二个元素的值为 100，返回新的 JsArray
+</code></pre>
+</li>
+<li>
+<p>JsValue 操作</p>
+<pre><code class="language-scala 3">   js1 match
+     case JsNull =&gt; // JsNull 的模式匹配
+     case JsBoolean(b) =&gt; b // JsBoolean 的模式匹配
+     case JsNumber(n: Long) =&gt; n // JsNumber 的模式匹配
+     case JsNumber(n: Double) =&gt; n // JsNumber 的模式匹配
+     case JsString(s) =&gt; s // JsString 的模式匹配
+     case JsObj(fields) =&gt; fields // JsObj 的模式匹配
+     case JsArr(elements) =&gt; elements // JsArr 的模式匹配
+
+   js1.isObj // 判断是否是 JsObj
+   js1.isArr // 判断是否是 JsArr
+   js1.isNull // 判断是否是 JsNull
+   js1.isBoolean // 判断是否是 JsBoolean
+   js1.isNumber // 判断是否是 JsNumber
+   js1.isString // 判断是否是 JsString
+
+   js1 == js2  // 判断是否相等, 对 JsObject, 会忽略字段的顺序
+
+   js1.asBool // 强制转换为 JsBoolean，如果类型不匹配，会抛出异常
+   js1.asNum // 强制转换为 JsNumber，如果类型不匹配，会抛出异常
+   js1.asStr // 强制转换为 JsString，如果类型不匹配，会抛出异常
+   js1.asObj // 强制转换为 JsObject，如果类型不匹配，会抛出异常
+   js1.asArr // 强制转换为 JsArray，如果类型不匹配，会抛出异常
+</code></pre>
+</li>
+<li>
+<p>JSON 与 对象值之间的转换</p>
+<pre><code class="language-scala 3"> case class Person(name: String, age: Int) derives JsValueMapper // 通过 derives JsValueMapper 自动生成 JSON 映射
+ case class User(name: String, age: Int) // 未定义 JsValueMapper 也可以，但每次映射都会生成 JsValueMapper 实例, 会增加编译后的代码大小
+ val js1 = json&quot;&quot;&quot;{&quot;name&quot;:&quot;John&quot;,&quot;age&quot;:18}&quot;&quot;&quot;
+
+ val person = js1.toBean[Person]   // 反序列化为 Person
+ val user = js1.toBean[User]       // 反序列化为 User
+ val js2 = person.toJson           // 序列化为 JsValue
+</code></pre>
+</li>
+<li>
+<p>字符串插值</p>
+<pre><code class="language-scala 3">   val name = &quot;John&quot;
+   val age = 18
+   val obj1 = json&quot;&quot;&quot;{&quot;name&quot;: $name, &quot;age&quot;: $age}&quot;&quot;&quot;  // 使用 json&quot;...&quot; 字符串插值
+   val obj2 = json5&quot;{name: $name, age: $age }&quot;  // 使用 json5&quot;...&quot; 字符串插值， 注意 JSON5 的语法更宽松
+
+   val arr1 = json&quot;[1,2,3, $age]&quot;  // 使用 json&quot;...&quot; 字符串插值
+   val arr2 = json5&quot;[1,2,3, $age,  ]&quot;  // 使用 json5&quot;...&quot; 字符串插值， 注意 JSON5 的语法更宽松
+</code></pre>
+<p>字符串插值也可以用于进行简单的模式匹配：</p>
+<pre><code class="language-scala 3">   val js = json&quot;{name: 'John', age: 18, }&quot;
+
+   jsval match
+     case json&quot;{name: $name, age: $age}&quot; =&gt; println(name, age)  // John 18
+     case _ =&gt; println(&quot;not match&quot;)
+   
+   json5&quot;{ name: 'John', age: 18, address: { city: 'Beijing', country: 'China' }, scores: [80,90,100] }&quot; match 
+     case json5&quot;{ address: {city: $city}, scores:[80,$score1,$score2]}&quot; =&gt; println(city, score1, score2)  // Beijing 90 100
+     case _ =&gt; println(&quot;not match&quot;)
+   
+</code></pre>
+<p>使用字符串插值进行模式匹配时，提供了一定的灵活性，例如：</p>
+<ol>
+<li>对 JsObject, 在模式中可以仅匹配部分字段，而忽略其他字段。</li>
+<li>对 JsArray, 可以匹配前面部分元素，而忽略其他元素。</li>
+</ol>
+<p>需要更强大的模式匹配功能，可以使用 wjson-pattern 模块。</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="jsonjson5-parser"><a class="header" href="#jsonjson5-parser">JSON(JSON5) parser</a></h1>
+<p>wjson 提供了 2个 JSON Parser:</p>
+<ol>
+<li>标准 JSON 解析器</li>
+<li>JSON5 解析器</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="beanjson-mapping"><a class="header" href="#beanjson-mapping">Bean/JSON Mapping</a></h1>
+<p>wjson 提供了丰富的 Bean/JSON 映射支持：</p>
+<pre><code class="language-scala 3">    true.toJson  // JsBoolean(true)
+    JsBoolean(true).to[Boolean]  // true
+
+    123.toJson  // JsNumber(123)
+    JsNumber(123).to[Int]  // 123
+
+    &quot;hello&quot;.toJson  // JsString(&quot;hello&quot;)
+    JsString(&quot;hello&quot;).to[String]  // &quot;hello&quot;
+
+    case class Person(name: String, age: Int)
+    val p = Person(&quot;John&quot;, 18)
+    p.toJson  // JsObject(&quot;name&quot; -&gt; JsString(&quot;John&quot;), &quot;age&quot; -&gt; JsNumber(18))
+    json&quot;&quot;&quot;{ &quot;name&quot;: &quot;John&quot;, &quot;age&quot;: 18 }&quot;&quot;&quot;.to[Person]  // Person(&quot;John&quot;, 18)
+</code></pre>
+<ol>
+<li>基本类型的序列化，
+<ul>
+<li>Byte, Short, Int, Long, Float, Double, BigDecimal(scala, java), BigInt(scala, java)</li>
+<li>Boolean</li>
+<li>String </li>
+</ul>
+</li>
+<li><code>Option[T]</code>: 其中 T 必须是可序列化的(T: JsValueMapper)</li>
+<li>集合类型
+<ul>
+<li><code>List[T]</code></li>
+<li><code>Seq[T]</code></li>
+<li><code>Set[T]</code></li>
+<li><code>SortedSet[T]</code></li>
+<li><code>Map[String, T]</code></li>
+<li><code>Map[K, V]</code> (K != String) 会映射为 <code>List[(K,V)]</code> 对应的 JSON 结构</li>
+<li><code>Array[T]</code>
+集合元素的类型 T 必须是可序列化的(T: JsValueMapper)</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"/>
+Tuple 类型， 目前尚未支持，计划在后续版本中支持</li>
+<li>case class: 其中所有的字段必须是可序列化的.
+<ol>
+<li>如果字段类型 T 是 <code>Option[T1]</code>，则该字段是可选的，如果 JSON 中没有该字段，则使用 <code>None</code> 填充</li>
+<li>如果字段有默认值，则该字段是可选的，如果 JSON 中没有该字段，则使用默认值填充。</li>
+<li>所有其他的字段都是必须的。如果JSON 中没有该字段，则抛出异常。(不会对应于 null 值)</li>
+<li>case class 与 JSON 的映射关系定义，请参考：<a href="./schema-adt.html">JSON Schema for ADT</a></li>
+</ol>
+</li>
+<li>enum class: 其中所有的字段必须是可序列化的.
+<ol>
+<li>enum class 与 JSON 的映射关系定义，请参考：<a href="./schema-adt.html">JSON Schema for ADT</a></li>
+</ol>
+</li>
 </ol>
 <p>如果你的类型 T 不符合上述规则，但你又希望提供序列化、反序列化的能力，你可以为之提供一个 <code>JsonValueMapper[T]</code> 的隐式值。</p>
-<pre><code class="language-scala">  // support Map[K,V] mapping to List[(K,V)]
+<pre><code class="language-scala 3">  // support Map[K,V] mapping to List[(K,V)]
   given [K: JsValueMapper, V: JsValueMapper]: JsValueMapper[Map[K, V]] = mapMapping2[K, V]
   def mapMapping2[K: JsValueMapper, V: JsValueMapper]: JsValueMapper[Map[K, V]] = new JsValueMapper[Map[K, V]]:
     def fromJson(js: JsValue): Map[K, V] = (js: @unchecked) match
@@ -244,51 +433,8 @@ BigInt、BigDecimal</li>
       val entry2Json = (k: K, v: V) =&gt; JsObject( &quot;key&quot; -&gt; summon[JsValueMapper[K]].toJson(k), &quot;value&quot; -&gt; summon[JsValueMapper[V]].toJson(v) )
       val entries = t.toList.map { case (k, v) =&gt; entry2Json(k,v) }
       JsArray( entries: _* )
-
 </code></pre>
-<p>只要符合上述的类型规则，那么就可以使用 wjson 的API： </p>
-<ol>
-<li><code>jsVal.to[T]</code>  反序列化</li>
-<li><code>(value:T).toJson</code> 序列化 </li>
-</ol>
-<p>而无需编写任何的代码。相比 spray-json 来说，wjson的API要简单很多，功能要强大很多（不再需要编写protocol, reader, writer等，也不再有22个参数的限制等），
-<strong>write less, get more</strong></p>
-<h2 id="json-字符串插值"><a class="header" href="#json-字符串插值">json 字符串插值</a></h2>
-<pre><code class="language-scala">val jsonStr1 = json&quot;&quot;&quot;{&quot;name&quot;:&quot;John&quot;,&quot;age&quot;:18}&quot;&quot;&quot;  // 标准 JSON 语法
-val jsonStr2 = json5&quot;{name: 'John', age:18, } &quot;  // 扩展 JSON 语法
-
-val name = &quot;John&quot;
-val age = 18
-val jsonStr3 = json5&quot;{name: $name, age: $age}&quot;  // 扩展 JSON 语法 + 插值
-</code></pre>
-<p><code>json&quot;...&quot;</code> 字符串插值，可以让我们更加简洁的构造 JSON 对象。
-其除了支持标准的 JSON 语法之外，还可以使用 <code>json5&quot;&quot;</code>还支持扩展的 JSON5语法， 包括：</p>
-<ul>
-<li>字段名，可以直接使用 name,age 等标识府，而无需加引号。（javascript语法）</li>
-<li>字符串，可以直接使用单引号，或者双引号。（javascript语法）</li>
-<li>数组、对象的最后一个成员后，可以添加逗号。（javascript语法）</li>
-<li>其他的 JSON5 特性，如注释等。</li>
-</ul>
-<p>使用字符串插值，还有一个特点是：JSON 格式是在编译期完成的，这样可以避免运行时错误，并提高运行性能。</p>
-<p>在字符串插值中，使用<code>${}</code> 来表示插值，嵌入动态的内容。
-json插值除了可以构造一个 JsVal 对象之外，还可以作为 Pattern 来使用，用于匹配一个JsVal，并从中提取出某些值。</p>
-<pre><code class="language-scala">val jsval1 = json&quot;{name: 'John', age: 18, }&quot;
-
-jsval match {
-case json&quot;{name: $name, age: $age}&quot; =&gt; println(name, age)  // John 18
-case _ =&gt; println(&quot;not match&quot;)
-}
-
-json&quot;{ name: 'John', age: 18, address: { city: 'Beijing', country: 'China' }, scores: [80,90,100] }&quot; match {
-case json&quot;{ address: {city: $city}, scores:[80,$score1,$score2]}&quot; =&gt; println(city, score1, score2)  // Beijing 90 100
-case _ =&gt; println(&quot;not match&quot;)
-}
-</code></pre>
-<p>使用 json 的插值匹配功能，可以一次性匹配一个复杂的JSON 对象，并且按照结构提取出某些值。这可以在不进行JSON反序列化的情况下，快速的 对JSON进行匹配、字段提取、数据验证工作。</p>
-<p>当然， wjson-pattern 通过提供一个更强大的DSL语言，可以提供更为强大的模式匹配能力，这个可以参考 <a href="pattern.html">wjson-pattern</a>。</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="jsonjson5-parser"><a class="header" href="#jsonjson5-parser">JSON(JSON5) parser</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="adt-mapping"><a class="header" href="#adt-mapping">ADT mapping</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="wjson-pattern-一个简单直观的scala-json库"><a class="header" href="#wjson-pattern-一个简单直观的scala-json库">wJson Pattern: 一个简单、直观的Scala JSON库</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="wjson-pattern-一个简单直观的scala-json库"><a class="header" href="#wjson-pattern-一个简单直观的scala-json库">wjson Pattern: 一个简单、直观的Scala JSON库</a></h1>
 <p>JSON作为数据交换标准，使用越来越广泛。对输入的 JSON 进行模式匹配、信息提取，并进行进一步的加工处理，是一个非常常见的场景。</p>
 <p>应用场景：</p>
 <p>Mock Server。在Mock Server中，我们需要配置大量的 Mock 规则，在 request 匹配规则的情况下，返回相应的数据。
@@ -306,7 +452,7 @@ case _ =&gt; println(&quot;not match&quot;)
 <li>简单示例</li>
 </ol>
 <p>先看一个简单的 wjson pattern 示例：</p>
-<pre><code class="language-json">// JSON data: curl https://api.github.com/repos/wangzaixiang/wjson/commits?per_page=1
+<pre><code class="language-json5">// JSON data: curl https://api.github.com/repos/wangzaixiang/wjson/commits?per_page=1
 {
 &quot;sha&quot;: &quot;650e56cd380c311909cd50408bbb4884f1f5d21e&quot;,
 &quot;node_id&quot;: &quot;C_kwDOHj94ltoAKDY1MGU1NmNkMzgwYzMxMTkwOWNkNTA0MDhiYmI0ODg0ZjFmNWQyMWU&quot;,
@@ -347,7 +493,7 @@ case _ =&gt; println(&quot;not match&quot;)
 ]
 }
 </code></pre>
-<pre><code class="language-json">// JSON Pattern
+<pre><code class="language-jsonpattern">// JSON Pattern
 {
   sha: @sha,
   commit: { author: { name: @commit_name } }
@@ -356,7 +502,7 @@ case _ =&gt; println(&quot;not match&quot;)
 }
 </code></pre>
 <p>对上述的示例 JSON，我们可以使用如下的 JSON pattern 来对其进行匹配，并完成相应字段的提取：</p>
-<pre><code class="language-scala">val info = &quot;...json string...&quot; 
+<pre><code class="language-scala 3">val info = &quot;...json string...&quot; 
   info.parseJson match
       case rejson&quot;&quot;&quot;
         {
@@ -384,13 +530,13 @@ case _ =&gt; println(&quot;not match&quot;)
 </li>
 <li>
 <p>支持基本类型：null, boolean(true, false), number, string（'hello' or &quot;hello&quot;）</p>
-<pre><code class="language-json">     [ 1, 2.0, true, false, &quot;hello&quot;, null ]
+<pre><code class="language-jsonpattern">     [ 1, 2.0, true, false, &quot;hello&quot;, null ]
      'hello' # single quote string
 </code></pre>
 </li>
 <li>
 <p>支持复杂类型： array: <code>[ ... ]</code>, object <code>{ name: value }</code>。 在 object 中可以使用 类似于 JSON5 的语法，以增强可读性</p>
-<pre><code class="language-json">  [ 1, 2, 3] # array
+<pre><code class="language-jsonpattern">  [ 1, 2, 3]                    # array
   { &quot;name&quot;: &quot;John&quot;, &quot;age&quot;: 20 }
   { 'name': 'John', 'age': 20 }  # 与上一行等效
   { name: 'John', age: 20 }  # 与上一行等效
@@ -398,7 +544,7 @@ case _ =&gt; println(&quot;not match&quot;)
 </li>
 <li>
 <p>在所有可以是值的地方，可以使用 name@value 的语法，将value 的值绑定到name变量中返回。</p>
-<pre><code class="language-json"> a @ 1  # 匹配 1 且将值绑定到 a 变量
+<pre><code class="language-jsonpattern"> a @ 1  # 匹配 1 且将值绑定到 a 变量
  b @ [ 1,2,3 ] # 匹配 [1,2,3] 且将值绑定到 b 变量
  c @ { name: &quot;John&quot;, age: 20 }  # 匹配 { name: &quot;John&quot;, age: 20 } 且将值绑定到 c 变量
  [ 1, 2, x @ 3, 4 ]     # 匹配 [1,2,3,4] 且将 3绑定到 x 变量
@@ -407,20 +553,20 @@ case _ =&gt; println(&quot;not match&quot;)
 </li>
 <li>
 <p>类型匹配： &quot;boolean&quot;, &quot;string&quot;, &quot;number&quot;, &quot;integer&quot;, &quot;array&quot;, &quot;object&quot; 匹配对应的JS类型</p>
-<pre><code class="language-json"># input: { name: &quot;John&quot;, age: 20, leader: true }
+<pre><code class="language-jsonpattern"># input: { name: &quot;John&quot;, age: 20, leader: true }
 { name: name @ string, age: age @ number, leader: leader @ boolean }
 # 匹配成功，并将 name 绑定到 &quot;John&quot;, age 绑定到 20, leader 绑定到 true
 </code></pre>
 </li>
 <li>
 <p>&quot;_&quot; 匹配任意单值</p>
-<pre><code class="language-json">[ 1, 2, _, 4]  #  match: [ 1,2,3,4], not match: [1,2,3,5,4]
+<pre><code class="language-jsonpattern">[ 1, 2, _, 4]  #  match: [ 1,2,3,4], not match: [1,2,3,5,4]
 { name: _, age: 20 } # match { name: &quot;John&quot;, age: 20 } but not { age: 20 }
 </code></pre>
 </li>
 <li>
 <p>&quot;_*&quot; 在数组中，可以匹配 0 到多个数组成员，在对象中，可以匹配未被指定的所有其他字段。</p>
-<pre><code class="language-json">{ name: &quot;John&quot;, other@_* }
+<pre><code class="language-jsonpattern">{ name: &quot;John&quot;, other@_* }
 # match { name: &quot;Johe&quot;, age:20 , leader:true} and others := { age: 20, leader: true}
 [ 1,2, o@_*, 10 ] 
 # match [ 1,2,3,4,5,6,7,8,9,10] and o:=[3,4,5,6,7,8,9]
@@ -428,33 +574,239 @@ case _ =&gt; println(&quot;not match&quot;)
 </li>
 <li>
 <p>可以使用 tag&quot;content&quot;的方式扩展匹配规则，这个规则可以有用户来使用自定义的方式对值进行匹配。wjson中提供了 eval&quot;expr&quot; 和 r&quot;expr&quot; 两个参考实现，mvel使用MVEL表达式引擎来匹配一个JS值，r使用正则表达式来匹配值。</p>
-<pre><code class="language-json">{ name: &quot;John&quot;, age: eval&quot;it &gt;= 0 &amp;&amp; it &lt;= 100&quot;, email: r&quot;\w+@(\w\.)*\w&quot; }
+<pre><code class="language-jsonpattern">{ name: &quot;John&quot;, age: eval&quot;it &gt;= 0 &amp;&amp; it &lt;= 100&quot;, email: r&quot;\w+@(\w\.)*\w&quot; }
 # match { name: &quot;John&quot;, age: 20,  email: &quot;john@qq.com&quot; }
 </code></pre>
 </li>
 <li>
 <p>可以使用 a/b/c 的路径来匹配，等效于 { a : { b: {c : _ } } } 。</p>
-<pre><code class="language-json">{ a/b/c: &quot;John&quot; } 
+<pre><code class="language-jsonpattern">{ a/b/c: &quot;John&quot; } 
 # match { a: { b:  {c : &quot;John&quot; } } }
 </code></pre>
 </li>
 <li>
 <p>可以使用 <code>/*</code> 来匹配数组中的所有成员，等效于 <code>[ _ ]</code> 。</p>
-<pre><code class="language-json">{ users/*/name: &quot;John&quot; }
+<pre><code class="language-jsonpattern">{ users/*/name: &quot;John&quot; }
 </code></pre>
 </li>
 <li>
 <p>可以使用 <code>a[ pattern ]</code> 或者 <code>a[n]</code> 的方式来对数组中的成员进行条件筛选(或选中第n个成员)。</p>
-<pre><code class="language-json"># { users: [ { name: &quot;John&quot;, age: 20, email: &quot;john@qq.com&quot; },
+<pre><code class="language-jsonpattern"># { users: [ { name: &quot;John&quot;, age: 20, email: &quot;john@qq.com&quot; },
 #            { name: &quot;rose“, ageL 25, email: &quot;rose@qq.com&quot; } ]  }
 { users[ {name:&quot;John&quot;} ]/email: @email } 
 # 匹配成功，并绑定 变量 email 的值为 &quot;john@qq.com&quot;
 </code></pre>
 </li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="pattern-matching-dsl"><a class="header" href="#pattern-matching-dsl">pattern matching DSL</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="json-schema-generator"><a class="header" href="#json-schema-generator">JSON schema generator</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="scala3-macro"><a class="header" href="#scala3-macro">scala3 macro</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="json-schema-设计草案"><a class="header" href="#json-schema-设计草案">JSON Schema 设计草案</a></h1>
+<h2 id="design-goals"><a class="header" href="#design-goals">Design Goals</a></h2>
+<ol>
+<li>使用 scala ADT 类型进行 JSON 建模，用于描述数据结果，可以自动生成 JSON Schema.</li>
+<li>通过 @js.description 之类的 annotation 定义更多的 constraint.</li>
+</ol>
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<ol>
+<li>
+<p>via macro during compile time</p>
+<pre><code class="language-scala">   val schema: String = JsonSchema.of[T]
+   println(schema)
+</code></pre>
+</li>
+<li>
+<p>running generator on tasty file</p>
+<pre><code>//&gt; using lib wjson.schema
+import wjson.schema.*
+
+JsonSchemaGenerator.generate(&quot;path/to/tasty/file.tasty&quot;, &quot;path/to/output/schema.json&quot;)
+</code></pre>
+</li>
+</ol>
+<h2 id="special-json-fields"><a class="header" href="#special-json-fields">Special JSON fields</a></h2>
+<ol>
+<li><code>$schema</code>: 对 JSON 元素，可以指定该元素的 JSON schema URI，通过该 URI 获取到 schema 信息，适合于：
+<ul>
+<li>top level JSON element</li>
+<li>dynamic inner level JSON element
+诸如 idea/visual code 之类的编辑器可以通过该 URI 获取到 schema 信息，从而提供更好的提示和校验。</li>
+</ul>
+</li>
+<li><code>$version</code>: 对应于 @js.version</li>
+<li><code>$enum</code>， 为 SUM 类型生成的 tag，非 JSON Schema 标准字段</li>
+<li><code>$or</code>, <code>$value</code>, 为 OR 类型生成的 tag，非 JSON Schema 标准字段</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="json-schema-annotations"><a class="header" href="#json-schema-annotations">JSON Schema Annotations</a></h2>
+<p>可以在 ADT 申明中，使用如下的 annotation 附加JSON Schema的元信息。</p>
+<ol>
+<li>@js.description</li>
+<li>@js.enums</li>
+<li>@js.multipleOf</li>
+<li>@js.maximum</li>
+<li>@js.minimum</li>
+<li>@js.exclusiveMaximum</li>
+<li>@js.exclusiveMinimum</li>
+<li>@js.maxLength</li>
+<li>@js.minLength</li>
+<li>@js.pattern</li>
+<li>@js.maxItems</li>
+<li>@js.minItems</li>
+<li>@js.uniqueItems</li>
+<li>@js.maxContains</li>
+<li>@js.minContains</li>
+<li>@js.maxProperties</li>
+<li>@js.minProperties</li>
+<li>@js.format
+<ul>
+<li>date/time/datetime/duration</li>
+<li>email</li>
+<li>hostname</li>
+<li>ipv4/ipv6</li>
+<li>uri</li>
+<li>uuid</li>
+</ul>
+</li>
+</ol>
+<h2 id="扩展"><a class="header" href="#扩展">扩展</a></h2>
+<ol>
+<li>
+<p>@js.toplevel </p>
+<p>表示改类型可以作为文档顶层元素，顶层元素在定义时，可选的支持 <code>$schema</code> 属性，用于指定 JSON Schema 的定义。</p>
+<p>tips: 可以在 JSON 文件中，手动指定 $schema, idea 编辑器会自动获取 schema 对文档进行校验
+（不在需要额外配置 mapping）</p>
+</li>
+<li>
+<p>@js.version </p>
+</li>
+<li>
+<p>@js.open:   mark a type <code>additionalProperties</code>= true</p>
+</li>
+<li>
+<p>@js.dynamic</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="adt-support"><a class="header" href="#adt-support">ADT support</a></h1>
+<h2 id="primitive-types"><a class="header" href="#primitive-types">Primitive Types</a></h2>
+<h2 id="container-types"><a class="header" href="#container-types">Container Types</a></h2>
+<h2 id="product-type"><a class="header" href="#product-type">Product Type</a></h2>
+<p>wjson 支持 Product 类型的 JSON 序列化和反序列化。</p>
+<pre><code class="language-scala 3">      case class Bean(name: String, age: Int)
+</code></pre>
+<p>对应的 JSON 如下：</p>
+<pre><code class="language-json">    {
+      &quot;name&quot;: &quot;wang&quot;,
+      &quot;age&quot;: 18
+    }
+</code></pre>
+<h2 id="sum-type"><a class="header" href="#sum-type">Sum Type</a></h2>
+<p>对 enum 类型，可以自动添加 <code>$tag</code> 字段，取 case 名作为值。</p>
+<pre><code class="language-scala 3">      enum Color:
+         case Red, Green, Blue
+         case Mixed(r: Int, g: Int, b: Int, alpha: Int)
+     
+</code></pre>
+<ol>
+<li>对 simple case, 如 Red, Green, Blue，编码为 string，无需 tag</li>
+<li>对 product case， 如 Mixed，编码为：</li>
+</ol>
+<pre><code class="language-json">        {
+          &quot;$tag&quot;: &quot;Mixed&quot;,
+           &quot;r&quot;: 10, &quot;g&quot;: 20, &quot;b&quot;: 30, &quot;alpha&quot;: 255
+        }
+</code></pre>
+<ul>
+<li>读取更高版本的JSON时，可能会存在不认识的 tag, 会忽略该枚举值。</li>
+</ul>
+<h2 id="or-type"><a class="header" href="#or-type">Or Type</a></h2>
+<p>wjson 支持 <code>X | Y</code> 的 Or Type 的 JSON 序列化和反序列化。</p>
+<p>示例：</p>
+<pre><code class="language-scala 3">       case class Root(bean: Bean1 | List[Bean2] | Array[String]) 
+</code></pre>
+<p>对应的 JSON 如下：</p>
+<pre><code class="language-json">    [{
+       &quot;bean&quot;:{
+            &quot;$or&quot;:&quot;demo2.Bean1&quot;,
+            &quot;$value&quot;:{&quot;name&quot;:&quot;wang&quot;,&quot;age&quot;:18}
+       }
+    },
+    {
+      &quot;bean&quot;:{
+            &quot;$or&quot;:&quot;scala.collection.immutable.List[demo2.Bean2]&quot;,
+            &quot;$value&quot;:[ {&quot;name&quot;:&quot;zhang&quot;,&quot;age&quot;:20} ]
+      }
+    },
+    {
+      &quot;bean&quot;: {
+            &quot;$or&quot;:&quot;scala.Array[java.lang.String]&quot;,
+            &quot;$value&quot;:[&quot;hello&quot;,&quot;world&quot;]
+      }
+    }]
+</code></pre>
+<p>Or Type 的成熟度不如 enum 的支持, 其规则相对比较复杂:</p>
+<ol>
+<li><code>T | Null</code>: 理解为可以为 Null 的类型， 与 <code>Option[T]</code> 是类似的</li>
+<li>如果有多个子类型，会生成一个 <code>$or</code> 的元素，指定其实际类型，使用 <code>$value</code> 作为值。
+<ul>
+<li>基础子类型：<code>Int | Long | String | Boolean | Double ｜ Float | Null </code>，不会生成 tag</li>
+<li>对非基础类型， 取该类型的名称作为 tag
+<ol>
+<li>非容器类型(非范型)。 如 <code>demo2.Bean1</code></li>
+<li>对容器类型，如 <code>scala.collection.immutable.List[demo2.Bean2]</code></li>
+<li>需要注意，这里的 tag 与 scala 语言有绑定，未来考虑转化为一个语言中立的 tag。</li>
+</ol>
+</li>
+<li>如果只有一个子类型需要 tag, 则会优化为不生成 $or</li>
+</ul>
+</li>
+<li>不能有 <code>List[A] | List[B]</code> 这样的类型，因为Java的擦除式范型，无法通过类型检测数据的实际类型。
+<ul>
+<li>特殊支持： 可以支持 <code>Option[A] | Option[B]</code></li>
+</ul>
+</li>
+<li><code>Option[T]</code> 与 <code>Null</code> 不能同时存在。</li>
+</ol>
+<p>使用 Or Type 时，因为要考虑的情况相对复杂，建议尽可能使用 enum 来替代。</p>
+<h2 id="json-pointer-support"><a class="header" href="#json-pointer-support">JSON Pointer support</a></h2>
+<pre><code class="language-scala">case class LocalPointer[T](p: String)  // ref inside the same document
+case class GlobalPointer[T](p: String) // ref outside document
+
+case class Relation(srcView: LocalPointer[View], destView: LocalPointer[View])
+
+val relation = Relation(&quot;view1&quot;, &quot;view2&quot;)
+</code></pre>
+<pre><code class="language-json5">{ 
+  &quot;srcView&quot;: &quot;view1&quot;, 
+  &quot;destView&quot;: &quot;view2&quot;
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="多版本支持"><a class="header" href="#多版本支持">多版本支持</a></h2>
+<pre><code class="language-scala 3">@js.version(&quot;1.0.6&quot;) case class Cube
+(
+   @js.since(&quot;1.0.5&quot;)
+   name: Option[String],      // 这个元素是 1.0.5 版本开始引入的
+
+   @js.deprecated(&quot;1.0.6&quot;)    // 在 1.0.6 这个版本中被废弃
+   age: Option[Int],
+
+   column: Column,    // 是一个枚举类型， 新版本，可以增加新的 枚举值
+   dimension: Dimension // 是一个 Product 类型， 新版本，可以增加新的字段
+)
+
+</code></pre>
+<p>场景：</p>
+<ol>
+<li>新版本中，对某个 Product 类型增加新的字段
+<ul>
+<li>该字段需要声明为 Option 类型，以兼容旧版本</li>
+<li>通过 @js.since(&quot;1.0.5&quot;) 来标记该字段是从 1.0.5 版本开始引入的</li>
+</ul>
+</li>
+<li>新版本中，对某个枚举类型增加新的枚举值</li>
+<li>读取更新版本的数据时，由于当前版本中没有该字段（或枚举值），会自动的忽略该字段（或枚举值）</li>
+<li>读取旧版本的数据时，会自动的填充默认值（对于 Option 类型，填充为 None）</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="internal"><a class="header" href="#internal">Internal</a></h1>
+<p>wjson 设计文档。</p>
+<p>wjson的设计依赖了 Scala 3 的 Macro</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="scala3-macro"><a class="header" href="#scala3-macro">scala3 macro</a></h1>
 
                     </main>
 

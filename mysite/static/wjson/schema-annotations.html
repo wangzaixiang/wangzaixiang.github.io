@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>core - wjson: a JSON API for scala</title>
+        <title>annotations - wjson: a JSON API for scala</title>
 
 
         <!-- Custom HTML head -->
@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="core.html" class="active"><strong aria-hidden="true">1.</strong> core</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="basic-api.html"><strong aria-hidden="true">1.1.</strong> basic</a></li><li class="chapter-item expanded "><a href="parser.html"><strong aria-hidden="true">1.2.</strong> parser</a></li><li class="chapter-item expanded "><a href="adt-mapping.html"><strong aria-hidden="true">1.3.</strong> JSON/Bean mapping</a></li></ol></li><li class="chapter-item expanded "><a href="pattern.html"><strong aria-hidden="true">2.</strong> pattern</a></li><li class="chapter-item expanded "><a href="schema.html"><strong aria-hidden="true">3.</strong> JSON schema</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="schema-annotations.html"><strong aria-hidden="true">3.1.</strong> annotations</a></li><li class="chapter-item expanded "><a href="schema-adt.html"><strong aria-hidden="true">3.2.</strong> ADT support</a></li><li class="chapter-item expanded "><a href="schema-version.html"><strong aria-hidden="true">3.3.</strong> Multi-Version</a></li></ol></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">4.</strong> internal</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro.html"><strong aria-hidden="true">4.1.</strong> scala3 macro</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="core.html"><strong aria-hidden="true">1.</strong> core</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="basic-api.html"><strong aria-hidden="true">1.1.</strong> basic</a></li><li class="chapter-item expanded "><a href="parser.html"><strong aria-hidden="true">1.2.</strong> parser</a></li><li class="chapter-item expanded "><a href="adt-mapping.html"><strong aria-hidden="true">1.3.</strong> JSON/Bean mapping</a></li></ol></li><li class="chapter-item expanded "><a href="pattern.html"><strong aria-hidden="true">2.</strong> pattern</a></li><li class="chapter-item expanded "><a href="schema.html"><strong aria-hidden="true">3.</strong> JSON schema</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="schema-annotations.html" class="active"><strong aria-hidden="true">3.1.</strong> annotations</a></li><li class="chapter-item expanded "><a href="schema-adt.html"><strong aria-hidden="true">3.2.</strong> ADT support</a></li><li class="chapter-item expanded "><a href="schema-version.html"><strong aria-hidden="true">3.3.</strong> Multi-Version</a></li></ol></li><li class="chapter-item expanded "><a href="internal.html"><strong aria-hidden="true">4.</strong> internal</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="macro.html"><strong aria-hidden="true">4.1.</strong> scala3 macro</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -142,40 +142,65 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="core"><a class="header" href="#core">core</a></h1>
-<p>wjson 是一个Scala3 JSON库，它提供了一个简单的、直观的API，用于在Scala中处理JSON。</p>
-<p>wJson的设计参考了如下的库，并试图变得提供更为 简单的API：</p>
+                        <h2 id="json-schema-annotations"><a class="header" href="#json-schema-annotations">JSON Schema Annotations</a></h2>
+<p>可以在 ADT 申明中，使用如下的 annotation 附加JSON Schema的元信息。</p>
 <ol>
-<li><a href="github.com/spray-json/spray-json">Spray JSON</a></li>
-<li><a href="github.com/wangzaixiang/spray-json">wangzaixiang's fork of Spray JSON</a></li>
-<li><a href="github.com/lihaoyi/ujson">ujson</a></li>
-</ol>
-<p>wjson-core 是 wjson 的核心模块，它提供了基本的 JSON 的核心数据结构，以及基本的 JSON 解析和序列化功能。</p>
+<li>@js.description</li>
+<li>@js.enums</li>
+<li>@js.multipleOf</li>
+<li>@js.maximum</li>
+<li>@js.minimum</li>
+<li>@js.exclusiveMaximum</li>
+<li>@js.exclusiveMinimum</li>
+<li>@js.maxLength</li>
+<li>@js.minLength</li>
+<li>@js.pattern</li>
+<li>@js.maxItems</li>
+<li>@js.minItems</li>
+<li>@js.uniqueItems</li>
+<li>@js.maxContains</li>
+<li>@js.minContains</li>
+<li>@js.maxProperties</li>
+<li>@js.minProperties</li>
+<li>@js.format
 <ul>
-<li>JsValue API： 对 JSON 数据结构的 ADT 抽象，支持 immutable 风格的 build, access, show 等操作，是 wjson 的核心数据结构。</li>
-<li>JSON parer, 一个高性能的JSON解析器，支持标准的 JSON 语法</li>
-<li>JSON5 parser, JSON5 语法解析器。<a href="https://json5.org">JSON5</a> 是 JSON 的超集，支持注释、多行字符串等特性。</li>
-<li>json&quot;...&quot; 和 json5&quot;...&quot; 字符串插值</li>
-<li>ADT 支持</li>
+<li>date/time/datetime/duration</li>
+<li>email</li>
+<li>hostname</li>
+<li>ipv4/ipv6</li>
+<li>uri</li>
+<li>uuid</li>
 </ul>
-<h2 id="安装"><a class="header" href="#安装">安装</a></h2>
-<p>以 sbt 为例：</p>
-<pre><code>libraryDependencies += &quot;com.github.wangzaixiang&quot; %% &quot;wjson-core&quot; % &quot;0.5.0-RC1&quot;
-</code></pre>
-<h2 id="使用"><a class="header" href="#使用">使用</a></h2>
-<p>在使用 wjson 库之前，简单引入一下：</p>
-<pre><code class="language-scala">import wjson.{*, given}
-</code></pre>
+</li>
+</ol>
+<h2 id="扩展"><a class="header" href="#扩展">扩展</a></h2>
+<ol>
+<li>
+<p>@js.toplevel </p>
+<p>表示改类型可以作为文档顶层元素，顶层元素在定义时，可选的支持 <code>$schema</code> 属性，用于指定 JSON Schema 的定义。</p>
+<p>tips: 可以在 JSON 文件中，手动指定 $schema, idea 编辑器会自动获取 schema 对文档进行校验
+（不在需要额外配置 mapping）</p>
+</li>
+<li>
+<p>@js.version </p>
+</li>
+<li>
+<p>@js.open:   mark a type <code>additionalProperties</code>= true</p>
+</li>
+<li>
+<p>@js.dynamic</p>
+</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="schema.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="basic-api.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="schema-adt.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -185,11 +210,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="schema.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="basic-api.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="schema-adt.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
