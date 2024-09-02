@@ -13,7 +13,8 @@ jobs:
         with:
           mdbook-version: 'latest'
 
-      - run: mdbook build books/wjson -d mysite/static/wjson
+      - run: mdbook build books/wjson -d public
+      - run: mv books/wjson/public mysite/static/wjson
 
       - name: build_and_deploy
         uses: shalzz/zola-deploy-action@v0.19.1

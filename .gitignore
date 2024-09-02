@@ -2,3 +2,4 @@ _site/
 public/
 /books/**/book/
 .DS_Store
+/mysite/static/wjson/
