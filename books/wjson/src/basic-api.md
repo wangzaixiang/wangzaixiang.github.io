@@ -10,6 +10,8 @@ enum JsVal:
     case JsArray(elements: List[JsVal])
     case JsObject(fields: Seq[String, JsVal])
 ```
+wjson 提供的是基于 immutable 的 API
+
 JsObject 会保留构建时字段的顺序，在格式化输出时，保留该顺序。但 equals 方法会忽略字段的顺序。
 
 
