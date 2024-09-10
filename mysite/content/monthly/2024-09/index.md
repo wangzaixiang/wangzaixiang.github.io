@@ -28,6 +28,19 @@ authors = ["monthly"]
     2. 隐藏分区
     3. 分区结构演进
   - [snowflake](https://www.snowflake.com) 云数据仓库，支持
+- [DuckDB internals](https://www.youtube.com/watch?v=bZOvAKGkzpQ)
+  1. in process like sqlite.
+  2. 1.1.0 性能优化
+     - 版本增加了对 join 的优化，可以根据右表的过滤结果，来优化左表的筛选。
+     - 对 CTE 的 material 的优化。
+  3. extension 支持 rust开发
+
+  > 考虑 DuckDB 作为数据分析的基础引擎，以解决复杂分析场景下的性能问题，与数据库兼容性问题。不同的源数据库，其提供的查询能力差别较大，
+  > （语法，函数）等，对 Full JOIN能力、窗口函数的计算能力等， 逐一适配成本太大，考虑使用 DuckDB 作为数据分析引擎，可以解决这个问题。
+
+- [Pipelined Relational Query Language](https://github.com/prql/prql) 一个更为结构化的SQL描述
+  
+  在数据分析时，对复杂的SQL进行理解，往往是非常头痛的，使用 with CTE 可以让这个过程便得更为结构化， PRQL 提供了另外一个参考的视角。
 
 # Web & Visualization
 - NoBuild
