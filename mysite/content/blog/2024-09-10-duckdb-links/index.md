@@ -32,6 +32,7 @@ duckdb 相关的源代码阅读文档，也给自己立一个flag，在接下里
 3. 必要时，可以根据自己的分析需要，进行针对性的优化。例如，常见的小计、合计等功能，使用 SQL 实现时，需要执行多条SQL，
    可以开发扩展进行针对性的优化。
 
+## DuckDB 源代码剖析 文档收集
 
 1. 张建:
    - [DuckDB Push-Based Execution Model](https://zhuanlan.zhihu.com/p/402355976)
