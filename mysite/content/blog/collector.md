@@ -52,3 +52,5 @@ template = "blog/page.html"
     - [TC39](https://github.com/tc39/proposal-signals)
     - [airstream](https://github.com/raquo/Airstream)
     - 我设计的 Variable Manager 设计方案
+    - Dom 增量更新 的三种模式
+      - vdom Diff / Lit / Solid

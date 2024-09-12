@@ -55,6 +55,8 @@ duckdb 相关的源代码阅读文档，也给自己立一个flag，在接下里
    - [DuckDB内存格式代码详解（一）](https://zhuanlan.zhihu.com/p/679569277)
 
 6. 官方 
-   - [In-Process Analytical Database System PDF](https://15721.courses.cs.cmu.edu/spring2023/slides/22-duckdb.pdf)
-   - [In-Process Analytical Database System Video](https://www.youtube.com/watch?v=bZOvAKGkzpQ)
+   - DuckDB internals [Slides](https://15721.courses.cs.cmu.edu/spring2023/slides/22-duckdb.pdf), 
+     [Video](https://www.youtube.com/watch?v=bZOvAKGkzpQ)
+   - Push-Based Execution In DuckDB [Slides](https://dsdsd.da.cwi.nl/slides/dsdsd-duckdb-push-based-execution.pdf),
+     [Video](https://www.youtube.com/watch?v=1kDrPgRUuEI)
    

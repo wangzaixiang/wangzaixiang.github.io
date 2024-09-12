@@ -18,6 +18,13 @@ authors = ["monthly"]
    {{ resize_image(path="@/monthly/2024-09/structured-concurrency.png", width=400, height=400, op="fit_width") }}
 
    > 这个作者的一系列文章，都是围绕着Rust 语言中的概念，例如：Self-Reference, Pin， Async/Await etc. 值得持续关注学习。
+- [Rust GUI](https://dioxuslabs.com)
+  按照文档，跑了一个 Web 示例程序。 感觉：
+  1. API 很熟悉。 rsx! 相当与将 JSX 和 react 风格迁移到 Rust 中。
+  2. 一种开发模式，可以支持 WEB, Desktop, TUI, 确实很有吸引力。到了 WEB 中也运行的是 Rust（基于WASM） 而非 JavaScript。
+  3. dx 风格也和 cargo/npm 风格很相似，开发模式下，修改源代码自动编译、热加载。简单的例子体验不错，不知道在复杂的项目中，这个效率会如何？
+     现在来看，是有些担心的，一是 rust 编译速度，二是整个 wasm 重新加载，hot reload 相当于是整个应用了。
+  4. wasm 的编译大小，目前看一个简单的例子（dx new 的示例代码)，编译后大小为 957K, br压缩后为 240K。 更复杂的项目会有多大呢？
 
 
 # MPP
