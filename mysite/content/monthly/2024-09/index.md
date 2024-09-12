@@ -27,7 +27,7 @@ authors = ["monthly"]
   4. wasm 的编译大小，目前看一个简单的例子（dx new 的示例代码)，编译后大小为 957K, br压缩后为 240K。 更复杂的项目会有多大呢？
 
 
-# MPP
+# MPP & OLAP
 - [GlareDB](https://glaredb.com) 又一个跨库执行SQL的引擎，从目前官网上没有看到与性能相关的信息，不知道这方面的表现如何。
 - [Databricks 收购了 Apache Iceberg背后公司 Tabular](https://www.sohu.com/a/783829162_121124375)
   - [iceberg](https://iceberg.apache.org) 开放的分析型表存储格式：支持
@@ -48,6 +48,11 @@ authors = ["monthly"]
 - [Pipelined Relational Query Language](https://github.com/prql/prql) 一个更为结构化的SQL描述
   
   在数据分析时，对复杂的SQL进行理解，往往是非常头痛的，使用 with CTE 可以让这个过程便得更为结构化， PRQL 提供了另外一个参考的视角。
+- [Hex](https://hex.tech) 一个蛮有特色的数据分析产品，可以体验一下其产品设计。
+  1. Notebook 风格，一个 notebook 就是一个 workspace，支持 Python, SQL两种分析语言。
+  2. 这些计算目前来看是执行在 server 上的
+- [Rill Opensource](Dashboards that move as fast as your business)
+  体验了一下，作为 EndUser，功能还比较粗燥。
 
 # Web & Visualization
 - NoBuild
