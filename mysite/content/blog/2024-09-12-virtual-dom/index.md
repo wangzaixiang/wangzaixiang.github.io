@@ -47,7 +47,7 @@ DOM 更新技术本身是一步技术演进历史，本文收集了从远古时�
       ```
       Lit 基于 template，由于可以识别 template 的静态部份（不会变化）和动态部份（会响应数据的变化），
       Lit 在 render 后，会追踪动态部份，检查动态部份依赖的数据是否发生变化，做出响应的更新。（参见很早期我编写的一篇文章：
-      [LitElement & LitHtml 探秘](https://mp.weixin.qq.com/s/euWqe-JzrRt08OQ8DLrj1A) )
+      [LitElement & LitHtml 探秘](/blog/litelement) )
       缺点：每次 render 函数调用都会执行，逐一检查动态部份是否发生变化，这个过程还是略显多余。
       优点：算是一种相对简单的平衡，即没有大量的 virtual dom 的内存占用(static部份是共享的，不会重复占用内存)，
       也简化了 DOM 的 diff过程。
