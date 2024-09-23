@@ -63,6 +63,10 @@ DOM 更新技术本身是一步技术演进历史，本文收集了从远古时�
       这一类的框架，在 Lit 的基础上更进一步：在后续响应式变化时，render 函数不再执行，而是每个动态部份独立响应。当然，做到这一点是
       依赖于对模版的编译的。即将模版中的动态部份、静态部份在编译期即进行了分离，并生成对应的响应式代码。
       当然，对一些复杂的结构，需要进一步展开其响应式机制。
+   5. 未来发展预测
+      在编译期进行更多的优化，从而避免在运行期做不必要的计算，这个方向应该还有不少空间，例如：诸如 Solid 目前设计（我的猜测），还是采用
+      动态的 track 方式来跟踪变化的依赖，在依赖发生变化时，重新计算，从重新刷新依赖关系。这个对于一些静态的依赖关系，可以在编译期直接确定，
+      进而减少 track 的开销。
    
   最新的发展，这种 React 风格也逐步的占领了桌面 GUI 的领域，如 Flutter, Slint 等。在最近留意的一个框架 dioxuslabs 中，更是把
   这个带入到 Rust + WASM + (Web/TUI/GUI)的风格中，令 Rustacean 们也有了一种新的选择。
@@ -139,3 +143,4 @@ DOM 更新技术本身是一步技术演进历史，本文收集了从远古时�
 5. Lit 的做法
 6. [增量DOM与虚拟DOM](https://www.cnblogs.com/zhazhanitian/p/14421993.html)
 7. Incremental-DOM https://google.github.io/incremental-dom/
+8. [Xilem: an architecture for UI in Rust](https://raphlinus.github.io/rust/gui/2022/05/07/ui-architecture.html) 

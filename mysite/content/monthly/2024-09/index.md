@@ -25,6 +25,18 @@ authors = ["monthly"]
   3. dx 风格也和 cargo/npm 风格很相似，开发模式下，修改源代码自动编译、热加载。简单的例子体验不错，不知道在复杂的项目中，这个效率会如何？
      现在来看，是有些担心的，一是 rust 编译速度，二是整个 wasm 重新加载，hot reload 相当于是整个应用了。
   4. wasm 的编译大小，目前看一个简单的例子（dx new 的示例代码)，编译后大小为 957K, br压缩后为 240K。 更复杂的项目会有多大呢？
+- [Xilem: an architecture for UI in Rust](https://raphlinus.github.io/rust/gui/2022/05/07/ui-architecture.html) 
+  一个 React 风格的 Rust GUI 框架，架构设计与 flutter 很相似，这个作者的 blogs 上有很多这方面的思考，介绍了
+  - view tree: 短生命周期，每次 render 都会重新创建，仅保留足够长的时间来协助事件分派，然后与下一个版本进行比较，然后就被销毁。
+    纯值对象。
+  - widget tree：长生命周期，每次 render 会更新。
+  - view state tree. 跨 circle 持续存在。
+  
+  如何维护这三颗树，实现高效的 incremental update，这与[DOM 更新技术对比：Virtual DOM or Incremental DOM](/blog/virtual-dom) 中介绍
+  的内容是同一个主题。
+  
+  文章也对比了与 immediate mode GUI(egui) 的区别。与 [Elm](https://guide.elm-lang.org/architecture/) 架构的区别。
+  - [Towards a unified theory of reactive UI](https://raphlinus.github.io/ui/druid/2019/11/22/reactive-ui.html)
 
 
 # MPP & OLAP
