@@ -144,3 +144,6 @@ DOM 更新技术本身是一步技术演进历史，本文收集了从远古时�
 6. [增量DOM与虚拟DOM](https://www.cnblogs.com/zhazhanitian/p/14421993.html)
 7. Incremental-DOM https://google.github.io/incremental-dom/
 8. [Xilem: an architecture for UI in Rust](https://raphlinus.github.io/rust/gui/2022/05/07/ui-architecture.html) 
+
+   Xilem 是一个很类似于 Flutter/SwiftUI 的 Rust GUI 框架，其核心也是一个增量更新的架构，在 [Xilem架构](https://github.com/linebender/xilem/blob/main/ARCHITECTURE.md)
+   中有很多这方面的思考，可以作为对 UI 的增量更新的参考。 

@@ -37,6 +37,8 @@ authors = ["monthly"]
   
   文章也对比了与 immediate mode GUI(egui) 的区别。与 [Elm](https://guide.elm-lang.org/architecture/) 架构的区别。
   - [Towards a unified theory of reactive UI](https://raphlinus.github.io/ui/druid/2019/11/22/reactive-ui.html)
+  - [增量计算之旅](https://docs.google.com/presentation/d/1opLymkreSTFfxygjzSLYI_uH7j1YFfE6DLl8RfCiw7E/edit?pli=1#slide=id.p)
+  - [系列架构文档](https://github.com/linebender/xilem/blob/main/ARCHITECTURE.md)
 
 
 # MPP & OLAP
