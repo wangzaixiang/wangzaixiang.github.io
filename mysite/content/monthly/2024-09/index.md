@@ -55,9 +55,12 @@ authors = ["monthly"]
      - 版本增加了对 join 的优化，可以根据右表的过滤结果，来优化左表的筛选。
      - 对 CTE 的 material 的优化。
   3. extension 支持 rust开发
-
+  
   > 考虑 DuckDB 作为数据分析的基础引擎，以解决复杂分析场景下的性能问题，与数据库兼容性问题。不同的源数据库，其提供的查询能力差别较大，
   > （语法，函数）等，对 Full JOIN能力、窗口函数的计算能力等， 逐一适配成本太大，考虑使用 DuckDB 作为数据分析引擎，可以解决这个问题。
+  
+  本月开始，计划阅读 DuckDB 的源代码，在阅读过程中整理文档，有几个目的：一是阅读一个优秀的OLAP引擎的源代码，加深对 OLAP 引擎的理解；
+  二是评估在公司产品中集成 duckdb, 提高产品的分析能力。三是顺便重温一下 C++ 的知识，把自己从 C++ 的陌生区转移到熟悉区来。
 
 - [Pipelined Relational Query Language](https://github.com/prql/prql) 一个更为结构化的SQL描述
   
@@ -87,7 +90,7 @@ authors = ["monthly"]
   - Variable Manager: 是我设计的一个更为宏观层面（响应联路更长、且支持异步处理）的前端变量响应式管理器，目前在内部产品中使用，后续整理成技术文章。
 - [Wasm: 2023年报告](https://medium.com/ekino-france/webassembly-the-future-of-backend-development-b40bdc7c5cb4)
   - 作为 Plugin 使用。 例如 nginx plugin。相比 LUA 来说，可以提供更好的性能、完成更复杂的功能，以及使用开发者更熟悉的编程语言。
-  - 目前，我觉得最为缺失的，是缺少 Debugger 支持。
+  - 目前，我觉得最为缺失的，是缺少 Debugger 支持，对开发者来说，这是一个很大的障碍。
   
 - Vega-altair: Declarative Visualization in Python 一个 Python 的可视化库，支持声明式的可视化设计。
    - [Vega-Lite](https://vega.github.io/vega-lite/) 基于 Vega，更偏向于用户层, 数据描述式风格
@@ -122,3 +125,5 @@ authors = ["monthly"]
   之前也断续阅读过一些 Rust 编译生成的汇编代码，确实，从更低成本的角度来理解语言特性和概念，往往会带来更为深刻的理解。更何况
   Rust 自身也是面向底层的一门语言，各种特性的设计都与内存、CPU 优化密切关联。很多在上层复杂的概念，往往只是在上层中不同
   角度的投影，在底层反而简单明了。
+
+  赶在月底之前，把这本书大概翻了一遍，对 Rust / LLVM 的代码优化有了进一步的了解。
