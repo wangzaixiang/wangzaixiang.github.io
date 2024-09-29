@@ -5,3 +5,9 @@ language = "zh-CN"
 multilingual = false
 src = "src"
 title = "duckdb 源代码阅读笔记"
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output.html]
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
