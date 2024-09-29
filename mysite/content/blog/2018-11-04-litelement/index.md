@@ -4,6 +4,9 @@ description = "本文对 WEB 前端框架（库）Lit 的渲染原理进行分�
 date = 2019-11-04
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 在Polymer的最新Blog中，介绍了新的webcomponent开发框架：LitElement 。作为一个Polymer的资深粉，这些年一直处在且爱且恨之中：

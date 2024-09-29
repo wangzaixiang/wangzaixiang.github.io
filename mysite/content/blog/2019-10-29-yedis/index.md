@@ -4,6 +4,9 @@ description = "本文介绍了云集自研 Redis 驱动程序的架构设计"
 date = 2021-10-29
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 Redis是互联网应用中广泛使用的缓存解决方案，以其高性能、丰富的数据结构、简单易用的API而著称，基本上已经成为了互联网应用的基础设施，

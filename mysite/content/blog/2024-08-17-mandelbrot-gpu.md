@@ -4,6 +4,9 @@ description = "基于mandelbrot set示例的 CPU vs GPU 版本性能对比 "
 date = 2024-08-17T15:19:42+00:00
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 本文承接上一片文章 [wgpu 代码阅读](@/blog/wgpu.md), 在阅读 wgpu 代码的基础上，通过一个实例来对比 CPU 和 GPU 的性能。

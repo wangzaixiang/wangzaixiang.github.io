@@ -4,6 +4,9 @@ description = "dapeng支持使用JSON作为RPC的内容编码协议，且提供�
 date = 2020-09-04T12:00:00+00:00
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 # 背景

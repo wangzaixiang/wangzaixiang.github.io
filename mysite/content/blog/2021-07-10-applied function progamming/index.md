@@ -4,6 +4,9 @@ description = "本文是我对函数式编程的一些理解，以及如何应�
 date = 2021-07-10
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 # 应用函数式编程

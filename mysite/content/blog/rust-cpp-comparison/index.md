@@ -6,6 +6,7 @@ draft = false
 template = "blog/page.html"
 
 [taxonomies]
+authors = ["wangzx"]
 
 +++
 

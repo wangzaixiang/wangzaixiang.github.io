@@ -47,12 +47,12 @@
 <div class="wrap container" role="document">
   <div class="content">
     <div class="row justify-content-center">
-      <div class="col-md-12 col-lg-10 col-xxl-8">
         <article>
           <h1 class="text-center">{{ title }}</h1>
-          {% if author_page and author_page.content %}<div class="text-center">{{ author_page.content | safe }}</div>{% endif %}
+          {% if author_page and author_page.content %}<div class="text-start">{{ author_page.content | safe }}</div>{% endif %}
 			    <div class="card-list">
             {% for page in term.pages %}
+                  {% if loop.index <= 12 %}
 					    <div class="card">
 						    <div class="card-body">
 							    <h2 class="h3"><a class="stretched-link text-body" href="{{ page.permalink }}">{{ page.title }}</a></h2>
@@ -60,10 +60,10 @@
                     {{ macros_publish::page_publish_metadata(page=page) }}
 					    	</div>
 					    </div>
-				    {% endfor %}
+                  {% endif %}
+            {% endfor %}
 			    </div>
         </article>
-      </div>
     </div>
   </div>
 </div>

@@ -4,6 +4,9 @@ description = "Object.wait 等方法有一个很特别的场景：spurious wakeu
 date = 2021-06-10
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 # 无端唤醒（spurious wakeup）

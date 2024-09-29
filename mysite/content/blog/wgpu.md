@@ -6,7 +6,7 @@ draft = false
 template = "blog/page.html"
 
 [taxonomies]
-
+authors = ["wangzx"]
 +++
 # 阅读 wgpu 代码记录
 

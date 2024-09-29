@@ -4,6 +4,9 @@ description = "本文记录在MDX优化过程中的一些思考"
 date = 2024-08-10T12:00:00+00:00
 draft = true
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 ## EvaluationContext 优化

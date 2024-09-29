@@ -4,6 +4,9 @@ description = "本文通过一个实际案例讲解 JMM 及 volatile 的语义"
 date = 2021-06-10
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 # 实例讲解 Java 内存模型

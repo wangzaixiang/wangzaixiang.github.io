@@ -4,6 +4,9 @@ description = "从一些简单的案例来理解 MonetDB 的 MAL，并思考建�
 date = 2024-08-08T12:00:00+00:00
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 MonetDB 是一个基于列存的 OLAP 数据库引擎，最近看到的很多 OLAP 引擎，包括 [DuckDB](https://duckdb.org)、[Polars](https://pola.rs)

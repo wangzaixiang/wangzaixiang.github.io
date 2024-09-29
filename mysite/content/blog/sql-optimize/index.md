@@ -4,6 +4,9 @@ description = "收集有关 OLAP 查询优化相关的策略、算法，为后�
 date = 2024-08-22T12:00:00+00:00
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 ## 优化策略 Summary

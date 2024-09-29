@@ -4,6 +4,9 @@ description = "收集有关 duckdb 的源代码阅读的文档，计划接下来
 date = 2024-09-10
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 最近，在评估引入一个 SQL 执行引擎，以取代分析产品对上游数据库的特性的依赖，这些差异给产品带来了显著的困难：

@@ -22,6 +22,8 @@ h4:hover a {
 
 .card-list {
   margin-top: 2.25rem;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .edit-page {

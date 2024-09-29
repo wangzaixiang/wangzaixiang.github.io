@@ -3,10 +3,6 @@ title = "September 2024"
 date = 2024-09-01
 draft = false
 template = "blog/page.html"
-
-[taxonomies]
-authors = ["monthly"]
-
 +++
 
 # Languages

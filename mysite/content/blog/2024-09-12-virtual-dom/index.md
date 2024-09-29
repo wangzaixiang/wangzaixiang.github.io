@@ -4,6 +4,9 @@ description = "WEB 前端开发中，DOM 的增量更新技术是一个重要的
 date = 2024-09-12
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 DOM 更新技术本身是一步技术演进历史，本文收集了从远古时间 到 最新的技术，并整理了我对其的理解。目前还只是一个提纲，后续有时间会慢慢细化。

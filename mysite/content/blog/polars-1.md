@@ -4,6 +4,9 @@ description = "本文是记录学习 Polars 过程中的一些笔记整理，采
 date = 2024-05-18T12:00:00+00:00
 draft = false
 template = "blog/page.html"
+
+[taxonomies]
+authors = ["wangzx"]
 +++
 
 ## 结论先行
