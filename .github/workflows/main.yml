@@ -13,10 +13,11 @@ jobs:
         with:
           mdbook-version: 'latest'
 
-      - run: mdbook build books/wjson -d public
-      - run: mv books/wjson/public mysite/static/wjson
-      - run: mdbook build books/inside-duckdb -d public
-      - run: mv books/inside-duckdb/public mysite/static/inside-duckdb
+      - name: build mdbook
+        shell: bash
+        run: |
+          mdbook build books/wjson -d `pwd`/mysite/static/wjson
+          mdbook build books/inside-duckdb -d `pwd`/mysite/static/inside-duckdb
 
       - name: build_and_deploy
         uses: shalzz/zola-deploy-action@v0.19.1
