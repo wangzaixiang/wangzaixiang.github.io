@@ -5,7 +5,7 @@
    ```
    or 
    ```shell
-   mdbook serve -o ./books/wjson
+   mdbook serve -d $"(pwd)/mysite/static/wjson" --open ./books/wjson
    ```
    
 2. compile mdbook inside-duckdb
