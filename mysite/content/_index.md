@@ -57,6 +57,10 @@ Rich features, including service governance, service discovery, service routing,
 support Java, Scala.
 """
 
+[[extra.list]]
+title = "duckdb 源代码阅读笔记"
+content = """<a href="/inside-duckdb/index.html">inside-duckdb</a>"""
+
 #[[extra.list]]
 #title = "Full text search"
 #content = "Search your Doks site with FlexSearch. Easily customize index settings and search options to your liking."

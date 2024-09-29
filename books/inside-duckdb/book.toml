@@ -1,0 +1,7 @@
+[book]
+
+authors = ["wangzaixiang"]
+language = "zh-CN"
+multilingual = false
+src = "src"
+title = "duckdb 源代码阅读笔记"

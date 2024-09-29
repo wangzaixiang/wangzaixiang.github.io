@@ -3,3 +3,5 @@ public/
 /books/**/book/
 .DS_Store
 /mysite/static/wjson/
+/mysite/static/inside-duckdb/
+/mysite/static/processed_images/
