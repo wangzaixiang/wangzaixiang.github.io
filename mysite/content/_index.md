@@ -3,7 +3,7 @@ title = "程序人生"
 
 # The homepage contents
 [extra]
-lead = """wangzx's blogs, month records, markdown books ..."""
+lead = """<a href="/authors/wangzx/">wangzx</a>'s blogs, month records, markdown books ..."""
 
 #url = "/docs/getting-started/introduction/"
 #url_button = "Get started"
