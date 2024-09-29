@@ -19,7 +19,7 @@ jobs:
       - name: build mdbook
         shell: bash
         run: |
-          cargo binstall mdbook-mermaid
+          cargo binstall -y mdbook-mermaid
           mdbook build books/wjson -d `pwd`/mysite/static/wjson
           mdbook build books/inside-duckdb -d `pwd`/mysite/static/inside-duckdb
 
