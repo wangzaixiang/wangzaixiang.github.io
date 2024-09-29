@@ -1,10 +1,10 @@
 +++
 title = "程序人生"
 
-
 # The homepage contents
 [extra]
-lead = '本站基于 zola + AdiDoks 主题搭建，主要用于记录个人技术博客、学习笔记、胡(qi)思乱(miao)想。'
+lead = """wangzx's blogs, month records, markdown books ..."""
+
 #url = "/docs/getting-started/introduction/"
 #url_button = "Get started"
 #repo_version = "GitHub v0.1.0"
@@ -12,11 +12,11 @@ lead = '本站基于 zola + AdiDoks 主题搭建，主要用于记录个人技�
 #repo_url = "https://github.com/aaranxu/adidoks"
 
 # Menu items
-[[extra.menu.main]]
-name = "Projects"
-section = "docs"
-url = "/docs/getting-started/introduction/"
-weight = 10
+# [[extra.menu.main]]
+# name = "Projects"
+# section = "docs"
+# url = "/docs/getting-started/introduction/"
+# weight = 10
 
 [[extra.menu.main]]
 name = "Blog"

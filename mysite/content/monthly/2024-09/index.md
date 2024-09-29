@@ -91,6 +91,8 @@ authors = ["monthly"]
 - [Wasm: 2023年报告](https://medium.com/ekino-france/webassembly-the-future-of-backend-development-b40bdc7c5cb4)
   - 作为 Plugin 使用。 例如 nginx plugin。相比 LUA 来说，可以提供更好的性能、完成更复杂的功能，以及使用开发者更熟悉的编程语言。
   - 目前，我觉得最为缺失的，是缺少 Debugger 支持，对开发者来说，这是一个很大的障碍。
+- [scala-js 1.17.0 支持 Wasm](http://www.scala-js.org/news/2024/09/28/announcing-scalajs-1.17.0/) 暂时还是实验性质。
+  - [Game of life Demo in scala-js WASM](https://github.com/keynmol/scalajs-wasm-game-of-life)
   
 - Vega-altair: Declarative Visualization in Python 一个 Python 的可视化库，支持声明式的可视化设计。
    - [Vega-Lite](https://vega.github.io/vega-lite/) 基于 Vega，更偏向于用户层, 数据描述式风格
