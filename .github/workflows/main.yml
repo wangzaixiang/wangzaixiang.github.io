@@ -12,13 +12,14 @@ jobs:
         uses: peaceiris/actions-mdbook@v2
         with:
           mdbook-version: 'latest'
-      - name: cargo-bininstall
-        uses: cargo-bins/cargo-bininstall@main
+      - name: Install cargo-binstall
+        uses: cargo-bins/cargo-binstall@v1.10.6
+
 
       - name: build mdbook
         shell: bash
         run: |
-          cargo bininstall mdbook-mermaid
+          cargo binstall mdbook-mermaid
           mdbook build books/wjson -d `pwd`/mysite/static/wjson
           mdbook build books/inside-duckdb -d `pwd`/mysite/static/inside-duckdb
 
