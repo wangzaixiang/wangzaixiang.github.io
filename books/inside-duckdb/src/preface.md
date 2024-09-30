@@ -6,7 +6,7 @@
   我之前进行了一次 OLAP 数据库的性能测试，对比了包括 ClickHouse, DuckDB, StarRocks, DorisDB, DataFusion， Pola.rs 在内的
   几款数据库， DuckDB 在好几项测试中，都处在领先位置。
 
-  ![img.png](images/mpp_compare.png)
+  ![img.png](images/mpp_compare.webp)
 
 - 轻量
   
