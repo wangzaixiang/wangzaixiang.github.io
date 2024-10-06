@@ -14,6 +14,8 @@ template = "blog/page.html"
 基本上，对照 LLVM-IR 文档，一遍下来就可以理解其含义。再考虑到跨 CPU 体系的兼容支持，LLVM-IR 无疑是一个更高level的，更容易理解的，同时也有
 更好的可移植性的中间表示。
 
+# Steps to learn LLVM
+
 1. 初读 LLVM-IR 示例代码
    
    自己动手编写一段 Rust 代码，然后编译生成 LLVM-IR，再对照 LLVM-IR 文档，逐一阅读 IR 代码，相比直接阅读 IR 文档来说，是一个很好的场景化
@@ -177,6 +179,28 @@ template = "blog/page.html"
 
    本质上，JIT 执行方式与步骤3 的方式是一样的，只是 JIT 方式在运行时，编译生成的机器码，是在内存中，并 mmap 到可执行内存区域，然后直接执行。
    当然，需要处理的是一些符号连接，包括获取 生成的函数地址，也包括调用宿主环境提供的函数等。
+
+# Comments on Kaleidoscope Chapter 4: JIT
+
+- LLVMContext:  an important class for using LLVM in a threaded context. owns core "global" data.
+- Module: 对应于单个 ll 文件，可以包含全局变量、函数定义等。
+- KaleidoscopeJIT： 详细的 CRC 有待整理。
+  - RTDyldObjectLinkingLayer 
+  - IRCompileLayer: 
+  - JITDylib
+  - ResourceTracer? 
+
+1. parser => AST
+2. AST => IR
+3. IR => JIT
+   - FunctionAST `def foo(x) x + 1` => IR `Function` => JIT.addModule 
+   - 在 Ch4 中，每个函数定义都会生成一个新的 Module，然后通过 JIT.addModule 加载到 JIT 中。这是 REPL 模式的一个选择。
+   - 函数调用时，`foo(x)` 首先在当前 Module 中查找 foo (例如递归调用)，如果没有找到，则在全局的 FunctionProtos 中查找，
+     此时，会在当前模块中生成一个 `extern` 函数申明。JIT 模块会负责 link。
+   - JIT 的核心接口是 addModule, 相当于 link 一个模块。
+   - JIT 可以通过 ResourceTracker 来删除部份模块，对 REPL 来说，top-level expr 会作为一个匿名模块，调用后就可以被清除掉。
+   - JIT 会处理 link: 首先从当前加载的所有模块中，自后向前搜索名字，如果没有找到，则，通过 dlsym("foo") 来查找。
+   - JIT 提供 `lookup(name)` 方法返回函数地址，可以在外部直接调用（前提是你知道如何通过 ABI 调用）
 
 # 工具速查
 - LLVM 工具
