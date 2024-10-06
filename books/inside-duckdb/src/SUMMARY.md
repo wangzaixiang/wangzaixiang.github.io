@@ -26,3 +26,4 @@ Summary
 # OLAP.NEXT 思考
 1. [Typed IR](./ir.md)
 2. [subquery optimization](./subquery-opt.md)
+3. [Misc](./next-misc.md)

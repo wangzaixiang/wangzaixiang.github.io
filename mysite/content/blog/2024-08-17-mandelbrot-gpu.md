@@ -41,3 +41,5 @@ authors = ["wangzx"]
   相比基于 wgpu 进行开发，易用性有显著的差异（ webgpu 的开发模式还是很 low-level, 需要模拟 linker, loading 等复杂逻辑，
   优点回到上世纪使用 win32 API 编写 Windows 图形界面的感觉，我今天是花了3-4个小时，才让 mandelbrot 的GPU版本跑起来。 
   而 RustGPU/Bend 等则试图让 GPU 开发更接近于现代的编程。
+- [faster Mandelbrot with SIMD](https://pythonspeed.com/articles/optimizing-with-simd/)
+  这个算法如何利用 SIMD 进行优化，可以作为一个学习的例子。

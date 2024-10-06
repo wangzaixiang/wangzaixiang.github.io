@@ -16,6 +16,24 @@
    - [Video](https://www.youtube.com/watch?v=1kDrPgRUuEI)
 3. 知乎链接 [DuckDB Push-Based Execution Model](https://zhuanlan.zhihu.com/p/402355976) 
 
+## 代码调试技巧
+1. 在 duckdb shell 中 使用 `explain statement` 或者`explain analyze statement` 查看执行计划。
+2. PipelineExecutor::Execute(idx_t max_chunks) 是 Pipeline 的执行入口，可以从这里添加断点，开启一个 Pipeline 的调试。
+   -. watches: `this->pipeline.ToString()` 查看当前 Pipeline 的信息。 或者 `this->pipeline.Print()` 在 console 中
+      查看当前 Pipeline 的 信息。 一次SQL 执行会产生多个 Pipeline，仅在满足条件的 Pipeline 上设置断点。
+   -. watches: `this->pipeline.source->ToString(ExplainFormat::TEXT)` 查看当前 Pipeline 的 Source 信息。
+   -. 在调试的 Variables 面板中，可以查看 pipeline 的 source, operators, sink 的信息，在对应的 operator 上设置断点。
+3. source 节点的入口是: `PhysicalXxxOperator::GetData(ExecutionContext &context, DataChunk &chunk, OperatorSourceInput &input)`， 
+   可以在这里设置断点，查看 source 的执行流程。
+4. operator 节点的执行入口是：`PhysicalXxxOperator::Execute(ExecutionContext &context, DataChunk &input, DataChunk &chunk,
+   GlobalOperatorState &gstate, OperatorState &state`
+5. sink 节点的执行有3个入口：
+   - `PhysicalXxxOperator::Sink(ExecutionContext &context, DataChunk &chunk, OperatorSinkInput &input)`
+   - `PhysicalXxxOperator::Combine(ExecutionContext &context, OperatorSinkCombineInput &input)`
+   - `PhysicalXxxOperator::Finalize((Pipeline &pipeline, Event &event, ClientContext &context, OperatorSinkFinalizeInput &input)`
+
+在阅读代码过程中，可以通过上述的调试技巧，找到需要学习的代码的入口点，设置断点后，跟着调试器一步一步的阅读代码，并在 Variables 中查看各个变量的
+值，理解数据流和代码执行流程。
 
 接下来，我们将从一些简单的SQL 执行示例出发，来阅读 Execution 模块的源代码。
 1. [example query: 两个表join后分组聚合](execution-demo1.md)
