@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 {% block seo %}
   {{ super() }}
 
@@ -39,17 +40,19 @@
           <p class="meta">{{ section.extra.repo_license | default(value="MIT")}}
             <a href='{{ section.extra.repo_url | default(value="https://github.com/aaranxu/adidoks") | safe }}'>
             {{ section.extra.repo_version | default(value="0.1.0") }}
-            </a></p>
-            -->
+            </a>
+          </p>
+          -->
         </div>
       </div>
     </section>
   </div>
 </div>
 
+<!-- for extra.list -->
 <section class="section section-sm">
   <div class="container">
-    <div class="row justify-content-center text-start">
+    <div class="row justify-content-start text-start">
       {% if section.extra.list %}
         {% for val in section.extra.list %}
         <div class="col-lg-5">
@@ -58,30 +61,24 @@
         </div>
         {% endfor %}
       {% else %}
-        <div class="col-lg-5">
-          <h2 class="h4">Security aware</h2>
-          <p>Get A+ scores on <a href="https://observatory.mozilla.org/analyze/doks.netlify.app">Mozilla Observatory</a> out of the box. Easily change the default Security Headers to suit your needs.</p>
-        </div>      
-        <div class="col-lg-5">
-          <h2 class="h4">Fast by default ⚡️</h2>
-          <p>Get 100 scores on <a href="https://googlechrome.github.io/lighthouse/viewer/?gist=7731347bb8ce999eff7428a8e763b637">Google Lighthouse</a> by default. Doks removes unused css, prefetches links, and lazy loads images.</p>
-        </div>
-        <div class="col-lg-5">
-          <h2 class="h4">SEO-ready</h2>
-          <p>Use sensible defaults for structured data, open graph, and Twitter cards. Or easily change the SEO settings to your liking.</p>
-        </div>
-        <div class="col-lg-5">
-          <h2 class="h4">Full text search</h2>
-          <p>Search your Doks site with FlexSearch. Easily customize index settings and search options to your liking.</p>
-        </div>
-        <div class="col-lg-5">
-          <h2 class="h4">Page layouts</h2>
-          <p>Build pages with a landing page, blog, or documentation layout. Add custom sections and components to suit your needs.</p>
-        </div>
-        <div class="col-lg-5">
-          <h2 class="h4">Dark mode</h2>
-          <p>Switch to a low-light UI with the click of a button. Change colors with variables to match your branding.</p>
-        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- for extra.books -->
+<section class="section section-sm">
+  <div class="container books">
+    <h2 class="h4 text-center">Markdown Books </h2>
+    <div class="row justify-content-start text-start">
+      {% if section.extra.books %}
+      {% for val in section.extra.books %}
+      <div class="col-lg-5">
+        <h2 class="h4">{{ val.title }}</h2>
+        <p>{{ val.content | safe }}</p>
+      </div>
+      {% endfor %}
+      {% else %}
       {% endif %}
     </div>
   </div>

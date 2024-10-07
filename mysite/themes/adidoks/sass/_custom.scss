@@ -1,0 +1,7 @@
+.books {
+  background: url("/images/books-light.svg") repeat-x transparent;
+}
+
+body.dark .books {
+  background: url("/images/books-dark.svg") repeat-x transparent;
+}

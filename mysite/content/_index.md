@@ -3,13 +3,13 @@ title = "程序人生"
 
 # The homepage contents
 [extra]
-lead = """<a href="/authors/wangzx/">wangzx</a>'s blogs, month records, markdown books ..."""
+lead = """<a href="/authors/wangzx/"> about me </a> """
 
-#url = "/docs/getting-started/introduction/"
-#url_button = "Get started"
-#repo_version = "GitHub v0.1.0"
-#repo_license = "Open-source MIT License."
-#repo_url = "https://github.com/aaranxu/adidoks"
+# url = "/docs/getting-started/introduction/"
+# url_button = "Get started"
+# repo_version = "GitHub v0.1.0"
+# repo_license = "Open-source MIT License."
+# repo_url = "https://github.com/aaranxu/adidoks"
 
 # Menu items
 # [[extra.menu.main]]
@@ -31,33 +31,44 @@ url = "/monthly/"
 weight = 30
 
 [[extra.menu.main]]
-name = "火花"
+name = "thoughts"
 section = "thoughts"
 url = "/thoughts/"
 weight = 30
 
 [[extra.list]]
+title = "blogs"
+content = """ <a href="/blogs/"> 技术博客</a> """
+
+[[extra.list]]
+title = "monthly"
+content = """<a href="/monthly/"> 每月读书札记 </a>"""
+
+[[extra.list]]
+title = "thoughts"
+content = """<a href="/thoughts/"> 思维火花 </a>"""
+
+[[extra.books]]
 title = "wsql"
 content = """
 <a href="https://github.com/wangzaixiang/wsql"> Direct Style Scala3 SQL API</a>.
 <p>良好的 ADT 支持能力, batch API 支持</p>
 """
 
-[[extra.list]]
+[[extra.books]]
 title = "wjson"
 content = """<a href="https://github.com/wangzaixiang/wjson/">wjson</a> 一个 Direct Style Scala3 JSON 处理库。
 提供了ADT支持，JSON/JSON5 解析，JSON schema 生成，强大的模式匹配DSL语言。
 <p><a href="/wjson/index.html">查看文档</a></p>
 """
 
-[[extra.list]]
+[[extra.books]]
 title = "dapeng-soa"
-content = """<a href="https://github.com/dapeng-soa/dapeng-soa">dapeng-soa</a> is a high-performance, scalable microservice framework.
-Rich features, including service governance, service discovery, service routing, service monitoring, API sites, API test tooling, etc.
-support Java, Scala.
+content = """<a href="https://github.com/dapeng-soa/dapeng-soa">dapeng-soa</a> 高性能微服务框架
+<p><a href="https://dapeng-soa.github.io">查看文档</a></p>
 """
 
-[[extra.list]]
+[[extra.books]]
 title = "duckdb 源代码阅读笔记"
 content = """<a href="/inside-duckdb/index.html">inside-duckdb</a>"""
 

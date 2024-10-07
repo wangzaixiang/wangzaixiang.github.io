@@ -50,6 +50,8 @@
         <article>
           <h1 class="text-center">{{ title }}</h1>
           {% if author_page and author_page.content %}<div class="text-start">{{ author_page.content | safe }}</div>{% endif %}
+
+          <!--
 			    <div class="card-list">
             {% for page in term.pages %}
                   {% if loop.index <= 12 %}
@@ -63,6 +65,7 @@
                   {% endif %}
             {% endfor %}
 			    </div>
+		   -->
         </article>
     </div>
   </div>
