@@ -31,21 +31,21 @@ url = "/monthly/"
 weight = 30
 
 [[extra.menu.main]]
-name = "thoughts"
+name = "Thoughts"
 section = "thoughts"
 url = "/thoughts/"
 weight = 30
 
 [[extra.list]]
-title = "blogs"
+title = "Blog"
 content = """ <a href="/blog/"> 技术博客</a> """
 
 [[extra.list]]
-title = "monthly"
+title = "Monthly Reading"
 content = """<a href="/monthly/"> 每月读书札记 </a>"""
 
 [[extra.list]]
-title = "thoughts"
+title = "Thoughts"
 content = """<a href="/thoughts/"> 思维火花 </a>"""
 
 [[extra.books]]
