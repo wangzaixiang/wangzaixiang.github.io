@@ -38,7 +38,7 @@ weight = 30
 
 [[extra.list]]
 title = "blogs"
-content = """ <a href="/blogs/"> 技术博客</a> """
+content = """ <a href="/blog/"> 技术博客</a> """
 
 [[extra.list]]
 title = "monthly"
