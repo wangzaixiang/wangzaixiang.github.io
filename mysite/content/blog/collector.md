@@ -6,7 +6,7 @@ draft = true
 template = "blog/page.html"
 +++
 
-1. Lit, SolidJS's incremental rendering architecture
+1. [X] Lit, SolidJS's incremental rendering architecture
 2. Functional Programming & Design
    - 副作用隔离
    - 结构化编程 与 结构化数据流，SSA

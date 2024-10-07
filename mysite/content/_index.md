@@ -41,7 +41,7 @@ title = "Blog"
 content = """ <a href="/blog/"> 技术博客</a> """
 
 [[extra.list]]
-title = "Monthly Reading"
+title = "Monthly Notes"
 content = """<a href="/monthly/"> 每月读书札记 </a>"""
 
 [[extra.list]]
