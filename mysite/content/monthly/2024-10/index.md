@@ -18,7 +18,9 @@ template = "blog/page.html"
    
    不过，这里作者的写法似乎有一些 BUG， SIMD 版本并不严格对应于 scalar 版本，有些地方的处理不一致。参考我之前的文章 
    [Mandelbrot-set CPU vs GPU comparison](@/blog/2024-08-17-mandelbrot-gpu.md)
-3. 
+3. 现代微处理器：90分钟速成指南！介绍了现代 CPU 的一些概念，如超标量、乱序执行、分支预测、缓存等、SIMD、SMT 等技术。
+   - [中文版](https://zhuanlan.zhihu.com/p/645343994)
+   - [English Version](https://www.lighterra.com/papers/modernmicroprocessors/)
 
 # MPP & OLAP
 

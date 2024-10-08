@@ -33,18 +33,18 @@ template = "blog/page.html"
    - 软件质量
    - 代码质量
    - Visibility 工具： 日志、监控、可视化、调试工具、REPL、Notebook
-9. 软件复杂性之 拆分、重组、分层、分领域、分角色、正交
+9. [X] 软件复杂性之 拆分、重组、分层、分领域、分角色、正交
    - 技术复杂性、业务复杂性
    - 时间不确定性
    - 空间不确定性
 10. 最优结构的标准：内聚、耦合、抽象层次一致性
 11. TDD 与 设计，由外而内的设计 vs 由内而外的设计， 自上而下 VS 自下而上
-12. 敏捷、精益
+12. [X] 敏捷、精益
     - 识别浪费
     - Pull style
     - iteration, visualization, PDCA
     - TDD 与 以迂为直
-13. Dax vs MDX vs Tableau Expression Language.
+13. [X] Dax vs MDX vs Tableau Expression Language.
     - MDX optimize 整理
 14. 理解 Rust 的语法糖
     - for in 

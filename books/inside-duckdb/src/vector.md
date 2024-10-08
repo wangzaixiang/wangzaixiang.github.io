@@ -6,6 +6,7 @@
    ![img.png](images/volcano-tpch-1-ipc.png)
 2. 即使在这 8.8% 的计算中，其 IPC(Instructions Per Cycle) 也不高，只有 0.8。即平均每个时钟周期只执行了 0.8 条指令。而现在的服务器 CPU
    是多发射架构，intel skylake 每个时钟周期理论上可以执行4条指令。 这与 tuple-at-a-time 的计算模型有关。
+   ![img.png](images/cpu-1.png) 来源：https://zhuanlan.zhihu.com/p/645343994 (具体的发射大小文档待查)
 3. 现代的 CPU 支持 SIMD 指令集，可以在一个时钟周期内执行多个相同操作的指令，这样可以提高计算效率。128/256/512 位的 SIMD 寄存器，可以在单条
    指令中操作 4/8/16 个 32-bit 的计算 或者 2/4/8 个 64-bit 的计算。
 4. tuple-at-a-time 的计算模型，对 CPU 的缓存友好性不好。无论是 I-cache 还是 D-cache，这些都会影响 IPC 的提升。

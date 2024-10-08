@@ -1,0 +1,1 @@
+../../../mysite/content/blog/2024-10-02-how-portable-simd-works/index.md
