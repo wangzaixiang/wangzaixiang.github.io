@@ -6,8 +6,6 @@ draft = false
 template = "blog/page.html"
 +++
 
-# Portable SIMD: How it works
-
 一直很好奇，portable simd 库是如何实现的，难道是修改了 rustc 的编译期，从而生成支持 SIMD 的机器代码？但在 portable-simd 的源代码中，
 并没有看到与 rustc 相关的修改。那么，portable-simd 是如何实现的呢？
 
@@ -151,3 +149,4 @@ template = "blog/page.html"
 2. rustc 内部有很多与 CPU 架构相关的 intrinsics 函数，这些函数在编译后（可能）会直接转换为目标 CPU 上的指令，而非函数调用。显然， intrinsics 函数
    的可移植能力对编译期来说，会是一个挑战。rustc 目前是建立在 LLVM 的基础之上，把这个责任转嫁给了 LLVM。
 3. 我们也可以参考 portable-simd 的实现，来利用 rustc 的 intrinsics 函数，来实现自己的某些特定操作。
+4. 了解 rustc 的编译过程，可以帮助我们更好的理解 Rust 语言生态。
