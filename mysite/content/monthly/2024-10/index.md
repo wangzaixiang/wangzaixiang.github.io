@@ -18,9 +18,30 @@ template = "blog/page.html"
    
    不过，这里作者的写法似乎有一些 BUG， SIMD 版本并不严格对应于 scalar 版本，有些地方的处理不一致。参考我之前的文章 
    [Mandelbrot-set CPU vs GPU comparison](@/blog/2024-08-17-mandelbrot-gpu.md)
+
 3. 现代微处理器：90分钟速成指南！介绍了现代 CPU 的一些概念，如超标量、乱序执行、分支预测、缓存等、SIMD、SMT 等技术。
    - [中文版](https://zhuanlan.zhihu.com/p/645343994)
    - [English Version](https://www.lighterra.com/papers/modernmicroprocessors/)
+
+4. [oxc: JavaScript Compiler 项目的性能优化记录](https://oxc.rs/docs/learn/performance.html)
+   oxc 项目是使用 Rust 编写的 JavaScript 编译器，最近 Vite 项目也在基于 oxc 开发新一代的 bundle: rolldown. OXC 以性能著称，这篇文章
+   介绍了作者在优化过程中采取的一系列措施，包括：
+   - AST 相关
+     - AST 内存分配。从每个小节点的分配、释放，Drop的成本较高，调整为为单个 AST 分配一个 arena，作为整体释放。提升 ～20%（也大为提升缓存友好性）
+       这个与 zig 的内存管理风格有些相似。
+     - Enum Size。使用 box 包装字段，减少 enum 占用大小。提升 ～10%。
+     - Span：将位置信息从 usize 调整到 u32. 提升 ～5%。
+     - String interning。 string-cache 存在并发问题，移除后，性能提升 ～30%。
+     - 对 string-cache 进行并发优化
+     - String inlining: 对 长度 <= 23 的字符串进行 inline, 避免使用 String。
+   - Lexer
+     - SIMD 
+     - keyword match
+   - Linter
+
+5. [gitoxide](https://github.com/Byron/gitoxide/tree/main) 用 rust 重新的 git 轮子。 git 生态已经是一个比较大的命令行生态了，这个
+   轮子的工作量并不小。
+
 
 # MPP & OLAP
 

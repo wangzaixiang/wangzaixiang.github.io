@@ -13,6 +13,7 @@ template = "blog/page.html"
    - 可测试性、可证明性
    - Monads, vs Direct Style
    - ADT 建模 
+     - [ ] 对 Reference 建模。在一个复杂的 ADT 中，如何建模对其他实体的引用，并发边应用进行处理？ 
    - DuckDB 等数据库执行引擎内部从 Query -> AST -> Logical Plan -> Physical Plan -> Pipeline -> Executor 的设计，也是一种典型的
      函数式风格。中间过程的数据结构，visibility 能力，对理解、调试、优化都有很大帮助。
    - 在设计数据模型的 SQL 查询引擎时，规划出 Query 的查询计划，然后再执行，也是非常函数式的风格。
