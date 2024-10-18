@@ -12,6 +12,13 @@ Summary
 - [Execution](./execution.md)
   - [execution-demo1](./execution-demo1.md)
   - [Pipeline](./pipeline.md) 
+- [Operators](./operators.md)
+  - [seq_scan](./seq_scan.md)
+  - [filter](./filter.md)
+  - [projection](./projection.md)
+  - [projection](./projection.md)
+  - [hash_join](./hash_join.md)
+  - [hash_group_by](./hash_group_by.md)
 
 # 其他组件
 - [Storage](./storage.md)

@@ -41,9 +41,15 @@ template = "blog/page.html"
 
 5. [gitoxide](https://github.com/Byron/gitoxide/tree/main) 用 rust 重新的 git 轮子。 git 生态已经是一个比较大的命令行生态了，这个
    轮子的工作量并不小。
+6. [x86 Intrinsics Cheat Sheet](https://db.in.tum.de/~finis/x86%20intrinsics%20cheat%20sheet%20v1.0.pdf) 这个是学习 SIMD 的好资料。
 
 
 # MPP & OLAP
+1. [Why Rust is taking the data engineering world by storm](https://kerkour.com/rust-data-engineering)
+   - 100G - 9T 规模的数据规模覆盖了 98% 的需求，之前需要一个大型的 MPP 集群，而现在，可以在1个服务器上完成。
+   - Rust + Cargo 改变了数据库应用的开发方式，不再需要一个 monlitic 的数据库，而是可以通过组合各种 crate 来完成。
+   - [很多数据库](https://datafusion.apache.org/user-guide/introduction.html#known-users)都采用 datafusion 作为计算引擎。
+2. [Big Data is dead](https://motherduck.com/blog/big-data-is-dead/)
 
 # Web & Visualization
 1. Bundlers
@@ -51,5 +57,11 @@ template = "blog/page.html"
    - [oxc-project](https://oxc-project.github.io)
    - [rolldown](https://rolldown.rs) based on oxc, vite 子项目，意在替换 esbuild 和 rollup，作为 dev/release 模式下统一的打包工具
 2. [brisa](https://brisa.build) 一个号称继承了组多前端框架特性的新轮子，对 webcomponent 和 SSR 都有支持，等发布了再看看。
+3. [Lit 支持 signals](https://lit.dev/blog/2024-10-08-signals/) 
+   
+   现在的组件有两种响应模式了：
+   - 对 组件 自己的 props/states 的变化的响应。
+   - 对 外部的 signal 的响应。
+   增加后者，带来了灵活性的同时，是否会带来更多的复杂性呢？
 
 # Tools & Libraries
