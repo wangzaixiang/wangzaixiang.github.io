@@ -17,3 +17,4 @@
 5. 编译选项：`-C target-cpu=native`，生成针对当前 CPU 的优化代码。
 6. 编译选项：`-C target-feature=+avx2`，生成针对 AVX2 指令集的优化代码。
 7. 编译选项：`-C target-feature=+avx512f`，生成针对 AVX512 指令集的优化代码。
+8. 交叉编译 `--target x86_64-apple-darwin` 在 M1 下编译生成 x86_64 的代码。

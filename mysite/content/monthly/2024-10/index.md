@@ -42,6 +42,7 @@ template = "blog/page.html"
 5. [gitoxide](https://github.com/Byron/gitoxide/tree/main) 用 rust 重新的 git 轮子。 git 生态已经是一个比较大的命令行生态了，这个
    轮子的工作量并不小。
 6. [x86 Intrinsics Cheat Sheet](https://db.in.tum.de/~finis/x86%20intrinsics%20cheat%20sheet%20v1.0.pdf) 这个是学习 SIMD 的好资料。
+7. [x86 Intrinsics Reference](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#) Intel 官方参考。
 
 
 # MPP & OLAP
@@ -50,6 +51,7 @@ template = "blog/page.html"
    - Rust + Cargo 改变了数据库应用的开发方式，不再需要一个 monlitic 的数据库，而是可以通过组合各种 crate 来完成。
    - [很多数据库](https://datafusion.apache.org/user-guide/introduction.html#known-users)都采用 datafusion 作为计算引擎。
 2. [Big Data is dead](https://motherduck.com/blog/big-data-is-dead/)
+3. [Apache Doris 3.0 里程碑版本｜存算分离架构升级、湖仓一体再进化](https://www.oschina.net/news/316422/apache-doris-3-0-released)
 
 # Web & Visualization
 1. Bundlers
@@ -58,6 +60,10 @@ template = "blog/page.html"
    - [rolldown](https://rolldown.rs) based on oxc, vite 子项目，意在替换 esbuild 和 rollup，作为 dev/release 模式下统一的打包工具
 2. [brisa](https://brisa.build) 一个号称继承了组多前端框架特性的新轮子，对 webcomponent 和 SSR 都有支持，等发布了再看看。
 3. [Lit 支持 signals](https://lit.dev/blog/2024-10-08-signals/) 
+4. 口水战： Web Components, Future or Not?
+   - [Web Components Are Not the Future](https://dev.to/ryansolid/web-components-are-not-the-future-48bh)
+      很遗憾，我都没有 get 到作者的点。
+   - [Web Components Are the Future](https://medium.com/@treeder/web-components-are-the-future-f0f9f0022686)
    
    现在的组件有两种响应模式了：
    - 对 组件 自己的 props/states 的变化的响应。
