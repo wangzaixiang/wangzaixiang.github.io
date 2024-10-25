@@ -13,7 +13,7 @@
 1. 查看 HIR 代码：`cargo rustc --release -- -Zunpretty=hir`
 2. 查看 MIR 代码：`cargo rustc --release -- -Zunpretty=mir`
 3. 查看 LLVM IR 代码：`cargo rustc --release -- --emit llvm-ir`，生成的文件在 `target/release/deps/` 目录下。
-4. 查看 ASM 代码： `cargo rustc --release -- --emit asm -C llvm-args=x86-asm-syntax=intel`，生成 intel 风格的汇编代码 (move dest src)
+4. 查看 ASM 代码： `cargo rustc --release -- --emit asm -C llvm-args=-x86-asm-syntax=intel`，生成 intel 风格的汇编代码 (move dest src)
 5. 编译选项：`-C target-cpu=native`，生成针对当前 CPU 的优化代码。
 6. 编译选项：`-C target-feature=+avx2`，生成针对 AVX2 指令集的优化代码。
 7. 编译选项：`-C target-feature=+avx512f`，生成针对 AVX512 指令集的优化代码。

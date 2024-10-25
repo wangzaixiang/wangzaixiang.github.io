@@ -43,6 +43,9 @@ template = "blog/page.html"
    轮子的工作量并不小。
 6. [x86 Intrinsics Cheat Sheet](https://db.in.tum.de/~finis/x86%20intrinsics%20cheat%20sheet%20v1.0.pdf) 这个是学习 SIMD 的好资料。
 7. [x86 Intrinsics Reference](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#) Intel 官方参考。
+8. 排序
+   - [排序算法 SIMD版本](https://www.vldb.org/pvldb/vol8/p1274-inoue.pdf)
+   - [x86-simd-sort](https://github.com/intel/x86-simd-sort)
 
 
 # MPP & OLAP
@@ -68,6 +71,12 @@ template = "blog/page.html"
     - [Web Components Are Not the Future](https://dev.to/ryansolid/web-components-are-not-the-future-48bh)
       很遗憾，我都没有 get 到作者的点。
     - [Web Components Are the Future](https://medium.com/@treeder/web-components-are-the-future-f0f9f0022686)
+5. wasm
+    - [Life of a Zed Extension: Rust, WIT, Wasm](https://zed.dev/blog/zed-decoded-extensions)
+      1. how an extension is built
+      2. using components model(IDL)
+      3. the wasm runtime: wasmtime
+   
 
 
 # Tools & Libraries
