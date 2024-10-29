@@ -14,6 +14,8 @@ template = "blog/page.html"
   - Chapter 2: The Nature of Complexity
 - [The Art of UNIX Programming](https://book.douban.com/subject/1467587/) 中文版：Unix编程艺术 (微信读书上有电子书)
   - Chapter 13: Complexity, As Simple As Possible, but No Simpler.
+- Rust for Rustaceans
+  - Chapter 3: Design Interfaces
 
 ## 复杂性的定义
 在`软件设计的哲学`一书中，对复杂性进行了如下定义：`软件的复杂性是指那些让系统难以理解的部份`：
@@ -122,7 +124,7 @@ template = "blog/page.html"
  在这种情况下，做必要的妥协是有价值的。（`UNIX编程艺术`一书中列举了系统调用中对无法屏蔽的中断的处理方式，以及 www 中对 404-Not Found 的处理方式
  就是将一定的复杂性从实现者转移到调用者去的很好案例。）
      
-## 如何降低实现复杂度：拆分（函数化、模块化、组件化）
+## 降低实现复杂度：拆分（函数化、模块化、组件化）
 
 排序算法是很有意思的算法，从最简单的冒泡排序 O(n^2) 到快速排序 O(n log(n))，其中的核心思想就是分拆，将一个大的问题分拆成小的问题，然后再组合。
 在这里，当问题分解到足够小时，它就变得简单了（衍生的问题是组合的成本）。软件的复杂性或许也是如此，其复杂度与内部规模的平方成正比，通过分拆后可以转化为
@@ -224,4 +226,80 @@ SOLID 可以作为模块拆分的一个参考。
 
 > 对降低复杂度的措施，后续持续更新中 ...
 
+## 降低接口复杂性之 DBC
+设计契约（Design by Contract）是一种软件设计方法，由 Bertrand Meyer 在 1986 年提出。Meyer 甚至创建了一门语言：Eiffel。Eiffel 语言的最大特征
+就是内置了对 Contract 的支持，将 DBC 从约定变为显式的编程构件。
+
+```eiffel
+note
+    description: "Simple bank accounts"
+
+class
+    ACCOUNT
+
+feature -- Access
+
+    balance: INTEGER
+            -- Current balance
+
+    deposit_count: INTEGER
+            -- Number of deposits made since opening
+        do
+            ... As before ...
+        end
+
+feature -- Element change
+
+    deposit (sum: INTEGER)
+            -- Add `sum' to account.
+        require
+            non_negative: sum >= 0
+        do
+            ... As before ...
+        ensure
+            one_more_deposit: deposit_count = old deposit_count + 1
+            updated: balance = old balance + sum
+        end
+
+feature {NONE} -- Implementation
+
+    all_deposits: DEPOSIT_LIST
+            -- List of deposits since account's opening.
+
+invariant
+    consistent_balance: (all_deposits /= Void) implies
+            (balance = all_deposits . total)
+    zero_if_no_deposits: (all_deposits = Void) implies
+            (balance = 0)
+
+end -- class ACCOUNT
+```
+
+DBC 只要由三个部份组成：
+1. 前置检查：一般是接口调用者需要保障的部份（调用者的职责）。当然，对于很多服务处理来说，前置检查也成为是服务提供者的责任。不过，一些基本的类型层面
+   的检查，更加建议直接通过强类型的方式来实现，在框架层进行检查，避免让服务提供者处理这类低层次的检查工作。
+2. 后置检查。后置检查是服务提供者在完成服务处理后，所需进行的必要检查，确保自身处理的正确性。
+3. 不变量。不变量是一类对象的基础契约，无论进行何种操作，都不应该破坏这种契约。
+
+现在，主流的编程语言，都没有对 DBC 的语言级显示支持，而改为使用 assert 机制来提供部份的 DBC 能力。作为接口设计的一部份，为接口（方法、对象）提供
+明确的契约定义，这应该成为设计的一部份：具备清晰、良好的契约定义的接口、对象，会有更加确定的边界。而反之，缺乏契约定义的接口、对象，很可能会产出
+不清晰的职责、不确定的边界，以及在 life time 中产生脏数据，从而使得后续的行为变得更为不可琢磨。
+
+以 RDBMS 为例，其提供了 table/column 级上的很多 constraint：
+1. unique index 保证了数据的唯一性，防止重复数据。
+2. not null 防止 null 数据进入。
+3. check 约束，保证数据的合法性。部份数据库可以定义一些列上的校验表达式。如 `CHECK (AGE >= 18)`
+4. foreign key：引用完整性。
+
+在能使用这些场景的地方，应该优先使用数据库的约束，而不是在应用层进行约束。不过，对很多互联网应用来说，由于分库分表等物理部署的约束，会限制使用
+foreign key，那么也需要在应用层有相应的应对措施，避免脏数据进入系统。脏数据进入系统，本身就以为着系统存在严重的 bug，更会导致后续复杂的处理、
+以及带来更多不确定的 BUG，从而使得复杂性恶化，是需要尽可能提前治理的。
+
+Contract 
+1. 可以作为文档的一部份，为接口的使用者提供价值，
+2. 可以作为测试的一部份，在测试阶段、试运行阶段，作为接口的内部保护器。
+3. 如果不是性能关切的，应该在运行期间进行必要的契约检查。如果某些契约检查有较高的性能成本，则可以考虑异步、批量的方式进行。
+
+
 ## 复杂性的度量
+未完、待续
