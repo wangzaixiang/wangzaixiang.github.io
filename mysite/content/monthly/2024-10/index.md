@@ -76,6 +76,18 @@ template = "blog/page.html"
       1. how an extension is built
       2. using components model(IDL)
       3. the wasm runtime: wasmtime
+6. [Svelte 5 发布](https://svelte.dev/blog/svelte-5-is-alive)
+
+   Svelte 是编译期优化的响应式框架，这个版本的特色是引入了 rune 的语法特征。
+   1. let count = $state(0);   // 申明 count 为一个响应式变量，这里仅仅是一个语法标识，而非函数调用。
+      > 从源代码的角度来看 count 仍然是未封装的 number，但编译期为其创建了一个分装的响应式变量，只是源代码中获取的是 wrapper 的值
+      > 当然，对 value 的赋值操作也被改写成为对 wrapper 的操作。
+      > 通过 $state 这个 rune 标识的变量读写，都被编译器进行了改写，而非通过运行期反射方式。
+      >
+      > Svelte 5 为什么要做这一个从隐式（Svelte 4）到显式的调整，这样做会有什么优点？这个在官网有一个 [说明](https://svelte.dev/blog/runes):
+      > - 显示说明，似乎是一种回退？
+      > - 对复杂项目，可以更好的理解哪个变量是响应式的（在变量的定义时明确），对 .svelte/.js 代码保持一致。
+   2. Svelte 与 solidjs 是类似的原理。后续可以做一个特性上的对比。
    
 
 
