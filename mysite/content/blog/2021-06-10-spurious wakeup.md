@@ -7,6 +7,9 @@ template = "blog/page.html"
 
 [taxonomies]
 authors = ["wangzx"]
+
+[extra]
+toc = true
 +++
 
 # 无端唤醒（spurious wakeup）

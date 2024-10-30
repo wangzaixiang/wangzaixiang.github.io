@@ -7,6 +7,9 @@ template = "blog/page.html"
 
 [taxonomies]
 authors = ["wangzx"]
+
+[extra]
+toc = true
 +++
 
 # 实例讲解 Java 内存模型

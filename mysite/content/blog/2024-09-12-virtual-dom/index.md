@@ -7,6 +7,9 @@ template = "blog/page.html"
 
 [taxonomies]
 authors = ["wangzx"]
+
+[extra]
+toc = true
 +++
 
 DOM 更新技术本身是一步技术演进历史，本文收集了从远古时间 到 最新的技术，并整理了我对其的理解。目前还只是一个提纲，后续有时间会慢慢细化。

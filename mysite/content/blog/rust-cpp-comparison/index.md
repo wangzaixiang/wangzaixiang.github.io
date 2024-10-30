@@ -8,6 +8,9 @@ template = "blog/page.html"
 [taxonomies]
 authors = ["wangzx"]
 
+[extra]
+toc = true
+
 +++
 
 本文内容节选自：

@@ -7,6 +7,9 @@ template = "blog/page.html"
 
 [taxonomies]
 authors = ["wangzx"]
+
+[extra]
+toc = true
 +++
 
 本文是数据分析表达式语言系列之二，主要介绍我对 Tabular 的理解。

@@ -4,6 +4,9 @@ description = "敏捷研发与过程管理"
 date = 2022-03-20
 draft = false
 template = "blog/page.html"
+
+[extra]
+toc = true
 +++
 
 本文是我在任深圳科脉公司CTO期间，在公司内部进行敏捷动员的一个 PPT 讲稿，分享了我对敏捷研发与过程管理的理解、实践经验。

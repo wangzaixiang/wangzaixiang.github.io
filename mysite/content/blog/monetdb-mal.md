@@ -7,6 +7,9 @@ template = "blog/page.html"
 
 [taxonomies]
 authors = ["wangzx"]
+
+[extra]
+toc = true
 +++
 
 MonetDB 是一个基于列存的 OLAP 数据库引擎，最近看到的很多 OLAP 引擎，包括 [DuckDB](https://duckdb.org)、[Polars](https://pola.rs)

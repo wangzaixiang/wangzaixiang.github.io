@@ -4,6 +4,9 @@ description = "LLVM 学习笔记"
 date = 2024-10-06
 draft = false
 template = "blog/page.html"
+
+[extra]
+toc = true
 +++
 
 # Why learn LLVM?

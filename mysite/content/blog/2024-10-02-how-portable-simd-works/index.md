@@ -4,6 +4,9 @@ description = "portable-simd 是一个 Rust 库，提供了一种跨平台的 SI
 date = 2024-10-02
 draft = false
 template = "blog/page.html"
+
+[extra]
+toc = true
 +++
 
 一直很好奇，portable simd 库是如何实现的，难道是修改了 rustc 的编译期，从而生成支持 SIMD 的机器代码？但在 portable-simd 的源代码中，

@@ -4,6 +4,9 @@ description = "账务系统设计及应用"
 date = 2016-06-15
 draft = false
 template = "blog/page.html"
+
+[extra]
+toc = true
 +++
 
 摘要：本文来自中生代技术交流群的分享。分享者：王在祥，现任快塑网 CTO，具有20年IT从业经验，目前负责大宗商品电商快塑网的B2B平台，

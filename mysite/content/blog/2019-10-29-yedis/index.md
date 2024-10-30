@@ -7,6 +7,9 @@ template = "blog/page.html"
 
 [taxonomies]
 authors = ["wangzx"]
+
+[extra]
+toc = true
 +++
 
 Redis是互联网应用中广泛使用的缓存解决方案，以其高性能、丰富的数据结构、简单易用的API而著称，基本上已经成为了互联网应用的基础设施，

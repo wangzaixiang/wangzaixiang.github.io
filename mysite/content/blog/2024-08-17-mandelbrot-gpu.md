@@ -7,6 +7,9 @@ template = "blog/page.html"
 
 [taxonomies]
 authors = ["wangzx"]
+
+[extra]
+toc = true
 +++
 
 本文承接上一片文章 [wgpu 代码阅读](@/blog/wgpu.md), 在阅读 wgpu 代码的基础上，通过一个实例来对比 CPU 和 GPU 的性能。

@@ -7,6 +7,9 @@ template = "blog/page.html"
 
 [taxonomies]
 authors = ["wangzx"]
+
+[extra]
+toc = true
 +++
 
 本文是想通过案例来学习 vectorize 的 使用、效果，以加深对这项技术的理解。

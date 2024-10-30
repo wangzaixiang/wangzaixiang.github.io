@@ -4,6 +4,9 @@ description = "关于软件复杂性"
 date = 2024-10-07
 draft = false
 template = "blog/page.html"
+
+[extra]
+toc = true
 +++
 
 复杂性是软件开发中最为核心的问题，绝大多数的创新，包括方法论、工具、框架、编程语言等，都可以说是为了应对复杂性的挑战而产生的。众多软件产品、

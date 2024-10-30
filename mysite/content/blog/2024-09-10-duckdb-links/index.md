@@ -7,6 +7,9 @@ template = "blog/page.html"
 
 [taxonomies]
 authors = ["wangzx"]
+
+[extra]
+toc = true
 +++
 
 最近，在评估引入一个 SQL 执行引擎，以取代分析产品对上游数据库的特性的依赖，这些差异给产品带来了显著的困难：

@@ -7,6 +7,9 @@ template = "blog/page.html"
 
 [taxonomies]
 authors = ["wangzx"]
+
+[extra]
+toc = true
 +++
 
 在Polymer的最新Blog中，介绍了新的webcomponent开发框架：LitElement 。作为一个Polymer的资深粉，这些年一直处在且爱且恨之中：
