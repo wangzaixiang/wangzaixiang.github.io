@@ -81,6 +81,18 @@ template = "blog/page.html"
   2. 由于不再bundle，对单个module的修改，无需重新build整个项目，以及重新下载整个大的bundle文件。
   3. 由于不再bundle，对多页面应用，可以更好的利用浏览器的缓存机制。（不同页面 bundle 会导致重复的下载）
 
+  反面意见：https://dev.to/konnorrogers/why-we-still-bundle-with-http2-in-2022-3noo
+  1. 太多的碎片，会产生瀑布式的请求，因为有一些请求是依赖于其他请求的，这种依赖关系，会导致 HTTP/2 也无法发挥。（优化：将深层次的 import 
+     提升到上一层来？改进采用 modulepreload）
+  2. 无法享受 tree shaking 带来的好处，后者可以减少下载的大小。
+  
+  Maybe 最佳实践:
+  1. 开发阶段，不使用 pack，减少 build 时间，并且方便 Hot Reload
+  2. 生产阶段，转为 package, module 两个层级，在 package 上进行 pack, 一个 package 作为一个 前端的单元。源代码级别的 module 太细粒度了。
+
+  以 shoelace 项目为例，我们可以将组件分为：高频、低频、庞大的组件，拆分为3-5个 package。
+
+
 - [Signals behind the scenes](https://levelup.gitconnected.com/signals-behind-the-scenes-19cbcb6b802b) 介绍了响应式款架 中
   Signal API 的实现原理。
   - Variable Manager: 是我设计的一个更为宏观层面（响应联路更长、且支持异步处理）的前端变量响应式管理器，目前在内部产品中使用，后续整理成技术文章。
