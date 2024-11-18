@@ -18,6 +18,15 @@ toc = true
    - 选择更好的库： faer 
    - IO 优化
    - const generics
+2. [Using portable SIMD in stable Rust](https://pythonspeed.com/articles/simd-stable-rust/)
+   > 延续：[October 2024](@/monthly/2024-10/index.md#Languages) 中 faster Mandelbrot with SIMD  一文
+
+   本文介绍了：
+   - 使用 wide 这个库，在 stable rust 中使用 SIMD 的方法。 （可以了解一下 wide 是如何通过 safe_arch 这个库来处理多平台架构的
+     支持的）。
+   
+     按照本文的测试，wide的性能相比 portable-simd 要慢一些，但比 scalar 的版本还是有成倍的提升。
+   - 使用 pulp 库，这个库是一个 high level SIMD abstraction. 也是 stable rust 的。
 
 # MPP & OLAP
 
@@ -36,5 +45,17 @@ toc = true
        过程可以在服务端完成。
        - 一个挑战：SSR 和 CSR 混合使用时，CSR 是如何将动态数据与 Declarative Shadow DOM 结合的？brisa 在这方面似乎比 Lit SSR 做的更优雅一些。
    - 约定而非配置。这使得应用变得非常简单。
+3. Web Components UI Library
+   - [Shoelace](https://shoelace.style)
+   - [SAP UI5](https://sap.github.io/ui5-webcomponents/blog/releases/announcing-v2/)
+   - [Cisco Momentum](https://github.com/momentum-design/momentum-ui/tree/master/web-components#:~:text=lit-element)
+   - [Adobe](https://opensource.adobe.com/spectrum-web-components/components/underlay)
+   - [Stencil Components](https://crayons.freshworks.com) Build with Stencil.
+   - [Vaadin](https://vaadin.com/docs/latest/components)
+   - [Sale Force](https://developer.salesforce.com/docs/component-library/overview/components)
+   以下库目前处在未维护、更新状态
+   - [Elix](https://github.com/elix/elix)
+   - [Hope UI](https://hope-ui.netlify.app) 被 pigment 替代，但目前尚未发布 
+   - [MWC](https://github.com/material-components/material-components-web) mwc is in maintenance mode.
 
 # Tools & Libraries
