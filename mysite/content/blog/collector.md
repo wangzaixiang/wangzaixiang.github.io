@@ -45,9 +45,8 @@ template = "blog/page.html"
    - 与 antlr 的性能对比
    - 源代码及数据结构分析
    - 如何增加一种语言的支持（增加Scala的支持？）
-10. SIMD 排序
-11. Rust intrinsic
-12. 产品质量思考
+10. Rust intrinsic
+11. 产品质量思考
     - 产品定义的质量
     - 软件设计（定义、概念、API）
     - 软件设计（实现：拆分、架构）
