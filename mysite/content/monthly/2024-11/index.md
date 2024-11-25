@@ -27,6 +27,17 @@ toc = true
    
      按照本文的测试，wide的性能相比 portable-simd 要慢一些，但比 scalar 的版本还是有成倍的提升。
    - 使用 pulp 库，这个库是一个 high level SIMD abstraction. 也是 stable rust 的。
+3. [Runtime Scripting for Rust Applications](https://www.youtube.com/watch?v=M8dpH3rO-2M) [PDF](https://dl.korz.dev/eurorust2024.pdf)
+    - Python.  PyO3(Rust bindings for Python) / RustPython(a interpreter written in Rust)
+    - Lua:  lightweight.(355k lua vs 25M cpython vs 37m V8) [mlua bindings to rust](https://github.com/mlua-rs/mlua)
+    - JavaScript
+      - V8: [rusty_v8r](https://crates.io/crates/v8) , deno_core, deno_ast, deno_runtime
+      - JavaScriptCore: [rusty_jsc](https://github.com/wasmerio/rusty_jsc) [jsc.rs](https://github.com/endoli/javascriptcore.rs)
+      - SpiderMonkey: [mozjs](https://github.com/servo/mozjs)
+    - WASM
+    - rhai: AST-interpreter, dynamic typed
+    - mun:  AOT, static typed, hot reloading. LLVM based
+    - 
 
 # MPP & OLAP
 
