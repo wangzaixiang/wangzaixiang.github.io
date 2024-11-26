@@ -58,7 +58,8 @@ AST 得操作，这会带来：
 
 Bison 的这个数据结构设计很有意思，之前我也阅读过代码，但对这个压缩的数据结构没有细化的分析，这对调试 Bison 生成的 Parser 代码还是会构成
 一些障碍，乘着这次在调试一个 SQL 编译期的过程，花了一些时间来彻底理解它的数据结构设计，感觉有必要进行记录，一来是理解 Bison  的数据结构，方便后续
-调试 Parser 代码时，能够更加的得心应手。二来也觉得这个数据结构的设计，非常精巧，值得学习。
+调试 Parser 代码时，能够更加的得心应手。二来也觉得这个数据结构的设计，非常精巧，值得学习。 LR 文法也是有限自动机的一个最佳实践，其设计之精巧，
+令人赞叹。
 
 在我们测试的案例中，
 1. terminal 共94个，编号为 0..93 (不同与 Lexer 中的编码，在 Lexer 中，为 1-255 的字符保留了 Lexer 编码，如果某个编码没有对应的 terminal,
@@ -76,7 +77,6 @@ yytable 中存储了两部份的信息：
   - non_terminal -> `yycheck[ state1 .. stateN ]` 这个在 yypgoto 中描述，如果 yycheck( yypgoto(non_terminal) + state ) == state，则表示有效的 goto
   - non_terminal -> `yytable[ state1 .. stateN]`, 如果是有效的 goto,则 yytable( yypgoto(non_terminal) + state ) 是goto 后的新状态。
 yytable 实际上是上述两个压缩表的合并。
-
 
 ## `short[] yypact, yytable, yycheck`
 这三个表结合起来，构成了 (state, terminal) -> state 的映射关系。
@@ -111,8 +111,32 @@ goto_table 由两部份组成：
 - yyr2: 对应于每一个产生式的右侧符号的数量。
 
 # Bison 的异常处理
+Bison 提供了 error recovery 的机制，有一个特殊的内置终结符：error，可以使用如下的方式来处理错误：
+```yacc
+prog: expr '\n' { printf("result: %d\n", $1);    # 1
+    | error '\n' { yyerrok; }                    # 2
+    ;
 
-未完成，待续
+expr: expr '+' expr { $$ = $1 + $3; }            # 3
+  | expr '-' expr { $$ = $1 - $3; }              # 4
+  | expr '*' expr  { $$ = $1 * $3; }             # 5
+  | expr '/' expr  { $$ = $1 / $3; }             # 6
+  | '(' expr ')' { $$ = $2; }                    # 7
+  | NUMBER { $$ = $1; }                          $ 8
+  ;
+```
+> 上述文法，需要结合 Bison 的终结符的优先级定义、左右结合定义来消除冲突。这也是 LR 文法的一大特点，诸如运算符表达式，可以简单
+> 的通过运算符的优先级、结合性来解决，既简单也非常符合人类的思维习惯。
+
+1. YYNEWSTATE -> YYERRLAB( yyreportSyntaxError ) -> YYERRLAB1 (从 stack 中查找一个可以 shift error 的状态，将其后的输入输入作为 error 终结符)
+   -> YYNEWSTATE 
+2. 需要注意，如果在 parse 过程中，已经完成了规约，但最后被 error 所覆盖，则之前规约的结果会被丢弃，因此，规约过程中应避免副作用的产生。
+   例如：对 ` 1 * 2 + hello\n ` 这个输入， 在遇到 + 号时，会完成 expr(1) * expr(2) 的规约的，而后在 处理 expr '*' 之后，遇到 error，此时将
+
+对上述文法，以 `1 * 2 + hello\n` 为例：在 词法分析器不认识 hello 时，会产生一个 error token, 此时 解析器会从 stack(记录了从初始状态，每次经历一个 
+terminal/nonterminal 到达当前的状态的全过程) 中查找到最近的一个支持 shift error 操作的状态，在这里，(#2:0 即 . error '\n' ) 状态是支持 
+shift error的，此时会把这个状态后的所有输入作为 error 重新压栈（原有的该状态后的栈被对应清楚）。直到下一个终结符为 '\n'， 此时会使用 #2 产生式进行规约，
+实现错误的恢复。
 
 # Location 
 

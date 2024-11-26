@@ -37,7 +37,6 @@ toc = true
     - WASM
     - rhai: AST-interpreter, dynamic typed
     - mun:  AOT, static typed, hot reloading. LLVM based
-    - 
 
 # MPP & OLAP
 
