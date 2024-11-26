@@ -122,7 +122,8 @@ expr: expr '+' expr { $$ = $1 + $3; }            # 3
   | expr '*' expr  { $$ = $1 * $3; }             # 5
   | expr '/' expr  { $$ = $1 / $3; }             # 6
   | '(' expr ')' { $$ = $2; }                    # 7
-  | NUMBER { $$ = $1; }                          $ 8
+  ｜ expr '?' expr ':' expr                      # 8
+  | NUMBER { $$ = $1; }                          # 9
   ;
 ```
 > 上述文法，需要结合 Bison 的终结符的优先级定义、左右结合定义来消除冲突。这也是 LR 文法的一大特点，诸如运算符表达式，可以简单
@@ -141,3 +142,17 @@ shift error的，此时会把这个状态后的所有输入作为 error 重新�
 # Location 
 
 # Comments 处理
+
+AST 对语法结构来说，是一种很好的表示结构，但对源代码中的注释来说，则并不适合：注释可以出现在源代码中的任意位置，其不具有 AST 的语义结构，因此，如何在 AST 中表示
+注释是一个挑战。
+
+在 Parser 的过程中保留 Comments 在有些场景中是有必要的，在我们的 parser 中，有两个已知的应用场景：
+- 对不符合标准的 SQL 语法，但需要在目标数据库中支持的 SQL语法，可以使用 `/*@ @*/` 的方式嵌入到 SQL 中。
+- 可以在 SQL 中嵌入一些 hint，用于辅助目标数据库的性能优化。
+
+我们的处理方式：
+1. 词法分析器处理 comments，并作为 下一个 token 的 comments 属性，返回给 parser.（相当于每一个 token 都有一个 comments 属性）
+2. 在 产生式规约时：
+   - 如果第一个符号($1)是 terminal，则将 $1.comments 作为 Y 的 preComments
+   - 在产生式中的其他终结符，其注释可以挂载到其前 nonTerminal 的 postComments 或者其后 nonTerminal 的 preComments 上。
+   - 如果出现连续的 non terminal， 中间的注释将无法精确定位。
