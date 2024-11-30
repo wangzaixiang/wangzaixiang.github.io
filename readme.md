@@ -17,7 +17,7 @@
      mdbook serve -d $"(pwd)/mysite/static/inside-duckdb" --open ./books/inside-duckdb 
     ```
    
-2. runs zola
+3. runs zola
    ```shell
     cd mysite; zola serve -O
    ```

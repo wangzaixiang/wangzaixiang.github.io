@@ -37,6 +37,11 @@ toc = true
     - WASM
     - rhai: AST-interpreter, dynamic typed
     - mun:  AOT, static typed, hot reloading. LLVM based
+4. a deep dive into the bun architecture
+    - [part 1](https://makwritinghouse.com/bun/a-deep-dive-into-the-bun-architecture-part-1/)
+      - core layer(using C/Zig): managing JS runtime, the native HTTP server, and the file system.
+      - API layer(using js).
+   目前没有后续的文章。
 
 # MPP & OLAP
 
