@@ -72,6 +72,10 @@ content = """<a href="https://github.com/dapeng-soa/dapeng-soa">dapeng-soa</a> �
 title = "duckdb 源代码阅读笔记"
 content = """<a href="/inside-duckdb/index.html">inside-duckdb</a>"""
 
+[[extra.books]]
+title = "零散学习笔记"
+content = """<a href="/learning/index.html">学习笔记</a>"""
+
 #[[extra.list]]
 #title = "Full text search"
 #content = "Search your Doks site with FlexSearch. Easily customize index settings and search options to your liking."

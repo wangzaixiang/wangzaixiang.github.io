@@ -101,7 +101,72 @@ const Writer = struct {
    
 2. 包含 comptime 的方法，有些类似于 C++ template，会在 callsite 进行展开。在不被展开时，这个方法只要没有明显的语法错误，
    就可以编译通过，并不检查任何类型性的错误。（更类似于 C++ Template，不同于 Rust Generic ）
+   和 comptime 最为相似的是 Scala3 的 Macro。
+
 3. Zig 中的 Tuple 可以理解为字段名是匿名的 Struct，.{ } 既可以定义 struct，也可以定义 Tuple。
    Tuple 可以使用 `[index]` 方式访问内部元素。
 
+4. zig 中的范型
+   - anytype 范型
+   - comptime 范型
+
 type 是什么？ @TypeOf 的值在运行期就是一个字符串，描述了类型名。
+
+# comptime
+
+## comptime parameter
+
+```zig
+fn max(comptime T: type, a: T, b: T) T {
+    return if (a > b) a else b;
+}
+
+// 这个方法是有错误的，但因为没有被调用，所以编译时并不报错
+fn do_sth(comptime T: type): T {
+   return T.MAX_VALUE; // 
+}
+
+// 这个方法是有错误的，但因为没有被调用，所以编译时并不报错
+fn do_sth2() i16 {
+   return i16.MAX_VALUE;
+}
+
+test "try to pass a runtime type" {
+    foo(false);
+}
+fn foo(condition: bool) void {   
+// fn foo(comptime condition: bool) void {   // change condition to comptime will fix the error
+    const result = max(if (condition) f32 else u64, 1234, 5678);  // error: condition is not a comptime value
+    _ = result;
+}
+```
+1. `type` 是一个元类型，其值是一个类型，这个类型只能出现在编译期。zig 并没有提供 `type` 这个类型的内部结构（一般的，运行期所有的类型
+都有自己的 layout 结构，但是 zig 语言中并没有定义 `type` 的 layout 结构），其内部结构是一个 opaque 的值，且仅能在 compile time
+中存在。
+2. comptime parameter 为 ziglang 提供了 generic 机制， 实际调用方法时，会为 comptime parameter 参数展开。
+3. zig 的 generic 处理，更类似于 C++ 的 template，而非 Rust 的 generic。 参考上例，do_sth 中的 T.MAX_VALUE 是一个
+   无效的访问，但是因为没有被调用，所以编译器并不会报错。
+4. 不仅对 generic 的方法，对普通的方法，如果没有被调用，编译器也不会报错。
+
+## comptime variable
+1. 类似于 comptime parameter, comptime variable 也是一个编译期的值，不过，由于对 call site 透明，因此，并不会作为 generic 机制。
+2. comptime parameter 也是一种类型的 comptime variable.
+3. comptime variable 与 inline 结合时，可以实现混合：代码中一部分在编译期计算（展开、替换），一部分在运行期计算。（可以和 Scala3 inline 
+   机制做一个对比，zig comptime + inline 比 scala3 inline 更简单，功能更强大，但功能完备性应该不如 Scala3 quotes API，后者可以在编译期
+   直接操作 type 信息和 AST，理论上可以处理任何 blackbox 的功能，但 ziglang 具有 whitebox 的能力，又超出了 Scala3 Macro的边界）
+
+> inline switch
+> inline while
+> inline for
+> inline if
+> inline fn
+
+comptime variable
+
+## comptime expression: 在编译期进行求值大的表达式
+
+
+
+2. 
+
+参考：https://zhuanlan.zhihu.com/p/622600857
