@@ -22,7 +22,7 @@ jobs:
           cargo binstall -y mdbook-mermaid
           mdbook build books/wjson -d `pwd`/mysite/static/wjson
           mdbook build books/inside-duckdb -d `pwd`/mysite/static/inside-duckdb
-          mdbook build bools/learning -d `pwd`/mysite/static/learning
+          mdbook build books/learning -d `pwd`/mysite/static/learning
 
       - name: build_and_deploy
         uses: shalzz/zola-deploy-action@v0.19.1
