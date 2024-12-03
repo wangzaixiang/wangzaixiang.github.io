@@ -4,6 +4,7 @@
 // main.zig
 const std = @import("std");
 
+// 这个方法没有太大的业务逻辑，目的仅仅是防止优化，让 longLoop(n) 方法的耗时更明显
 fn longLoop(n: usize) usize {
     var sum: usize = 0;
 

@@ -1,6 +1,13 @@
-# 学习笔记
+# Summary
 
-- [zig learning](./zig.md)
-  - [understand print in zig](./zig/print_in_zig.md)
-  - [comptime](./zig/comptime.md) 
-  - [How comptime works](./zig/how_comptime_works.md)
+# rust-lang
+
+# zig-lang
+- [misc](zig_misc.md)
+- [understand print in zig](zig_print_in_zig.md)
+- [comptime](zig_comptime.md) 
+- [How comptime works](zig_how_comptime_works.md)
+
+# scala-lang
+
+# DuckDB
