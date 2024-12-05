@@ -17,8 +17,6 @@ toc = true
    - zig comptime vs rust macro
    - zig comptime vs Scala meta programming. 
    
-     zig comptime 更适合对比 scala3 inline，在这方面，zig 更强大一些，可以直接操作 type。不过，如果加上 scala.quotes.Quotes API 这个
-     开挂的 compiler API，我估计Scala3 更强大一些。（至少，目前，还没有看到 zig 提供代码的 AST 的API，当然，代价就是编程的难度也显著增加）
 
 # comptime expression 是如何执行的？
 
@@ -65,7 +63,7 @@ pub fn main() !void {
 1. 编译 main.zig, `zig build-exe -O ReleaseFast src/main.zig`, 耗时 21s. 调整 comptime longLoop(n) 的参数， 分别耗时如下：
 
    | n       | compile time | runtime eval | comptime eval |
-         |---------|--------------|--------------|---------------|
+   |---------|--------------|--------------|---------------|
    | 1       | 4.5s         | 0ms          | 0ms           |
    | 10      | 4.5s         | 0ms          | 0ms           |
    | 100     | 4.5s         | 0ms          | 0ms           |
@@ -91,13 +89,16 @@ pub fn main() !void {
 
 ## 对比 Scala3 Macro
 
+我对 Scala3 Macro 了解较多，wsql, wjson等项目都深度依赖 macro 提供的强大能力，rust macro 则只是泛泛了解。因此，很多时候，会对照
+Scala3 macro 来理解 zig comptime. 
+   
 由于目前 zig comptime 执行的一些限制，例如：
-> - All code with runtime side effects or depending on runtime values emits a compile error.
-> - All function calls cause the compiler to interpret the function at compile-time, 
->  emitting a compile error if the function tries to do something that has global runtime side effects.
-> 
 
-1. 加上目前的 interpret 执行方式的可能性能损失，zig comptime 会有一些限制，而 scala3 macro 则不会受上述限制。
-2. Scala3 quotes API 有更强的反射能力，可以直接操作 AST。在一些动态生成代码的场景会更灵活。
+1. 不能有 runtime side effects, 加上目前的 interpret 执行方式的可能性能损失，zig comptime 会有一些限制，而 scala3 macro 则不会受上述限制。
+   > - All code with runtime side effects or depending on runtime values emits a compile error.
+   > - All function calls cause the compiler to interpret the function at compile-time,
+   >  emitting a compile error if the function tries to do something that has global runtime side effects.
+2. Scala3 quotes API 有更强的反射能力，可以直接操作 AST，在一些动态生成代码的场景会更灵活（这个API本身是 Scala Compiler 的API）。
+   zig 目前来看，是不提供对代码的 AST 反射、操纵的能力的。
 3. 限制：Scala3 目前的 macro 提供的都是 blackbox macro, 也就是说，macro 自身并不影响外部的类型系统，例如，不能添加新的
    类型、方法、变量等，即使添加了，也无法为其他代码所感知。zig comptime 则可以直接创新新的类型。（这也是 zig generic 的实现方式）
