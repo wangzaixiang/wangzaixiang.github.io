@@ -28,6 +28,7 @@ toc = true
       7. TypedValue: value with type.
       
       理解 comptime, 我准备了一个实验，参考：[comptime 是如何工作的](/learning/zig/how_comptime_works.html)
+2. [发现了 Zig 编译器的一个 BUG](@/blog/2024-12-04-a-zig-bug/index.md)，还比较严重的。
 
 # MPP & OLAP
 
