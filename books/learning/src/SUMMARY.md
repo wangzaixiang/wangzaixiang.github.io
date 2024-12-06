@@ -9,7 +9,6 @@
 - [How comptime works](zig_how_comptime_works.md)
 - [Stack-Layout](zig_stack_layout.md)
 - [A Zig Compiler Bug](zig_a_bug.md)
+- [dynamic construct a type in comptime](zig_dynamic_construct_a_type_in_comptime.md)
 
 # scala-lang
-
-# DuckDB

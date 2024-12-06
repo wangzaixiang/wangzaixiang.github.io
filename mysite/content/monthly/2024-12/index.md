@@ -29,6 +29,9 @@ toc = true
       
       理解 comptime, 我准备了一个实验，参考：[comptime 是如何工作的](/learning/zig/how_comptime_works.html)
 2. [发现了 Zig 编译器的一个 BUG](@/blog/2024-12-04-a-zig-bug/index.md)，还比较严重的。
+3. Scala Macro: 两篇关于 Scala 3 Macro 的文章，较为深入，值得收藏学习。
+   - [Crafting types with Scala 3 macros - Part 1: Introduction to macros](https://inoio.de/blog/2024/07/14/scala3-macros-part1/)
+   - [Crafting types with Scala 3 macros - Part 2: A Whitebox Macro](https://inoio.de/blog/2024/07/15/scala3-macros-part2/)
 
 # MPP & OLAP
 
