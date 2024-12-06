@@ -90,6 +90,11 @@ pub fn main() void {
 
 ```
 
+## 参考
+- Zig Cli: 处理 CLI 是 comptime 的一个很实用的场景。 rust/scala 都玩这个。
+  - [Zig CLI](https://zigcli.liujiacai.net/modules/simargs/)
+  - [Zig Clap](https://github.com/Hejsil/zig-clap)
+
 ## 结论
 1. std.builtin.Type 类似于 scala.quotes.TypeRepr，是 comptime 时用于描述 Type 的元数据结构。
 2. 目前来看，并没有提供动态构建一个 Fn ，即操作 AST 的 API。因此，动态构建的类型，还是有一些局限的。
