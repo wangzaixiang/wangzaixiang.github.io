@@ -32,23 +32,20 @@ template = "blog/page.html"
    - 软件质量
    - 代码质量
    - Visibility 工具： 日志、监控、可视化、调试工具、REPL、Notebook
-7. [X] 敏捷、精益
-   - 识别浪费
-   - Pull style vs Push Style
-   - iteration, visualization, PDCA
-   - TDD 与 以迂为直
-8. 理解 Rust 的语法糖
+7. 理解 Rust 的语法糖
    - for in 
    - `x[i]`
    - deref
-9. Yacc
-   - 与 antlr 的性能对比
-   - 源代码及数据结构分析
-   - 如何增加一种语言的支持（增加Scala的支持？）
-10. Rust intrinsic
-11. 产品质量思考
-    - 产品定义的质量
-    - 软件设计（定义、概念、API）
-    - 软件设计（实现：拆分、架构）
-    - 软件实现（编码）
-    - 软件测试：可测试性、测试成本。
+8. Rust intrinsic
+9. 产品质量思考
+   - 产品定义的质量
+   - 软件设计（定义、概念、API）
+   - 软件设计（实现：拆分、架构）
+   - 软件实现（编码）
+   - 软件测试：可测试性、测试成本。
+10. meta programming
+   - dapeng SOA
+   - macro: scala, rust, zig
+   - java: reflection, JDBC metadata.
+   - ADT / JSON Schema.
+   - code as data, data as code

@@ -1,6 +1,9 @@
 # Summary
 
 # rust-lang
+- [Prefaces](rust_prefaces.md)
+- [compiler vectorization](rust_vectorization-1.md)
+
 
 # zig-lang
 - [misc](zig_misc.md)

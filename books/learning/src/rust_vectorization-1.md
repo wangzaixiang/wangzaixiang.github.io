@@ -1,3 +1,4 @@
+本篇分析一下 rust 语言的编译期自动向量化的特性。
 
 ```rust
 #[inline(never)]
