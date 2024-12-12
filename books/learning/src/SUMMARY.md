@@ -13,5 +13,6 @@
 - [Stack-Layout](zig_stack_layout.md)
 - [A Zig Compiler Bug](zig_a_bug.md)
 - [dynamic construct a type in comptime](zig_dynamic_construct_a_type_in_comptime.md)
+- [Zig Structure of Array test](zig_soa_test.md)
 
 # scala-lang
