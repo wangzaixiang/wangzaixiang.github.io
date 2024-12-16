@@ -13,9 +13,12 @@ toc = true
 1. zen: Only one obvious way to do things. 显示，直接。
    - No Hidden control flow. 没有隐藏的函数调用。（当然也没有析构函数、隐式转换、自动解引用等等）。缺点是抽象可能不够，优点是代码更直接。
    - No hidden allocations. 看一个函数是否有内存分配，只需要看它是否有 allocator 参数了
+   - No variable shadowing. 虽然写代码时，可能会有一些不便，但对阅读代码来说，更直接一些。
 2. comptime
    - zig comptime vs rust macro
    - zig comptime vs Scala meta programming.
+   - If a container level variable is const then its value is comptime-known, otherwise it is runtime-known
+   - type/ std.built.Type 等类型，只存在于 comptime 中，很多代码需要可 inline.
 
 # 2. comptime expression 是如何执行的？
 
@@ -81,8 +84,31 @@ pub fn main() !void {
    编译时长为50s。而 runtime eval 的耗时仅仅是从 0ms 增长到 19ms, 这可以说明，compile 阶段，comptime eval 并非 native 方式执行 longLoop
    代码，而是采用了一种 AST interpreter 的方式执行代码，在这个场景中，效率有上千倍的差距。（这个案例仅为测试目的，实际 comptime 的耗时差距一般
    会显著低于这个差距，甚至在大部份情况下，对使用者无明显感知）。
+2. 之前，我是使用 fib(n) 来测试 comptime 的，参考：
+   ```zig
+   const std=@import("std");
+   
+   fn fibonacci(index:i64)i64 {
+       if (index < 2) return index;
+       return fibonacci(index-1)+ fibonacci(index - 2);
+   }
+   pub fn main() !void {
+        const n:i64 = 50;
+        // const result = fibonacci(n);// run: 37.8s,compile:4.34s
+        const result = comptime fibonacci(n); // compile 4.3s run: 0s
+        std.debug.print("fib(f})= {}\n", .{n, result }); 
+   }
+   ```
+   这个案例看起来很反常：fib(50) 在运行期执行耗时 37.8s, 而 comptime 耗时则近乎为0（4.34s 是zig compile -O ReleaseFast 的基准时间），为什么
+   comptime 的耗时这么低呢？猜测是对 fib 计算进行了 cache 优化，这一点也从 zig 的文档中得到了证实：
+   ```zig
+    // Functions called at compile-time are memoized. This means you can
+    // do this:
+    try expect(LinkedList(i32) == LinkedList(i32));
+   ```
+   因为 zig 对 AST 的解释执行，并且进行了 memoize 优化，所以才有了在这里，解释执行比编译执行版本更快的情况。
 
-2. comptime evaluation 是在 Sema 阶段完成的。参考文档：[Zig Sema](https://mitchellh.com/zig/sema)
+3. comptime evaluation 是在 Sema 阶段完成的。参考文档：[Zig Sema](https://mitchellh.com/zig/sema)
 
    我还没有看懂这篇文章。
 

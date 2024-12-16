@@ -162,6 +162,7 @@ pub fn main() !void {
 
 # 3. 总结
 1. 利用 Zig 的 comptime 特性，可以生成一个 SOA 的数据结构（TODO）
+   - 限制：目前来看，无法为 dynamic struct 生成动态的操作方法。
 2. zig 对 这种 SOA 的数据结构的访问，由于编译优化，实际上是高效的，完全无需担心额外的性能开销。（Zero Cost Abstraction）
 3. Rust 采用 macro 应该也能实现类似的方式。相比之下，comptime 应该更简单一些。毕竟 rust macro 本质上又是另外一门语言了。
 4. comptime 生成的类型，在调试器中是有很清晰的结构。不过，IDE 对这类的支持还不够完善。相比 rust, zig 的调试看起来要清爽很多。

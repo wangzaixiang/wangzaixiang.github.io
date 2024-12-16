@@ -78,6 +78,7 @@ toc = true
       - 组件的互操作性。 ABI 兼容性。在框架A中编写一个组件，在框架B、C、D中使用。
       - 我们不需要就如何编写组件达成一致，我们只需要在底层实现达成一致，这样就可以实现组件的互操作性。
       - Element? Component? 谁是谁的子集？组件不一定是 Element，不是 Element 的组件，不一定要作为 WebComponent, JS Module 足以。
+   - 2024-11 [WebComponents Are (a Part of) the Future](https://c5r.medium.com/webcomponents-are-a-part-of-the-future-94a2b0940314)
 5. wasm
     - [Life of a Zed Extension: Rust, WIT, Wasm](https://zed.dev/blog/zed-decoded-extensions)
       1. how an extension is built
