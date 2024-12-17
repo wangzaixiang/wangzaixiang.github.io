@@ -79,6 +79,15 @@ toc = true
       - 我们不需要就如何编写组件达成一致，我们只需要在底层实现达成一致，这样就可以实现组件的互操作性。
       - Element? Component? 谁是谁的子集？组件不一定是 Element，不是 Element 的组件，不一定要作为 WebComponent, JS Module 足以。
    - 2024-11 [WebComponents Are (a Part of) the Future](https://c5r.medium.com/webcomponents-are-a-part-of-the-future-94a2b0940314)
+   - [Why I don't use web components](https://dev.to/richharris/why-i-don-t-use-web-components-2cia)
+      - 渐进式组件对 JS 的依赖？ tiny case
+      - css in js. little case.
+      - 标准、稳定性。 little case
+      - polyfills.
+      - slot composition. WEB 组件对 lighting DOM 缺少延迟处理。
+      - props or attrs. 
+      - The DOM is bad, write less code. 又一个双向绑定的争论。 svelte 有对双向绑定的支持。
+      这篇文章有比较具体的技术点，不过，从我的角度上看，是一些偏好行的选择。
 5. wasm
     - [Life of a Zed Extension: Rust, WIT, Wasm](https://zed.dev/blog/zed-decoded-extensions)
       1. how an extension is built
