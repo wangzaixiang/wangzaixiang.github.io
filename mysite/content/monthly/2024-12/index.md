@@ -38,10 +38,10 @@ toc = true
 2. Scala 3.6.2 Released
    - Clause Interleave. 支持: `def getOrElse(k: Key)[V >: k.Value](default: V): V`, 更强的 path-dependent type.
    - Improve Syntax for Context Bounds and Givens
-   - NamedTuple 很期待的一个语法糖，可以让使用 Tuple 的代码更加可读。 对 参数较多的 case class 进行 pattern match 也可以享受 NamedTuple 的便利了。 
+   - NamedTuple 很期待的一个语法糖，可以让使用 Tuple 的代码更加可读。 对 参数较多的 case class 进行 pattern match 也可以享受 NamedTuple 的便利了
 3. [How We Made the Deno Language Server Ten Times Faster, +8s -> <1s](https://denoland.medium.com/how-we-made-the-deno-language-server-ten-times-faster-62358af87d11)
-   - 封装（样式、行为通过 Shadow DOM）、互操作性(框架无关)、标准化       、
-   
+   - 封装（样式、行为通过 Shadow DOM）、互操作性(框架无关)、标准化
+4. [Modeling in scala, part 1: modeling you domain](https://kubuszok.com/2024/modeling-in-scala-part-1/)
 
 # MPP & OLAP
 
@@ -50,5 +50,6 @@ toc = true
 2. [Scoped Components](https://medium.com/dev-jam/functional-web-components-with-lit-part-2-3521a82bf339)
    - 可以为某个组件的 html`` 中使用的 webcomponent 提供一个 scope，重新定义 tag -> element 的映射关系。
    - 为组件提供示例级的 css
+3. [Setting up bun in webstorm](https://medium.com/@muthuishere/setting-up-bun-as-your-javascript-runtime-in-webstorm-and-other-jetbrains-ides-ae98f9368557)
 
 # Tools & Libraries
