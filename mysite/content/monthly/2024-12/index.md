@@ -46,7 +46,7 @@ toc = true
 # MPP & OLAP
 
 # Web & Visualization
-1. [WC 在现代I中的无名贡献](https://blog.devgenius.io/widget-wonders-web-components-the-unsung-heroes-of-modern-ui-052131d692be)
+1. [WC 在现代UI中的无名贡献](https://blog.devgenius.io/widget-wonders-web-components-the-unsung-heroes-of-modern-ui-052131d692be)
 2. [Scoped Components](https://medium.com/dev-jam/functional-web-components-with-lit-part-2-3521a82bf339)
    - 可以为某个组件的 html`` 中使用的 webcomponent 提供一个 scope，重新定义 tag -> element 的映射关系。
    - 为组件提供示例级的 css
