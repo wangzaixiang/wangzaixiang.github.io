@@ -44,6 +44,7 @@ toc = true
 4. [Modeling in scala, part 1: modeling you domain](https://kubuszok.com/2024/modeling-in-scala-part-1/)
 
 # MPP & OLAP
+1. [Hot Module Replacement](https://bjornlu.com/blog/hot-module-replacement-is-easy#importmetahotaccept)
 
 # Web & Visualization
 1. [WC 在现代UI中的无名贡献](https://blog.devgenius.io/widget-wonders-web-components-the-unsung-heroes-of-modern-ui-052131d692be)
@@ -51,5 +52,11 @@ toc = true
    - 可以为某个组件的 html`` 中使用的 webcomponent 提供一个 scope，重新定义 tag -> element 的映射关系。
    - 为组件提供示例级的 css
 3. [Setting up bun in webstorm](https://medium.com/@muthuishere/setting-up-bun-as-your-javascript-runtime-in-webstorm-and-other-jetbrains-ides-ae98f9368557)
-
+4. No Build 后续
+   - [Why do we still need bundlers](https://rolldown.rs/guide/in-depth/why-bundlers)
+     1. HTTP/2 并不意味可以停止关心 HTTP 请求的数量（大部份浏览器的限制是100个，每个请求的额外开销），对包含数千个模块的应用仍然需要 bundling。
+     2. 深层次的 import 会导致 waterfalls.
+     3. Cache:
+     4. 减少网络字节数
+     5. 编译优化
 # Tools & Libraries

@@ -92,7 +92,6 @@ template = "blog/page.html"
 
   以 shoelace 项目为例，我们可以将组件分为：高频、低频、庞大的组件，拆分为3-5个 package。
 
-
 - [Signals behind the scenes](https://levelup.gitconnected.com/signals-behind-the-scenes-19cbcb6b802b) 介绍了响应式款架 中
   Signal API 的实现原理。
   - Variable Manager: 是我设计的一个更为宏观层面（响应联路更长、且支持异步处理）的前端变量响应式管理器，目前在内部产品中使用，后续整理成技术文章。

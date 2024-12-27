@@ -1,5 +1,8 @@
 # Summary
 
+# C++
+- [CPP Optimizations](cpp_optimizations.md)
+
 # rust-lang
 - [Prefaces](rust_prefaces.md)
 - [compiler vectorization](rust_vectorization-1.md)
