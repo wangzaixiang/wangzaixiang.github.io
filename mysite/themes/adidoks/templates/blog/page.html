@@ -22,14 +22,39 @@
     <div class="row justify-content-center">
       {{ macros_toc::docs_toc(page=page) }}
       <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
         <article>
           <div class="blog-header">
             <h1>{{ page.title }}</h1>
-            {{ macros_publish::page_publish_metadata(page=page) }}
+            <nav style="display: flex; justify-content: space-between">
+              {% if page.lower %}
+              <a href="{{ page.lower.permalink | safe }}"> ⇦ Previous </a>
+              {% endif %}
+
+              {{ macros_publish::page_publish_metadata(page=page) }}
+
+              {% if page.higher %}
+              <a href="{{ page.higher.permalink | safe }}"> Next ⇨ </a>
+              {% endif %}
+            </nav>
+
           </div>
           {% if page.extra.lead %}<p class="lead">{{ page.extra.lead | safe }}</p>{% endif %}
           {{ page.content | safe }}
         </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          {% if page.lower %}
+          <a href="{{ page.lower.permalink | safe }}"> ⇦ Previous </a>
+          {% endif %}
+
+          {% if page.higher %}
+          <a href="{{ page.higher.permalink | safe }}"> Next ⇨ </a>
+          {% endif %}
+        </nav>
+
       </div>
     </div>
   </div>
