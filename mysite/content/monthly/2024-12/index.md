@@ -44,7 +44,6 @@ toc = true
 4. [Modeling in scala, part 1: modeling you domain](https://kubuszok.com/2024/modeling-in-scala-part-1/)
 
 # MPP & OLAP
-1. [Hot Module Replacement](https://bjornlu.com/blog/hot-module-replacement-is-easy#importmetahotaccept)
 
 # Web & Visualization
 1. [WC 在现代UI中的无名贡献](https://blog.devgenius.io/widget-wonders-web-components-the-unsung-heroes-of-modern-ui-052131d692be)
@@ -59,4 +58,6 @@ toc = true
      3. Cache:
      4. 减少网络字节数
      5. 编译优化
+5. [Hot Module Replacement: How it works?](https://bjornlu.com/blog/hot-module-replacement-is-easy#importmetahotaccept)
+
 # Tools & Libraries

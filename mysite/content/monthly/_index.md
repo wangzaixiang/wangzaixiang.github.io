@@ -1,5 +1,5 @@
 +++
-title = "Monthly Notes"
+title = "Monthly Digest"
 description = "每月读书札记"
 sort_by = "date"
 paginate_by = 12

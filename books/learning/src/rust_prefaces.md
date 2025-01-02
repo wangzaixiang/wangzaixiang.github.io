@@ -16,6 +16,6 @@
 4. 查看 ASM 代码： `cargo rustc --release -- --emit asm -C llvm-args=-x86-asm-syntax=intel`，生成 intel 风格的汇编代码 (move dest src)
 5. 编译选项：`-C target-cpu=native`，生成针对当前 CPU 的优化代码。
 6. 编译选项：`-C target-feature=+avx2`，生成针对 AVX2 指令集的优化代码。
-7. 编译选项：`-C target-feature=+avx512f`，生成针对 AVX512 指令集的优化代码。
+7. 编译选项：`-C target-feature=+avx512f,+popcnt`，生成针对 AVX512 + popcnt 指令集的优化代码。
 8. 交叉编译 `--target x86_64-apple-darwin` 在 M1 下编译生成 x86_64 的代码。
 9. 对有的 cargo 命令，如 cargo bench，可以使用 RUSTFLAGS 环境变量传递

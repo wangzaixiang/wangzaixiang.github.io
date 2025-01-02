@@ -7,6 +7,9 @@
 - [Prefaces](rust_prefaces.md)
 - [compiler vectorization](rust_vectorization-1.md)
 
+# simd
+- [simd-1](simd-1.md)
+
 
 # zig-lang
 - [misc](zig_misc.md)
