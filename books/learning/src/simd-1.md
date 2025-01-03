@@ -407,4 +407,43 @@ fn aggregate_data_simd2(orders: &Orders) -> (f64, u32) {
    ```
    
    对应的 CFG 如下：
+   ```mermaid
+   flowchart TD
+    start[MStart] -->|len < 16| bb12
+    start -->|len >= 16| bb11_lr_ph
+
+    bb11_lr_ph --> bb11
+    bb12 --> bb29
+    bb12 -->|has_remain| bb27_lr_ph
+
+    bb27_lr_ph --> bb27_preheader
+    bb27_lr_ph --> vector_ph
+    vector_ph --> unroll_16_body
+
+    bb27_preheader --> bb27
+
+    unroll_16_body --> middle_block
+    middle_block --> bb27_preheader
+    unroll_16_body --> unroll_16_body
+
+    bb11 -->|&orders.amount i.. 越界| bb14
+    bb11 --> bb15
+
+    bb29 --> END[End]
+    bb27 --> unroll_1_body
+    bb27 --> panic --> unreachable[Unreachable]
+
+    unroll_1_body --> bb27
+    unroll_1_body --> bb29
+
+    bb15 --> simd_block
+    bb15 --> bb18 --> unreachable
+
+    bb14 --> unreachable
+
+    simd_block --> bb12
+    simd_block --> bb11
+   ```
    ![img.png](simd-1-cfg.png)
+   
+   - [ ] 阅读 LLVM-IR 代码，需要有一个 CFG 工具，以及可以对 变量， block 进行重命名的工具。
