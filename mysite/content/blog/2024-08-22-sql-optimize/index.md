@@ -88,7 +88,7 @@ toc = true
    - partial merge：右表在关联字段上排序。
    - direct: 类似于 Hash，针对于特定的存储引擎类型。
    
-   {{ resize_image(path="@/blog/sql-optimize/clickhouse-joins.png", width=600, height=400, op="fit_width") }}
+   {{ resize_image(path="@/blog/2024-08-22-sql-optimize/clickhouse-joins.png", width=600, height=400, op="fit_width") }}
    
    1. [Join Types supported in ClickHouse](https://clickhouse.com/blog/clickhouse-fully-supports-joins-part1)
    2. [Hash Join, Parallel HashJoin, Grace HashJoin](https://clickhouse.com/blog/clickhouse-fully-supports-joins-hash-joins-part2)

@@ -1,9 +1,12 @@
 +++
 title = "收集箱 ..."
 description = "记录一些准备整理的主题"
-date = 2024-12-31 
+date = 2025-12-31 
 draft = true
 template = "blog/page.html"
+
+[extra]
+toc = true
 +++
 
 1. Functional Programming & Design

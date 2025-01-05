@@ -1,5 +1,5 @@
 +++
-title = "LLVM 学习笔记"
+title = "LLVM 学习系列一：初读 LLVM-IR 示例代码"
 description = "LLVM 学习笔记"
 date = 2024-10-06
 draft = false
@@ -220,3 +220,6 @@ toc = true
     2. 使用选项 -C target-cpu=native 来生成针对当前 CPU 的优化代码。`cargo rustc --target x86_64-apple-darwin --release -- -C target-cpu=native --emit asm`
     3. 使用选项 -C target-feature=+avx2 来生成针对 AVX2 指令集的优化代码。
     4. cargo -vv 可以查看详细的执行命令行参数。 
+- 系列链接
+    1. [LLVM 学习系列一：初读 LLVM-IR 示例代码](@/blog/2024-10-06-learning-llvm/index.md)
+    2. [LLVM 学习系列二：从一段简单的C代码来学习LLVM-IR](@/blog/2025-01-05-learning-llvm-2/index.md) 

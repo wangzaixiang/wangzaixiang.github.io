@@ -10,6 +10,8 @@
 # simd
 - [simd-1](simd-1.md)
 
+# LLVM
+- [从一个简单的C代码来学习LLVM-IR](demo-llvm-ir.md)
 
 # zig-lang
 - [misc](zig_misc.md)

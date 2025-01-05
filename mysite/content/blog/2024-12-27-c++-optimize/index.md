@@ -206,3 +206,11 @@ pub fn main(){
 1. normal 模式下，编译期的预测与实际数据是一致的，但生成的代码效率与 likely 下的效率像差很大，主要原因应该是 无条件branch 导致的流水线的空转。
 2. unlikely 模式下，两个 if 分支的预测都是错误的，其性能相比 likely 下降了 25%， 应该说还是很明显的。
 3. 即使是 likely 完全预测准确，也有可能生成不够高效的代码。这里的 normal 模式就是一个例子。在这种情况下，或许最终的方案还是要手写的汇编才能达到最优。
+
+# links
+1. [Performance optimization — branchless programming](https://medium.com/@techhara/performance-optimization-technique-branchless-programming-a40c0a35511e)
+   这篇文章中的示例，通过消除分支，实现了 6-7倍的性能提升。
+2. [Performance optimization—efficient cache programming 1](https://medium.com/@techhara/performance-optimization-efficient-cache-programming-f107dce3bef0)
+   通过减少 struct 的大小，提高 cache 命中率，性能提升 31%， cache miss rate 从 39% 降低到 13%。
+3. [How to write code to make the cpu execute faster](https://blog.devgenius.io/cpu-cache-how-to-write-code-to-make-the-cpu-execute-faster-cc0cf4969c4b)
+   cache 友好的代码编写。
