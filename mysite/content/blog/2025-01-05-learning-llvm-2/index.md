@@ -145,6 +145,7 @@ int demo1(int x) {
 2. 本文中的 passes 生成工具，脚本是通过 github copilot 辅助生成的 rust 脚本，稍微调整一下后，就可以使用，来辅助分析 IR。 
 3. 后续：
    - 对于复杂的 IR 代码，需要有一个从 IR 生成 CFG 的工具，这样可以更好的理解 IR 的控制流程。我会在后面的学习中，使用 rust 来编写这个工具。
+     > 初稿已经完成，可以参考：https://github.com/wangzaixiang/my-llvm-tools/blob/main/src/bin/ll2cfg.rs
    - 可以使用本文中介绍的方法，逐步阅读更为复杂的 LLVM IR 代码，学习 LR 的基本知识。
    - 下一步重点关注的是向量化代码的编译过程，评估直接基于 LLVM 生成向量化的关系计算代码的可行性。
 4. 系列链接

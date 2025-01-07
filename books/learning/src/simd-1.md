@@ -408,6 +408,7 @@ fn aggregate_data_simd2(orders: &Orders) -> (f64, u32) {
    
    对应的 CFG 如下：
    ```mermaid
+   %% 
    flowchart TD
     start[MStart] -->|len < 16| bb12
     start -->|len >= 16| bb11_lr_ph
