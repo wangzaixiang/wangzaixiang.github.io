@@ -37,6 +37,11 @@ template = "blog/page.html"
    - `/sys/devices/system/cpu/cpu0/cache/index[0123]/coherency_line_size` for cache line size.
    - sched_setaffinity: set the CPU affinity of a process.
    - `array[i][j]` 访问顺序对 cache 的影响。
+4. [Zig Comptime is Bonkers Good 疯狂的好](https://www.scottredig.com/blog/bonkers_comptime/)
+   - view 0: 语法噪音少，你几乎可以忽略它。
+   - view 1: 没有泛型，但有更好的泛型。
+   - view 2: 编译期执行的标准 zig 代码。
+   - view 3/4/5: 混合 comptime + runtime，展开成新的代码。
 
 # MPP & OLAP
 
