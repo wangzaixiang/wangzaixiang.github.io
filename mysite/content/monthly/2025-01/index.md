@@ -42,6 +42,13 @@ template = "blog/page.html"
    - view 1: 没有泛型，但有更好的泛型。
    - view 2: 编译期执行的标准 zig 代码。
    - view 3/4/5: 混合 comptime + runtime，展开成新的代码。
+5. [Mesh: compacting memory management for C/C++ applications](https://github.com/plasma-umass/Mesh/raw/master/mesh-pldi19-powers.pdf)
+   概览了这篇论文，很有创意的内存管理方式，减少物理内存碎片（而非虚拟内存），提高物理内存的使用效率。
+   - 如果两个 virtual page 中的活跃分配没有重叠，则可以合并映射到同一个 physical page.
+   - 在 Linux 上，可以通过 /dev/mem 来访问物理内存。可以通过 /proc/pid/pagemap, 参考：[Accessing physical memory from userspace on Linux](https://codentium.com/accessing-physical-memory-from-userspace-on-linux/#)
+   - Linux 系统调用 `memfd_create(name, flags)` 创建一个虚拟文件，其内容在 virtual memory 中，这个文件接下来又可以 mmap 到虚拟内存中。
+   - 在 Mac 上是通过 mkstemp 创建一个文件，保留 fd 然后 unlink 改文件。这样的话，理论上会多一个 IO 的开销。[Stackoverflow](https://stackoverflow.com/questions/39779517/does-mac-os-have-a-way-to-create-an-anonymous-file-mapping)
+   - 参考实现：[LibMesh](https://github.com/plasma-umass/Mesh)
 
 # MPP & OLAP
 
