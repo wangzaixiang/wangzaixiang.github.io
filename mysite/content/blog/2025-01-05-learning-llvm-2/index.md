@@ -122,6 +122,105 @@ int demo1(int x) {
    - SROA: An optimization pass providing Scalar Replacement of Aggregates. This pass takes allocations which can be completely
      analyzed (that is, they don't escape) and tries to turn them into scalar SSA values.
      刚开始的时候，IR 并不是严格意义上的 SSA，对每个变量的读写都是通过 alloca 和 load/store 来实现的，这个 pass 将这些变量转换为 SSA 形式。
+   - pass 7: After SimplifyCFGPass
+      {% mermaid() %}
+      ```mermaid
+      flowchart TD
+      %% function demo1
+      %1["  %2 = alloca i32, align 4
+        %3 = alloca i32, align 4
+        store i32 %0, ptr %2, align 4, !tbaa !5
+        call void @llvm.lifetime.start.p0(i64 4, ptr %3) #2
+        store i32 0, ptr %3, align 4, !tbaa !5
+        %4 = load i32, ptr %2, align 4, !tbaa !5
+        %5 = icmp eq i32 %4, 1
+        br i1 %5, label %6, label %7"]
+          %1 -->|%6| %6
+      %6["  store i32 10, ptr %3, align 4, !tbaa !5
+        br label %16"]
+          %1 -->|%7| %7
+      %7["  %8 = load i32, ptr %2, align 4, !tbaa !5
+        %9 = icmp eq i32 %8, 100
+        br i1 %9, label %10, label %11"]
+          %7 -->|%10| %10
+      %10["  store i32 20, ptr %3, align 4, !tbaa !5
+        br label %16"]
+          %7 -->|%11| %11
+      %11["  %12 = load i32, ptr %2, align 4, !tbaa !5
+        %13 = icmp eq i32 %12, 200
+        br i1 %13, label %14, label %15"]
+          %11 -->|%14| %14
+      %14["  store i32 30, ptr %3, align 4, !tbaa !5
+        br label %16"]
+          %11 -->|%15| %15
+      %15["  store i32 40, ptr %3, align 4, !tbaa !5
+        br label %16"]
+          %10 -->|%16| %16
+          %15 -->|%16| %16
+          %14 -->|%16| %16
+          %6 -->|%16| %16
+      %16["  %17 = load i32, ptr %3, align 4, !tbaa !5
+        call void @llvm.lifetime.end.p0(i64 4, ptr %3) #2
+        ret i32 %17"]
+      style %16 stroke:#0f0
+      ```
+     {% end %}
+   - 2: pass 8:  After SROAPass
+      {% mermaid() %}
+      ```mermaid
+      flowchart TD
+      %% function demo1
+      %1["  %2 = icmp eq i32 %0, 1
+        br i1 %2, label %3, label %4"]
+          %1 -->|%3| %3
+      %3["  br label %11"]
+          %1 -->|%4| %4
+      %4["  %5 = icmp eq i32 %0, 100
+        br i1 %5, label %6, label %7"]
+          %4 -->|%6| %6
+      %6["  br label %11"]
+          %4 -->|%7| %7
+      %7["  %8 = icmp eq i32 %0, 200
+        br i1 %8, label %9, label %10"]
+          %7 -->|%9| %9
+      %9["  br label %11"]
+          %7 -->|%10| %10
+      %10["  br label %11"]
+          %6 -->|%11| %11
+          %10 -->|%11| %11
+          %9 -->|%11| %11
+          %3 -->|%11| %11
+      %11["  %12 = phi i32 [ 10, %3 ], [ 20, %6 ], [ 30, %9 ], [ 40, %10 ]
+        ret i32 %12"]
+      style %11 stroke:#0f0
+      ```
+      {% end %}
+
+   - 3: pass 17:  After SimplifyCFGPass
+      {% mermaid() %}
+      ```mermaid
+      flowchart TD
+      %% function demo1
+      %1["  switch i32 %0, label %4 [
+          i32 1, label %5
+          i32 100, label %2
+          i32 200, label %3
+        ]"]
+              %1 -->|%2| %2
+      %2["  br label %5"]
+              %1 -->|%3| %3
+      %3["  br label %5"]
+              %1 -->|%4| %4
+      %4["  br label %5"]
+              %1 -->|%5| %5
+              %2 -->|%5| %5
+              %4 -->|%5| %5
+              %3 -->|%5| %5
+      %5["  %6 = phi i32 [ 20, %2 ], [ 30, %3 ], [ 40, %4 ], [ 10, %1 ]
+        ret i32 %6"]
+      style %5 stroke:#0f0
+      ```
+      {% end %}
    
 6. 通过 opt 命令来重现某个 pass 的优化过程：（部份 pass 输出的 IL 需要简单的手工调整方能正确执行）
    ```shell
@@ -145,7 +244,8 @@ int demo1(int x) {
 2. 本文中的 passes 生成工具，脚本是通过 github copilot 辅助生成的 rust 脚本，稍微调整一下后，就可以使用，来辅助分析 IR。 
 3. 后续：
    - 对于复杂的 IR 代码，需要有一个从 IR 生成 CFG 的工具，这样可以更好的理解 IR 的控制流程。我会在后面的学习中，使用 rust 来编写这个工具。
-     > 初稿已经完成，可以参考：https://github.com/wangzaixiang/my-llvm-tools/blob/main/src/bin/ll2cfg.rs
+     > 初稿已经完成，可以参考：[ll2cfg](https://github.com/wangzaixiang/my-llvm-tools/blob/main/src/bin/ll2cfg.rs)
+     > 本文中的 CFG 流程图均使用该工具生成。 
    - 可以使用本文中介绍的方法，逐步阅读更为复杂的 LLVM IR 代码，学习 LR 的基本知识。
    - 下一步重点关注的是向量化代码的编译过程，评估直接基于 LLVM 生成向量化的关系计算代码的可行性。
 4. 系列链接
