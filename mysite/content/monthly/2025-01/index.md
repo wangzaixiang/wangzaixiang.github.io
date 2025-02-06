@@ -50,6 +50,16 @@ template = "blog/page.html"
    - 在 Mac 上是通过 mkstemp 创建一个文件，保留 fd 然后 unlink 改文件。这样的话，理论上会多一个 IO 的开销。[Stackoverflow](https://stackoverflow.com/questions/39779517/does-mac-os-have-a-way-to-create-an-anonymous-file-mapping)
    - 参考实现：[LibMesh](https://github.com/plasma-umass/Mesh)
 
+6. [M1: A demo shows how to read Intel or Apple M1 CPU performance counter in macOS.](https://gist.github.com/ibireme/173517c208c7dc333ba962c1f0d67d12)    
+   终于找到了一个在 M1 下度量 IPC 的方法了。接下来我会改进一下这个工具，后续可以用来辅助度量自己编写的代码的性能。
+   - 我把这个工具简单的改进了一下，可以对某个进行进行度量，代码提交到了 [github](https://github.com/wangzaixiang/m1_ipc_measure) 上，目前还很原始，
+     使用方式：
+     1. clang -o kpc main.c
+     2. ./kpc 2 command args  # 启动 command, 并度量 2s 的 IPC(目前需确保 命令执行时长大于2s * 2)
+     就可以度量出 IPC, branch misses 等信息了。使用这个工具度量了一下最近的 1brc 代码，IPC达到了 4.70, branch misses 为 2.6%。有这些数据，可以
+     更好的指导如何进行代码优化。
+   - 参考：[Counting cycles and instructions on the Apple M1 processor](https://github.com/lemire/Code-used-on-Daniel-Lemire-s-blog/tree/master/2021/03/24)
+
 # MPP & OLAP
 
 # Web & Visualization
