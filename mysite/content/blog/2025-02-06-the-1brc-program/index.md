@@ -100,7 +100,7 @@ pub fn ver1() -> Result<HashMap<String,(f32,f32,f32)>, Box<dyn std::error::Error
 1. 耗时：107.9s
 2. IPC: 4.91 (看起来还很不错)
 3. Branch misses: 0.64%
-4. [samply]() profile:
+4. [samply](https://github.com/mstange/samply) profile:
    ![img.png](img.png)
    - read_line: ~46s
      - read_line: ~37.7s
