@@ -34,7 +34,7 @@ toc = true
 原项目是使用Java进行挑战，不过在本文中，我会尝试基于 Rust 来完成这个挑战，毕竟，Rust 距离 CPU 更近，有更多的空间可供我们腾挪。当然，对我来说，也是一次
 学习 Rust 的机会。
 
-# ver1: 原始版本
+# ver1: 原始版本 108s
 
 ```rust
 use crate::MEASUREMENT_FILE;
@@ -100,7 +100,7 @@ pub fn ver1() -> Result<HashMap<String,(f32,f32,f32)>, Box<dyn std::error::Error
 1. 耗时：107.9s
 2. IPC: 4.91 (看起来还很不错)
 3. Branch misses: 0.64%
-4. [samply](https://github.com/mstange/samply) profile [link](https://github.com/wangzaixiang/onebrc_rust/blob/master/profiles/profile-v1.json):
+4. [samply](https://github.com/mstange/samply) profile [link](https://share.firefox.dev/3WMkb80):
    ![img.png](img.png)
    ```bash
    samply load profiles/profile-v1.json  
@@ -121,7 +121,7 @@ pub fn ver1() -> Result<HashMap<String,(f32,f32,f32)>, Box<dyn std::error::Error
 第一个基线版本出来了，看起来，read_line 是目前最大的瓶颈，其中真实的 IO 开销并不高（本次测试的电脑有64G内存，因此，文件的内容大概率是全部在 Page Cache中的，
 并不会涉及到真实的IO，目前来看，2.76s 读取完全部文件内容，看起来还是比较快的），而花在 查找换行符，复制数据（String）、解析UTF-8、分配和释放内存的耗时占比很比。
 
-# ver2
+# ver2, 89s
 在 ver1 中，我们发现 read_line 中 `Vec::extend_from_slice` 上花费了12.75s 的时间，原因是我们每次读取并返回一个新行（String），处理完成后
 就释放掉这个该字符串（～7.7s），如果我们不重复分配、释放内存，而是复用一个 String 呢？简单的做如下修改：[详细代码](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver2.rs)：
 ![diff_ver2_ver1.png](diff_ver2_ver1.png)
@@ -130,7 +130,7 @@ pub fn ver1() -> Result<HashMap<String,(f32,f32,f32)>, Box<dyn std::error::Error
 1. 耗时：89.3s (-17.6s, +16.3%)
 2. IPC: 4.57
 3. Branch misses: 8.4%
-4. [samply profile](https://github.com/wangzaixiang/onebrc_rust/blob/master/profiles/profile-v2.json)
+4. [samply profile](https://share.firefox.dev/4htrWrC)
 
 看起来不错，几行代码的修改，就提升了16.3%的性能，查看 samply profile, 计划要消除的耗时都如预期的减少了。
 1. 内存分配和释放的成本，并没有那么的廉价（当然，这个案例可是10亿次循环，把这个成本给放大了）。对于parser 处理 AST 这样的场景，多遍遍历，
@@ -140,7 +140,7 @@ pub fn ver1() -> Result<HashMap<String,(f32,f32,f32)>, Box<dyn std::error::Error
    上更加高效：一是由于内存整理，避免了碎片的存在，分配内存成本更低。二是几种的释放，尤其是分代GC下年轻代的复制回收机制，成本相比逐一的回收会有
    显著的提升。但无论如何，如果能避免分配和释放，才是最佳的选择。
 
-# ver3
+# ver3, 65s
 
 消除了 read_line 的内存分配和释放的成本，我们的瓶颈点又转移到了 `line.split(';').collect::<Vec<&str>>()` 上，这个操作的成本是22s，其主要成本也是
 花费在 Iterator 的遍历和 Vec 的分配和释放上。由于每一行文本格式比较简单，因此我们重新优化一下我们的代码 [ver3完整连接](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver3.rs)：
@@ -153,7 +153,7 @@ pub fn ver1() -> Result<HashMap<String,(f32,f32,f32)>, Box<dyn std::error::Error
 1. 耗时：65.5s (vs ver2: -23.8s, +26.6%) (vs ver1: -42.4s, +39.4%)
 2. IPC: 4.12
 3. Branch misses: 0.94%
-4. [samply profile](https://github.com/wangzaixiang/onebrc_rust/blob/master/profiles/profile-v3.json)
+4. [samply profile](https://share.firefox.dev/4hqukPN)
 
 ver2/ver3 两轮优化后，在 samply profile 中，已经看到没有明显的内存分配、释放的开销了，性能的整体提升达到了39.4%。为我们的优化成就鼓掌。
 
@@ -162,7 +162,7 @@ ver2/ver3 两轮优化后，在 samply profile 中，已经看到没有明显的
 2. 大部份应用在早期都存在“低垂”的果实，往往只需要较少的代价，就可以取得巨大的性能提升。在实际应用中，这些低垂的果实，可能会获得成倍、
    数十倍的性能提升，而代价则非常微小。
 
-# ver4 
+# ver4, 51s
 
 对 ver3 的 profile 数据进行分析发现，&str::from_utf8 花费了 ~9s 的时间，由于我们的输入文件是一个格式良好的文件，在本次性能挑战中，可以忽略
 UTF8 检查的成本（当然，在实际应用中，需要权衡输入检查的必要性，不一定能够妥协，不过在一个复杂系统中，应该尽可能的在最外层进行足够的输入校验，避免在
@@ -203,7 +203,7 @@ fn read_line<'a>(reader: &mut std::io::BufReader<std::fs::File>, line: &'a mut V
 
 性能数据：
 1. 耗时：51.2s (vs ver3: -14.3s, +21.8%) (vs ver2: -38.7s, +43%) (vs ver1: -56.7s, +52.6%)
-2. [samply profile](https://github.com/wangzaixiang/onebrc_rust/blob/master/profiles/profile-v4.json)
+2. [samply profile](https://share.firefox.dev/40ObCun)
 
 经过 ver4 的优化后，samply profile 中的火焰图变得更加的简单，目前主要的开销包括：
 - `std::io::BufRead::read_until` ~ 32s 以 `, \n` 作为分隔符逐一读取 &str
