@@ -526,7 +526,7 @@ fn parse_value(buf: &[u8]) -> i16 {    // ~0.5s
 
 [ver10源代码](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver10.rs)
 
-# ver12， 13.07s
+# ver12，13.07s
 在 ver10 中，我们尝试自建一个替代的 HashMap，基本的方向是将 city_name 映射为 integer, 然后使用一个稀疏的 Vec 来存储 key-value，
 在 ver10 中尝试是失败的，主要是 HashMap 的 Miss 比例过高（50%）,即有50%的 key 都需要进行都多余1次的查找。
 
@@ -574,7 +574,7 @@ fn parse_value(buf: &[u8]) -> i16 {    // ~0.5s
 3. 使用 i128 作为 key 的唯一性，避免了进行字符串比较的开销。
 4. 上述的 hash 算法，是简单的数学运算，相比字符串计算 hash 要快捷很多（且不涉及内存访问）。
 
-[ver12 完整源代码](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver10.rs)
+[ver12 完整源代码](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver12.rs)
 
 性能数据:
 1. 耗时： 13.07s (vs ver9: -10.69s, +45.1%) (vs ver1: -93.83s, +87.1%)
@@ -590,5 +590,270 @@ fn parse_value(buf: &[u8]) -> i16 {    // ~0.5s
 
 还可以进行哪些优化呢？
 
+# ver13, 9.12s
+在ver9 中，我们使用 SIMD 优化了 parse_value，但是并没有达到预期的效果，如果我们将多行的 value 放到一起来使用 SIMD 呢？另外，loop unroll
+也是一种常见的优化手段，在我们前面的版本中，每次循环都是处理1行，而我们现在的版本已经每次读取 64 字节的 block，使用 SIMD 来进行分隔符检测，
+那么我们也可以尝试把一个 block 中的多行数据放到一起来处理。根据上面的数据分析，每个block 包含 1-8 行数据，平均为 4.6 行。
+
+```rust
+unsafe fn parse_values(val1: &[u8], val2: &[u8], val3: &[u8], val4: &[u8]) -> (i16, i16, i16, i16) {
+
+    let pad_1 = 8 - val1.len() as isize;
+    let pad_2 = 8 - val2.len() as isize;
+    let pad_3 = 8 - val3.len() as isize;
+    let pad_4 = 8 - val4.len() as isize;
+
+    let ptr1 = val1.as_ptr().offset( -pad_1);
+    let ptr2 = val2.as_ptr().offset(-pad_2);
+    let ptr3 = val3.as_ptr().offset(-pad_3);
+    let ptr4 = val4.as_ptr().offset(-pad_4);
+
+    let l1 = u64::from_be_bytes( *(ptr1 as *const [u8;8]) );
+    let l2 = u64::from_be_bytes( *(ptr2 as *const [u8;8]) );
+    let l3 = u64::from_be_bytes( *(ptr3 as *const [u8;8]) );
+    let l4 = u64::from_be_bytes( *(ptr4 as *const [u8;8]) );
+
+    // clear top pad_1 * 8 bits of l1
+    let l1 = l1 & (u64::MAX >> (pad_1 * 8));
+    let l2 = l2 & (u64::MAX >> (pad_2 * 8));
+    let l3 = l3 & (u64::MAX >> (pad_3 * 8));
+    let l4 = l4 & (u64::MAX >> (pad_4 * 8));
+
+    let sign_1 = if val1[0] == b'-' { -1 } else { 1 };
+    let sign_2 = if val2[0] == b'-' { -1 } else { 1 };
+    let sign_3 = if val3[0] == b'-' { -1 } else { 1 };
+    let sign_4 = if val4[0] == b'-' { -1 } else { 1 };
+
+    let v: u32x4 = u32x4::from_array([l1 as u32, l2 as u32, l3 as u32,  l4 as u32]);
+    let v2: i8x16 = transmute(v);
+
+    let v2  = unsafe { extend_i8x16(v2) };
+    // let v2: i16x32 = simd_swizzle!(v2, [7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8, 23, 22, 21, 20, 19, 18, 17, 16, 31, 30, 29, 28, 27, 26, 25, 24]);
+
+    let scale: i16x16 = i16x16::from_array([ 1, 0, 10, 100, 1, 0, 10, 100, 1, 0, 10, 100, 1, 0, 10, 100 ] );
+    let mask = v2.simd_ge(i16x16::splat('0' as i16));
+    let v2 = mask.select(v2, i16x16::splat(b'0' as i16));
+    let sub = v2 - i16x16::splat(b'0' as i16);      // (c - '0')
+    let mul = sub * scale;                                // (c - '0') * scale
+
+    let mul_2 = mul.rotate_elements_right::<2>();       // 100 + 0, 10 + 1
+    let sum = mul + mul_2;
+
+    let sum_2 = sum.rotate_elements_right::<1>();       // 100 + 0 + 10 + 1
+    let sum = sum + sum_2;
+
+    let array: &[i16;16] = & transmute(sum);
+    (sign_1 * array[3], sign_2 * array[7], sign_3 * array[11], sign_4 * array[15])
+}
+
+struct FileReader {
+    _mmap: Mmap,         // const
+    length: usize,      // const
+    buf: *const u8,     // const
+    eof: bool,          // has more content
+    cursor: usize,      // read_more will update, 当前读取位置，已读取并分析结果保存在 mask 中
+    mask:   u64,        // read_more will set, next will clear
+    line_begin: usize,    // next will update，下一行的开始位置
+}
+
+impl FileReader {
+
+    fn new(mmap: Mmap) -> FileReader {
+        let length = mmap.len();
+        let buf = mmap.as_ptr();
+        let u8x64 = u8x64::from_array( unsafe { *( buf as *const[u8;64]) } );
+        let mask_v1: u8x64 = u8x64::splat(b';');
+        let mask_v2: u8x64 = u8x64::splat(b'\n');
+        let mask: Mask<i8, 64> = u8x64.simd_eq(mask_v1) | u8x64.simd_eq(mask_v2);
+        let mask = mask.to_bitmask();
+        FileReader {
+            _mmap: mmap,
+            length,
+            buf,
+            eof: false,
+            cursor: 0,
+            mask,
+            line_begin: 0
+        }
+    }
+
+    #[inline]
+    fn read_block_at_cursor(&mut self) {
+        // change to unlikely fastup from 11.5s ~ 6.65s
+        if unlikely(self.mask == 0) {    // need more
+
+            self.cursor += 64;
+
+            if likely(self.cursor + 64 <= self.length) {
+                let mask_v1: u8x64 = u8x64::splat(b';');
+                let mask_v2: u8x64 = u8x64::splat(b'\n');
+
+                let u8x64 = u8x64::from_array( unsafe { *( self.buf.add(self.cursor) as *const[u8;64]) } );
+                let mask: Mask<i8, 64> = u8x64.simd_eq(mask_v1) | u8x64.simd_eq(mask_v2);
+                self.mask = mask.to_bitmask();
+            }
+            else {
+                self.read_last_block();      //
+            }
+        }
+    }
+
+    #[inline(never)]
+    fn read_last_block(&mut self) {
+        let ptr = unsafe { self.buf.add(self.cursor) };
+        let count = self.length - self.cursor;  // maybe zero
+        let slice = unsafe { std::slice::from_raw_parts(ptr, count) };
+        let mut base = 0usize;
+        loop {
+            if base >= count {
+                break;
+            }
+            match memchr2(b';', b'\n', &slice[base..]) {
+                Some(index) => {
+                    self.mask |= 1 << (base+index);
+                    base += index+1;
+                }
+                _ => {
+                    panic!("tail block should always have a match");
+                }
+            }
+        }
+        self.eof = true;
+    }
+
+    // TODO wrongs for the last line
+
+    fn next(&mut self) -> Option<(&'static [u8], &'static [u8])> {
+        if likely(self.eof == false) {
+            self.read_block_at_cursor();
+            let first = {
+                let index = self.mask.trailing_zeros();
+                self.mask &= !(1 << index);
+                self.cursor + index as usize
+            };
+
+            self.read_block_at_cursor();
+            let second = {
+                let index = self.mask.trailing_zeros();
+                self.mask &= !(1 << index);
+                self.cursor + index as usize
+            };
+
+            let key: &[u8] = unsafe { std::slice::from_raw_parts(self.buf.add(self.line_begin), first - self.line_begin) };
+            let value: &[u8] = unsafe { std::slice::from_raw_parts(self.buf.add(first + 1), second - first - 1) };
+
+            let result = (key, value);
+            self.line_begin = second + 1;
+            Some(result)
+        }
+        else {
+            None
+        }
+    }
+}
+
+...
+
+#[inline(never)]
+// based on ver12
+pub fn ver13() -> Result<HashMap<String,(f32, f32, f32)>, Box<dyn std::error::Error>> {     // 8.96s
+
+    let file = std::fs::File::open(MEASUREMENT_FILE)?;
+
+    let mmap = unsafe { Mmap::map(&file)? };
+
+    let mut reader = FileReader::new(mmap);
+
+    let mut aggr = AggrInfo::new();
+
+    loop {
+        let r1 = reader.next();
+        let r2 = reader.next();
+        let r3 = reader.next();
+        let r4 = reader.next();
+
+        if likely(r4.is_some()) {
+            let Some((r1_name, r1_value)) = r1 else { unreachable!() };
+            let Some((r2_name, r2_value)) = r2 else { unreachable!() };
+            let Some((r3_name, r3_value)) = r3 else { unreachable!() };
+            let Some((r4_name, r4_value)) = r4 else { unreachable!() };
+
+            let ptr1 = r1_name.as_ptr();
+            let key_a_1: u64 = u64::from_le_bytes( unsafe { *(ptr1 as *const[u8;8]) });
+            let key_b_1: u64 = u64::from_le_bytes( unsafe { *(ptr1.add(8) as *const[u8;8]) });
+
+            let ptr2 = r2_name.as_ptr();
+            let key_a_2: u64 = u64::from_le_bytes( unsafe { *(ptr2 as *const[u8;8]) });
+            let key_b_2: u64 = u64::from_le_bytes( unsafe { *(ptr2.add(8) as *const[u8;8]) });
+
+            let ptr3 = r3_name.as_ptr();
+            let key_a_3: u64 = u64::from_le_bytes( unsafe { *(ptr3 as *const[u8;8]) });
+            let key_b_3: u64 = u64::from_le_bytes( unsafe { *(ptr3.add(8) as *const[u8;8]) });
+
+            let ptr4 = r4_name.as_ptr();
+            let key_a_4: u64 = u64::from_le_bytes( unsafe { *(ptr4 as *const[u8;8]) });
+            let key_b_4: u64 = u64::from_le_bytes( unsafe { *(ptr4.add(8) as *const[u8;8]) });
+
+
+            let len_a_1 = if r1_name.len() >= 8 { 8 } else { r1_name.len() };
+            let len_b_1 = if r1_name.len() >= 16 { 8 } else if r1_name.len() > 8 { r1_name.len() - 8 }  else { 0 };
+
+            let len_a_2 = if r2_name.len() >= 8 { 8 } else { r2_name.len() };
+            let len_b_2 = if r2_name.len() >= 16 { 8 } else if r2_name.len() > 8 { r2_name.len() - 8 }  else { 0 };
+
+            let len_a_3 = if r3_name.len() >= 8 { 8 } else { r3_name.len() };
+            let len_b_3 = if r3_name.len() >= 16 { 8 } else if r3_name.len() > 8 { r3_name.len() - 8 }  else { 0 };
+
+            let len_a_4 = if r4_name.len() >= 8 { 8 } else { r4_name.len()  };
+            let len_b_4 = if r4_name.len() >= 16 { 8 } else if r4_name.len() > 8 { r4_name.len() - 8 }  else { 0 };
+
+            let key_a_1 = key_a_1 & MASKS[len_a_1];
+            let key_b_1 = key_b_1 & MASKS[len_b_1];
+            let key_a_2 = key_a_2 & MASKS[len_a_2];
+            let key_b_2 = key_b_2 & MASKS[len_b_2];
+            let key_a_3 = key_a_3 & MASKS[len_a_3];
+            let key_b_3 = key_b_3 & MASKS[len_b_3];
+            let key_a_4 = key_a_4 & MASKS[len_a_4];
+            let key_b_4 = key_b_4 & MASKS[len_b_4];
+
+            let (v1, v2, v3, v4) = unsafe { parse_values(r1_value, r2_value, r3_value, r4_value) };
+            aggr.save_item(r1_name, key_a_1, key_b_1, v1);
+            aggr.save_item(r2_name, key_a_2, key_b_2, v2);
+            aggr.save_item(r3_name, key_a_3, key_b_3, v3);
+            aggr.save_item(r4_name, key_a_4, key_b_4, v4);
+
+        }
+        else {
+            if let Some((name, value)) = r1 {
+                process_one(name, value, &mut aggr);
+            }
+            if let Some((name, value)) = r2 {
+                process_one(name, value, &mut aggr);
+            }
+            if let Some((name, value)) = r3 {
+                process_one(name, value, &mut aggr);
+            }
+            break;
+        }
+    }
+
+    // check_result(&aggr);
+
+    Ok( HashMap::new() )
+}
+
+```
+ver13 源代码：[ver13](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver13.rs)
+
+性能数据：
+1. 耗时：9.12s (vs ver12: -3.95s, +30.2%) (vs ver1: -97.58s, +91.4%)
+2. [samply profile](https://share.firefox.dev/3Q6KCBh)
+
+parse_values 的耗时从降到了 0.56s，从 4.7s 减少到了 0.56s，甚至超出了我们的预期。当然，1brc 首次进入10秒以内的成绩，相比 ver1 提升了 11.8 倍。
+
+现在，主要的耗时：
+- 遍历读取 block：5.35s
+- hash aggregator: 1.97s
+- parse_values: 0.56s
 
 未完，待续......
