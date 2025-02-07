@@ -203,7 +203,7 @@ fn read_line<'a>(reader: &mut std::io::BufReader<std::fs::File>, line: &'a mut V
 
 性能数据：
 1. 耗时：51.2s (vs ver3: -14.3s, +21.8%) (vs ver2: -38.7s, +43%) (vs ver1: -56.7s, +52.6%)
-2. [samply profile]()
+2. [samply profile](https://github.com/wangzaixiang/onebrc_rust/blob/master/profiles/profile-v4.json)
 
 经过 ver4 的优化后，samply profile 中的火焰图变得更加的简单，目前主要的开销包括：
 - `std::io::BufRead::read_until` ~ 32s 以 `, \n` 作为分隔符逐一读取 &str
