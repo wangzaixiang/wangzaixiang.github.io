@@ -211,4 +211,384 @@ fn read_line<'a>(reader: &mut std::io::BufReader<std::fs::File>, line: &'a mut V
 
 低垂的果实似乎已经采摘完毕，这两个感觉都不好进行进一步的优化了。那么我们还能做些什么呢？
 
-未完待续...
+# ver5, 48.3s
+这个版本尝试对 next_line 进行优化，使用状态机来进行 one scan per line 的处理，效果较为有限，这里就不贴代码和性能数据了，
+感兴趣的可以查看[ver5源代码](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver4.rs)
+
+# ver6, 30.9s
+经过前面5轮的优化，目前最大的瓶颈点是 `std::io::read_until(b';' or b'\n')`，这里涉及到：
+- 需要使用 Buffer 的方式从 OS 读取数据到 进程Buffer（固定大小，一般为8K）中。 ~ 3s
+- 在 Buffer 中查找下一个分隔符的位置。（每一行有2个分隔符：`;` 和 `\n`) ~ 19.2s
+- 从 Buffer 中复制到 Vec 中（读者可以思考为什么需要这次复制，不直接在 Buffer 中处理？）~ 6.7s
+
+我们是否可以避免两次数据复制呢，并减少查找分隔符的成本呢？zero copy 是解决这类问题的一个方向，在 Kafka 等 Java 项目中，使用 sendfile 
+这样的系统调用来避免数据的复制，在本例中，我们使用 [mmap](https://www.man7.org/linux/man-pages/man2/mmap.2.html) 来实现 zero copy。
+
+```rust 
+use crate::MEASUREMENT_FILE;
+use memchr::memchr;
+use memmap2::Mmap;
+use std::collections::HashMap;
+
+
+#[inline]
+fn parse_value(_buf: &[u8]) -> i32 {    // ~0.5s
+    // return 0;
+    use std::intrinsics::unlikely;
+    let mut sign = 1;
+    let mut value = 0;
+    for b in _buf {
+        if unlikely(*b == b'-') {
+            sign = -1;
+        }
+        else if unlikely(*b == b'.') {
+            continue;
+        } else {
+            value = value * 10 + (*b - b'0') as i32;
+        }
+    }
+    value * sign
+}
+
+#[allow(dead_code)]
+#[inline(never)]
+pub fn ver6() -> Result<HashMap<String, (f32,f32,f32)>, Box<dyn std::error::Error>> {
+
+    let file = std::fs::File::open(MEASUREMENT_FILE)?;
+
+    let mmap = unsafe { Mmap::map(&file)? };
+    let mut buf = mmap.as_ref();
+
+    struct Item {
+        min: i32,
+        max: i32,
+        count: u32,
+        sum: i32,
+    }
+    let mut hash: HashMap<String, Item> = HashMap::with_capacity(16384);
+    // let mut hash:FxHashMap<String, Item> = FxHashMap::with_capacity_and_hasher(16384, rustc_hash::FxBuildHasher::default());
+
+    let mut callback = |name: &[u8], value: i32| {
+        match hash.get_mut(unsafe { core::str::from_utf8_unchecked(name) }) {
+            Some(item) => {
+                item.count += 1;
+                item.sum += value;
+                item.min = item.min.min(value);
+                item.max = item.max.max(value);
+            }
+            None => {
+                let item = Item {
+                    min: value,
+                    max: value,
+                    count: 1,
+                    sum: value
+                };
+                hash.insert(unsafe { core::str::from_utf8_unchecked(name) }.to_string(), item);
+            }
+        }
+    };
+
+    let mut _no_used = 0;
+    // let mut callback = |_name: &[u8], value: i32| {
+    //     _no_used += value;
+    // };
+
+    loop {
+        match memchr(b';', &buf[0..]) { // scan ~14s
+            Some(pos1) => {
+                let name = &buf[0..pos1];
+                let remain = &buf[pos1+1..];
+                match memchr(b'\n', remain) {
+                    Some(pos2) => {
+                        let value = parse_value(&remain[0..pos2]);
+                        callback(name, value);      // 7.5s
+                        buf = &remain[pos2+1..];
+                    }
+                    None => {
+                        break;
+                    }
+                }
+            }
+            None => {
+                break;
+            }
+        }
+    }
+
+    let result = hash.iter().map(|(name, item)| {
+        (name.to_string(), (item.min as f32 / 10.0, item.max as f32 / 10.0, item.sum as f32 / (10.0 * item.count as f32)))
+    }).collect();
+
+    Ok(result)
+}
+```
+[ver6完整源代码](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver6.rs)
+
+性能数据：
+1. 耗时：31s （vs ver4: -20.3s, +39.6%）（vs ver1: -76.9s, +71.1%）
+2. [samply profile](https://share.firefox.dev/4hOMo5W)
+
+采用 zero copy 优化后，我们的性能获得了显著提升，相对于 ver1，耗时缩短到 29%。从 flame graph 中，可以看到，已经没有数据复制的成本了。
+目前，最大的几块耗时为：
+- `memchr::memchr::memchr` ~ 3.7s
+- `onebrc_rust::ver6::parse_value` ~ 4.87s
+- `std::collections::hash::map::HashMap::get_mut` ~ 19.5s， 有点奇怪，这里的耗时相比之前的版本，反而增加了。这个以后再分析。
+
+# ver7, 25.5s
+查看 ver6 的 flame graph，我们发现 HashMap 中最大的开销是 make_hash, 消耗了～16s 的时间，反而 其他的lookup 操作(~3s)并不大，经查阅资源，
+
+> https://nnethercote.github.io/perf-book/hashing.html
+> 
+> HashSet and HashMap are two widely-used types. The default hashing algorithm is not specified, but at the time of 
+> writing the default is an algorithm called SipHash 1-3. This algorithm is high quality—it provides high protection 
+> against collisions—but is relatively slow, particularly for short keys such as integers.
+> 
+
+可以看到，在 Rust 的哲学中，HashMap 的设计是为了保证高质量的 hash，而不是为了速度。
+
+按照文中的推荐，我们切换到 [fxhash](https://crates.io/crates/fxhash), 完整源代码参见：[ver7](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver7.rs)
+
+性能数据：
+1. 耗时：25.5s (vs ver6: -5.5s, +21.5%) (vs ver1: -82.5s, +76.3%)
+2. [samply profile](https://share.firefox.dev/4hE32Fs)
+    - make_hash 的时间大幅缩短，~5.1s
+    - lookup 的时间反而提升，从 ~3s 提升到 ～8.8s. 这个原因后续分析。
+
+切换到 fxhash 后，性能又小幅度的提升，进入到 25s，当然，相比 ver1，我们已经有 4+倍 的性能提升了。
+
+# ver8, 23.25s
+在 ver1 - ver7 中，我们都没有使用 SIMD 这一技术，从 ver8 开始，我们将逐步引入 SIMD 技术。先从 查找分隔符开始。在之前的例子中，一直使用
+`memchr` 或 read_until(其内部也基于 memchr )，如果查找 crate.io 的文档，我们得知，memchr 内部也会采用 SIMD 技术进行优化，不过如果阅读
+源代码，memchr 尽在较大的数组中使用 SIMD，而对小数组则直接遍历。
+
+1. 在 1brc 这个挑战赛中，平均每行的长度为 13.8 字符，而且每行包含2个分隔符，因此，memchr 大部份情况下都没有采用 SIMD 优化。 
+2. ver1 - ver7 的版本中，每次都是获取下一个分隔符的位置，这并没有充分发挥 SIMD 的效率。我们完全可以一次读取一个 block(比如64B)，使用
+   SIMD 指令一次找出全部的分隔符的位置，然后再进行处理。如果是 64B 的 Block，平均包含 4.6 行的数据，共 9.2 个分隔符。这就相当于原来需要
+   9次 memchr 的操作可以在 单个 SIMD 操作中完成。
+
+[ver8源代码](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver8.rs)
+
+```rust
+#[inline(never)]
+pub fn ver8() -> Result<HashMap<String,(f32, f32, f32)>, Box<dyn std::error::Error>> {
+
+    let file = std::fs::File::open(MEASUREMENT_FILE)?;
+
+    let mmap = unsafe { Mmap::map(&file)? };
+    let buf = mmap.as_ref();
+
+    struct Item {
+        min: i16,
+        max: i16,
+        count: u32,
+        sum: i32,
+    }
+    // let mut hash = HashMap::with_capacity_and_hasher(16384, fasthash::spooky::Hash64);
+    let mut hash:FxHashMap<String, Item> = FxHashMap::with_capacity_and_hasher(16384, rustc_hash::FxBuildHasher::default());
+
+    // let mut sum = 0;
+    let mut callback = |name: &[u8], value: i16| {  // ~13.5s 60%
+        match hash.get_mut(unsafe { core::str::from_utf8_unchecked(name) }) {
+            Some(item) => {
+                item.count += 1;
+                item.sum += value as i32;
+                item.min = item.min.min(value);
+                item.max = item.max.max(value);
+            }
+            None => {
+                let item = Item {
+                    min: value,
+                    max: value,
+                    count: 1,
+                    sum: value as i32,
+                };
+                hash.insert(unsafe { core::str::from_utf8_unchecked(name) }.to_string(), item);
+            }
+        }
+    };
+
+    let v01 = u8x64::splat(b';');
+    let v02 = u8x64::splat(b'\n');
+
+    enum State {
+        BEGIN, POS1
+    }
+    let mut state2: State = State::BEGIN;     // BEGIN, POS1
+    let mut line_begin: usize = 0usize;  // always valid
+    let mut pos1: usize = 0;        // when state2 is POS1
+    let mut cursor: usize = 0;      // if block_is_tail, cursor can scroll forward, otherwise, cursor is always the head of the block
+    let mut block_is_tail: bool = false;
+    let mut simd_mask: u64 = {      // when block_is_tail == false, simd_mask is the search mask
+        let v1: u8x64 = u8x64::from_slice(buf);        // 64 bytes
+        (v1.simd_eq(v01) | v1.simd_eq(v02)).to_bitmask()
+    };
+
+    loop {
+
+        let pos: usize =  loop {
+            if likely(block_is_tail == false) {    // 1. simd_block
+                let first = simd_mask.trailing_zeros(); // 0..64
+                if likely(first < 64) {  // 1.1 having a match
+                    simd_mask &= !(1 << first);
+                    break cursor + first as usize;      // break result 1: from simd_block
+                } else {  // 1.2 load next block and continue loop
+                    cursor += 64;
+                    if likely(cursor + 64 <= buf.len()) { // 1.2.1 load next u8x64 block
+                        let v1 = u8x64::from_slice(&buf[cursor..cursor + 64]);
+                        simd_mask = (v1.simd_eq(v01) | v1.simd_eq(v02)).to_bitmask();
+                    } else {    // 1.2.2 load the tail block
+                        block_is_tail = true;
+                    }
+                    continue;
+                }
+            } else {  // 2. tail block
+                match memchr2(b';', b'\n', &buf[cursor..]) {
+                    Some(index) => {
+                        let result = cursor + index;
+                        cursor += index + 1;
+                        break result;   // break result 2: from tail block
+                    }
+                    None => {
+                        unreachable!("tail block should always have a match");
+                    }
+                }
+            }
+        };
+
+        match state2 {
+            State::BEGIN => {
+                pos1 = pos;
+                state2 = State::POS1;
+            }
+            State::POS1 => {
+                let pos2 = pos;
+                callback(&buf[line_begin..pos1], parse_value(&buf[pos1+1..pos2]));
+                state2 = State::BEGIN;
+                line_begin = pos2 + 1;
+            }
+        }
+
+        if unlikely( pos + 1 == buf.len() ) {
+            break;
+        }
+
+    }
+
+    let result = hash.iter().map(|(name, item)| {
+        (name.clone(), (item.min as f32/ 10.0, item.max as f32 / 10.0, item.sum as f32 / item.count as f32 / 10.0))
+    }).collect();
+
+    Ok(result)
+}
+
+```
+
+性能数据：
+1. 耗时: 23.25s (vs ver7: -2.25s, +9.2%) (vs ver1: -84.65s, +78.3%)
+2. [samply profile](https://share.firefox.dev/3Er2Afo)
+
+对比ver7, 有小幅度提升（这是因为 v7 中 memchr 的耗时也只有 3s, 并不大）。
+
+切换成 SIMD 处理后，代码稍微又些复杂，这是因为在性能优化的过程中，我会产生越来越多的”自我控制“感，以避免编译期生成不佳的代码，也就是说，在
+很多情况下，高性能的代码与 zero cost abstraction 是有矛盾的。当然，后面我们也会看到，这种感觉并不可靠，很多情况下，现代编译期足以生成高效的
+代码，并且无悖于 zero cost abstraction。
+
+# ver9, 23.76s
+ver9 是在 ver8 的基础上，对 parse_value 进行优化，使用 SIMD 指令进行优化。
+
+```rust
+#[inline]
+fn parse_value(buf: &[u8]) -> i16 {    // ~0.5s
+    // return 0;
+    let scale = u16x4::from_array( [100, 10, 0, 1] );
+    let sign = if buf[0] == b'-' {-1i16} else {1};
+    let offset = if buf[0] == b'-' {1} else {0};
+    let v1 = {
+        let buf = &buf[offset..];
+        let mut arr: [u8; 8] = [b'0' as u8; 8];
+        arr[8 - buf.len()..].copy_from_slice(buf);
+        u16x4::from_array( [ arr[4] as u16, arr[5] as u16, arr[6] as u16, arr[7] as u16 ] )
+    };
+    ((v1 - u16x4::splat('0' as u16))  * scale).reduce_sum() as i16 * sign
+}
+```
+[ver9完整源代码](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver9.rs)
+
+性能数据：
+1. 耗时：23.76s (vs ver8: +0.51s, -2.1%) (vs ver1: -84.14s, +78.1%)
+2. [samply profile](https://share.firefox.dev/3EtGoRX)
+
+对 parse_value 进行 SIMD 优化并没有达到预期的结果。我们继续前行。
+
+# ver10, 27.10s
+在 ver9 的火焰图上，当前最大的开销是 `std::collections::hash::map::HashMap::get_mut`(~11.7s), ver10 尝试使用一个替代的 HashMap
+方案，来减少 hash 的计算开销和 lookup 的开销，不过，这个版本并没有达到预期的效果。 这里就不分析了。
+
+[ver10源代码](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver10.rs)
+
+# ver12， 13.07s
+在 ver10 中，我们尝试自建一个替代的 HashMap，基本的方向是将 city_name 映射为 integer, 然后使用一个稀疏的 Vec 来存储 key-value，
+在 ver10 中尝试是失败的，主要是 HashMap 的 Miss 比例过高（50%）,即有50%的 key 都需要进行都多余1次的查找。
+
+在 ver12 中，我们继续优化数据结构，尝试将 flame graph 中目前最大的开销 `std::collections::hash::map::HashMap::get_mut`(~11.7s) 
+降下来。
+
+优化后的算法：
+1. 将 city_name 映射为 i128, 即仅取 city_name 的最多16字节作为 key。（有些取巧，在测试中，所有的city name 截取前16个字节时，是没有
+   重复的。）
+2. 使用如下算法将 i128 映射为 i20:
+   ```rust
+    let key_a: i64 = ??? // 低64位
+    let key_b: i64 = ??? // 高64位
+    let hash = { // b[0..19] ^ b[20..39] ^ b[40..59] ^ b[64..83] ^ b[84..103] ^ b[104..123]
+            let p0 = key_a & mask;
+            let p1 = (key_a >> 20) & mask;
+            let p2 = (key_a >> 40) & mask;
+            let p3 = key_b & mask;
+            let p4 = (key_b >> 20) & mask;
+            let p5 = (key_b >> 40) & mask;
+            p0 ^ p1 ^ p2 ^ p3 ^ p4 ^ p5
+        };
+   ```
+3. 分配一个 2^20 + 1024 的 Vec<AggrItem>, 其中: AggrItem 是每一个汇总项（占用56字节大小）
+   ```rust
+   struct AggrItem {
+    key_a:  u64,     // 32
+    key_b:  u64,     // 40
+    key: Vec<u8>,    // 24
+    min: i16,       // 42
+    max: i16,       // 44
+    count: u32,     // 48
+    sum: i32,       // 52
+   }
+   ```
+4. 根据 city_name 计算 128位的 key 值，并使用上述的 hash 算法，计算 hash 值(0 - 2^20-1), 然后使用该 hash 值直接访问数组
+   - 由于可能存在重复的 hash 值，因此，需要比较 key 值是否一致，一致则命中。
+   - 不命中则搜索数组中的下一项，直到 hash 值相同
+   - 最多搜索1024次，否则直接报错。
+
+设计这个算法的原因是：
+1. 1brc 挑战的数据集中，共有443个城市，city_name 长度为 3..33，选取前16个字符时，即可保证唯一性。
+2. 设计一个包含 1M 大小的 HashMap，并通过精心设计的 hash 算法，可以确保该 HashMap 的稀疏性，绝大部分的 city 应该唯一命中某个 slot 而无需
+   遍历。
+3. 使用 i128 作为 key 的唯一性，避免了进行字符串比较的开销。
+4. 上述的 hash 算法，是简单的数学运算，相比字符串计算 hash 要快捷很多（且不涉及内存访问）。
+
+[ver12 完整源代码](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver10.rs)
+
+性能数据:
+1. 耗时： 13.07s (vs ver9: -10.69s, +45.1%) (vs ver1: -93.83s, +87.1%)
+2. [samply profile](https://share.firefox.dev/414vPNO)
+
+非常可喜的突破，通过独特设计的 HashMap，我们获得了比使用 `std::collections::hash::map::HashMap` 快得多的性能，原来 HashMap 11.7s 的开销
+降低到了 2 s，更让我们的程序相比 ver1 提高了 8+ 倍的性能提升。
+
+现在，主要的耗时：
+- 处理分隔符：~3.15s
+- parse_value ～4.7s
+- hash aggregate: ~2.4s
+
+还可以进行哪些优化呢？
+
+
+未完，待续......
