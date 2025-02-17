@@ -27,7 +27,7 @@ toc = true
 本文是在 M1 Max(Mac Book Pro 2021)上进行的， 下文中的 IPC 分析会参考这个 CPU 的特性。这里附上 M1 微架构图（来源：[中文](https://zhuanlan.zhihu.com/p/700865927)、
 [原文](https://dougallj.github.io/applecpu/firestorm.html)）
 
-![img.png](M1-Firestorm-MicroArchitecture.png)
+{{ resize_image(path="@/blog/2025-02-06-measure-ipc-for-m1/M1-Firestorm-MicroArchitecture.png", width=1500, height=400, op="fit_width") }}
 
 # 3. IPC度量
 
