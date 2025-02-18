@@ -34,6 +34,26 @@ template = "blog/page.html"
    - like LLVM IR, but simpler.
    - ~10k lines of c code. (vs 1M lines of LLVM), 代码量少，Pure C，是一个很好的学习编译期后端的参考。
    - support for amd64 (linux and osx), arm64, and riscv64.
+5. [LLVM指令选择](https://www.zhihu.com/question/500409301/answer/3210484073)
+   
+   指令选择过程以 IR 为输入，输出一系列使用无限寄存器的指令，分为如下阶段：
+   - 构建初始 Selection DAG
+   - 优化
+   - 类型合法化
+   - 优化
+   - 操作合法化
+   - 优化
+   - 目标指令选择
+   - 调度核形成。
+
+   > 注意：您可以通过在调用llc时作为命令行参数传递-view-dag-combine1-dags、-view-legalize-dags、-view-dag-combine2-dags、
+   > -view-isel-dags或-view-sched-dags来告诉LLVM在指令选择过程的各个阶段生成选择DAG的可视化表示。
+   > -debug参数告诉llc生成选择DAG的文本表示。
+
+作者：图灵智能
+链接：https://www.zhihu.com/question/500409301/answer/3210484073
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
 # MPP & OLAP
 

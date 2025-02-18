@@ -31,7 +31,7 @@ toc = true
 
 # 3. IPC度量
 
-## 3.1 test1
+## 3.1 test1: IPC ～ 3.74, 为什么不是 6+ ?
 代码：[完整源代码](https://github.com/wangzaixiang/onebrc_rust/master/src/bin/TestIPC.rs#L44)
 ```rust
 fn test1(){
@@ -111,3 +111,159 @@ fn test1(){
 
 按照架构图的设计，M1 有 6个 ALU 单元，都可以执行 add 指令， 理论上 IPC 值应该可以 达到 6，但只测试到了 3.74, 这个原因还有待分析。
 
+# 2. test2: IPC ~1.84
+```rust
+fn test2(){
+    let base0 = 1234i64;
+    let base1 = 1234i64;
+    let mut i1 = 10i64;
+    let mut i2 = 20i64;
+    let mut i3 = 30i64;
+    let mut i4 = 40i64;
+    let mut i5 = 50i64;
+    let mut i6 = 60i64;
+    let mut i7 = 70i64;
+    let mut i8 = 80i64;
+    let mut i9 = 90i64;
+    let mut i10 = 100i64;
+    let mut i11 = 110i64;
+    let mut i12 = 120i64;
+
+    let time0 = std::time::Instant::now();
+
+    for _ in 0..100_0000_0000u64 {
+
+        unsafe { asm! {
+        "add {i1}, {i1}, {base0}",  // 1. loop N: instr 0 -> loop N - 1 : instr 12
+        "add {i2}, {i2}, {i1}",     // 2
+        "add {i3}, {i3}, {i2}",     // 3
+        "add {i4}, {i4}, {i3}",     // 4
+        "add {i5}, {i5}, {i4}",     // 5
+        "add {i6}, {i6}, {i5}",     // 6
+        "add {i7}, {i7}, {i6}",     // 7
+        "add {i8}, {i8}, {i7}",     // 8
+        "add {i9}, {i9}, {i8}",     // 9
+        "add {i10}, {i10}, {i9}",   // 10
+        "add {i11}, {i11}, {i10}",  // 11
+        "add {i12}, {i12}, {i11}",  // 12
+        "add {i1}, {i1}, {i12}",    // 13
+        "add {i2}, {i2}, {i1}",     // 14
+        "add {i3}, {i3}, {i2}",     // 15
+        "add {i4}, {i4}, {i3}",     // 16
+        "add {i5}, {i5}, {i4}",     // 17
+        "add {i6}, {i6}, {i5}",     // 18
+        "add {i7}, {i7}, {i6}",     // 19
+        "add {i8}, {i8}, {i7}",     // 20
+        "add {i9}, {i9}, {i8}",     // 21
+        "add {i10}, {i10}, {i9}",   // 22
+        "add {i11}, {i11}, {i10}",  // 23
+        "add {i12}, {i12}, {i11}",  // 24
+        base0 = in(reg) base0,
+        // base1 = in(reg) base1,
+        i1 = inout(reg) i1,
+        i2 = inout(reg) i2,
+        i3 = inout(reg) i3,
+        i4 = inout(reg) i4,
+        i5 = inout(reg) i5,
+        i6 = inout(reg) i6,
+        i7 = inout(reg) i7,
+        i8 = inout(reg) i8,
+        i9 = inout(reg) i9,
+        i10 = inout(reg) i10,
+        i11 = inout(reg) i11,
+        i12 = inout(reg) i12,
+        }
+        }
+
+    }
+
+    let time1 = time0.elapsed();
+    println!("test2 total time: {:?}, iteration: {:.2}ns", time1, time1.as_nanos() as f64  / 100_0000_0000.0);
+}
+
+```
+
+在这段代码中，每轮循环中的24条指令是有上下文依赖的，即每条指令都依赖于上一条指令的结果，理论上只能串行执行，但很奇怪的是，IPC 仍然达到了 1.84，
+而不是1，即每个周期内，CPU 仍然执行了1.84条指令。
+
+仔细分析，虽然在每个循环内部，有上下文依赖，但下一个循环的第一条指令仅依赖于上一轮循环的第13条指令，所以，理论上 Loop1:14 和 Loop2:1 可以并行执行，
+Loop1:15 和 Loop2:2 可以并行执行，Loop1:24 和 Loop2:11 可以并行执行，在大部份时间范围内，CPU 仍然可以并行2条指令。
+
+那么为什么 Loop3 不能加入到并行执行中来呢？这样的话，IPC就可以接近3了？对照 M1 的架构图，我们可以猜测：由于受 ALU dispatch queue 的限制，
+但具体的原因还有待进一步的分析。
+
+在如此串行的代码中，IPC 仍然这么高，对简单的ALU操作，是否有可能限制到 1 呢？如果让 Loop2:head 依赖 Loop1:tail，理论上这样的代码就不太可能
+并行执行了。我们可以尝试一下。
+
+# 4. test2_1: IPC ~1.0
+```rust
+fn test2_1(){
+    let base0 = 1234i64;
+    let base1 = 1234i64;
+    let mut i1 = 10i64;
+    let mut i2 = 20i64;
+    let mut i3 = 30i64;
+    let mut i4 = 40i64;
+    let mut i5 = 50i64;
+    let mut i6 = 60i64;
+    let mut i7 = 70i64;
+    let mut i8 = 80i64;
+    let mut i9 = 90i64;
+    let mut i10 = 100i64;
+    let mut i11 = 110i64;
+    let mut i12 = 120i64;
+
+    let time0 = std::time::Instant::now();
+
+    for _ in 0..100_0000_0000u64 {
+
+        unsafe { asm! {
+        "add {i1}, {i12}, {base0}",
+        "add {i2}, {i2}, {i1}",
+        "add {i3}, {i3}, {i2}",
+        "add {i4}, {i4}, {i3}",
+        "add {i5}, {i5}, {i4}",
+        "add {i6}, {i6}, {i5}",
+        "add {i7}, {i7}, {i6}",
+        "add {i8}, {i8}, {i7}",
+        "add {i9}, {i9}, {i8}",
+        "add {i10}, {i10}, {i9}",
+        "add {i11}, {i11}, {i10}",
+        "add {i12}, {i12}, {i11}",
+        "add {i1}, {i1}, {i12}",
+        "add {i2}, {i2}, {i1}",
+        "add {i3}, {i3}, {i2}",
+        "add {i4}, {i4}, {i3}",
+        "add {i5}, {i5}, {i4}",
+        "add {i6}, {i6}, {i5}",
+        "add {i7}, {i7}, {i6}",
+        "add {i8}, {i8}, {i7}",
+        "add {i9}, {i9}, {i8}",
+        "add {i10}, {i10}, {i9}",
+        "add {i11}, {i11}, {i10}",
+        "add {i12}, {i12}, {i11}",
+        base0 = in(reg) base0,
+        // base1 = in(reg) base1,
+        i1 = inout(reg) i1,
+        i2 = inout(reg) i2,
+        i3 = inout(reg) i3,
+        i4 = inout(reg) i4,
+        i5 = inout(reg) i5,
+        i6 = inout(reg) i6,
+        i7 = inout(reg) i7,
+        i8 = inout(reg) i8,
+        i9 = inout(reg) i9,
+        i10 = inout(reg) i10,
+        i11 = inout(reg) i11,
+        i12 = inout(reg) i12,
+        }
+        }
+
+    }
+
+    let time1 = time0.elapsed();
+    println!("test2_1 total time: {:?}, iteration: {:.2}ns", time1, time1.as_nanos() as f64  / 100_0000_0000.0);
+}
+```
+
+对这个完全首尾相衔的代码，IPC 约为：~ 1.08，至于为什么仍然大于1，应该是处理循环的额外指令，这些指令可以被并发执行，从而稍微的提高了 IPC。
