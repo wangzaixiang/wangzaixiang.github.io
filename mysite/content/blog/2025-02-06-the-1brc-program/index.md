@@ -887,17 +887,45 @@ parse_values 的耗时从降到了 0.56s，从 4.7s 减少到了 0.56s，甚至�
 # ver16, 8.55s
 在 ver15 的技术上，使用 (u64, u64) 替代 u128，尝试进一步优化。
 
+完整源代码：[ver16](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver16.rs）
+
 性能数据：
 1. 耗时：8.55s (vs ver15: -1.97s, -18.8%) (vs ver13: -0.56s, + 6% )(vs ver1: -92.15s, +86.2%)
 2. [samply profile](https://share.firefox.dev/4hTD3d4)
 
-减少到了9秒内。
+减少到了9秒内。原因是在 ARM 中，通用寄存器是 64 位的，即使是对128位的向量寄存器，单个Lane 也最多仅支持 64b, 在 Rust 中的u128 实际上是通过
+软件进行模拟的,对 u128 的操作远比 u64 要低效。在 v16 中，我们直接使用 (u64, u64) 来替代 u128，避免了软件模拟的开销,相比使用 u128 要更快一些。
+
+在 ver16 中，每次只处理 64B 的block, 并将行中的`;` 分隔符 和 行末的 `\n`分隔符的位置分开存储 为 mask1, mask2，这样，在后续处理中，对两个 mask 
+的 获取操作可以并行进行，提高指令的并行度。 
 
 # ver17: 16.2s
+ver17 尝试对代码进行一些重构，使得代码的可读性更好一些，将主流程的循环处理从主函数中抽出来，转移到 scan_loop 中，同时，将循环的一些上下文变量
+从 struct 字段转移到 scan_loop 的局部变量中，当时的考虑是编译器可以更好的进行 SSA 优化，减少内存访问。
+
+rust 在很多情况下，可以直接将 struct 字段的变量也 SSA 优化，到来的优势就是这些字段会直接保存在 register 中，而不是在内存中，访问寄存器相比
+访问内存，有更低的成本（虽然在很多情况下，由于L1 Cache的优化以及其他优化，这个差距可能并不明显，但使用寄存器总是更为性能有好的）。
+
+这个版本的性能退化到了 16.2s，原因是在 scan_loop 中，因此，本文不对其进行展开说明，直接跳过。
+
+完整源代码：[ver17](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver17.rs)
+性能说明：
+1. 耗时：16.2s (vs ver16: +7.65s, -89.4%) (vs ver1: -84.48s, +82.4%)
+2. [samply profile](https://share.firefox.dev/3QnKGgg)
 
 # ver18: 6.76s
+在 ver17 的基础上，我们进行了一些优化：
+1. 每次读取 64B 的block，而不是 128B, 64B 的 block 可以更好的匹配 ARM 的 64b 架构。
+2. 使用 3 行一个批量的方式进行处理，减少分支预测失败的情况。
 
-# ver20: 6.76s
+完整源代码：[ver18](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver18.rs)
+
+性能说明：
+1. 耗时：6.76s (vs ver17: -9.44s, -58.4%) (vs ver1: -94.32s, +93.3%)
+2. [samply profile](https://share.firefox.dev/4gQ8hB3)
+
+这个版本的性能有了很大的提升，我们进入了 7s 以内的范围（原项目中Java第一名在我本地的单线程成绩为7.10s），ver18 首次超过了 Java Top 1的成绩。
+可喜可贺，是否还有更进一步的优化空间呢？
 
 # ver21: 6.17s
 
