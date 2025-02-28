@@ -50,10 +50,8 @@ template = "blog/page.html"
    > -view-isel-dags或-view-sched-dags来告诉LLVM在指令选择过程的各个阶段生成选择DAG的可视化表示。
    > -debug参数告诉llc生成选择DAG的文本表示。
 
-作者：图灵智能
-链接：https://www.zhihu.com/question/500409301/answer/3210484073
-来源：知乎
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+6. [makemore](https://github.com/karpathy/makemore) 语言生成模型，transformer 的简单版本。
+7. [Rust Edition 2024](https://blog.rust-lang.org/2025/02/20/Rust-1.85.0.html) 又一个大版本来了。
 
 # MPP & OLAP
 

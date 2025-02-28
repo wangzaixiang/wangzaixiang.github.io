@@ -14,6 +14,9 @@
 # LLVM
 - [从一个简单的C代码来学习LLVM-IR](demo-llvm-ir.md)
 
+# QBE
+- [初始QBE](qbe-1.md)
+
 # zig-lang
 - [misc](zig_misc.md)
 - [understand print in zig](zig_print_in_zig.md)
