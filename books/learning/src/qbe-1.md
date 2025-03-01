@@ -86,7 +86,7 @@ export function w $main() {
 	%t1 =w call $fib(w 10, ...)
 	storew %t1, %result
 	%t5 =w loadw %result
-	%t3 =w call $printf(l $glo1, w %t5, ...)
+	%t3 =w call $printf(l $glo1, w %t5, ...)    # minic 生成的 IR 有些问题，应该是 call $printf(l $fmt, ..., w %t5)
 	ret 0
 }
 

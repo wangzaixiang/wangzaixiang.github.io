@@ -15,7 +15,8 @@
 - [从一个简单的C代码来学习LLVM-IR](demo-llvm-ir.md)
 
 # QBE
-- [初始QBE](qbe-1.md)
+- [初始QBE](./qbe-1.md)
+- [QBE 源代码阅读](./qbe-2.md)
 
 # zig-lang
 - [misc](zig_misc.md)
