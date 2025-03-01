@@ -1,24 +1,24 @@
 # QBE 源代码阅读
 
-| dir    | file    | lines | details |
-|--------|---------|-------|---------|
-| root   | main.c  | 198   | 主流程     |
-| root   | parse.c | 1428  |         |
-| root   | rega.c  | 698   |         |
-| root   | util.c  | 653   |         |
-| root   | spill.c | 538   |         |
-| root   | fold.c  | 535   |         |
-| root   | load.c  | 493   |         |
-| root   | mem.c   | 488   |         |
-| root   | ssa.c   | 434   |         |
-| root   | cfg.c   | 331   |         |
-| root   | emit.c  | 254   |         |
-| root   | alias.c | 222   |         |
-| root   | copy.c  | 217   |         |
-| root   | live.c  | 144   |         |
-| root   | simpl.c | 126   |         |
-| root   | abi.c   | 25    |         |
-| total  |         | 6,366 |         |
+| dir   | file    | lines | details                                                   |
+|-------|---------|-------|-----------------------------------------------------------|
+| root  | main.c  | 198   | 主流程                                                       |
+| root  | parse.c | 1428  |                                                           |
+| root  | rega.c  | 698   | register allocation depends on rpo, phi, cost, spill.     |
+| root  | util.c  | 653   |                                                           |
+| root  | spill.c | 538   | spill code insertion, requires spill costs, rpo, liveness |
+| root  | fold.c  | 535   | require rpo, use, pred                                    |
+| root  | load.c  | 493   | require rpo, ssa, alias                                   |
+| root  | mem.c   | 488   | promote, require use, maintains use counts                |
+| root  | ssa.c   | 434   | require rpo and use                                       |
+| root  | cfg.c   | 331   | Control Flow Graph                                        |
+| root  | emit.c  | 254   |                                                           |
+| root  | alias.c | 222   |                                                           |
+| root  | copy.c  | 217   |                                                           |
+| root  | live.c  | 144   |                                                           |
+| root  | simpl.c | 126   |                                                           |
+| root  | abi.c   | 25    |                                                           |
+| total |         | 6,366 |                                                           |
 
 ## main.c
 
@@ -79,7 +79,6 @@ int main(){
 
     接下来就是对 IR 的 多个 pass 处理了。
 
-    阅读完成度：(198 + 1428)/6366 = 1626/6366 = 25.5%
 3. 改造 main.c 增加 -d 9 选项支持，在该选项下，打印每一个 pass 后的 IR 输出。
    然后，对测试的输入进行分析，理解各个 pass 的作用。
 
@@ -113,4 +112,6 @@ int main(){
       - copy：消除 copy 操作，减少 register 的使用
       - abi: 引入目标平台的寄存器分配（参数、返回值），对寄存器分配目前还不是很清楚，是如何在IR上进行的
       - isel: 选择指令。 目前还不清楚，是如何和 IR 协调工作的。
-   
+
+阅读完成度：(198 + 1428)/6366 = 1626/6366 = 25.5%
+

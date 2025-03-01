@@ -16,7 +16,8 @@
 
 # QBE
 - [初始QBE](./qbe-1.md)
-- [QBE 源代码阅读](./qbe-2.md)
+- [QBE 源代码阅读 1](./qbe-2.md)
+- [QBE 源代码阅读 2: fillrpo](./qbe-fillrpo.md)
 
 # zig-lang
 - [misc](zig_misc.md)
