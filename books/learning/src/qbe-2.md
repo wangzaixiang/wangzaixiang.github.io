@@ -1,24 +1,24 @@
 # QBE 源代码阅读
 
-| dir   | file    | lines | details                                                   |
-|-------|---------|-------|-----------------------------------------------------------|
-| root  | main.c  | 198   | 主流程                                                       |
-| root  | parse.c | 1428  |                                                           |
-| root  | rega.c  | 698   | register allocation depends on rpo, phi, cost, spill.     |
-| root  | util.c  | 653   |                                                           |
-| root  | spill.c | 538   | spill code insertion, requires spill costs, rpo, liveness |
-| root  | fold.c  | 535   | require rpo, use, pred                                    |
-| root  | load.c  | 493   | require rpo, ssa, alias                                   |
-| root  | mem.c   | 488   | promote, require use, maintains use counts                |
-| root  | ssa.c   | 434   | require rpo and use                                       |
-| root  | cfg.c   | 331   | Control Flow Graph                                        |
-| root  | emit.c  | 254   |                                                           |
-| root  | alias.c | 222   |                                                           |
-| root  | copy.c  | 217   |                                                           |
-| root  | live.c  | 144   |                                                           |
-| root  | simpl.c | 126   |                                                           |
-| root  | abi.c   | 25    |                                                           |
-| total |         | 6,366 |                                                           |
+| dir   | file    | lines | details                                                   | 占比 ｜  |
+|-------|---------|-------|-----------------------------------------------------------|-------|
+| root  | main.c  | 198   | 主流程                                                       | 3.1%  |
+| root  | parse.c | 1428  |                                                           | 25.5% |
+| root  | cfg.c   | 331   | Control Flow Graph                                        | 30.7% |
+| root  | rega.c  | 698   | register allocation depends on rpo, phi, cost, spill.     |       |
+| root  | util.c  | 653   |                                                           |       |
+| root  | spill.c | 538   | spill code insertion, requires spill costs, rpo, liveness |       |
+| root  | fold.c  | 535   | require rpo, use, pred                                    |       |
+| root  | load.c  | 493   | require rpo, ssa, alias                                   |       |
+| root  | mem.c   | 488   | promote, require use, maintains use counts                |       |
+| root  | ssa.c   | 434   | require rpo and use                                       |       | 
+| root  | emit.c  | 254   |                                                           |       |
+| root  | alias.c | 222   |                                                           |       |
+| root  | copy.c  | 217   |                                                           |       |
+| root  | live.c  | 144   |                                                           |       |
+| root  | simpl.c | 126   |                                                           |       |
+| root  | abi.c   | 25    |                                                           |       |
+| total |         | 6,366 |                                                           |       |
 
 ## main.c
 
