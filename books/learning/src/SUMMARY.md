@@ -16,6 +16,7 @@
 
 # QBE
 - [初始QBE](./qbe-1.md)
+- [QBE core concepts](./qbe-core-concepts.md)
 - [QBE 核心数据结构](./qbe-data-structure.md)
 - [QBE 源代码阅读 1](./qbe-2.md)
 - [QBE 源代码阅读 2: fillrpo](./qbe-fillrpo.md)
