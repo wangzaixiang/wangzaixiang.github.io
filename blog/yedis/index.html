@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>Yedis：一款轻量级、高性能的Redis驱动程序 | 程序人生</title>
+<meta name="description" content="本文介绍了云集自研 Redis 驱动程序的架构设计">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/yedis/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="Yedis：一款轻量级、高性能的Redis驱动程序">
+  <meta name="twitter:description" content="本文介绍了云集自研 Redis 驱动程序的架构设计">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="Yedis：一款轻量级、高性能的Redis驱动程序">
+  <meta property="og:description" content="本文介绍了云集自研 Redis 驱动程序的架构设计">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/yedis/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="Yedis：一款轻量级、高性能的Redis驱动程序">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/yedis/"
+      },
+      "headline": "Yedis：一款轻量级、高性能的Redis驱动程序",
+      "image": ,
+      "datePublished": "2021-10-29",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "Yedis：一款轻量级、高性能的Redis驱动程序"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Yedis：一款轻量级、高性能的Redis驱动程序",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文介绍了云集自研 Redis 驱动程序的架构设计"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Yedis",
+            "item": "https://wangzaixiang.github.io/blog/yedis/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/yedis/#yedis-shi-yong-shuo-ming">Yedis 使用说明</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/yedis/#ji-ben-jia-gou-tu">基本架构图</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/yedis/#ji-ben-liu-cheng-zheng-chang-ming-ling-chu-li">基本流程：正常命令处理</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/yedis/#ji-ben-liu-cheng-lu-you-chu-li">基本流程：路由处理</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/yedis/#ji-ben-liu-cheng-wang-luo-yi-chang-chu-li">基本流程：网络异常处理</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/yedis/#ji-ben-liu-cheng-xin-tiao-jian-cha">基本流程：心跳检查</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/yedis/#pipeline-chu-li-liu-cheng">Pipeline 处理流程</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/yedis/#yedis-xing-neng-ce-shi-shu-ju">Yedis 性能测试数据</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/yedis/#qi-ta-jing-yan-zong-jie">其它经验总结</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>Yedis：一款轻量级、高性能的Redis驱动程序</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/agile-rd/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted October 29, 2021 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>16&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/applied-function-progamming/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>Redis是互联网应用中广泛使用的缓存解决方案，以其高性能、丰富的数据结构、简单易用的API而著称，基本上已经成为了互联网应用的基础设施，
+其重要程度与MySQL、Nginx等足以相提并论。Jedis是最常用的Redis Java驱动程序，在我们的应用中也广泛使用Jedis驱动程序。</p>
+<p>在使用Jedis的过程中，我们遇到了如下的问题：</p>
+<ol>
+<li>
+<p>Jedis 对 Redis Cluster 支持有局限，Slave实例不能提供读访问。诸如MySQL的Slave实例，一般用于承担一定的线上只读访问访问，
+以降低对主库的访问压力，提高整个系统的吞吐能力。虽然Redis实例具有很高的访问性能，单实例可以提供10万量级的访问QPS，
+但也是存在上限的。对电商、秒杀等业务场景，单实例的处理能力仍然会成为性能瓶颈，既然 Redis Cluster 支持 Master/Slave 模式，
+为什么不能充分应用 Redis Slave 来分担访问压力呢？</p>
+</li>
+<li>
+<p>Jedis 使用连接池的模式，在实际应用中，就需要关注诸多的连接池参数，并尝试平衡：</p>
+<ol>
+<li>minIdle</li>
+<li>maxTotal</li>
+<li>maxIdle</li>
+<li>testOnBorrow</li>
+<li>testOnReturn</li>
+<li>testWhileIdle</li>
+<li>timeBetweenEvictionRunsMillis</li>
+<li>numTestsPerEvictionRun</li>
+</ol>
+<p>本文并不尝试介绍最佳的 Jedis 参数实践，这些参数的调优过程确实是一个挑战。当服务部署的实例增加到一定量级后，配置一个较大的连接池，
+会导致单个redis服务实例需要支持一个很大的连接数。这些也给到DBA一定的心理压力。</p>
+</li>
+<li>
+<p>Jedis 连接需要 testOnBorrow, 或者testOnReturn 等检测机制来检测连接状态是否正常，这种检测或者会导致额外的 RTT 时间，
+从而降低了应用的访问速度(每次连接0.1ms级别)。或者采用 testWhileIdle 机制，这种机制避免了每次连接进行测试，
+但无法保证连接检测的及时，有可能出现漏检的可能型。</p>
+</li>
+<li>
+<p>在 Redis Cluster 模式下，Redis服务并不支持 mget, mput 等批量操作。而业务上碰到这类场景时，或者采用串行模式逐个调用 get 操作，
+或者使用线程池等方式，进行并发操作。无论哪一种方式都不够让人满意：串行的性能不佳，多线程的模式，由增加了业务服务的复杂性。</p>
+</li>
+</ol>
+<p>基于如上的痛点问题，我们决定自研一个匹配的驱动程序，我们称之为：Yedis，可以理解为 Yunji Redis Driver 或者
+Yet another Redis Driver。</p>
+<h2 id="yedis-shi-yong-shuo-ming">Yedis 使用说明</h2>
+<ol>
+<li>
+<p>maven依赖</p>
+<pre data-lang="xml" style="background-color:#2b303b;color:#c0c5ce;" class="language-xml "><code class="language-xml" data-lang="xml"><span>&lt;</span><span style="color:#bf616a;">dependency</span><span>&gt;
+</span><span>   &lt;</span><span style="color:#bf616a;">groupId</span><span>&gt;yunji.yedis.client&lt;/</span><span style="color:#bf616a;">groupId</span><span>&gt;
+</span><span>   &lt;</span><span style="color:#bf616a;">artifactId</span><span>&gt;yedis&lt;/</span><span style="color:#bf616a;">artifactId</span><span>&gt;
+</span><span>   &lt;</span><span style="color:#bf616a;">version</span><span>&gt;1.3.2&lt;/</span><span style="color:#bf616a;">version</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">dependency</span><span>&gt;
+</span></code></pre>
+</li>
+<li>
+<p>基本API用法</p>
+</li>
+</ol>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span>   </span><span style="color:#65737e;">//初始化
+</span><span>   </span><span style="color:#ebcb8b;">Yedis</span><span> yedis = </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Yedis</span><span>(&quot;</span><span style="color:#a3be8c;">172.16.0.3:6379,172.16.0.3:6380</span><span>&quot;, </span><span style="color:#d08770;">5</span><span>);</span><span style="color:#65737e;">//超时时间(单位:秒)
+</span><span>   
+</span><span>   </span><span style="color:#65737e;">//String
+</span><span>   yedis.</span><span style="color:#bf616a;">set</span><span>(&quot;</span><span style="color:#a3be8c;">key_str</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">test_value</span><span>&quot;);
+</span><span>   </span><span style="color:#ebcb8b;">String</span><span> val = yedis.</span><span style="color:#bf616a;">get</span><span>(&quot;</span><span style="color:#a3be8c;">key_str</span><span>&quot;);
+</span><span>   
+</span><span>   </span><span style="color:#65737e;">//Hash
+</span><span>   </span><span style="color:#ebcb8b;">Map</span><span>&lt;</span><span style="color:#ebcb8b;">String</span><span>, </span><span style="color:#ebcb8b;">String</span><span>&gt; map = yedis.</span><span style="color:#bf616a;">hgetAll</span><span>(&quot;</span><span style="color:#a3be8c;">key_map</span><span>&quot;);
+</span><span>   </span><span style="color:#ebcb8b;">List</span><span>&lt;</span><span style="color:#ebcb8b;">String</span><span>&gt; list = yedis.</span><span style="color:#bf616a;">hmget</span><span>(&quot;</span><span style="color:#a3be8c;">key_map</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">f1</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">f2</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">f3</span><span>&quot;);
+</span><span>   </span><span style="color:#ebcb8b;">String</span><span> str = yedis.</span><span style="color:#bf616a;">hget</span><span>(&quot;</span><span style="color:#a3be8c;">key_map</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">f1</span><span>&quot;);
+</span><span>   
+</span><span>   </span><span style="color:#65737e;">//List
+</span><span>   </span><span style="color:#ebcb8b;">List</span><span>&lt;</span><span style="color:#ebcb8b;">String</span><span>&gt; list = yedis.</span><span style="color:#bf616a;">lrange</span><span>(&quot;</span><span style="color:#a3be8c;">key_list</span><span>&quot;, </span><span style="color:#d08770;">0</span><span>, -</span><span style="color:#d08770;">1</span><span>);
+</span><span>   </span><span style="color:#ebcb8b;">List</span><span>&lt;</span><span style="color:#ebcb8b;">String</span><span>&gt; list = yedis.</span><span style="color:#bf616a;">sort</span><span>(&quot;</span><span style="color:#a3be8c;">key_list</span><span>&quot;);
+</span><span>   yedis.</span><span style="color:#bf616a;">rpush</span><span>(&quot;</span><span style="color:#a3be8c;">key_list</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">1</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">2</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">5</span><span>&quot;)
+</span><span>   
+</span><span>   </span><span style="color:#65737e;">//指定数据读取来源
+</span><span>   yedis.</span><span style="color:#bf616a;">get</span><span>(&quot;</span><span style="color:#a3be8c;">key_str</span><span>&quot;, </span><span style="color:#ebcb8b;">ReadModel</span><span>.</span><span style="color:#d08770;">MASTER_SLAVE</span><span>);</span><span style="color:#65737e;">//ReadModel：MASTER、SLAVE、MASTER_SLAVE
+</span><span>   
+</span><span>   </span><span style="color:#65737e;">//Pipeline
+</span><span>   </span><span style="color:#ebcb8b;">Pipeline</span><span> pip = yedis.</span><span style="color:#bf616a;">openPipeline</span><span>();
+</span><span>   pip.</span><span style="color:#bf616a;">set</span><span>(&quot;</span><span style="color:#a3be8c;">key_string</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">a</span><span>&quot;);  </span><span style="color:#65737e;">//返回值：String
+</span><span>   pip.</span><span style="color:#bf616a;">hvals</span><span>(&quot;</span><span style="color:#a3be8c;">key_map</span><span>&quot;);</span><span style="color:#65737e;">//返回值：List
+</span><span>   pip.</span><span style="color:#bf616a;">get</span><span>(&quot;</span><span style="color:#a3be8c;">key_map</span><span>&quot;);</span><span style="color:#65737e;">//数据类型不匹配，异常
+</span><span>   pip.</span><span style="color:#bf616a;">zrangeWithScores</span><span>(&quot;</span><span style="color:#a3be8c;">key_zset</span><span>&quot;, </span><span style="color:#d08770;">0</span><span>, -</span><span style="color:#d08770;">1</span><span>);</span><span style="color:#65737e;">//返回值：Tuple
+</span><span>   
+</span><span>   </span><span style="color:#ebcb8b;">List</span><span>&lt;</span><span style="color:#ebcb8b;">Object</span><span>&gt; list = pip.</span><span style="color:#bf616a;">getResults</span><span>();
+</span><span>   </span><span style="color:#b48ead;">for</span><span>(</span><span style="color:#ebcb8b;">Object</span><span> obj : list){
+</span><span>       </span><span style="color:#b48ead;">if</span><span>(obj instanceof </span><span style="color:#ebcb8b;">YedisException</span><span>){
+</span><span>           </span><span style="color:#ebcb8b;">YedisException</span><span> exception = (</span><span style="color:#ebcb8b;">YedisException</span><span>) obj;
+</span><span>           exception.</span><span style="color:#bf616a;">printStackTrace</span><span>();
+</span><span>       }
+</span><span>       </span><span style="color:#ebcb8b;">System</span><span>.out.</span><span style="color:#bf616a;">println</span><span>(obj);
+</span><span>   }
+</span></code></pre>
+<ol start="3">
+<li>JMX 监控
+yedis提供监控信息方便查看当时运行状况，以及基本的统计信息:</li>
+</ol>
+
+<img src="https:&#x2F;&#x2F;wangzaixiang.github.io&#x2F;processed_images&#x2F;yedis_jmx.27a2445429253d4c.png" />
+<p>监控中包含4个属性：</p>
+<ul>
+<li>ChannelInfo：一个redis节点对应一个channel，监控中可以看到当前连接是否正常、当前连接创建时间、请求数(最近20s内)、平均响应时间(单位:ms)以及该Redis节点对应的连接总创建、关闭次数</li>
+<li>QueueInfo:  记录Queue最后一次写入、消费时间、Queue中消息阻塞数(Queue的具体作用下文会提到)</li>
+<li>UpdateNums: Reids集群发生变更次数</li>
+<li>LastUpdateTime:  最后一次更新Redis状态时间</li>
+</ul>
+<h2 id="ji-ben-jia-gou-tu">基本架构图</h2>
+<p>Yedis 采用了如下的设计思路：</p>
+<ol>
+<li>每个 Redis 节点只维护一个连接，所有的客户端线程均共享单个连接，发送命令。而不采用连接池。</li>
+<li>基于 Netty，所有网络处理采用异步、非阻塞模式。</li>
+</ol>
+<p>采用单连接模式是否会有性能问题？</p>
+<ol>
+<li>单连接并不意味着一次只能有一个客户端请求redis，其它的客户端必须等待这个请求返回后，才能发起下一个请求。相反，Yedis在单个TCP Socket之上，多个应用线程可以并行的使用这个Socket发送命令。这个是基于Redis的Pipeline特性。</li>
+<li>大部分单个的Redis命令执行时间非常之快，一般在 10-50us 数量级上，相反，即使在局域网上，网络的 rtt 一般也会达到0.3ms - 1ms量级。也就是说，如果从单个命令的执行过程来看，只有5%-15%的时间是在真正的耗费在redis执行之上，其余时间其实是耗费在等待网络传输的过程之中。</li>
+<li>通过使用Pipeline技术，无需等待上一个命令处理完毕，再发送下一个命令请求，而是客户端一个接一个的将命令发送给Redis服务器，Redis逐个进行处理，再逐个的进行返回，客户端在逐个的处理返回结果。这种方式，可以实现单个连接就可以替代原有连接池才能完成任务。</li>
+</ol>
+<blockquote>
+<p>那么单连接的模式是否会存在性能瓶颈呢？理论上确实有，在单个Socket上传输的最大速度 = windowSize / rtt，在万兆局域网下，这个值一般在50M byte左右。考虑到单个客户端对redis的访问很少会达到如此高的场景，因此，单个TCP连接的数据传输瓶颈并不会成为实际的问题。</p>
+</blockquote>
+
+<img src="https:&#x2F;&#x2F;wangzaixiang.github.io&#x2F;processed_images&#x2F;15722638104683.fd5cf1a8194d8491.jpg" /><h3 id="ji-ben-liu-cheng-zheng-chang-ming-ling-chu-li">基本流程：正常命令处理</h3>
+<ol>
+<li>首先，根据用户所传入的Key进行计算，得到该Key的所在Redis节点对应的Channel</li>
+<li>对选中的Channel，同步的执行如下操作：
+<ol>
+<li>创建一个处理返回结果的 Future， 保存到 channel 对应的队列中（目前没有使用JDK8的Future API，原因是需要提供对JDK7的API兼容）</li>
+<li>调用 Netty writeAndFlush 操作将命令发送给服务器。
+这两个操作必须同步完成，确保 queue 中的Future顺序和发送顺序完全一致，这样在下一步处理返回结果</li>
+</ol>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span>   </span><span style="color:#b48ead;">private </span><span>&lt;</span><span style="color:#ebcb8b;">R</span><span>&gt; </span><span style="color:#ebcb8b;">R </span><span style="color:#bf616a;">send</span><span>(final </span><span style="color:#ebcb8b;">Request</span><span> request, </span><span style="color:#ebcb8b;">Channel</span><span> channel) {
+</span><span>    </span><span style="color:#bf616a;">assertChannelNotNull</span><span>(channel);
+</span><span>    </span><span style="color:#ebcb8b;">ResponseFuture</span><span>&lt;</span><span style="color:#ebcb8b;">R</span><span>&gt; future = </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">ResponseFuture</span><span>(</span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">SendCallback</span><span>() </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">        ......
+</span><span style="color:#eff1f5;">    }</span><span>);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">synchronized </span><span>(channel) {
+</span><span>        </span><span style="color:#bf616a;">assertChannelIsActive</span><span>(channel);
+</span><span>        </span><span style="color:#b48ead;">try </span><span>{
+</span><span>            </span><span style="color:#ebcb8b;">YedisHandler</span><span>.</span><span style="color:#bf616a;">put</span><span>(channel, future);
+</span><span>            channel.</span><span style="color:#bf616a;">writeAndFlush</span><span>(request);
+</span><span>        } </span><span style="color:#b48ead;">catch </span><span>(</span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#bf616a;">e</span><span>) {
+</span><span>            </span><span style="color:#b48ead;">throw new </span><span style="color:#ebcb8b;">YedisInterruptedExceptionException</span><span>(e);
+</span><span>        }
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">waitResponse</span><span>(future);
+</span><span>}
+</span></code></pre>
+</li>
+<li>Netty接收到Redis的返回结果后，从对应Queue中取出ResponseFuture，将结果设置到到ResponseFuture，然后唤醒客户端等待线程、将结果返回。<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span>    @</span><span style="color:#bf616a;">Override
+</span><span style="color:#b48ead;">public</span><span> void </span><span style="color:#bf616a;">channelRead</span><span>(</span><span style="color:#ebcb8b;">ChannelHandlerContext</span><span> ctx, </span><span style="color:#ebcb8b;">Object</span><span> msg) {
+</span><span>    </span><span style="color:#ebcb8b;">ResponseFuture</span><span> response = </span><span style="color:#bf616a;">take</span><span>(ctx.</span><span style="color:#bf616a;">channel</span><span>());
+</span><span>    response.</span><span style="color:#bf616a;">setContent</span><span>((</span><span style="color:#ebcb8b;">RedisMessage</span><span>) msg);
+</span><span>    </span><span style="color:#b48ead;">synchronized </span><span>(response) {
+</span><span>        response.</span><span style="color:#bf616a;">notify</span><span>();
+</span><span>    }
+</span><span>}
+</span></code></pre>
+</li>
+</ol>
+<p>在上述的代码中虽然有 synchronized 代码块，但是，在代码块内没有阻塞性的操作，因此，其对并发的性能影响是非常微小的。当然例外也是存在的：我们会控制单个queue的排队数量，目前缺省是200，相当于最多可以有200个处理中的命令，对应于Jedis的话，相当于最多200个连接池。</p>
+<h3 id="ji-ben-liu-cheng-lu-you-chu-li">基本流程：路由处理</h3>
+<ol>
+<li>先对Key进行CRC16、对16384进行取模，得到该Key对应的slot</li>
+<li>yedis内存中维护了一个长度为16384的slots数组，slots数组存储了Partion引用，Partion与Redis节点一一对应、同时也保存了Redis的主从关系。通过第1步的slot + ReadModel可以获得对应的Partion，进而获取对应的Redis节点Host</li>
+<li>yedis在初始化的时候，会为每个Reids节点创建一个channel连接，同时将channel缓存到本地Map，使用host作为key。通过第2步获取到的host便可从channel map中获取对应的channel，然后进行数据的发送了,</li>
+</ol>
+<h3 id="ji-ben-liu-cheng-wang-luo-yi-chang-chu-li">基本流程：网络异常处理</h3>
+<ol>
+<li>服务器异常关闭连接
+yedis网络通信采用netty，与Redis保持长连接，一旦某个Redis节点连接被关闭，客户端能迅速检测到并且移除该Channel缓存信息，使得发往该Reids节点的请求在客户端便快速失败，不会因此堵塞；同时后台线程会异步的尝试重新创建到该Reids节点的Channel连接。</li>
+<li>集群发生变化
+yedis启动的时候，后台会启动一个异步线程，每5s检测Reids集群是否发生变化，例如：主节点down机、主从发生切换、新增/缩减Redis节点等，yedis会重新执行一次初始化操作，期间所有读写操作均暂停，直至Redis信息同步完成</li>
+</ol>
+<h3 id="ji-ben-liu-cheng-xin-tiao-jian-cha">基本流程：心跳检查</h3>
+<p>yedis后台有一个异步线程，每10s向服务端发送一个PING命令然后带上当前时间戳，然后我们检测Reids服务的返回内容是否与我们发送的时间戳一致，如果不一致，那就说明消息在Queue中发生了错位，我们会立即关闭该channel，然后立即重新创建一个新的连接</p>
+<h3 id="pipeline-chu-li-liu-cheng">Pipeline 处理流程</h3>
+<p>yedis的数据发送、接收模式非常友好的支持Pipeline，是全局的Pipeline，而非针对某个Redis节点的。具体使用方式，可参考API基本用法。Pipeline处理流程十分简单，和普通命令唯一的区别就是同步和异步等待结果，Pipeline模式下，命令均返回ResponseFuture，在命令全部发送完成后，再统一等待结果。这样，Redis命令可以不停的发送到Redis服务端，而不必等待上一条命了处理完，再处理下一条，大大提升效率！
+基于 Yedis 的单连接、异步处理框架，Pipeline的实现逻辑非常简单：</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span>    </span><span style="color:#b48ead;">private </span><span>&lt;</span><span style="color:#ebcb8b;">R</span><span>&gt; </span><span style="color:#ebcb8b;">ResponseFuture</span><span>&lt;</span><span style="color:#ebcb8b;">R</span><span>&gt; </span><span style="color:#bf616a;">send</span><span>(final </span><span style="color:#ebcb8b;">Request</span><span> request, </span><span style="color:#ebcb8b;">Channel</span><span> channel) {
+</span><span>        </span><span style="color:#bf616a;">assertChannelNotNull</span><span>(channel);
+</span><span>        </span><span style="color:#ebcb8b;">ResponseFuture</span><span>&lt;</span><span style="color:#ebcb8b;">R</span><span>&gt; future = </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">ResponseFuture</span><span>(</span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">SendCallback</span><span>() </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">            ......
+</span><span style="color:#eff1f5;">        }</span><span>);
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">synchronized </span><span>(channel) {
+</span><span>            </span><span style="color:#bf616a;">assertChannelIsActive</span><span>(channel);
+</span><span>            </span><span style="color:#b48ead;">try </span><span>{
+</span><span>                </span><span style="color:#b48ead;">if </span><span>(!</span><span style="color:#ebcb8b;">YedisHandler</span><span>.</span><span style="color:#bf616a;">put</span><span>(channel, future, timeout)) {
+</span><span>                    </span><span style="color:#b48ead;">throw new </span><span style="color:#ebcb8b;">YedisException</span><span>(</span><span style="color:#ebcb8b;">String</span><span>.</span><span style="color:#bf616a;">format</span><span>(&quot;</span><span style="color:#a3be8c;">put msg to blockingqueue timeout %s seconds</span><span>&quot;, timeout));
+</span><span>                }
+</span><span>                channel.</span><span style="color:#bf616a;">writeAndFlush</span><span>(request);
+</span><span>            } </span><span style="color:#b48ead;">catch </span><span>(</span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#bf616a;">e</span><span>) {
+</span><span>                </span><span style="color:#b48ead;">throw new </span><span style="color:#ebcb8b;">YedisInterruptedExceptionException</span><span>(e);
+</span><span>            }
+</span><span>        }
+</span><span>        </span><span style="color:#b48ead;">return</span><span> future;
+</span><span>    }
+</span></code></pre>
+<h2 id="yedis-xing-neng-ce-shi-shu-ju">Yedis 性能测试数据</h2>
+<table><thead><tr><th style="text-align: left">序号</th><th style="text-align: left">线程数</th><th style="text-align: left">测试数据大小(byte)</th><th style="text-align: left">queue size</th><th style="text-align: left">主/从</th><th style="text-align: left">总请求数</th><th style="text-align: left">成功数</th><th style="text-align: left">失败数</th><th style="text-align: left">QPS</th><th style="text-align: left">YGC</th><th style="text-align: left">FGC</th></tr></thead><tbody>
+<tr><td style="text-align: left">1</td><td style="text-align: left">16</td><td style="text-align: left">256</td><td style="text-align: left">200</td><td style="text-align: left">M</td><td style="text-align: left">320万</td><td style="text-align: left">320万</td><td style="text-align: left">0</td><td style="text-align: left">64878</td><td style="text-align: left">7</td><td style="text-align: left">0</td></tr>
+<tr><td style="text-align: left">2</td><td style="text-align: left">32</td><td style="text-align: left">256</td><td style="text-align: left">200</td><td style="text-align: left">M</td><td style="text-align: left">320万</td><td style="text-align: left">320万</td><td style="text-align: left">0</td><td style="text-align: left">76591</td><td style="text-align: left">7</td><td style="text-align: left">0</td></tr>
+<tr><td style="text-align: left">3</td><td style="text-align: left">64</td><td style="text-align: left">256</td><td style="text-align: left">200</td><td style="text-align: left">M</td><td style="text-align: left">320万</td><td style="text-align: left">320万</td><td style="text-align: left">0</td><td style="text-align: left">82486</td><td style="text-align: left">8</td><td style="text-align: left">0</td></tr>
+<tr><td style="text-align: left">4</td><td style="text-align: left">128</td><td style="text-align: left">256</td><td style="text-align: left">200</td><td style="text-align: left">M</td><td style="text-align: left">320万</td><td style="text-align: left">320万</td><td style="text-align: left">0</td><td style="text-align: left">88704</td><td style="text-align: left">8</td><td style="text-align: left">0</td></tr>
+<tr><td style="text-align: left">5</td><td style="text-align: left">256</td><td style="text-align: left">256</td><td style="text-align: left">200</td><td style="text-align: left">M</td><td style="text-align: left">320万</td><td style="text-align: left">320万</td><td style="text-align: left">0</td><td style="text-align: left">81655</td><td style="text-align: left">8</td><td style="text-align: left">0</td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: left"></td></tr>
+<tr><td style="text-align: left">6</td><td style="text-align: left">16</td><td style="text-align: left">1024</td><td style="text-align: left">200</td><td style="text-align: left">M</td><td style="text-align: left">320万</td><td style="text-align: left">320万</td><td style="text-align: left">0</td><td style="text-align: left">55200</td><td style="text-align: left">10</td><td style="text-align: left">0</td></tr>
+<tr><td style="text-align: left">7</td><td style="text-align: left">32</td><td style="text-align: left">1024</td><td style="text-align: left">200</td><td style="text-align: left">M</td><td style="text-align: left">320万</td><td style="text-align: left">320万</td><td style="text-align: left">0</td><td style="text-align: left">63713</td><td style="text-align: left">10</td><td style="text-align: left">0</td></tr>
+<tr><td style="text-align: left">8</td><td style="text-align: left">64</td><td style="text-align: left">1024</td><td style="text-align: left">200</td><td style="text-align: left">M</td><td style="text-align: left">320万</td><td style="text-align: left">320万</td><td style="text-align: left">0</td><td style="text-align: left">68154</td><td style="text-align: left">11</td><td style="text-align: left">0</td></tr>
+<tr><td style="text-align: left">9</td><td style="text-align: left">128</td><td style="text-align: left">1024</td><td style="text-align: left">200</td><td style="text-align: left">M</td><td style="text-align: left">320万</td><td style="text-align: left">320万</td><td style="text-align: left">0</td><td style="text-align: left">74609</td><td style="text-align: left">11</td><td style="text-align: left">0</td></tr>
+<tr><td style="text-align: left">10</td><td style="text-align: left">256</td><td style="text-align: left">1024</td><td style="text-align: left">200</td><td style="text-align: left">M</td><td style="text-align: left">320万</td><td style="text-align: left">320万</td><td style="text-align: left">0</td><td style="text-align: left">71428</td><td style="text-align: left">11</td><td style="text-align: left">0</td></tr>
+</tbody></table>
+<h2 id="qi-ta-jing-yan-zong-jie">其它经验总结</h2>
+<p>在Yedis开发中，我们非常关注代码的性能，尽可能提供一个足够高效的驱动程序，这里简单的补充说明一下：</p>
+<ol>
+<li>直接在 ByteBuf（一般的，是HeapOff的ByteBuf，可以提供更高的数据读写、分配性能）中搜索CR、LF等分隔符，实际测试表明：使用 ByteBuf.forEachByte 迭代相比手写的 for循环遍历，具有10-20%的性能提升。</li>
+<li>最小化内存分配，减少GC负担。Yedis针对网络通信，尽量避免创建额外的对象。我们为每个Channel准备了一个缺省1024的buffer，除非单个redis响应字符串超过1024，否则无需额外的内存分配。这对于大量以较小的key，value为主的Redis应用来说，可以最小化对象分分配。</li>
+<li>使用 immutable 的数据结构，简化并发情况下的线程安全。Yedis中涉及到大量的并发操作，这些并发操作会涉及到复杂的数据同步。同步操作是并发的万恶之源，为了简化并发处理，提高系统的鲁棒性，Yedis在存储共享的数据结构时，尽量采用 immutable 的数据结构，这个可以参考：<code>ClusterInfo</code>、<code>Node</code>、<code>Partion</code>等数据结构。</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/agile-rd/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/applied-function-progamming/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

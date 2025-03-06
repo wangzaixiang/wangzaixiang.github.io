@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="209pt" height="570pt" viewBox="0.00 0.00 208.50 569.50">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.5)">
+<title>polars_query</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-565.5 204.5,-565.5 204.5,4 -4,4"/>
+<!-- SORT BY [col(&quot;YM&quot;)] [(0, 0)] -->
+<g id="node1" class="node">
+<title>SORT BY [col(&quot;YM&quot;)] [(0, 0)]</title>
+<polygon fill="none" stroke="black" points="172.38,-561.5 28.12,-561.5 28.12,-525.5 172.38,-525.5 172.38,-561.5"/>
+<text text-anchor="middle" x="100.25" y="-538.45" font-family="Times,serif" font-size="14.00">SORT BY [col(&quot;YM&quot;)]</text>
+</g>
+<!-- DISTINCT [(0, 1)] -->
+<g id="node2" class="node">
+<title>DISTINCT [(0, 1)]</title>
+<polygon fill="none" stroke="black" points="139,-489.5 61.5,-489.5 61.5,-453.5 139,-453.5 139,-489.5"/>
+<text text-anchor="middle" x="100.25" y="-466.45" font-family="Times,serif" font-size="14.00">DISTINCT</text>
+</g>
+<!-- SORT BY [col(&quot;YM&quot;)] [(0, 0)]&#45;&#45;DISTINCT [(0, 1)] -->
+<g id="edge1" class="edge">
+<title>SORT BY [col(&quot;YM&quot;)] [(0, 0)]--DISTINCT [(0, 1)]</title>
+<path fill="none" stroke="black" d="M100.25,-525.2C100.25,-514.35 100.25,-500.42 100.25,-489.6"/>
+</g>
+<!-- π 2/4 [(0, 2)] -->
+<g id="node3" class="node">
+<title>π 2/4 [(0, 2)]</title>
+<polygon fill="none" stroke="black" points="127.25,-417.5 73.25,-417.5 73.25,-381.5 127.25,-381.5 127.25,-417.5"/>
+<text text-anchor="middle" x="100.25" y="-394.45" font-family="Times,serif" font-size="14.00">π 2/4</text>
+</g>
+<!-- DISTINCT [(0, 1)]&#45;&#45;π 2/4 [(0, 2)] -->
+<g id="edge2" class="edge">
+<title>DISTINCT [(0, 1)]--π 2/4 [(0, 2)]</title>
+<path fill="none" stroke="black" d="M100.25,-453.2C100.25,-442.35 100.25,-428.42 100.25,-417.6"/>
+</g>
+<!-- WITH COLUMNS [&quot;last_close&quot;] [(0, 3)] -->
+<g id="node4" class="node">
+<title>WITH COLUMNS [&quot;last_close&quot;] [(0, 3)]</title>
+<polygon fill="none" stroke="black" points="200.5,-345.5 0,-345.5 0,-309.5 200.5,-309.5 200.5,-345.5"/>
+<text text-anchor="middle" x="100.25" y="-322.45" font-family="Times,serif" font-size="14.00">WITH COLUMNS [&quot;last_close&quot;]</text>
+</g>
+<!-- π 2/4 [(0, 2)]&#45;&#45;WITH COLUMNS [&quot;last_close&quot;] [(0, 3)] -->
+<g id="edge3" class="edge">
+<title>π 2/4 [(0, 2)]--WITH COLUMNS [&quot;last_close&quot;] [(0, 3)]</title>
+<path fill="none" stroke="black" d="M100.25,-381.2C100.25,-370.35 100.25,-356.42 100.25,-345.6"/>
+</g>
+<!-- SORT BY [col(&quot;Date&quot;)] [(0, 4)] -->
+<g id="node5" class="node">
+<title>SORT BY [col(&quot;Date&quot;)] [(0, 4)]</title>
+<polygon fill="none" stroke="black" points="173.88,-273.5 26.62,-273.5 26.62,-237.5 173.88,-237.5 173.88,-273.5"/>
+<text text-anchor="middle" x="100.25" y="-250.45" font-family="Times,serif" font-size="14.00">SORT BY [col(&quot;Date&quot;)]</text>
+</g>
+<!-- WITH COLUMNS [&quot;last_close&quot;] [(0, 3)]&#45;&#45;SORT BY [col(&quot;Date&quot;)] [(0, 4)] -->
+<g id="edge4" class="edge">
+<title>WITH COLUMNS [&quot;last_close&quot;] [(0, 3)]--SORT BY [col(&quot;Date&quot;)] [(0, 4)]</title>
+<path fill="none" stroke="black" d="M100.25,-309.2C100.25,-298.35 100.25,-284.42 100.25,-273.6"/>
+</g>
+<!-- WITH COLUMNS [&quot;YM&quot;] [(0, 5)] -->
+<g id="node6" class="node">
+<title>WITH COLUMNS [&quot;YM&quot;] [(0, 5)]</title>
+<polygon fill="none" stroke="black" points="185.12,-201.5 15.38,-201.5 15.38,-165.5 185.12,-165.5 185.12,-201.5"/>
+<text text-anchor="middle" x="100.25" y="-178.45" font-family="Times,serif" font-size="14.00">WITH COLUMNS [&quot;YM&quot;]</text>
+</g>
+<!-- SORT BY [col(&quot;Date&quot;)] [(0, 4)]&#45;&#45;WITH COLUMNS [&quot;YM&quot;] [(0, 5)] -->
+<g id="edge5" class="edge">
+<title>SORT BY [col(&quot;Date&quot;)] [(0, 4)]--WITH COLUMNS [&quot;YM&quot;] [(0, 5)]</title>
+<path fill="none" stroke="black" d="M100.25,-237.2C100.25,-226.35 100.25,-212.42 100.25,-201.6"/>
+</g>
+<!-- π 2/2 [(0, 6)] -->
+<g id="node7" class="node">
+<title>π 2/2 [(0, 6)]</title>
+<polygon fill="none" stroke="black" points="127.25,-129.5 73.25,-129.5 73.25,-93.5 127.25,-93.5 127.25,-129.5"/>
+<text text-anchor="middle" x="100.25" y="-106.45" font-family="Times,serif" font-size="14.00">π 2/2</text>
+</g>
+<!-- WITH COLUMNS [&quot;YM&quot;] [(0, 5)]&#45;&#45;π 2/2 [(0, 6)] -->
+<g id="edge6" class="edge">
+<title>WITH COLUMNS [&quot;YM&quot;] [(0, 5)]--π 2/2 [(0, 6)]</title>
+<path fill="none" stroke="black" d="M100.25,-165.2C100.25,-154.35 100.25,-140.42 100.25,-129.6"/>
+</g>
+<!-- Csv SCAN ./apple_stock.csv;
+π 2/2;
+σ &#45; [(0, 7)] -->
+<g id="node8" class="node">
+<title>Csv SCAN ./apple_stock.csv;
+π 2/2;
+σ - [(0, 7)]</title>
+<polygon fill="none" stroke="black" points="189.25,-57.5 11.25,-57.5 11.25,0 189.25,0 189.25,-57.5"/>
+<text text-anchor="middle" x="100.25" y="-40.2" font-family="Times,serif" font-size="14.00">Csv SCAN ./apple_stock.csv;</text>
+<text text-anchor="middle" x="100.25" y="-23.7" font-family="Times,serif" font-size="14.00">π 2/2;</text>
+<text text-anchor="middle" x="100.25" y="-7.2" font-family="Times,serif" font-size="14.00">σ -</text>
+</g>
+<!-- π 2/2 [(0, 6)]&#45;&#45;Csv SCAN ./apple_stock.csv;
+π 2/2;
+σ &#45; [(0, 7)] -->
+<g id="edge7" class="edge">
+<title>π 2/2 [(0, 6)]--Csv SCAN ./apple_stock.csv;
+π 2/2;
+σ - [(0, 7)]</title>
+<path fill="none" stroke="black" d="M100.25,-93.38C100.25,-83.1 100.25,-69.77 100.25,-57.97"/>
+</g>
+</g>
+</svg>
