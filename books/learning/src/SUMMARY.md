@@ -21,6 +21,7 @@
 - [QBE 源代码阅读 1](./qbe-2.md)
 - [QBE 源代码阅读 2: fillrpo](./qbe-fillrpo.md)
 - [QBE 源代码阅读 3: fillrpo](./qbe-fillpreds.md)
+- [QBE 源代码阅读 4：promote](./qbe-promote.md)
 
 # zig-lang
 - [misc](zig_misc.md)
