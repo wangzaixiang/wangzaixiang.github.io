@@ -931,4 +931,10 @@ rust 在很多情况下，可以直接将 struct 字段的变量也 SSA 优化�
 
 # ver22: 5.38s
 
+# ver22 + pgo: 5.25s
+在 ver22 的基础上，使用 [profile guided optimization](https://doc.rust-lang.org/rustc/profile-guided-optimization.html#:~:text=rustc%20supports%20doing%20profile-guided%20optimization%20%28PGO%29.%20This%20chapter,it%20can%20be%20used.%20What%20Is%20Profiled-Guided%20Optimization%3F) 
+进行编译优化，相比 ~pgo 的版本，提升了约 %2 的性能。虽然比例不大，不过胜在成本低。
+
+没有对比生成的代码，估计是基于 profile data, 对 register allocation 等做了策略性的优化。
+
 未完，待续......

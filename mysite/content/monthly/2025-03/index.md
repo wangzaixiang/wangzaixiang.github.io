@@ -23,6 +23,16 @@ template = "blog/page.html"
      - async closure
      - use<'a>
 2. zig 0.14 期待发布时在此补充
+3. [Const Fn in Rust](https://felixwrt.dev/posts/const-fn/)
+   这篇文章并没有介绍 const fn 是如何在 compile time 时evaluate 的，只是介绍了 const fn 的基本用法。
+   - [compile time evaluation](https://doc.rust-lang.org/reference/const_eval.html)
+4. 学习 register allocation
+   - [A Generalized Algorithm for Graph-Coloring Register Allocation](https://c9x.me/compile/bib/pcc-rega.pdf)
+   - [CS143 编译原理笔记 6 - Register Allocation](https://zhuanlan.zhihu.com/p/640647465) 中文笔记
+     - Liveness Analysis
+     - Register interference graph
+     - Graph coloring
+   - [Linear Scan Register Allocation](https://c9x.me/compile/bib/linearscan.pdf)
 
 # MPP & OLAP
 
