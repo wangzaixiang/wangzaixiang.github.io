@@ -22,7 +22,13 @@ template = "blog/page.html"
      - async trait fn
      - async closure
      - use<'a>
-2. zig 0.14 期待发布时在此补充
+2. zig 0.14 2025-3-5 发布 
+   - switch 支持 continue :label value 语法
+   - .foo 支持 Result Location Semantics
+   - field & declarations 不能同名
+   - 全局变量初始化可以使用彼此的地址。
+   - @branchHint(.unlikely)
+   - ...
 3. [Const Fn in Rust](https://felixwrt.dev/posts/const-fn/)
    这篇文章并没有介绍 const fn 是如何在 compile time 时evaluate 的，只是介绍了 const fn 的基本用法。
    - [compile time evaluation](https://doc.rust-lang.org/reference/const_eval.html)
