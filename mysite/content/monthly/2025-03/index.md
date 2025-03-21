@@ -35,6 +35,29 @@ template = "blog/page.html"
    - [Linear Scan Register Allocation](https://c9x.me/compile/bib/linearscan.pdf)
 
 # MPP & OLAP
+1. [DuckDB -- ART索引](https://zhuanlan.zhihu.com/p/645064049)
+   trie 树的变种，面向内存（索引数据全部加载到内存）
+   1. Node4 ( `key[4], child[4]` ):  4 + 4 * 8 = 36 bytes
+   2. Node16 ( `key[16], child[16]` ) 16 + 16 * 8 = 144 bytes
+   3. Node48 ( `key[256], child[48]` ) 256 + 48 * 8 = 400 bytes
+   4. Node256 ( `child[256]` ) 256 * 8 = 2048 bytes
+   5. Leaf
+   
+   优化：Node: prefix + key + index, Leaf: prefix + value。
+2. [Duck DB -- ART](https://duckdb.org/2022/07/27/art-storage.html)
+   DuckDB 早期 ART 索引是不存储的，启动时会重建。目前的版本是持久化的。
+   使用 ART 来存储 PK（每一行都需要在 Leaf 中）:
+   1. 是否会占用大量内存？lazy load node 使得无需将全部索引加载到内存中。
+   2. 如何进行存储？方便 lazy load
+   ![img.png](art-post-order.png)
+   ![img.png](art-storage.png)
+   使用 post-order 可以使得一个一个 Block (256K) 作为一个整体进行读取（存储时可选压缩）。当 block 未加载时，只需整体加载该 block 到内存中。
+   ![img.png](swizzlable-pointer.png)
+   
+   问题：
+   1. post order 维持了 node 的整体有序性，一个 block 中的节点是基本连续、有序的。
+   2. 插入、修改操作涉及到对 block 的拆分、合并。
+   3. 索引的存储放大比率如何？比如说对 1G 的数据行， ART 索引需要多少空间？
 
 # Web & Visualization
 
