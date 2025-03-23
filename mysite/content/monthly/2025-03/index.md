@@ -38,7 +38,8 @@ template = "blog/page.html"
      - Liveness Analysis
      - Register interference graph
      - Graph coloring
-   - [Linear Scan Register Allocation](https://c9x.me/compile/bib/linearscan.pdf)
+   - [Linear Scan Register Allocation](https://c9x.me/compile/bib/linearscan.pdf) [中文笔记](https://zhuanlan.zhihu.com/p/628123333)
+     简单的选择，life time 最长的variable 进行 spill，简单粗暴（存活时间最长就意味着占用最多资源）
 
 # MPP & OLAP
 1. [DuckDB -- ART索引](https://zhuanlan.zhihu.com/p/645064049)
