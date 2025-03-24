@@ -52,6 +52,7 @@ Lit + Plain Web Component: PerfComp00 using plain web component.
 4. **Web Component 自身并不会带来复杂的性能问题，在必要的情况下，可以使用原生的 Web Component 来避免框架带来的性能问题**。
 5. 目前的测试来看，各种框架对大量组件的初始化，还是有一定的开销。对 Lit 来说，LitHtml 的模版成本还是偏高一些，在这方面，Svelte 的
    静态编译的优势最为明显。
+6. Lit 最新版本有支持对 template 进行编译，这个特性应该会对性能有所提升，不过，这个特性依赖 rollup 插件，使用上有一些bug，未能进行测试。
 
 ## 参考：
 [Git Repo](https://github.com/wangzaixiang/lot-of-elements-compare)
