@@ -25,12 +25,12 @@ template = "blog/page.html"
    
 ## 测试结果：
 
-| Part      | Svelte   | Vue3     | Lit      | Lit + Plain PerfComp00 | Lit + Plain PerfComp00, PerfComp01 |
-|-----------|----------|----------|----------|------------------------|------------------------------------|
-| Scripting | 134.28ms | 332.95ms | 427.68ms | 265.5ms                | 112.29ms                           |
-| Styling   | 17.39ms  | 15.3ms   | 59.71ms  | 24.86ms                | 20ms                               |
-| Layout    |          | 51.69ms  | 124.53ms | 33ms                   | 31ms                               |
-| Paint     | 2.10ms   | 8.6ms    | 34ms     | 20ms                   | 11ms                               |
+| Part      | Svelte   | Vue3     | Lit      | Lit + Plain PerfComp00 | Lit + Plain PerfComp00, PerfComp01 | All Plain WC |
+|-----------|----------|----------|----------|------------------------|------------------------------------|--------------|
+| Scripting | 134.28ms | 332.95ms | 427.68ms | 265.5ms                | 112.29ms                           | 85ms         |
+| Styling   | 17.39ms  | 15.3ms   | 59.71ms  | 24.86ms                | 20ms                               | 21ms         |
+| Layout    |          | 51.69ms  | 124.53ms | 33ms                   | 31ms                               | 32ms         |
+| Paint     | 2.10ms   | 8.6ms    | 34ms     | 20ms                   | 11ms                               | 14ms         | 
 
 | Part      | Lit0  | Lit1  | Lit 2 |
 |-----------|-------|-------|-------|
