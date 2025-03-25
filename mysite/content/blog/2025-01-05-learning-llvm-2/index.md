@@ -236,7 +236,24 @@ int demo1(int x) {
 4. `clang -mllvm --help-hidden` 查看隐藏的选项
 5. `clang -mllvm -debug-pass=Arguments` print pass arguments to pass to opt.
 6. `opt -S src.ll -passes=.. -o -` 使用 opt 来执行选择的 pass 并观察 IR 的演进。
+   - --debug-pass=Details: print pass details when it is executed
+   - --debug-pass-manager=quiet|verbose
+   - --debugify-each    Start each pass with debugify and end it with check-debugify
+   - --print-passes     print available passes
+   - --print-pipeline-passes 显示当前的 pass pipeline 可以使用 clang -mllvm --print-pipeline-passes 查看 clang 的 pass pipeline 
+     然后在 opt 中重放这个 pipeline。
 7. `llc` from LLVM IR to assembly
+
+    如果出现如下错误：
+    ```text
+    LLVM ERROR: Unsupported stack probing method
+    PLEASE submit a bug report to https://github.com/Homebrew/homebrew-core/issues and include the crash backtrace.
+    Stack dump:
+    0.	Program arguments: /opt/homebrew/opt/llvm/bin/llc demo.ll
+    1.	Running pass 'Function Pass Manager' on module 'demo.ll'.
+    ......
+    ```
+    请确保clang 与 llc 的版本是一致的。apple 自带的 clang 与 homebrew 安装的 llvm 不一定是同一个版本。
 8. `as` from assembly to object file
 
 # 小结
