@@ -40,7 +40,13 @@ template = "blog/page.html"
      - Graph coloring
    - [Linear Scan Register Allocation](https://c9x.me/compile/bib/linearscan.pdf) [中文笔记](https://zhuanlan.zhihu.com/p/628123333)
      简单的选择，life time 最长的variable 进行 spill，简单粗暴（存活时间最长就意味着占用最多资源）
-
+5. 理解 rust 的编译方式与 LTO
+   1. rust 的编译单元是 crate, 一个 crate 可以编译称为一个 rlib 或者一个 executable, 一个 crate 会包括多个 .o 文件（具体构成待分析）
+   2. rust 在每个 crate 中会对 generic 进行展开，因此，会包括展开的代码（在使用的crate中展开）
+   3. 如果 a crate 依赖了 b, c crate，那么在 b, c 中可能都包括了对 generic 的相同展开代码（如果是相同的范型参数）。如果不使用 LTO 
+      优化，在最终生成的 a 中会包括重复的代码。启用 LTO 则可以消除。
+   4. 这也意味着 generic 展开，会在每个 crate 编译时中重复一次。有分析说这是 rust 慢的主要原因之一，可能是大型项目大量的crate导致了这种情况。
+ 
 # MPP & OLAP
 1. [DuckDB -- ART索引](https://zhuanlan.zhihu.com/p/645064049)
    trie 树的变种，面向内存（索引数据全部加载到内存）
