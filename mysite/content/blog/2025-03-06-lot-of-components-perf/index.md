@@ -77,5 +77,18 @@ template = "blog/page.html"
 3. 本次测试较为变态，在一般应用场景中如不涉及到如此巨大的组件树（建议一般控制在2000以下时），一般无需担心初始化的性能问题。
 
 ## 参考：
-[Git Repo](https://github.com/wangzaixiang/lot-of-elements-compare)
+1. 项目源代码：[Git Repo](https://github.com/wangzaixiang/lot-of-elements-compare)
+2. Recalculate Style
+   > In your performance recordings, some of these long-running tasks may be Recalculate Style events. 
+   > A Recalculate Style event tracks the time it takes for the browser to do the following:
+   > - Iterate through the DOM elements on a page, to find all of the CSS style rules that match a given element.
+   > - Compute each element's actual style, based on the matching CSS style rules.
+   > 
+   > CSS styles need to be recalculated whenever the applicability of CSS rules may have changed, such as:
+   > - When elements are added to or removed from the DOM.
+   > - When an element's attributes are changed, such as the value of a class or id attribute.
+   > - When user input occurs, such as a mouse move or a change of which element in a webpage has focus, which can affect :hover rules. 
+   > 
+   > see: https://developer.chrome.com/docs/devtools/performance/selector-stats?hl=zh-cn
+3. 对大量 DOM 进行更新导致 reflow 时，可以考虑使用 [FastDOM](https://github.com/wilsonpage/fastdom?tab=readme-ov-file)
 
