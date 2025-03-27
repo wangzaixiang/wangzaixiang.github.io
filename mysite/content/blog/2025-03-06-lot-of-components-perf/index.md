@@ -92,13 +92,19 @@ template = "blog/page.html"
    > see: https://developer.chrome.com/docs/devtools/performance/selector-stats?hl=zh-cn
 3. 对大量 DOM 进行更新导致 reflow 时，可以考虑使用 [FastDOM](https://github.com/wilsonpage/fastdom?tab=readme-ov-file)
 4. Shadow DOM 对 Style 的性能影响。[中文](https://mp.weixin.qq.com/s?__biz=MzA5NTg1NzI0Mw==&mid=2650000010&idx=1&sn=dd2c9188b1e91467358d542e4ed99001&chksm=895bac7764066c46c70e6fb79023871313717d67db92722402bd04eb296e0735f398e6f393b9#rd) 
-   [原文连接](https://nolanlawson.com/2021/08/15/does-shadow-dom-improve-style-performance/)
+   [原文:Does shadow DOM improve style performance?](https://nolanlawson.com/2021/08/15/does-shadow-dom-improve-style-performance/)
    - 如果 page 比较复杂（DOM节点越多、CSS规则越多），shadow dom 可以提高 Style 速度
    - 如果 page 并不复杂，引入 shadow dom 会增加固定的开销，反而增加 Style 开销（从单个大批量转换为多个小批量）
    在很多时候，Style的时间会比 layout 更耗时。
-5. Shadow DOM 对 layout 的性能影响。
+5. [Style scoping versus shadow DOM: which is fastest?](https://nolanlawson.com/2022/06/22/style-scoping-versus-shadow-dom-which-is-fastest/#:~:text=TL%3BDR%3A%20My%20new%20benchmark%20largely%20confirmed%20my%20previous,scenarios%2C%20but%20in%20others%20it’s%20much%20less%20performant)
+   总体支持 Shadow DOM 有改善 Style 性能的观点，且性能比较稳定。
+   - 相关测试项目 [shadow-selector-benchmark](https://github.com/nolanlawson/shadow-selector-benchmark)
+   - 在线测试：https://nolanlawson.github.io/shadow-selector-benchmark/
+   - Firefox Stylo 引擎是最快的，几乎可以忽略这一块的开销。在其他浏览器需要花1000ms的场景下，Firefox 只需要花费 100ms。
+   - 在2025年，这一块的性能对比 FF(360ms) > Chrome(460ms) > Safari(931ms) Chrome 与 Safari 的差距虽小了。
+6. Shadow DOM 对 layout 的性能影响。
    - 减少布局范围，是否仅影响边界内的局部布局？
    - 结合 CSS containment 属性，是否可以减少 layout 的开销？
-6. [CSS Containment Performance Example](https://blogs.igalia.com/mrego/files/2019/01/css-contain-example.html)
+7. [CSS Containment Performance Example](https://blogs.igalia.com/mrego/files/2019/01/css-contain-example.html)
    使用 contain: strict 带来了8倍的性能提升。在某些程度上，CSS containment 与 shadow dom 有相似之处。
 
