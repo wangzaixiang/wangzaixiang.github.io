@@ -46,6 +46,12 @@ template = "blog/page.html"
    3. 如果 a crate 依赖了 b, c crate，那么在 b, c 中可能都包括了对 generic 的相同展开代码（如果是相同的范型参数）。如果不使用 LTO 
       优化，在最终生成的 a 中会包括重复的代码。启用 LTO 则可以消除。
    4. 这也意味着 generic 展开，会在每个 crate 编译时中重复一次。有分析说这是 rust 慢的主要原因之一，可能是大型项目大量的crate导致了这种情况。
+   
+   与早期的 C 语言不同，在 C 中，每个 .c 文件编译称为一个 .o 文件，最后通过 linker 进行连接（在早期内存较少的情况下，这种方式是合适的）。
+
+   - Rust/C++ 由于引入了 generic/template, Vec<T> 的代码需要在 T 确定时进行生成。Rust 是在每个 crate 中生成这些代码，然后在 link 时
+     通过 LTO 进行合并。
+   - Zig 则是作为整体进行编译，因此，总是全局消除重复的。
  
 # MPP & OLAP
 1. [DuckDB -- ART索引](https://zhuanlan.zhihu.com/p/645064049)
