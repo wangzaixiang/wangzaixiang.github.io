@@ -782,7 +782,6 @@ pipeline 之间可以有依赖关系:
 - [ ] operator 之间支持 notify 机制，下游 operator 可以向上游 operator 发送通知，例如：
   - Limit 操作，当达到指定的行数时，通知上游停止发送数据
 
-
 ## operator
 operator 是数据处理算子，每个算子都有明确定义的输入和输出类型。常见的算子包括:
 - filter: 过滤算子
@@ -801,6 +800,16 @@ sink 是汇聚算子，负责将处理结果写入存储系统或传递给下一
 - identity_sink: 恒等汇聚算子
 - exchange_sender: 数据交换发送算子
 - build_hash_table: 哈希表构建算子
+
+## type system
+1. data type
+2. column metadata: nullable, sort, index(minmax, bloom)
+3. table metadata: partition, bucket
+4. 对性能的优化
+   - 表达式求值，减少运行期的解释开销
+   - nullable: 避免 null 检查
+   - 排序： 如果数据已经排序，则可以选择 Merge Sort 等算法
+   - partition: 避免全表扫描
 
 ## partition
 partition 是数据分区概念，用于并行和分布式计算:
