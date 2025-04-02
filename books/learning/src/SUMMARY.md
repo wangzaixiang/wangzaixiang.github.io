@@ -7,6 +7,7 @@
 - [Prefaces](rust_prefaces.md)
 - [compiler vectorization](rust_vectorization-1.md)
 - [rust sugars](./rust_sugars.md)
+- [rust 类型系统](./rust_type_system.md)
 
 # simd
 - [simd-1](simd-1.md)
