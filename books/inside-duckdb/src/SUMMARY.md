@@ -16,7 +16,6 @@ Summary
   - [seq_scan](./seq_scan.md)
   - [filter](./filter.md)
   - [projection](./projection.md)
-  - [projection](./projection.md)
   - [hash_join](./hash_join.md)
   - [hash_group_by](./hash_group_by.md)
 
