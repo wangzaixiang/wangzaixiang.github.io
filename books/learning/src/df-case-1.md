@@ -38,8 +38,8 @@ select wt.tag_name, sum(wt.amount) from (
 
 耗时对比：
 ![img.png](images/df-case-1-costs.png)
-- case 4-4: datafusion 的耗时 12.042s vs (polars:552ms) vs (duckdb: 476ms)
-- case 4-5: (datafusion: 12.877s) vs (polars: 202ms) vs (duckdb: 2ms)
+- case 4-4: datafusion 46.0.1  的耗时 7.729s) vs (polars:552ms) vs (duckdb: 476ms) 
+- case 4-5: (datafusion 46.0.1: 7.606s) vs (polars: 202ms) vs (duckdb: 2ms)
 
 1. duckdb 查询计划
    ![img.png](images/df-case-1-duckdb-plan.png)

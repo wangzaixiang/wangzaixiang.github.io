@@ -320,4 +320,72 @@ public class Test1 {
 
 ```
 
-[java - thread - spurious wakeup explained](https://code-examples.net/en/q/1007e0)
+# 后记
+2025-04-07 学习《超标量处理器设计》，对CPU ISA(微架构)有一定理解后，可以更好的理解这个问题
+- 对超标量处理器、多发射、乱序执行情况下，理论上指令从前端解码后，会进入到后端发射队列。此后，其执行是乱序的。可能会出现后面的指令先执行，
+  前面的指令后执行的情况。
+- ROB(Reorder Buffer) 乱序执行的指令，可能会在ROB中等待很长时间，才会被提交到内存中。这个主要是对单个线程的有序性而言，主要是针对应用可见的寄存器、内存的可见性而言。
+- 在执行指令时的内存有序性，存在 Load-Load, Store-Store, Load-Store, Store-Load 四种情况。不同的 CPU 架构有不同的实现。
+  - x86 架构下，Load-Load, Store-Store 不会重排序，Load-Store 不会重排序，Store-Load 可能会重排序。
+  - ARM 架构下，都会出现重排序，需要显示使用内存屏障。优点是容许更多的指令重排，从而提升 IPC，但并发场景中需要更多的内存屏障。
+
+## Load-Load (这个案例待改进)
+```c
+// 共享变量
+int data = 0;
+bool ready = false;
+
+// Thread A: 写入数据
+void writer() {
+    data = 42;      // 写操作
+    ready = true;   // 写标记
+}
+
+// Thread B: 读取数据
+void reader() {
+    while (!ready) { /* 等待 */ }
+    int local_data_1 = data;  // Load 1
+    int local_data_2 = data;  // Load 2
+    assert(local_data_1 == local_data_2);  // 断言应总成立
+}
+```
+
+## Store-Store
+```c 
+// 共享变量
+int a = 0;
+int b = 0;
+
+// Thread A: 写入两个变量
+void writer() {
+    a = 1;  // Store 1
+    b = 2;  // Store 2
+}
+
+// Thread B: 检查写入顺序
+void reader() {
+    while (b != 2) { /* 等待 */ }
+    assert(a == 1);  // 若 Store-Store 重排导致 b=2 先于 a=1，则断言失败
+}
+```
+
+## Load-Store(此案例待改进)
+```c 
+// 共享变量
+int data = 0;
+bool ready = false;
+
+// Thread A: 写入数据
+void writer() {
+    data = 42;
+    ready = true;  // 写标记
+}
+
+// Thread B: 读取数据后立即写入新值
+void reader() {
+    while (!ready) { /* 等待 */ }
+    int local_data = data;  // Load
+    DMB(LD);        // 假设此处缺少屏障
+    data = local_data + 1;  // Store
+}
+```
