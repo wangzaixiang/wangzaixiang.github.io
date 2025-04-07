@@ -8,6 +8,7 @@
 - [compiler vectorization](rust_vectorization-1.md)
 - [rust sugars](./rust_sugars.md)
 - [rust 类型系统](./rust_type_system.md)
+- [unsafe: cast &T to &mut T](./rust_unsafe_cast.md)
 
 # simd
 - [simd-1](simd-1.md)
@@ -35,3 +36,6 @@
 - [Zig Structure of Array test](zig_soa_test.md)
 
 # scala-lang
+
+# arrow + datafusion
+- [df-case-1](df-case-1.md)
