@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>Zig Comptime | 程序人生</title>
+<meta name="description" content="本文记录我对 zig comptime 的一些理解、思考">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/zig-comptime/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="Zig Comptime">
+  <meta name="twitter:description" content="本文记录我对 zig comptime 的一些理解、思考">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="Zig Comptime">
+  <meta property="og:description" content="本文记录我对 zig comptime 的一些理解、思考">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/zig-comptime/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="Zig Comptime">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/zig-comptime/"
+      },
+      "headline": "Zig Comptime",
+      "image": ,
+      "datePublished": "2024-12-05",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "Zig Comptime"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Zig Comptime",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文记录我对 zig comptime 的一些理解、思考"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Zig Comptime",
+            "item": "https://wangzaixiang.github.io/blog/zig-comptime/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/zig-comptime/#1-what-is-zig-other-than-others">1. what is zig other than others?</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/zig-comptime/#2-comptime-expression-shi-ru-he-zhi-xing-de">2. comptime expression 是如何执行的？</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/zig-comptime/#3-dynamic-construct-a-type-in-comptime">3. dynamic construct a type in comptime</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/zig-comptime/#4-dui-bi-scala3-macro">4. 对比 Scala3 Macro</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/zig-comptime/#can-kao">参考</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>Zig Comptime</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/a-zig-bug/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted December  5, 2024&nbsp;&hyphen;&nbsp;<strong>8&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/bison/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="1-what-is-zig-other-than-others">1. what is zig other than others?</h1>
+<ol>
+<li>zen: Only one obvious way to do things. 显示，直接。
+<ul>
+<li>No Hidden control flow. 没有隐藏的函数调用。（当然也没有析构函数、隐式转换、自动解引用等等）。缺点是抽象可能不够，优点是代码更直接。</li>
+<li>No hidden allocations. 看一个函数是否有内存分配，只需要看它是否有 allocator 参数了</li>
+<li>No variable shadowing. 虽然写代码时，可能会有一些不便，但对阅读代码来说，更直接一些。</li>
+</ul>
+</li>
+<li>comptime
+<ul>
+<li>zig comptime vs rust macro</li>
+<li>zig comptime vs Scala meta programming.</li>
+<li>If a container level variable is const then its value is comptime-known, otherwise it is runtime-known</li>
+<li>type/ std.built.Type 等类型，只存在于 comptime 中，很多代码需要可 inline.</li>
+</ul>
+</li>
+</ol>
+<h1 id="2-comptime-expression-shi-ru-he-zhi-xing-de">2. comptime expression 是如何执行的？</h1>
+<pre data-lang="zig" style="background-color:#2b303b;color:#c0c5ce;" class="language-zig "><code class="language-zig" data-lang="zig"><span style="color:#65737e;">// main.zig
+</span><span style="color:#b48ead;">const</span><span> std = </span><span style="color:#b48ead;">@import</span><span>(</span><span style="color:#a3be8c;">&quot;std&quot;</span><span>);
+</span><span>
+</span><span style="color:#65737e;">// 这个方法没有太大的业务逻辑，目的仅仅是防止优化，让 longLoop(n) 方法的耗时更明显
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">longLoop</span><span>(</span><span style="color:#bf616a;">n</span><span>: </span><span style="color:#b48ead;">usize</span><span>) </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">sum</span><span>: </span><span style="color:#b48ead;">usize </span><span>= </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">i</span><span>: </span><span style="color:#b48ead;">usize </span><span>= </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">while</span><span>(i &lt; n) : (i += </span><span style="color:#d08770;">1</span><span>) {
+</span><span>        </span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">sum2</span><span>: </span><span style="color:#b48ead;">usize </span><span>= </span><span style="color:#d08770;">0</span><span>;
+</span><span>        </span><span style="color:#b48ead;">const</span><span> skip = i % </span><span style="color:#d08770;">10 </span><span>+ </span><span style="color:#d08770;">1</span><span>;
+</span><span>        </span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">j</span><span>: </span><span style="color:#b48ead;">usize </span><span>= </span><span style="color:#d08770;">0</span><span>;
+</span><span>        </span><span style="color:#b48ead;">while</span><span>(j &lt; n) : (j += skip) {
+</span><span>            sum2 += j;
+</span><span>        }
+</span><span>        sum += sum2;
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">return</span><span> sum;
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">main</span><span>() !</span><span style="color:#b48ead;">void </span><span>{
+</span><span>    </span><span style="color:#b48ead;">const</span><span> n = </span><span style="color:#d08770;">6000</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// show times of longLoop(n)
+</span><span>    </span><span style="color:#b48ead;">const</span><span> start = std.time.</span><span style="color:#bf616a;">milliTimestamp</span><span>();
+</span><span>    </span><span style="color:#b48ead;">const</span><span> result = </span><span style="color:#bf616a;">longLoop</span><span>(n);
+</span><span>    </span><span style="color:#b48ead;">const</span><span> end = std.time.</span><span style="color:#bf616a;">milliTimestamp</span><span>();
+</span><span>    std.debug.</span><span style="color:#bf616a;">print</span><span>(</span><span style="color:#a3be8c;">&quot;runtime  eval: n = {}, result = {}, time = {}ms</span><span style="color:#96b5b4;">\n</span><span style="color:#a3be8c;">&quot;</span><span>, .{ n,  result, end - start});
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">const</span><span> start2 = std.time.</span><span style="color:#bf616a;">milliTimestamp</span><span>();
+</span><span>    </span><span style="color:#96b5b4;">@setEvalBranchQuota</span><span>(</span><span style="color:#d08770;">1_000_000_000</span><span>);
+</span><span>    </span><span style="color:#b48ead;">const</span><span> result2 = </span><span style="color:#b48ead;">comptime </span><span style="color:#bf616a;">longLoop</span><span>(n);
+</span><span>    </span><span style="color:#b48ead;">const</span><span> end2 = std.time.</span><span style="color:#bf616a;">milliTimestamp</span><span>();
+</span><span>    std.debug.</span><span style="color:#bf616a;">print</span><span>(</span><span style="color:#a3be8c;">&quot;comptime eval: n = {}, result = {}, time = {}ms</span><span style="color:#96b5b4;">\n</span><span style="color:#a3be8c;">&quot;</span><span>, .{ n,  result2, end2 - start2});
+</span><span>
+</span><span>}
+</span><span>
+</span></code></pre>
+<ol>
+<li>
+<p>编译 main.zig, <code>zig build-exe -O ReleaseFast src/main.zig</code>, 耗时 21s. 调整 comptime longLoop(n) 的参数， 分别耗时如下：</p>
+<table><thead><tr><th>n</th><th>compile time</th><th>runtime eval</th><th>comptime eval</th></tr></thead><tbody>
+<tr><td>1</td><td>4.5s</td><td>0ms</td><td>0ms</td></tr>
+<tr><td>10</td><td>4.5s</td><td>0ms</td><td>0ms</td></tr>
+<tr><td>100</td><td>4.5s</td><td>0ms</td><td>0ms</td></tr>
+<tr><td>1000</td><td>5.0s</td><td>0ms</td><td>0ms</td></tr>
+<tr><td>2000</td><td>6.6s</td><td>1ms</td><td>0ms</td></tr>
+<tr><td>3000</td><td>8.6s</td><td>3ms</td><td>0ms</td></tr>
+<tr><td>4000</td><td>11.9s</td><td>3ms</td><td>0ms</td></tr>
+<tr><td>5000</td><td>15.9s</td><td>4ms</td><td>0ms</td></tr>
+<tr><td>6000</td><td>21.0s</td><td>9ms</td><td>0ms</td></tr>
+<tr><td>7000</td><td>27.0s</td><td>12ms</td><td>0ms</td></tr>
+<tr><td>8000</td><td>33.9s</td><td>14ms</td><td>0ms</td></tr>
+<tr><td>9000</td><td>41.9s</td><td>18ms</td><td>0ms</td></tr>
+<tr><td>10000</td><td>50.7s</td><td>19ms</td><td>0ms</td></tr>
+</tbody></table>
+<p>从上述数据可以看出，<code>comptime longLoop(n)</code> 随着 n 的增长， compile time 会显著增长，n == 1000 时，编译时长为5s，而 n = 10000 时
+编译时长为50s。而 runtime eval 的耗时仅仅是从 0ms 增长到 19ms, 这可以说明，compile 阶段，comptime eval 并非 native 方式执行 longLoop
+代码，而是采用了一种 AST interpreter 的方式执行代码，在这个场景中，效率有上千倍的差距。（这个案例仅为测试目的，实际 comptime 的耗时差距一般
+会显著低于这个差距，甚至在大部份情况下，对使用者无明显感知）。</p>
+</li>
+<li>
+<p>之前，我是使用 fib(n) 来测试 comptime 的，参考：</p>
+<pre data-lang="zig" style="background-color:#2b303b;color:#c0c5ce;" class="language-zig "><code class="language-zig" data-lang="zig"><span style="color:#b48ead;">const</span><span> std=</span><span style="color:#b48ead;">@import</span><span>(</span><span style="color:#a3be8c;">&quot;std&quot;</span><span>);
+</span><span>
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">fibonacci</span><span>(</span><span style="color:#bf616a;">index</span><span>:</span><span style="color:#b48ead;">i64</span><span>)</span><span style="color:#b48ead;">i64 </span><span>{
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(index &lt; </span><span style="color:#d08770;">2</span><span>) </span><span style="color:#b48ead;">return</span><span> index;
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">fibonacci</span><span>(index</span><span style="color:#d08770;">-1</span><span>)+ </span><span style="color:#bf616a;">fibonacci</span><span>(index - </span><span style="color:#d08770;">2</span><span>);
+</span><span>}
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">main</span><span>() !</span><span style="color:#b48ead;">void </span><span>{
+</span><span>     </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">n</span><span>:</span><span style="color:#b48ead;">i64 </span><span>= </span><span style="color:#d08770;">50</span><span>;
+</span><span>     </span><span style="color:#65737e;">// const result = fibonacci(n);// run: 37.8s,compile:4.34s
+</span><span>     </span><span style="color:#b48ead;">const</span><span> result = </span><span style="color:#b48ead;">comptime </span><span style="color:#bf616a;">fibonacci</span><span>(n); </span><span style="color:#65737e;">// compile 4.3s run: 0s
+</span><span>     std.debug.</span><span style="color:#bf616a;">print</span><span>(</span><span style="color:#a3be8c;">&quot;fib(f})= {}</span><span style="color:#96b5b4;">\n</span><span style="color:#a3be8c;">&quot;</span><span>, .{n, result }); 
+</span><span>}
+</span></code></pre>
+<p>这个案例看起来很反常：fib(50) 在运行期执行耗时 37.8s, 而 comptime 耗时则近乎为0（4.34s 是zig compile -O ReleaseFast 的基准时间），为什么
+comptime 的耗时这么低呢？猜测是对 fib 计算进行了 cache 优化，这一点也从 zig 的文档中得到了证实：</p>
+<pre data-lang="zig" style="background-color:#2b303b;color:#c0c5ce;" class="language-zig "><code class="language-zig" data-lang="zig"><span> </span><span style="color:#65737e;">// Functions called at compile-time are memoized. This means you can
+</span><span> </span><span style="color:#65737e;">// do this:
+</span><span> </span><span style="color:#b48ead;">try </span><span style="color:#bf616a;">expect</span><span>(</span><span style="color:#bf616a;">LinkedList</span><span>(i32) == </span><span style="color:#bf616a;">LinkedList</span><span>(i32));
+</span></code></pre>
+<p>因为 zig 对 AST 的解释执行，并且进行了 memoize 优化，所以才有了在这里，解释执行比编译执行版本更快的情况。</p>
+</li>
+<li>
+<p>comptime evaluation 是在 Sema 阶段完成的。参考文档：<a href="https://mitchellh.com/zig/sema">Zig Sema</a></p>
+<p>我还没有看懂这篇文章。</p>
+</li>
+</ol>
+<h1 id="3-dynamic-construct-a-type-in-comptime">3. dynamic construct a type in comptime</h1>
+<p>Zig 可以通过 comptime 来实现 generic，但官网给的例子还是比较简单的：</p>
+<pre data-lang="zig" style="background-color:#2b303b;color:#c0c5ce;" class="language-zig "><code class="language-zig" data-lang="zig"><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">List</span><span>(</span><span style="color:#b48ead;">comptime </span><span style="color:#bf616a;">T</span><span>: </span><span style="color:#b48ead;">type</span><span>) </span><span style="color:#b48ead;">type </span><span>{
+</span><span>    </span><span style="color:#b48ead;">return struct </span><span>{
+</span><span>        </span><span style="color:#bf616a;">items</span><span>: []</span><span style="color:#b48ead;">T</span><span>,
+</span><span>        </span><span style="color:#bf616a;">len</span><span>: </span><span style="color:#b48ead;">usize</span><span>,
+</span><span>    };
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">// The generic List data structure can be instantiated by passing in a type:
+</span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">buffer</span><span>: [</span><span style="color:#d08770;">10</span><span>]</span><span style="color:#b48ead;">i32 </span><span>= </span><span style="color:#d08770;">undefined</span><span>;
+</span><span style="color:#b48ead;">var</span><span> list = </span><span style="color:#bf616a;">List</span><span>(i32){
+</span><span>    .items = &amp;buffer,
+</span><span>    .len = </span><span style="color:#d08770;">0</span><span>,
+</span><span>};
+</span></code></pre>
+<p>这个例子中，构造的 <code>List(i32)</code> 还是感觉不够动态，譬如，是否可以：</p>
+<ul>
+<li>结构体的成员数量、类型是动态的？</li>
+<li>结构体内的 fn 是动态的？</li>
+</ul>
+<p>这一切的奥秘，隐藏在 <code>@typeInfo</code>, <code>@Type</code> 这几个内置函数中。如下是一个简单的示例： User2 是一个 comptime 动态计算出来的类型，其一部份
+字段是从 User 这个模版类型中复制来的，email 字段则是动态添加上去的。</p>
+<pre data-lang="zig" style="background-color:#2b303b;color:#c0c5ce;" class="language-zig "><code class="language-zig" data-lang="zig"><span>
+</span><span style="color:#b48ead;">const</span><span> std = </span><span style="color:#b48ead;">@import</span><span>(</span><span style="color:#a3be8c;">&quot;std&quot;</span><span>);
+</span><span>
+</span><span style="color:#65737e;">// used as a type Template
+</span><span style="color:#b48ead;">const </span><span>User = </span><span style="color:#b48ead;">struct </span><span>{
+</span><span>    </span><span style="color:#bf616a;">name</span><span>: [:</span><span style="color:#d08770;">0</span><span>]</span><span style="color:#b48ead;">const u8</span><span>,
+</span><span>    </span><span style="color:#bf616a;">age</span><span>: </span><span style="color:#b48ead;">u32</span><span>,
+</span><span>};
+</span><span>
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">main</span><span>() </span><span style="color:#b48ead;">void </span><span>{
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">const</span><span> print = std.debug.print;
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">t_info</span><span>: </span><span style="color:#b48ead;">std.builtin.Type </span><span>= </span><span style="color:#96b5b4;">@typeInfo</span><span>(User);
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// dynamic construct a Type
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">t_info2</span><span>: </span><span style="color:#b48ead;">std.builtin.Type </span><span>= .{
+</span><span>       .Struct = .{
+</span><span>          .layout = t_info.Struct.layout,
+</span><span>           .backing_integer =  t_info.Struct.backing_integer,
+</span><span>           .fields = &amp; .{
+</span><span>               .{
+</span><span>                   .name = </span><span style="color:#a3be8c;">&quot;NAME&quot;</span><span>,
+</span><span>                   .type = t_info.Struct.fields[</span><span style="color:#d08770;">0</span><span>].type,
+</span><span>                   .default_value = t_info.Struct.fields[</span><span style="color:#d08770;">0</span><span>].default_value,
+</span><span>                   .is_comptime = t_info.Struct.fields[</span><span style="color:#d08770;">0</span><span>].is_comptime,
+</span><span>                   .alignment = t_info.Struct.fields[</span><span style="color:#d08770;">0</span><span>].alignment
+</span><span>               },
+</span><span>               .{
+</span><span>                   .name = </span><span style="color:#a3be8c;">&quot;AGE&quot;</span><span>,
+</span><span>                   .type = t_info.Struct.fields[</span><span style="color:#d08770;">1</span><span>].type,
+</span><span>                   .default_value = t_info.Struct.fields[</span><span style="color:#d08770;">1</span><span>].default_value,
+</span><span>                   .is_comptime = t_info.Struct.fields[</span><span style="color:#d08770;">1</span><span>].is_comptime,
+</span><span>                   .alignment = t_info.Struct.fields[</span><span style="color:#d08770;">1</span><span>].alignment
+</span><span>               },
+</span><span>               .{
+</span><span>                   .name = </span><span style="color:#a3be8c;">&quot;email&quot;</span><span>,
+</span><span>                   .type = [:</span><span style="color:#d08770;">0</span><span>]</span><span style="color:#b48ead;">const</span><span> u8,
+</span><span>                   .default_value = </span><span style="color:#d08770;">null</span><span>,
+</span><span>                   .is_comptime = </span><span style="color:#d08770;">false</span><span>,
+</span><span>                   .alignment = </span><span style="color:#d08770;">1
+</span><span>               }
+</span><span>           },
+</span><span>           .decls = t_info.Struct.decls,
+</span><span>           .is_tuple = </span><span style="color:#d08770;">false
+</span><span>       }
+</span><span>    };
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// build type User2
+</span><span>    </span><span style="color:#b48ead;">const</span><span> User2 = </span><span style="color:#96b5b4;">@Type</span><span>(t_info2);
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// now, User2 can be used in source code.
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">u</span><span>: </span><span style="color:#b48ead;">User2 </span><span>= .{
+</span><span>        .NAME = </span><span style="color:#a3be8c;">&quot;WANGZX&quot;</span><span>,
+</span><span>        .AGE = </span><span style="color:#d08770;">20</span><span>,
+</span><span>        .email = </span><span style="color:#a3be8c;">&quot;wangzx@qq.com&quot;</span><span>,
+</span><span>    };
+</span><span>
+</span><span>    </span><span style="color:#bf616a;">print</span><span>(</span><span style="color:#a3be8c;">&quot;Users = {any}</span><span style="color:#96b5b4;">\n</span><span style="color:#a3be8c;">&quot;</span><span>, .{User2});
+</span><span>    </span><span style="color:#bf616a;">print</span><span>(</span><span style="color:#a3be8c;">&quot;u.NAME = {s}, u.AGE = {d} u.email = {s}</span><span style="color:#96b5b4;">\n</span><span style="color:#a3be8c;">&quot;</span><span>,
+</span><span>        .{ u.NAME, u.AGE, u.email });
+</span><span>}
+</span><span>
+</span></code></pre>
+<h1 id="4-dui-bi-scala3-macro">4. 对比 Scala3 Macro</h1>
+<p>我对 Scala3 Macro 了解较多，wsql, wjson等项目都深度依赖 macro 提供的强大能力，rust macro 则只是泛泛了解。因此，很多时候，会对照
+Scala3 macro 来理解 zig comptime.</p>
+<p>由于目前 zig comptime 执行的一些限制，例如：</p>
+<ol>
+<li>不能有 runtime side effects, 加上目前的 interpret 执行方式的可能性能损失，zig comptime 会有一些限制，而 scala3 macro 则不会受上述限制。
+<blockquote>
+<ul>
+<li>All code with runtime side effects or depending on runtime values emits a compile error.</li>
+<li>All function calls cause the compiler to interpret the function at compile-time,
+emitting a compile error if the function tries to do something that has global runtime side effects.</li>
+</ul>
+</blockquote>
+</li>
+<li>Scala3 quotes API 有更强的反射能力，可以直接操作 AST，在一些动态生成代码的场景会更灵活（这个API本身是 Scala Compiler 的API）。
+zig 目前来看，是不提供对代码的 AST 反射、操纵的能力的。</li>
+<li>限制：Scala3 目前的 macro 提供的都是 blackbox macro, 也就是说，macro 自身并不影响外部的类型系统，例如，不能添加新的
+类型、方法、变量等，即使添加了，也无法为其他代码所感知。zig comptime 则可以直接创新新的类型。（这也是 zig generic 的实现方式）</li>
+<li>std.builtin.Type 类似于 scala.quotes.TypeRepr，但具有更强的 whitebox 能力，是 comptime 时用于描述 Type 的元数据结构。</li>
+</ol>
+<h2 id="can-kao">参考</h2>
+<ul>
+<li>Zig Cli: 处理 CLI 是 comptime 的一个很实用的场景。 rust/scala 都玩这个。
+<ul>
+<li><a href="https://zigcli.liujiacai.net/modules/simargs/">Zig CLI</a></li>
+<li><a href="https://github.com/Hejsil/zig-clap">Zig Clap</a></li>
+</ul>
+</li>
+</ul>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/a-zig-bug/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/bison/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>
