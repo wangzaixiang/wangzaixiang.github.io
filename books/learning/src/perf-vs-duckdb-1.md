@@ -63,20 +63,24 @@ group by s.order_date;
 3. cli 工具，duckdb 的 cli 工具更为完善，支持命令更多，且 tab complete 做的很好。datafusion 在这方面几乎没有支持。
 
 # 理解 datafusion 中的算子
+
 ```mermaid
-graph BT
+graph TD
 
-    ds1[datasource: sale_items * 10] --> rp1[repartition sale_order_id, 10] -.->
-  coal1[coalesce batches] -->|probe| hj1[hashjoin]
+    ds1[datasource: sale_items * 10] --> rp1[repartition sale_order_id, 10] 
+    rp1 -.-> coal1[coalesce batches] 
+    coal1 -->|probe| hj1[hashjoin]
 
-ds2[datasource: sale_orders * 10] --> rp2[repartition sale_order_id, 10] -.->
-coal2[coalesce batches] -->|build| hj1[hashjoin partitioned by sale_order_id]
+    ds2[datasource: sale_orders * 10] --> rp2[repartition sale_order_id, 10] 
+    rp2 -.-> coal2[coalesce batches] 
+    coal2 -->|build| hj1[hashjoin partitioned by sale_order_id]
 
-hj1 --> coal3[coalesce batches] --> prj[projection amount,order_date]
---> aggr1["aggregate partial, order_date->sum(amount)"]
---> rp3[repartition order_date]
--.-> coal4[coalesce batches]
---> aggr2["aggregate final"]
+    hj1 --> coal3[coalesce batches] 
+    coal3 --> prj[projection amount,order_date]
+    prj   --> aggr1["aggregate partial, order_date->sum(amount)"]
+    aggr1 --> rp3[repartition order_date]
+    rp3   -.-> coal4[coalesce batches]
+    coal4 --> aggr2["aggregate final"]
 
 ```
 

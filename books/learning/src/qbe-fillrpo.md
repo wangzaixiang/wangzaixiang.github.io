@@ -41,7 +41,7 @@ graph TD
     D --> F
     F --> E
 ```
-![img.png](images/qbe-rpo.png)
+
 则：
 - DFS pre-order: A B C D E F
 - DFS post-order: C B E F D A
