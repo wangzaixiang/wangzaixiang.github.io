@@ -65,7 +65,7 @@ group by s.order_date;
 # 理解 datafusion 中的算子
 
 ```mermaid
-graph TD
+graph BT
 
     ds1[datasource: sale_items * 10] --> rp1[repartition sale_order_id, 10] 
     rp1 -.-> coal1[coalesce batches] 
