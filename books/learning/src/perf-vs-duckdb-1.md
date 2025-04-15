@@ -57,11 +57,6 @@ group by s.order_date;
 2. dataframe 的执行计划更为复杂，引入了 Repartition, CoalesceBatches 等算子，有较多的跨线程操作，这些理论上可能导致
    性能下降。
 
-工具化对比：
-1. duckdb 的 explain analyze 具有较好的可读性，且耗时信息也较为简单。
-2. datafusion 的 explain analyze 缺乏可读性，且耗时信息要复杂得多。
-3. cli 工具，duckdb 的 cli 工具更为完善，支持命令更多，且 tab complete 做的很好。datafusion 在这方面几乎没有支持。
-
 # 理解 datafusion 中的算子
 
 ```mermaid
@@ -185,8 +180,15 @@ graph BT
    来处理处理，更贴近火山模型。
 2. 虽然逻辑上是等效的，但我个人更倾向于 push 模型，主要是 async 的调用链看起来没有那么爽？这个是不是我的错觉？
 3. datafusion 在这个 case 上的性能要比 duckdb 慢上不少，目前来看，主要的原因是：
-   - hashjoin 算子的实现效率
-   - duckdb 对 hashjoin 有更好的查询计划优化，尤其是 [Dynamic Filter Pushdown from Joins](https://duckdb.org/2024/09/09/announcing-duckdb-110.html#dynamic-filter-pushdown-from-joins)
+   - hash join 算子的实现效率
+   - duckdb 对 hash join 有更好的查询计划优化，尤其是 [Dynamic Filter Pushdown from Joins](https://duckdb.org/2024/09/09/announcing-duckdb-110.html#dynamic-filter-pushdown-from-joins)
    - 需要进一步评估 datafusion 算子的 copy 开销？这一块，在火焰图上还是比较明显的，duckdb 就少了很多。
-4. 虽然 datafusion 的性能相比 duckdb 要差，但代码的结构要简单很多。当然，也可能是 rust 代码更易于阅读一些的缘故？所以，如果是选择 data frame 进行优化，我更倾向于
-   base on datafusion.
+4. datafusion 在命令行的友好程度上相比 duckdb 要差很多，体现在：
+   - duckdb 支持更多的选项，例如 .timer 可以查看执行耗时，.rows/.columns 格式，.mode 设置多种 output 格式
+   - duckdb 的 explain analyze 结果更为简洁，可读性强
+   - duckdb 的 cli 对 SQL 的格式化、多行 SQL 输入、以及输入时的 tab complete 支持很好，datafusion 几乎没有支持。
+5. datafusion 对窗口函数的支持不完善，range spec 不支持 expr.
+6. 虽然 datafusion 的性能相比 duckdb 要差，但代码的结构要简单很多。当然，也可能是 rust 代码更易于阅读一些的缘故？所以，如果是选择 data frame 进行优化，我更倾向于
+   base on datafusion。
+
+总体来说，作为一个SQL计算的基础库而言，datafusion 目前的成熟度还较低，使用起来估计会有更多的坑。
