@@ -7,3 +7,6 @@ template = "blog/page.html"
 +++
 
 先占个坑位，以后再完善这篇文章。
+
+目前整理的一些草稿:
+1. [perf-vs-duckdb](/learning/perf-vs-duckdb-1.html)
