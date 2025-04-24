@@ -4,6 +4,9 @@ description = "QIR 设计草案"
 date = 2025-04-02
 draft = false
 template = "blog/page.html"
+
+[extra]
+toc = true
 +++
 
 
@@ -886,8 +889,8 @@ partition 是数据分区概念，用于并行和分布式计算:
 # TODO
 1. 支持 `SELECT sum(amount), sum(amount) FILTER (region != 'north') FROM sales;`
 2. 支持 `SELECT first(amount ORDER BY date ASC) FROM sales;`
-3. 提供更多基础时间窗口能力（date based）
-   - 年/年季/年月/年周/年月日 多种层次结构
+3. 提供更多基础时间窗口能力（date based）,增强对时间快速计算的支持。
+   - 年/年季/年月/年周/年月日 多种层次结构  `date_trunc`
    - 前期、同期
    - （年/月/周）累计、前期累计、同期累计
    - 滑动、滚动窗口
@@ -895,3 +898,30 @@ partition 是数据分区概念，用于并行和分布式计算:
 5. 支持更灵活的窗口函数能力。
    - `SUM(X) OVER (PARTITION BY expr ORDER BY expr RANGE BETWEEN expr AND expr)`
    - `SUM(X) OVER (PARTITION BY expr ORDER BY expr WHERE expr)`
+   对字符串等类型而言，range bettween expr precedding 没法使用，对日期、时间等也更简洁。
+6. 扩展支持如下的 SQL 语法，这样，就可以处理类似于 MDX 的衍生度量（修改当前 Context 的上下文，包括增加新的维度条件，或者减少现有的维度限制，但保持当前的查询行不变）。
+   ```sql
+    SELECT a, b, SUM(X),
+              SUM(X) FILTER (c > 10),  -- SUM(X, a, b, c > 10) 
+              SUM(X) BY a FILTER(b = 2 and c > 10) -- SUM(X, a, b = 2, c > 10)
+   ```
+   提供这种扩展能力，不仅提升了 SQL 的表达能力，而且这个可以生成一个高效的执行 plan，执行效率也能得到显著提升。
+7. 支持：这个特性可以显著简化 分组小计的 SQL 查询。
+   - duckdb: 
+     ```sql
+        -- the syntax () denotes the empty set (i.e., computing an ungrouped aggregate)
+        -- 这个功能非常适合于进行分组小计的计算。
+     SELECT city, street_name, avg(income)
+     FROM addresses
+     GROUP BY GROUPING SETS ((city, street_name), (city), (street_name), ());
+     
+     SELECT city, street_name, avg(income)
+     FROM addresses
+     GROUP BY CUBE (city, street_name); -- 等效于 group by grouping sets( (city, street_name), (city), (street_name), ());
+     
+     SELECT city, street_name, avg(income)
+     FROM addresses
+     GROUP BY ROLLUP (city, street_name) -- 等效于 group by grouping sets( (city, street_name), (city), () );
+     
+     -- grouping_id
+     ```

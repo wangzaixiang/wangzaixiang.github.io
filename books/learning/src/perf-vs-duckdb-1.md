@@ -50,6 +50,7 @@ group by s.order_date;
      -  hash group by: 470ms
 2. DataFusion v46.0.1 810ms(user: 5.47s, sys: 0.99s) -- timer command
    [samply profile](https://share.firefox.dev/4iit5lv)
+   - HashJoin 算子的效率不够高。 其中 lookup 的开销占比 67%
    
 
 接近1倍的性能差距。

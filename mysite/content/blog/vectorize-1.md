@@ -681,9 +681,9 @@ fn countNonZeroV512_popcntAsm(bytes: &[u8]) -> usize {
 1. C++中的向量计算https://www.zhihu.com/question/450069375/answer/3258826060?utm_psn=1714201317017481216
 2. hash 向量算法：是否可以设计一个可基于 SIMD 的hash算法（不是对单个值计算hash，而是对向量计算hash向量）？ 
 3. hash join的 向量算法
-    1. [40x faster hash joiner with vectorized execution](https://link.zhihu.com/?target=https%3A//www.cockroachlabs.com/blog/vectorized-hash-joiner/)) 有图示，相对比较清楚
+    1. [40x faster hash joiner with vectorized execution](https://www.cockroachlabs.com/blog/vectorized-hash-joiner/)
     2. 源头：Balancing vectorized query execution with bandwidth-optimized storage (已收藏到 ivySCI 库中第5.4节：Optimizing Hash-Join)，比较难读。
-    3. [A Vectorized Hash-Join](https://link.zhihu.com/?target=http%3A//groups.csail.mit.edu/cag/6.893-f2000/vectorhashjoin.pdf)
+    3. [A Vectorized Hash-Join](https://groups.csail.mit.edu/cag/6.893-f2000/vectorhashjoin.pdf)
 4. binary search 的向量算法
 5. Simd-json 中的向量计算
 6. 加密解密中的向量计算

@@ -40,3 +40,6 @@
 # arrow + datafusion
 - [df-case-1](df-case-1.md)
 - [compare-with-duckdb](perf-vs-duckdb-1.md)
+- [Join Performance](sql-join.md)
+- [Hashjoin](./datafusion/hash-join.md)
+
