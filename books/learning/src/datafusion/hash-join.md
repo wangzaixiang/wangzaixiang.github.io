@@ -1,8 +1,79 @@
 # DataFusion HashJoin 源代码阅读
 
 # Concepts
-1. left side: build side, 完整读取，构建 hash table
-2. right side: probe side: 分批读取，并进行 hash-join
+1. struct JoinLeftData: build side struct (习惯上，我之前会将 probe side 称为 left side, 但在 df 中，将 build side 称为 left side)。
+   ```rust
+    struct JoinLeftData {
+        hash_map: JoinHashMap,  /// 一个由 first 和 next 组成的 特殊 hashmap
+        batch: RecordBatch,     /// build side 的数据
+        values: Vec<ArrayRef>,  /// build side 的关联列
+        visited_indices_bitmap: SharedBitmapBuilder,    /// 已使用的行 bitmap，在 left/right/full join 等场景下需要
+        
+        probe_threads_counter: AtomicUsize,
+        _reservation: MemoryReservation,    // 用于跟踪内存使用情况
+    }
+   ```
+2. struct HashJoinExec: HashJoin 算子
+   ```rust
+    struct HashJoinExec {
+        // base
+        left: Arc<dyn ExecutionPlan>,   // build side 
+        right: Arc<dyn ExecutionPlan>,  // probe side
+        on: Vec<(PhysicalExprRef, PhysicalExprRef)>,  // join key
+        filter: Option<JoinFilter>,    // join table r on r.id > 10 非 join 条件
+        join_type: JoinType,          // INNER, LEFT, RIGHT, FULL, LEFT_SEMI, LEFT_ANTI, RIGHT_SEMI, RIGHT_ANTI, LEFT_MARK
+        project: Option<Vec<usize>>,    //
+        mode: PartitionMode,  // Partitioned: build/probe 都是分区的，必须在关联字段上有相同的分区, CollectLeft: build 不分区, Auto： 在物理计划中必须已明确
+        null_equals_null: bool,  // null 是否相等
+   
+        // calcuated
+        join_schema: SchemaRef,  // join 后的 schema, 如果有 projection, 则 output schmea 可能会不同
+        column_indices: Vec<ColumnIndex>,   // （index: usize, side: JoinSide)
+        random_state: RandomState,  // 用于生成 hash 值
+        cache: PlanProperties,   // TODO
+      
+        // execution runtime
+        left_fut: OnceAsync<JoinLeftData>,  // build side 的数据
+        metrics: ExecutionPlanMetricsSet,  // 运行时的 metrics
+    }
+   ```
+   1. build HashJoinExec: 是否有好的 builder API?
+   2. 1个算子，会在不同线程中执行不同的分区任务
+3. struct HashJoinStream
+   ```rust 
+    struct HashJoinStream {
+        schema: Arc<Schema>,    // output schema
+        on_right: Vec<PhysicalExprRef>,  // probe side 的 join key
+        filter: Option<JoinFilter>,  // join filter
+        join_type: JoinType,   // join type
+        
+        right:  SendableRecordBatchStream,  // probe side 的数据
+        random_state: RandomState,  // 用于生成 hash 值
+        join_metrics: BuildProbeJoinMetrics,  // 运行时的 metrics
+        column_indices: Vec<ColumnIndex>,  // (index: usize, side: JoinSide)
+        null_equals_null: bool,  // null 是否相等
+        
+        state: HashJoinStreamState, 
+        build_side: BuildSide,
+        batch_size: usize,  // 每次处理的 batch 大小
+        hashes_buffer: Vec<u64>,  // hash 值
+        right_side_ordered: bool,
+    }
+   
+    enum HashJoinStreamState {
+        WaitBuildSide,
+        FetchProbeBatch,
+        ProcessProbeBatch(ProcessProbeBatchState),
+        ExhaustedProbeSide,
+        Completed,
+    }
+   
+    enum BuildSide {
+        Initial(BuildSideInitialState),  // left_fut: OnceFut<JoinLeftData>
+        Ready(BuildSideReadyState),      // Arc<JoinLeftData>
+    }
+   
+   ```
 
 # flow
 
@@ -77,6 +148,13 @@
     ```
 - [Coroutine 重构数据库算子——以 hash join probe 为例](https://zhuanlan.zhihu.com/p/666465496?utm_medium=social&utm_psn=1897664392729982364&utm_source=ZHShareTargetIDMore)
   对使用 coroutine 来提高这一块的性能表示怀疑，主要是因为 coroutine 的调度开销会更大。
+- datafusion 中的内存管理
+- datafusion 中的 macro 使用
+- datafusion 中的 metric 信息 和 explain analyze 格式化
+- datafusion 中的 逻辑算子和物理算子
+- 哪些操作没有向量化
+  - create hashes
+- 循环类代码的 IPC?
   
 - 新的向量算法
   ```rust

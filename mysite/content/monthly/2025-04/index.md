@@ -14,6 +14,9 @@ template = "blog/page.html"
       类似于 zig 的 ArenaAllocator。对于 Request/Response 模式的应用场景，有着最好的内存分配性能。
 2. Scala
    - Scala.js 1.19.0 对 WASM 支持增强。
+3. JavaScript 
+   - https://evanw.github.io/source-map-visualization/ 这个工具可以帮助我们很好的理解 SourceMap
+   - 基于 SourceMap 可以很好的进行 package 后的代码大小进行分析。source-map-explorer 这个工具好像已经过时了。
 
 # MPP & OLAP
 1. Datafusion
