@@ -210,3 +210,76 @@
      - 根据左表、右表的数据规模选择 build side
      - 消除不必要的 re-partition （数据量小于 1M 时，直接不做 partion 处理）
  
+
+# in_order vs out_of_order
+
+|                                           | in_order | out_of_order | rate    | description |
+|-------------------------------------------|----------|--------------|---------|-------------|
+| collect_build_side                        | 515      | 529          | ~       |             |
+| fetch_probe_side                          | 108      | 111          | ~       |             |
+| process_probe_batch                       | 2511     | 3991         | +58%    |             |
+| ....equal_rows_arr                        | 189      | 455          | +141%   | cache miss  |
+| ....get_matched_indices_with_limit_offset | 1886     | 2897         | +53%    | cache miss  |
+| ....ht.find                               | 171      | 989          | +476%   | cache miss  |
+| ....adjust_indices_by_join_type           | 248      | 198          | -20%    |             |
+| ....build_batch_from_indices              | 173      | 430          | +148%   | cache miss  |
+| total                                     | 3135     | 4632         | +47%    | cache miss  |
+
+# BUILD_SIDE = 2（1.4s) vs 20M(3.8s)
+| method                                    | L1D_CACHE_MISS_LD | L1D_CACHE_MISS_LD_NONSPEC | L1D_CACHE_MISS_ST | L1D_CACHE_MISS_ST_NONSPEC | BRANCH_COND_MISPRED | Cycles |
+|-------------------------------------------|-------------------|---------------------------|-------------------|---------------------------|---------------------|--------|
+| get_matched_indices_with_limit_offset-20M | 281M              | 202M                      | 404M              | 351M                      | 1.35M               | 7157M  |
+| get_matched_indices_with_limit_offset-2   | 19M               | 10M                       | 94M               | 83M                       | 40K                 | 471M   |
+
+导致性能显著的下降的原因是 L1D_CACHE_MISS 还是 Branch missing? 
+
+
+测试结论：
+1. 目前的 hash join 在 build side 数据无序时，整体的效率会下降 50%。这些是由于 probe side 的数据是无序的，build side 采用
+   列式存储反而会导致 cache miss，且理论上会因为 build side 的 column 数量增大而更为明显。（在这个例子中）
+2. cache miss 对 equal_rows_arr, ht.find, build_batch_from_indices 的影响是非常大的。
+
+# 新的 hash join 设计方案
+1. build side 使用 row store
+2. 重新设计 first 和 next 的存储方式
+   - first: group = h1(hash) % n  每个 group 存储 16个 (h2 + next_index) 
+     - h2: 0x00 - 0x7F，使用 向量搜索 在一个组内进行匹配
+     - 0xFF 表示为一个 EMPTY SLOT
+     - 0xFE 表示为一个 OTHER SLOT: 当一个 group 中超过15个 slot 被占用时，第16个 slot 会
+       使用 0xFE 来表示。（不进行二次搜索）
+     - entry: row + next_idx： 如果 next_idx == 0 表示没有 next
+   - next[]
+     每一行包括：hashcode + row, 其中 next_flag 为 0 时表示没有 next， 一般的 next_index 为当前 index + 1
+3. 非向量化 probe 过程
+   - probe 行，计算 h1, h2
+   - 根据 h1 计算 group，在 group 中搜索 h2
+     - 如果匹配 first 为 第一行的地址
+     - 如果存在 0xFF 且未匹配，则 first = NULL
+     - 入如果存在 0xFE 且未匹配，则 first = 该行
+   - eq 测试 first 如果匹配，则输出该行（如果需要则 mark build bit）
+   - 获取 next_index 
+   - 如果 next_index == 0 则结束，否则从 `next[next_index]` 获取下一行，循环上述过程
+   - 如果 next_index == 0 则结束，如果需要 adjust 则输出 probe 行。
+4. 向量化 probe 过程
+   - probe_hash: u64x4
+   - h1: u64x4
+   - h2: u8x4
+   - group 1: 
+     - `groups[h1[0] % buckets]` 
+     - search `h2[0]` 
+     - search 0xFE
+     - first1
+   - first2
+   - first3
+   - first4
+   - first: u64x4
+   - first_mask: Mask<u64x4>
+   - first_eq: 进行 eq 测试（不做分支处理）
+   - 根据 first_eq 输出 行
+   - first = first.next
+   - update first mask
+   - if first_mask == 0 complete
+
+关键点：
+1. 将 build side 转为 row store, 并且具有相同 hash code 的数据连续存储
+2. h1/h2 的设计有高的概率会命中
