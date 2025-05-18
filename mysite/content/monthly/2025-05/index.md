@@ -21,6 +21,8 @@ template = "blog/page.html"
     - [A Visual Journey Through Async Rust](https://github.com/alexpusch/rust-magic-patterns/blob/master/visual-journey-through-async-rust/Readme.md)
       通过可视化的方式来理解 async/await 的执行，包括 concurrent 与 parallel 的区别。
     - [Rust Stream API visualized and exposed](https://github.com/alexpusch/rust-magic-patterns/blob/master/rust-stream-visualized/Readme.md)
+    - [使用 Stream 编写函数式的代码](https://willemvanhulle.tech/blog/func-async/)
+      1. Stream ～ async iterator
 3. Scala
     - Scala 3.7.0 发布。这个版本最大的特性是 [NamedTuple](https://docs.scala-lang.org/scala3/reference/other-new-features/named-tuples.html) 成为正式特性。
 

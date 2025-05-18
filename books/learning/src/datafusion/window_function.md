@@ -1,55 +1,107 @@
-# 窗口函数
+# datafusion 窗口函数执行分析
 
-1. AggregateUDF: 从多行聚集一个结果
-   - [simple udaf](https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/simple_udaf.rs)
-   - [advanced udaf](https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/advanced_udaf.rs)
-   
-   ```rust
-   trait AggrgateUDF {
-     fn accumulator(&self, acc_args: AccumulatorArgs) -> Result<Box<dyn Accumulator>>    ;
-     fn create_groups_accumulator(&self, acc_args: AccumulatorArgs)  -> Result<Box<dyn GroupsAccumulator>> ;
-   }
-   
-   trait Accumulator {
-      fn update_batch(&mut self, values: &[ArrayRef]) -> Resutl<()>;
-      fn merge_batch(&mut self, states: &[ArrayRef]) -> Result<()>;
-      fn retract_batch(&mut self, values: &[ArrayRef]) -> Result<()>;
-      fn support_retract_batch(&self) -> bool;
-      fn state(&mut self) -> Result<Vec<ScalarValue>>;
-      fn evaluate(&mut self) -> Resutl<ScalarValue>;
-   }
-   
-   // 1. acc.update_batch -> acc.evaluate
-   // 2. acc1.update_batch, acc2.update_batch, acc3.update_batch
-   //    acc1.merge_batch( acc2.state, acc3.state )
-   //    acc1.evaluate()
-   
-   trait GroupsAccumulator {
-     fn update_batch(&mut self, values: &[ArrayRef], group_indices: &[usize], opt_filter: Option<&BooleanArray>, total_num_groups: usize) -> Result<()>;
-     fn evaluate(&mut self, emit_to: EmitTo) -> Result<ArrayRef>;
-     fn state(&mut self, emit_to: EmitTo) -> Result<Vec<ArrayRef>>;
-     fn merge_batch(&mut self, values: &[ArrayRef], group_indices: &[usize], opt_filter, total_num_groups);
-   }
-   
-   ```
-2. WindowUDF
+## API: 使用窗口函数
+窗口函数是针对数据分析的一个 SQL 查询扩展，其执行顺序如下图中，
+![SQL 执行顺序](sql-execute-plan.png)
 
+一般的，窗口函数的语法如下：
+![window_expr_grammar.png](window_expr_grammar.png)
+来源：https://duckdb.org/docs/stable/sql/functions/window_functions
 
-# 窗口函数执行堆栈
+datafusion 提供了对窗口函数的支持，不过，目前的版本支持程度仍然不如 duckdb，我目前发现的问题是： frame 中目前仅支持 literal expr, 
+这限制了基于当前行的 dynamic range 的支持能力，例如，典型的 上年同期年累 这样的计算。
 
-BoundedWindowAggStream as futures_core::stream::Stream::poll_next 
-  BoundedWindowAggStream::poll_next_inner 
-    BoundedWindowAggStream::compute_aggregates
-      <SlidingAggregateWindowExpr as WindowExpr>::evaluate_stateful 
-        AggregateWindowExpr::aggregate_evaluate_stateful 
-          AggregateWindowExpr::get_result_column 
-            <SlidingAggregateWindowExpr as AggregateWindowExpr>::get_aggregate_result_inside_range 
-              <SlidingSumAccumulator<T> as Accumulator>::update_batch
+在 duckdb 中，可以表示为 
+  ```sql
+  SUM( SUM(amount) ) over (order by order_date 
+    range between to_days( order_date - (date_trunc('year', order_date'year') - interval 1 year)) preceding 
+    and interval 1 year preceding )
+  ```
+本文分析的目的之一就是对 datafusion 的窗口函数执行机制进行研究，并评估为其添加上这类能力的可行性。
 
-WindowExpr  AggregateWindowExpr
-   StandardWindowExpr
-   SlidingAggregateWindowExpr
-   PlainAggregateWindowExpr
+## SPI：创建自定义的窗口函数
+
+datafusion 中支持4种 自定义函数：
+- udf: scalar 函数
+- udtf: 表函数，如 csv_read 之类的函数
+- udwf: User Define Window Function：以 partition 为单位的窗口函数
+
+  主要针对非聚合类的窗口函数，参见：
+  1. [simple udwf](https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/simple_udwf.rs)
+  2. [advanced udwf](https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/advanced_udwf.rs)
+   
+   see: datafusion/physical-expr/src/window/standard.rs StandardWindowExpr::evaluate(按照这个源代码整理，与代码注释对应不上)
+
+  | [`uses_window_frame`] | [`supports_bounded_execution`] | [`include_rank`] | function_to_implement      | functions                   |
+  |-----------------------|--------------------------------|------------------|----------------------------|-----------------------------|
+  | true                  | *                              | *                | [`evaluate`]               | nth                         |
+  | false (default)       | *                              | true             | [`evaluate_all_with_rank`] | rank, dense_rank, cume_dist |
+  | false                 | *                              | false (default)  | [`evaluate_all`]           |                             |
+
+  - use_window_frame = false: 表示该函数使用 frame 部分，在单个 partition 粒度上执行
+    - nth use_window_frame = true 
+    - others: false
+  - supports_bounded_execution:
+    - lead
+    - lag
+    - row_number
+    - nth,
+    - rank
+    - dense_rank
+  - include_rank
+    - cume_dist
+    - rank
+    
+- udaf: User Define Aggregate Function
+  针对形如 SUM, COUNT 之类的函数，自定义函数参考：[advanced udaf](https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/advanced_udaf.rs)
+  核心接口是 Accumulator, GroupsAccumulator
+
+```mermaid
+classDiagram
+        
+        class WindowUDFImpl {
+            <<trait>>
+            +partition_evaluator(PartitionEvaluatorArgs args) PartitionEvaluator
+        }
+        class PartitionEvaluator {
+                <<trait>>
+                +is_causal(): bool
+                +uses_window_frame(): bool
+                +supports_bounded_execution(): bool
+                +include_rank(): bool
+                +evaluate(&~ArrayRef~ values, &Range~usize~ range): Result<ScalarValue> 
+                +evaluate_all(values:&~ArrayRef~, num_rows:uszie): Result<ArrayRef>
+                +evaluate_all_with_rank(usize num_rows, &[Range~usize~] ranks_in_partition) -> Result<ArrayRef>
+        }
+        WindowUDFImpl .. PartitionEvaluator
+        
+        class AggregateUDFImpl {
+            <<trait>>    
+            +accumulator(AccumulatorArgs args): Result~Box~dyn Accumulator~~
+            +create_groups_accumulator(AccumulatorArgs args): Result<Box<dyn GroupsAccumulator>>
+        }
+        
+        class Accumulator {
+                <<trait>>
+                +update_batch(&[ArrayRef]): Result<()>
+                +retract_batch(&[ArrayRef]): Result<()>
+                +state(): Result<Vec<ScalaValue>>
+                +merge_batch(&[ArrayRef]): Result<()>
+                +evaluate(): Result<ScalaValue>
+        }
+        
+        class GroupsAccumulator {
+            <<trait>>
+            +update_batch(&[ArrayRef], Option<&BooleanArray>, usize): Result<()>
+            +state(EmitTo): Result<ArrayRef>
+            +merge_batch(&[ArrayRef], &[usize], Option<&BooleanArray>, usize): Result<()>
+            +evaluate(EmitTo): Result<ArrayRef>    
+        }
+
+    AggregateUDFImpl .. Accumulator
+    AggregateUDFImpl .. GroupsAccumulator
+        
+```
 
 ```mermaid
 classDiagram
@@ -60,10 +112,12 @@ classDiagram
         +evaluate_stateful(partition_batches: &PartitionBatches, window_agg_state: &mut PartitionWindowAggStates) Result~()~
     }
 
+    note for AggregateWindowExpr "for user-defined-aggregate-function"
     class AggregateWindowExpr {
         <<trait>>
     }
 
+    note for StandardWindowExpr "for user-defined-window-function"
     class StandardWindowExpr {
             <<struct>>
     }
@@ -81,6 +135,48 @@ classDiagram
     AggregateWindowExpr <|-- PlainAggregateWindowExpr
     WindowExpr <|-- StandardWindowExpr
 ```
+
+组合：
+
+1. operator & window_expr for aggregate functions
+
+   | frame start                   | frame end                     | window_expr                | operator             |
+   |-------------------------------|-------------------------------|----------------------------|----------------------|
+   | unbounded preceding           | unbounded following           | PlainAggregateWindowExpr   | WindowAggExec        |
+   | unbounded preceding           | expr following or current row | PlainAggregateWindowExpr   | BoundedWindowAggExec |
+   | expr preceding or current row | unbounded following           | SlidingAggregateWindowExpr | WindowAggExec        |
+   | expr preceding or current row | expr following or current row | SlidingAggregateWindowExpr | BoundedWindowAggExec |
+ 
+2. operator for user-defined-window-functions
+ 
+   | frame start                   | frame end                     | window_expr        | operator             |
+   |-------------------------------|-------------------------------|--------------------|----------------------|
+   | unbounded preceding           | unbounded following           | StandardWindowExpr | WindowAggExec        |
+   | unbounded preceding           | expr following or current row | StandardWindowExpr | BoundedWindowAggExec |
+   | expr preceding or current row | unbounded following           | StandardWindowExpr | WindowAggExec        |
+   | expr preceding or current row | expr following or current row | StandardWindowExpr | BoundedWindowAggExec |
+
+## 算子: WindowAggExec 分析
+
+## 算子： BoundedWindowAggExec
+
+# 窗口函数执行堆栈
+
+BoundedWindowAggStream as futures_core::stream::Stream::poll_next 
+  BoundedWindowAggStream::poll_next_inner 
+    BoundedWindowAggStream::compute_aggregates
+      <SlidingAggregateWindowExpr as WindowExpr>::evaluate_stateful 
+        AggregateWindowExpr::aggregate_evaluate_stateful 
+          AggregateWindowExpr::get_result_column 
+            <SlidingAggregateWindowExpr as AggregateWindowExpr>::get_aggregate_result_inside_range 
+              <SlidingSumAccumulator<T> as Accumulator>::update_batch
+
+WindowExpr  AggregateWindowExpr
+   StandardWindowExpr
+   SlidingAggregateWindowExpr
+   PlainAggregateWindowExpr
+
+
 
 ```rust
 struct WindowState { -- 每个分区维护一个 WindowState
@@ -102,107 +198,3 @@ struct WindowAggState {
 partitionBatcheS:           IndexMap<PartitionKey,  PartitionBatchState>
 partitionWindowAggStates:   IndexMap<PartitionKey, WindowState>
 ```
-
-1. WindowAggExec
-   - 需要保持窗口中的所有历史行，以进行计算。
-   - 成本高
-2. BoundedWindowAggExec
-   - 适合于窗口边界在查询时即可确定的场景
-   - 仅保留一个有限的历史数据，支持流式计算
-
-
-rows
-    each row:
-        update frame: moves forward only
-            1. rows   from..end
-            2. range  from..end
-            3. groups
-
-1. (rows, current_row)
-2. current_frame
-
-- on first row, initialize current_row, current_frame
-- on new row:
-  - if new row out of current_frame:
-    - update current row's result to aggregator's result
-    - current_row++, calculate new frame
-    - evict old rows, update frame's result
-    - if new row still out of current_frame, repeat.
-  - if new row inside current_frame, continue
-
-
-1. StandardWindowExpr: 只与分区有关，不是用 frame?
-   ```text
-   BoundedWindowAggStream.pill_next_inner -> 
-   BoundedWindowAggStream.compute_aggregates -> 
-   StandardWindowExpr.evaluate_stateful ->
-   RankEvaluator.evaluate
-   ```
-
-2. SlidingAggrgateWindowExpr: over( rows between N preceding and ... )
-```text
-BoundedWindowAggStream as futures_core::stream::Stream::poll_next 
-  BoundedWindowAggStream::poll_next_inner 
-    BoundedWindowAggStream::compute_aggregates
-      <SlidingAggregateWindowExpr as WindowExpr>::evaluate_stateful 
-        AggregateWindowExpr::aggregate_evaluate_stateful 
-          AggregateWindowExpr::get_result_column 
-            <SlidingAggregateWindowExpr as AggregateWindowExpr>::get_aggregate_result_inside_range 
-              <SlidingSumAccumulator<T> as Accumulator>::update_batch    
-```
-
-3. PlainAggregateWindowExpr: over( rows between unbounded preceding and ...)
-
-```sql
-select *, 
-    sum(amount) over (partition by product_id) as "product_amounts", -- WindowAggExec + PlainAggregateWindowExpr
-    sum(amount) over (partition by product_id order by order_date rows 1 preceding) as "amounts1", -- BoundedWindowAggExec + SlidingAggrgateWindowExpr
-    rank() over (partition by product_id order by order_date) as rank1, -- BoundedWindowAggExec + StandardWindowExpr
-    rank() over (partition by product_id order by order_date desc) as rank2 -- BoundedWindowAggExec + StandardWindowExpr
-from t1
-```
-
-
-
-
-算子选择：
-1. 如果计算需要基于 partition 的全量数据进行，使用 window_agg_exec 算子
-    - 输入数据已经按照 partion by 和 order by 进行排序
-    - 将输入数据，按 partition 分割为 RecordBatch
-        - 对每个窗口表达式调用 window_expr.evaluate(batch)，返回 求值后的向量 （按分区全量求值）
-2. 否则，意味着算子基于一个受限的窗口数据进行计算，使用 bounded_window_agg_exec 算子
-    - 输入数据已经按照 partition by 和 order by 进行排序
-    - 将输入的 batch 添加到 input_buffer: RecordBatch 和  partition_buffers: IndexedMap< PartitionKey, PartionBatchState> 中 // TODO
-    - 调用 boundedWindowAggStream::compute_aggregates 进行增量求值
-        - 对 每一个 window_expr 调用 evaluate_stateful 进行增量求值，其求值结果同步在 IndexedMap< PartitionKey, WindowState> 中
-          三元组：(window_expr, partition_key, WindowState) // TODO 合适初始化
-            - Windowexpr::evalute_statful( partition_batches, partition_states ) 对多个 partition 进行增量求值，并不直接返回结果，而是更新 states
-        - calculate_out_columns 计算当前是否有完成的计算行，有的话，修改 partition_buffers 并返回（会作为算子的输出行）
-
-重点是这个状态是如何维护的：
-
-struct WindowAggState {			// 窗口的状态在这里维护
-window_frame_range: Range<usize>,
-window_frame_ctx:  Option<WindowFrameContext>,
-
-    last_calculated_index: usize,
-    offset_pruned_rows: usize,
-
-    out_col:  ArrayRef,
-    n_row_result_missing: usize,
-    is_end: bool
-}
-
-pub enum WindowFn {
-Builtin(Box<dyn PartitionEvaluator>),	//
-Aggregate(Box<dyn Accumulator>),		// 累加器的状态在这里维护
-}
-
-1. get_result_column 中更新 state.window_frame_range, 并返回 ArrayRef
-   -> get_aggregate_result_inside_range 计算出一个值
-
-2. 根据返回结果，再 state.update 其余字段
-
-   accumulator.update_batch  新增数据
-   accumulator.retract_batch 删除数据
-
