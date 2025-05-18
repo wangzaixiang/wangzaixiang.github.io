@@ -42,4 +42,5 @@
 - [compare-with-duckdb](perf-vs-duckdb-1.md)
 - [Join Performance](sql-join.md)
 - [Hashjoin](./datafusion/hash-join.md)
+- [window function](./datafusion/window_function.md)
 
