@@ -136,14 +136,15 @@ classDiagram
     WindowExpr <|-- StandardWindowExpr
 ```
 
+## 物理计划生成：选择算子、WindowExpr 决策树
+
 ```mermaid
 flowchart TD
-    A[function type ?] == window function ==> StandardWindowExpr
-    A == aggregate function ==> A1[is aggregation]
-    A1 --> C[frame start bounded ?]
-    A1 --> B[frame end bounded ?]
-    B == unbounded following ==> WA[WindowAggExec]
-    B == bounded ==> BWA[BoundedWindowAggExec]    
+    A[ 1: function type ?] == window function ==> StandardWindowExpr
+    A == aggregate function ==> C[frame start unbounded ?]
+    A2[2: frame end bounded ?]
+    A2 == unbounded following ==> WA[WindowAggExec]
+    A2 == bounded ==> BWA[BoundedWindowAggExec]    
     C == unbounded preceding ==> plain[PlainAggregateWindowExpr]
     C == bounded ==> sliding[SlidingAggregateWindowExpr]
 ```
