@@ -159,6 +159,8 @@ flowchart TD
 | aggregate | bounded window agg exec | sliding aggregate | [test_sum3](https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs)  |
 
 ## 算子: WindowAggExec 分析
+根据上述分析，WindowAggExec 的 frame 形如：between bounded and unbounded following
+
 1. 从上游获取 RecordBatch，追加到 self.batches 中，直至全部读取完成，进入到第2步。
 2. 将全部的 RecordBatch 合并为一个 RecordBatch
 3. 在 batch 上求值 sort columns (partition key, maybe + order key)
@@ -167,20 +169,36 @@ flowchart TD
 5. foreach partition，调用函数 WindowAggExec::compute_window_aggregates 进行窗口函数求值
    1. foreach window_expr 调用 window_expr.evaluate(batch) 求值（多个窗口函数可以共享同一个窗口）
       - window_expr.evaluate(batch) : single partition, single window_exp
-        - foreach row in batch
+        - foreach row in batch `AggregateWindowExpr::get_result_column`
           1. 计算 当前行的 window range
           2. window_expr.`get_aggregate_result_inside_range`: evaluate for single row with a range(window)
              - PlainAggregateWindowExpr::get_aggregate_result_inside_range: window 0..end end 是递增的
-               1. 对比 last_range，将 shift out rows 调用 accumulator.retract_batch 
+             
+               frame: 0 .. LAST
+               1. 对比 last_range，将 shift in rows 调用 accumulator.update_batch 
                2. 获取 accumulator.evaluate
-             - SlidingAggregateWindowExpr::get_aggregate_result_inside_range: window start..end
+             - SlidingAggregateWindowExpr::get_aggregate_result_inside_range: 
+               
+               frame: *bounded* .. LAST
                1. 对比 last_range，将 shift out rows 调用 accumulator.retract_batch
                2. 将 shift in rows 调用 accumulator.update_batch
                3. 获取 accumulator.evaluate
+               
              - 总之： SlidingAggregateWindowExpr::get_aggregate_result_inside_range 可以覆盖 PlainAggregateWindowExpr::get_aggregate_result_inside_range 的能力。
-
+    
+   TODO: 补充一个图示，分别针对 PlainAggregateWindowExpr 和 SlidingAggregateWindowExpr 的计算过程
 
 ## 算子： BoundedWindowAggExec
+BoundedWindowAggExec 是有 bounded end 的 frame
+1. Plain:  0 .. *bounded*
+2. Sliding: *bounded* .. *bounded*
+
+处理过程：
+1. 无需在读取了全部分区数据后，再进行窗口函数计算，可以在读入 batch 的过程中增量的处理。
+2. 思考：WindowAggExec 是否可以转换为 逆序后使用 BoundedWindowAggExec?
+
+## 思考：支持更为灵活的 values between expr and expr ? 虽然不能匹配上述的优化，但在数据量不大的情况下，可以有更大的表现力
+## 思考：如何高效的支持同期、同期累积等功能？
 
 # 窗口函数执行堆栈
 
