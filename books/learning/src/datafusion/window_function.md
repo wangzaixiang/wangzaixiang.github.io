@@ -149,7 +149,36 @@ flowchart TD
     C == bounded ==> sliding[SlidingAggregateWindowExpr]
 ```
 
+具体，可以查看如下的代码实例，通过代码的调试等方式，可以帮助我们理解不同的算子下的执行流程：
+
+| function  | operator                | window expr       | demo                                                                                                                        |
+|-----------|-------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| aggregate | window agg exec         | plain aggregate   | [test_sum_1](https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs) |
+| aggregate | window agg exec         | sliding aggregate | [test_sum2](https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs)  |
+| aggregate | bounded window agg exec | plain aggregate   | [test_sum4](https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs)  |
+| aggregate | bounded window agg exec | sliding aggregate | [test_sum3](https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs)  |
+
 ## 算子: WindowAggExec 分析
+1. 从上游获取 RecordBatch，追加到 self.batches 中，直至全部读取完成，进入到第2步。
+2. 将全部的 RecordBatch 合并为一个 RecordBatch
+3. 在 batch 上求值 sort columns (partition key, maybe + order key)
+4. 按照 partition key 对 batch 进行 partition，由于 batch 已经排序，因此，在batch 中每个分区的数据已经是连续存放的，一个分区的数据接着
+   上一个分区的数据。每个分区可以表示为 Range<usize>
+5. foreach partition，调用函数 WindowAggExec::compute_window_aggregates 进行窗口函数求值
+   1. foreach window_expr 调用 window_expr.evaluate(batch) 求值（多个窗口函数可以共享同一个窗口）
+      - window_expr.evaluate(batch) : single partition, single window_exp
+        - foreach row in batch
+          1. 计算 当前行的 window range
+          2. window_expr.`get_aggregate_result_inside_range`: evaluate for single row with a range(window)
+             - PlainAggregateWindowExpr::get_aggregate_result_inside_range: window 0..end end 是递增的
+               1. 对比 last_range，将 shift out rows 调用 accumulator.retract_batch 
+               2. 获取 accumulator.evaluate
+             - SlidingAggregateWindowExpr::get_aggregate_result_inside_range: window start..end
+               1. 对比 last_range，将 shift out rows 调用 accumulator.retract_batch
+               2. 将 shift in rows 调用 accumulator.update_batch
+               3. 获取 accumulator.evaluate
+             - 总之： SlidingAggregateWindowExpr::get_aggregate_result_inside_range 可以覆盖 PlainAggregateWindowExpr::get_aggregate_result_inside_range 的能力。
+
 
 ## 算子： BoundedWindowAggExec
 
