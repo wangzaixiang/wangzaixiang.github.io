@@ -136,25 +136,17 @@ classDiagram
     WindowExpr <|-- StandardWindowExpr
 ```
 
-组合：
-
-1. operator & window_expr for aggregate functions
-
-   | frame start                   | frame end                     | window_expr                | operator             |
-   |-------------------------------|-------------------------------|----------------------------|----------------------|
-   | unbounded preceding           | unbounded following           | PlainAggregateWindowExpr   | WindowAggExec        |
-   | unbounded preceding           | expr following or current row | PlainAggregateWindowExpr   | BoundedWindowAggExec |
-   | expr preceding or current row | unbounded following           | SlidingAggregateWindowExpr | WindowAggExec        |
-   | expr preceding or current row | expr following or current row | SlidingAggregateWindowExpr | BoundedWindowAggExec |
- 
-2. operator for user-defined-window-functions
- 
-   | frame start                   | frame end                     | window_expr        | operator             |
-   |-------------------------------|-------------------------------|--------------------|----------------------|
-   | unbounded preceding           | unbounded following           | StandardWindowExpr | WindowAggExec        |
-   | unbounded preceding           | expr following or current row | StandardWindowExpr | BoundedWindowAggExec |
-   | expr preceding or current row | unbounded following           | StandardWindowExpr | WindowAggExec        |
-   | expr preceding or current row | expr following or current row | StandardWindowExpr | BoundedWindowAggExec |
+```mermaid
+flowchart TD
+    A[function type ?] == window function ==> StandardWindowExpr
+    A == aggregate function ==> A1[is aggregation]
+    A1 --> C[frame start bounded ?]
+    A1 --> B[frame end bounded ?]
+    B == unbounded following ==> WA[WindowAggExec]
+    B == bounded ==> BWA[BoundedWindowAggExec]    
+    C == unbounded preceding ==> plain[PlainAggregateWindowExpr]
+    C == bounded ==> sliding[SlidingAggregateWindowExpr]
+```
 
 ## 算子: WindowAggExec 分析
 
