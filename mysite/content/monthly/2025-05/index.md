@@ -30,6 +30,19 @@ template = "blog/page.html"
 
 # Web & Frontend
 1. [How Rolldown Works: Module Loading, Dependency Graphs, and Optimization Explained](https://www.atriiy.dev/blog/rolldown-module-loader-and-dependency-graph)
+2. [How We Built a 500% Faster Web App with WebAssembly in 2025](https://medium.com/@yewang222/how-we-built-a-500-faster-web-app-with-webassembly-in-2025-49f8f3f52995)
+   
+   应用类型：典型的BI展示、分析应用：实时数据处理，类似于电子表格的展示，图表展示，动态的用户界面。
+
+   在前端进行了大量的数据加工处理类工作(非DOM操作)，以提高交互的体验：
+   - 前端过滤
+   - 前端排序
+   - transpose（交叉表本地处理）
+   - 本地的分组聚合
+   - 电子表格的本地公式计算
+   - JSON: 将远程的 blob 转换为 JSON 
+   
+   最佳搭配：JavaScript 处理 render, WASM 处理 compute
    
 
 # Tools & Libraries

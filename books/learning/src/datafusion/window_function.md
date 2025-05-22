@@ -193,6 +193,103 @@ BoundedWindowAggExec 是有 bounded end 的 frame
 1. Plain:  0 .. *bounded*
 2. Sliding: *bounded* .. *bounded*
 
+```rust
+
+struct BoundedWindowAggStream {
+  window_expr: Vec<WindowExprRef>,
+  
+  input_buffer: RecordBatch,
+  
+  partition_buffers:  PartitionBatches,   // IndexMap<PartitionKey, PartitionBatchState>
+  window_agg_states:  Vec<PartitionWindowAggStates>, // indexed by window_expr, IndexMap<PartitionKey, WindowState>
+}
+
+struct PartitionBatchState {
+  record_batch:  RecordBatch,
+  most_recent_row: Option<RecordBatch>
+  is_end: bool,
+  n_out_row: usize
+}
+
+struct WindowState {
+  state: WindowAggState,
+  window_fn: WindowFn,      // 累加器会持有状态，通过 update_batch, retract_batch, merge_batch 更新状态
+}
+
+struct WindowAggState {
+  window_frame_range: Range<usize>,
+  window_frame_ctx:  Option<WindowFrameContext>,
+  
+  last_calculated_index: usize,
+  offset_pruned_rows: usize,
+  
+  out_col: ArrayRef,
+  n_row_result_missing: usize,
+  is_end: bool
+}
+
+```
+
+```mermaid
+classDiagram
+  class BoundedWindowAggStream {
+          <<object>>
+          
+          window_exprs: Vec~WindowExprRef~
+          
+          input_buffer: RecordBatch
+          finished: bool
+          
+  }
+
+  class PartitionBatchState {
+          <<object>>
+          
+          record_batch: RecordBatch
+          most_recent_row: Option<RecordBatch>
+          is_end: bool
+          n_out_row: usize
+  }
+  
+  class WindowState {
+          <<object>>
+          state: WindowAggState
+          window_fn: WindowFn
+  }
+  class WindowAggState {
+          <<object>>
+          window_frmae_range: Range<usize>
+          window_frame_ctx: Option<WindowFrameContext>
+          
+          last_cacluated_index: usize
+          offset_pruned_rows: usize
+          out_col: ArrayRef
+          n_row_result_missing: usize
+          is_end: bool
+  }
+  class WindowFn {
+          <<object>>
+          partition_evaluator: PartitionEvaulator
+          accumulator: Accumulator
+  }      
+        
+        
+
+  BoundedWindowAggStream o-- PartitionBatchState : partition_buffers[PartitionKey]
+  BoundedWindowAggStream o-- WindowState : window_agg_state[window_expr_idx][PartitionKey]
+  
+  WindowState o--  WindowAggState
+  WindowState o--  WindowFn    
+
+```
+
+1. `BoundedWindowAggStream::poll_next_inner` 
+   1. poll RecordBatch from input
+   2. `BoundedWindowAggStream::compute_aggregates`
+      1. foreach window_expr, `window_expr::evaluate_stateful(partion_batches, partition_window_agg_states)`
+         1. `AggregateWindowExpr::evalute_stateful` foreach partition
+            1. 
+
 处理过程：
 1. 无需在读取了全部分区数据后，再进行窗口函数计算，可以在读入 batch 的过程中增量的处理。
 2. 思考：WindowAggExec 是否可以转换为 逆序后使用 BoundedWindowAggExec?
