@@ -2,7 +2,17 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/books/learning/book" />
+      <excludeFolder url="file://$MODULE_DIR$/books/wjson/book" />
+      <excludeFolder url="file://$MODULE_DIR$/mysite/public" />
+      <excludeFolder url="file://$MODULE_DIR$/mysite/static/inside-duckdb" />
+      <excludeFolder url="file://$MODULE_DIR$/mysite/static/learning" />
+      <excludeFolder url="file://$MODULE_DIR$/mysite/static/olympics" />
+      <excludeFolder url="file://$MODULE_DIR$/mysite/static/rust-asm" />
+      <excludeFolder url="file://$MODULE_DIR$/mysite/static/simd" />
+      <excludeFolder url="file://$MODULE_DIR$/mysite/static/wjson" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
