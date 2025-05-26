@@ -43,6 +43,14 @@ template = "blog/page.html"
    - JSON: 将远程的 blob 转换为 JSON 
    
    最佳搭配：JavaScript 处理 render, WASM 处理 compute
+3. [Yoga](https://www.yogalayout.dev)  Meta 的急于 CSS 的 box layout engine, PixiJS 使用其来进行 scenario layout, 也可以考虑
+   用于仪表盘之类的场景。
+   - [Yoga-WASM](https://github.com/shuding/yoga-wasm-web) 以 WASM 方式使用
+   - [Stretch](https://github.com/vislyhq/stretch) Rust 实现，支持 FlexBox layout, 目前不活跃
+   - [druid: A data-first Rust-native UI design toolkit](https://github.com/linebender/druid) 
+   - incremental layout.
+   - containing block
+4. [pixijs layout v3](https://pixijs.com/blog)
    
 
 # Tools & Libraries
