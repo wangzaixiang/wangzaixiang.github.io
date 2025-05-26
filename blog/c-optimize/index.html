@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>C++/Rust 面向CPU进行优化 | 程序人生</title>
+<meta name="description" content="C++&#x2F;Rust 面向CPU进行优化">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/c-optimize/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="C++&#x2F;Rust 面向CPU进行优化">
+  <meta name="twitter:description" content="C++&#x2F;Rust 面向CPU进行优化">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="C++&#x2F;Rust 面向CPU进行优化">
+  <meta property="og:description" content="C++&#x2F;Rust 面向CPU进行优化">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/c-optimize/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="C++&#x2F;Rust 面向CPU进行优化">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/c-optimize/"
+      },
+      "headline": "C++&#x2F;Rust 面向CPU进行优化",
+      "image": ,
+      "datePublished": "2024-12-27",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "C++&#x2F;Rust 面向CPU进行优化"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "C++&#x2F;Rust 面向CPU进行优化",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "C++&#x2F;Rust 面向CPU进行优化"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "C Optimize",
+            "item": "https://wangzaixiang.github.io/blog/c-optimize/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/c-optimize/#dan-wen-jian-bian-yi-vs-duo-wen-jian-bian-yi-lto">单文件编译 vs 多文件编译 &amp; LTO</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/c-optimize/#shi-yan">实验</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/c-optimize/#jie-lun">结论</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/c-optimize/#what-about-rust">What about Rust?</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/c-optimize/#aliasing">Aliasing</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/c-optimize/#c">C++</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/c-optimize/#fen-zhi-you-hua">分支优化</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/c-optimize/#links">links</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>C++&#x2F;Rust 面向CPU进行优化</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/learning-llvm-2/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted December 27, 2024&nbsp;&hyphen;&nbsp;<strong>7&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/a-zig-bug/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>本文是阅读 《从现代CPU 特性和编译的角度分析C++ 代码优化-李成栋》的笔记以及我做的一些实验。</p>
+<h1 id="dan-wen-jian-bian-yi-vs-duo-wen-jian-bian-yi-lto">单文件编译 vs 多文件编译 &amp; LTO</h1>
+<h2 id="shi-yan">实验</h2>
+<p>示例代码：</p>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">compute</span><span>(</span><span style="color:#b48ead;">int </span><span>*</span><span style="color:#bf616a;">input</span><span>, </span><span style="color:#b48ead;">int </span><span>*</span><span style="color:#bf616a;">output</span><span>){
+</span><span>
+</span><span>  </span><span style="color:#b48ead;">if</span><span>(*input &gt; </span><span style="color:#d08770;">10</span><span>) *output = </span><span style="color:#d08770;">1</span><span>;
+</span><span>  </span><span style="color:#b48ead;">if</span><span>(*input &gt; </span><span style="color:#d08770;">5</span><span>) *output *= </span><span style="color:#d08770;">2</span><span>;
+</span><span>
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;"># include </span><span>&lt;</span><span style="color:#a3be8c;">stdio.h</span><span>&gt;
+</span><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">main</span><span>(</span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">args</span><span>, </span><span style="color:#b48ead;">char </span><span>**</span><span style="color:#bf616a;">argv</span><span>){
+</span><span>
+</span><span>  </span><span style="color:#b48ead;">int</span><span> i = </span><span style="color:#d08770;">20</span><span>;
+</span><span>  </span><span style="color:#b48ead;">int</span><span> o = </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span>  </span><span style="color:#b48ead;">for</span><span>(</span><span style="color:#b48ead;">int</span><span> j = </span><span style="color:#d08770;">0</span><span>; j &lt; </span><span style="color:#d08770;">800000000</span><span>; j++){
+</span><span>    </span><span style="color:#bf616a;">compute</span><span>(&amp;i, &amp;o);
+</span><span>  }
+</span><span>
+</span><span>  </span><span style="color:#96b5b4;">printf</span><span>(&quot;</span><span style="color:#a3be8c;">out = </span><span style="color:#d08770;">%d</span><span style="color:#96b5b4;">\n</span><span>&quot;, o);
+</span><span>
+</span><span>}
+</span></code></pre>
+<ol>
+<li>单文件版本。
+<ul>
+<li>clang<pre data-lang="text" style="background-color:#2b303b;color:#c0c5ce;" class="language-text "><code class="language-text" data-lang="text"><span>  clang -O3 -o compute compute.cpp
+</span><span>  time ./compute
+</span><span>  耗时 0.00s
+</span><span>  
+</span><span>  clang --target=x86_64-macos -O3 -o compute compute.c -- 可以交叉编译为 x86_64 的代码。
+</span></code></pre>
+</li>
+<li>gcc 与上类似。</li>
+</ul>
+</li>
+<li>多文件版本。
+将上述文件拆分为 compute.h, compute.cpp, main.cpp 三个文件。
+<ul>
+<li>clang 不启动 LTO<pre data-lang="text" style="background-color:#2b303b;color:#c0c5ce;" class="language-text "><code class="language-text" data-lang="text"><span>  clang -O3 -o compute compute.cpp main.cpp
+</span><span>  time ./compute
+</span><span>  耗时 0.76s
+</span></code></pre>
+</li>
+<li>clang 启动 LTO<pre data-lang="text" style="background-color:#2b303b;color:#c0c5ce;" class="language-text "><code class="language-text" data-lang="text"><span>  clang -O3 -flto -o compute compute.cpp main.cpp
+</span><span>  time ./compute
+</span><span>  耗时 0.00s
+</span></code></pre>
+</li>
+<li>gcc 与上类似。</li>
+</ul>
+</li>
+</ol>
+<h2 id="jie-lun">结论</h2>
+<table><thead><tr><th>代码结构</th><th>LTO</th><th>耗时</th></tr></thead><tbody>
+<tr><td>单文件</td><td>否</td><td>0.00s</td></tr>
+<tr><td>多文件</td><td>是</td><td>0.00s</td></tr>
+<tr><td>多文件</td><td>否</td><td>0.76s</td></tr>
+</tbody></table>
+<ol>
+<li>单文件时，clang/gcc 会尽可能的 inline 优化，其产生的代码如下：
+<img src="https://wangzaixiang.github.io/blog/c-optimize/img.png" alt="img.png" />
+<blockquote>
+<p>compute 函数的代码在内联后，其值直接被计算出来，而不是通过循环计算。所以耗时为0.00s。</p>
+</blockquote>
+</li>
+<li>多文件时，除非启动 LTO，否则无法进行内联优化。所以耗时为0.76s。而启动 LTO 后，其代码结构与单文件时类似，所以耗时为0.00s。
+<img src="https://wangzaixiang.github.io/blog/c-optimize/img_1.png" alt="img_1.png" /></li>
+</ol>
+<h2 id="what-about-rust">What about Rust?</h2>
+<ol>
+<li>Rust 与 C++ 在 inline 方面更为激进：
+<ul>
+<li>在 同一个 crate 内，即使是不同的 module，编译器会尽可能的 inline 函数。</li>
+<li>在不同的 crate 简，除非使用 <code>#[inline]</code> 或者 <code>#[inline(always)]</code>，否则无法进行内联优化。这个并不需要开启 LTO。</li>
+</ul>
+</li>
+</ol>
+<h1 id="aliasing">Aliasing</h1>
+<h2 id="c">C++</h2>
+<pre data-lang="cpp" style="background-color:#2b303b;color:#c0c5ce;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">compute</span><span>(</span><span style="color:#b48ead;">int</span><span>* </span><span style="color:#b48ead;">__restrict__ </span><span style="color:#bf616a;">input</span><span>, </span><span style="color:#b48ead;">int</span><span>* </span><span style="color:#b48ead;">__restrict__ </span><span style="color:#bf616a;">output</span><span>){
+</span><span>
+</span><span>  </span><span style="color:#b48ead;">if</span><span>(*input &gt; </span><span style="color:#d08770;">10</span><span>) *output = </span><span style="color:#d08770;">1</span><span>;
+</span><span>  </span><span style="color:#b48ead;">if</span><span>(*input &gt; </span><span style="color:#d08770;">5</span><span>) *output *= </span><span style="color:#d08770;">2</span><span>;
+</span><span>
+</span><span>}
+</span></code></pre>
+<p><code>__restrict__</code> 限定了 input 与 output 不会指向同一个地址，(不会是同一个数据的两个别名)，这样编译器可以更好的优化代码，例如，两次 <code>*input</code>
+操作就无需从内存中读取两次，而是读取一次后，第二次访问时，可以重复使用该值。</p>
+<table><thead><tr><th>代码结构</th><th><strong>restrict</strong></th><th>耗时</th></tr></thead><tbody>
+<tr><td>多文件</td><td>否</td><td>0.76s</td></tr>
+<tr><td>多文件</td><td>是</td><td>0.76s</td></tr>
+</tbody></table>
+<p>优化结果并不明显：主要是因为 L1 cache 的存在，即使是两次读取，也不会有太大的性能损失。
+对应的汇编代码如下：
+<img src="https://wangzaixiang.github.io/blog/c-optimize/img_2.png" alt="img_2.png" /></p>
+<p>Aliasing 消除在很多场景下会带来更为明显的优化（这个例子不够明显），可以参考：<a href="/blog/rust-cpp-comparison/">Rust vs C++: A Performance Comparison</a></p>
+<h1 id="fen-zhi-you-hua">分支优化</h1>
+<p>理论上，分支预测失败会导致流水线的空转，从而导致性能下降。但到底分支预测失败会导致多少性能下降，是否需要引起重视呢？</p>
+<p>我之前有在 Rust 的 std 库中看到 <code>std::intrinsics::likely</code> 的用法，例如：</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#65737e;">// from core::slice::sort::stable
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">sort</span><span>&lt;T, F: FnMut(&amp;T, &amp;T) -&gt; </span><span style="color:#b48ead;">bool</span><span>, BufT: BufGuard&lt;T&gt;&gt;(</span><span style="color:#bf616a;">v</span><span>: &amp;</span><span style="color:#b48ead;">mut</span><span> [T], </span><span style="color:#bf616a;">is_less</span><span>: &amp;</span><span style="color:#b48ead;">mut</span><span> F) {
+</span><span>    </span><span style="color:#65737e;">// Arrays of zero-sized types are always all-equal, and thus sorted.
+</span><span>    </span><span style="color:#b48ead;">if </span><span>T::</span><span style="color:#d08770;">IS_ZST </span><span>{
+</span><span>        </span><span style="color:#b48ead;">return</span><span>;
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// Instrumenting the standard library showed that 90+% of the calls to sort
+</span><span>    </span><span style="color:#65737e;">// by rustc are either of size 0 or 1.
+</span><span>    </span><span style="color:#b48ead;">let</span><span> len = v.</span><span style="color:#96b5b4;">len</span><span>();
+</span><span>    </span><span style="color:#b48ead;">if </span><span>intrinsics::likely(len &lt; </span><span style="color:#d08770;">2</span><span>) {
+</span><span>        </span><span style="color:#b48ead;">return</span><span>;
+</span><span>    }
+</span><span>
+</span><span>   ...
+</span></code></pre>
+<p>这个例子提供了对分支预测失败的性能损失的一个评估。我把作者的代码使用 Rust 重写了一遍，然后进行了一些实验。</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>#![</span><span style="color:#bf616a;">feature</span><span>(core_intrinsics)]
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">compute</span><span>(</span><span style="color:#bf616a;">input</span><span>: &amp;</span><span style="color:#b48ead;">i32</span><span>, </span><span style="color:#bf616a;">output</span><span>: &amp;</span><span style="color:#b48ead;">mut i32</span><span>) {
+</span><span>    #[</span><span style="color:#bf616a;">cfg</span><span>(</span><span style="color:#bf616a;">not</span><span>(</span><span style="color:#bf616a;">any</span><span>(feature = &quot;</span><span style="color:#a3be8c;">likely</span><span>&quot;, feature = &quot;</span><span style="color:#a3be8c;">unlikely</span><span>&quot;)))]
+</span><span>    {
+</span><span>        </span><span style="color:#b48ead;">if </span><span>*input &gt; </span><span style="color:#d08770;">10 </span><span>{  </span><span style="color:#65737e;">// compiler as likely
+</span><span>            *output = </span><span style="color:#d08770;">1</span><span>;
+</span><span>        }
+</span><span>        </span><span style="color:#b48ead;">if </span><span>*input &gt; </span><span style="color:#d08770;">5 </span><span>{  </span><span style="color:#65737e;">// compiler as likely
+</span><span>            *output *= </span><span style="color:#d08770;">2</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    #[</span><span style="color:#bf616a;">cfg</span><span>(feature = &quot;</span><span style="color:#a3be8c;">likely</span><span>&quot;)]
+</span><span>    {
+</span><span>        </span><span style="color:#b48ead;">if </span><span>std::intrinsics::likely(*input &gt; </span><span style="color:#d08770;">10</span><span>) {
+</span><span>            *output = </span><span style="color:#d08770;">1</span><span>;
+</span><span>        }
+</span><span>        </span><span style="color:#b48ead;">if </span><span>std::intrinsics::likely(*input &gt; </span><span style="color:#d08770;">5</span><span>) {
+</span><span>            *output *= </span><span style="color:#d08770;">2</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>    #[</span><span style="color:#bf616a;">cfg</span><span>(feature = &quot;</span><span style="color:#a3be8c;">unlikely</span><span>&quot;)]
+</span><span>    {
+</span><span>        </span><span style="color:#b48ead;">if </span><span>std::intrinsics::unlikely(*input &gt; </span><span style="color:#d08770;">10</span><span>) {
+</span><span>            *output = </span><span style="color:#d08770;">1</span><span>;
+</span><span>        }
+</span><span>        </span><span style="color:#b48ead;">if </span><span>std::intrinsics::unlikely(*input &gt; </span><span style="color:#d08770;">5</span><span>) {
+</span><span>            *output *= </span><span style="color:#d08770;">2</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">main</span><span>(){
+</span><span>    </span><span style="color:#b48ead;">let</span><span> i = </span><span style="color:#d08770;">20</span><span style="color:#b48ead;">i32</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> o = </span><span style="color:#d08770;">0</span><span style="color:#b48ead;">i32</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#96b5b4;">compute</span><span>(&amp;</span><span style="color:#d08770;">0</span><span style="color:#b48ead;">i32</span><span>, &amp;</span><span style="color:#b48ead;">mut</span><span> o);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> tm0 = std::time::Instant::now();
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> j = </span><span style="color:#d08770;">0</span><span style="color:#b48ead;">u32</span><span>;
+</span><span>    </span><span style="color:#b48ead;">while</span><span> j &lt; </span><span style="color:#d08770;">1_000_000_000</span><span style="color:#b48ead;">u32 </span><span>{
+</span><span>        </span><span style="color:#b48ead;">unsafe </span><span>{ </span><span style="color:#96b5b4;">compute</span><span>(&amp;i, &amp;</span><span style="color:#b48ead;">mut</span><span> o); }
+</span><span>        j += </span><span style="color:#d08770;">1</span><span>;
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> tm1 = std::time::Instant::now();
+</span><span>
+</span><span>    #[</span><span style="color:#bf616a;">cfg</span><span>(</span><span style="color:#bf616a;">not</span><span>(</span><span style="color:#bf616a;">any</span><span>(feature = &quot;</span><span style="color:#a3be8c;">likely</span><span>&quot;, feature = &quot;</span><span style="color:#a3be8c;">unlikely</span><span>&quot;)))]
+</span><span>    </span><span style="color:#b48ead;">let</span><span> msg = &quot;</span><span style="color:#a3be8c;">normal</span><span>&quot;;
+</span><span>    #[</span><span style="color:#bf616a;">cfg</span><span>(feature = &quot;</span><span style="color:#a3be8c;">likely</span><span>&quot;)]
+</span><span>    </span><span style="color:#b48ead;">let</span><span> msg = &quot;</span><span style="color:#a3be8c;">likely</span><span>&quot;;
+</span><span>    #[</span><span style="color:#bf616a;">cfg</span><span>(feature = &quot;</span><span style="color:#a3be8c;">unlikely</span><span>&quot;)]
+</span><span>    </span><span style="color:#b48ead;">let</span><span> msg = &quot;</span><span style="color:#a3be8c;">unlikely</span><span>&quot;;
+</span><span>
+</span><span>    println!(&quot;</span><span style="color:#d08770;">{msg}</span><span style="color:#a3be8c;"> out = </span><span style="color:#d08770;">{}</span><span style="color:#a3be8c;"> time = </span><span style="color:#d08770;">{:?}</span><span>&quot;, o, tm1-tm0 );
+</span><span>
+</span><span>}
+</span></code></pre>
+<table><thead><tr><th>feature</th><th>耗时</th></tr></thead><tbody>
+<tr><td>normal</td><td>1.253s</td></tr>
+<tr><td>unlikely</td><td>1.267s</td></tr>
+<tr><td>likely</td><td>0.955s</td></tr>
+</tbody></table>
+<p>对应的代码的差异如下：
+<img src="https://wangzaixiang.github.io/blog/c-optimize/img_3.png" alt="img_3.png" /></p>
+<p>从这个生成的代码来看：</p>
+<ol>
+<li>normal 模式下，编译期的预测与实际数据是一致的，但生成的代码效率与 likely 下的效率像差很大，主要原因应该是 无条件branch 导致的流水线的空转。</li>
+<li>unlikely 模式下，两个 if 分支的预测都是错误的，其性能相比 likely 下降了 25%， 应该说还是很明显的。</li>
+<li>即使是 likely 完全预测准确，也有可能生成不够高效的代码。这里的 normal 模式就是一个例子。在这种情况下，或许最终的方案还是要手写的汇编才能达到最优。</li>
+</ol>
+<h1 id="links">links</h1>
+<ol>
+<li><a href="https://medium.com/@techhara/performance-optimization-technique-branchless-programming-a40c0a35511e">Performance optimization — branchless programming</a>
+这篇文章中的示例，通过消除分支，实现了 6-7倍的性能提升。</li>
+<li><a href="https://medium.com/@techhara/performance-optimization-efficient-cache-programming-f107dce3bef0">Performance optimization—efficient cache programming 1</a>
+通过减少 struct 的大小，提高 cache 命中率，性能提升 31%， cache miss rate 从 39% 降低到 13%。</li>
+<li><a href="https://blog.devgenius.io/cpu-cache-how-to-write-code-to-make-the-cpu-execute-faster-cc0cf4969c4b">How to write code to make the cpu execute faster</a>
+cache 友好的代码编写。</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/learning-llvm-2/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/a-zig-bug/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

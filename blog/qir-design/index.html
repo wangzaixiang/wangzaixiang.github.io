@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>A Query Intermediate Representation Language (Draft) | 程序人生</title>
+<meta name="description" content="QIR 设计草案">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/qir-design/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="A Query Intermediate Representation Language (Draft)">
+  <meta name="twitter:description" content="QIR 设计草案">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="A Query Intermediate Representation Language (Draft)">
+  <meta property="og:description" content="QIR 设计草案">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/qir-design/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="A Query Intermediate Representation Language (Draft)">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/qir-design/"
+      },
+      "headline": "A Query Intermediate Representation Language (Draft)",
+      "image": ,
+      "datePublished": "2025-04-02",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "A Query Intermediate Representation Language (Draft)"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "A Query Intermediate Representation Language (Draft)",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "QIR 设计草案"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Qir Design",
+            "item": "https://wangzaixiang.github.io/blog/qir-design/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/qir-design/#overview">Overview</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#what-is-qir">What is QIR</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#why-qir">Why QIR</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#query-ir-de-tuo-bu-tu">Query IR 的拓扑图</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/qir-design/#examples">Examples</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#example-1-jian-dan-cha-xun">Example 1: 简单查询</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#example-2-simple-join">Example 2: simple join</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#example-3-join-with-filter">Example 3: join with filter</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#example-4-join-with-filter-and-having">Example 4: join with filter and having</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#example-5-shuffle-join">Example 5: shuffle join</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#example-6-chuang-kou-han-shu">Example 6: 窗口函数</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/qir-design/#he-xin-gai-nian">核心概念</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#topology">topology</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#pipeline">pipeline</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#operator">operator</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#source">source</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#sink">sink</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#type-system">type system</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/qir-design/#partition">partition</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/qir-design/#suan-zi-shuo-ming">算子说明</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/qir-design/#todo">TODO</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>A Query Intermediate Representation Language (Draft)</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/duck-push-vs-datafusion-pull/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted April  2, 2025&nbsp;&hyphen;&nbsp;<strong>23&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/understand-svelte-rune/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>QIR 是一种用于描述关系代数查询的中间语言，SQL 查询可以翻译称为 qir 代码，然后再解释或者编译执行。</p>
+<h1 id="overview">Overview</h1>
+<h2 id="what-is-qir">What is QIR</h2>
+<p>QIR (Query Intermediate Representation) 是一种用于描述数据查询的中间表示语言，类似于 SQL 查询的查询计划）。它具有以下特点：</p>
+<ol>
+<li>
+<p>基于关系代数</p>
+<ul>
+<li>QIR 使用关系代数算子(如 scan、filter、join、aggregation 等)来描述数据处理逻辑</li>
+<li>每个算子都有明确定义的输入和输出类型</li>
+<li>支持复杂的数据处理操作，如 join、group by、window functions 等</li>
+</ul>
+</li>
+<li>
+<p>AST based</p>
+<ul>
+<li>QIR 是一种 AST (Abstract Syntax Tree) 表示，而非 bytecode</li>
+<li>QIR 是函数式的。</li>
+</ul>
+</li>
+<li>
+<p>类型安全</p>
+<ul>
+<li>QIR 提供了表结构类型定义，用于类型检查，并且便于JIT优化，减少运行时的检查开销。</li>
+<li>每个算子的输入输出类型在编译时进行检查</li>
+<li>可以及早发现类型错误，提高代码质量</li>
+</ul>
+</li>
+<li>
+<p>流水线式处理</p>
+<ul>
+<li>QIR 使用 pipeline 来组织算子</li>
+<li>支持多个 pipeline 之间的依赖关系</li>
+<li>便于进行并行化和分布式处理</li>
+</ul>
+</li>
+</ol>
+<p>QIR 的定位类似于 <a href="https://www.monetdb.org/documentation-Mar2025/dev-guide/monetdb-internals/mal_reference/">MonetDB 中的 MAL 语言</a>，或者 <a href="https://sqlite.org/opcode.html">Sqlite 中的 bytecode</a>.</p>
+<h2 id="why-qir">Why QIR</h2>
+<ol>
+<li>可以直接生成、编写 QIR 代码并执行。</li>
+<li>SQL 查询扩展查询算子较为复杂。QIR 目标是提供更方面的扩展算子能力。</li>
+<li>更敏捷的新算子开发、测试流程
+<ul>
+<li>实现新的算子、策略。</li>
+<li>手动编写 QIR 代码</li>
+<li>进行 JIT 优化</li>
+<li>达到预期效果后，再改进 Planner 支持新算子（以终为始）</li>
+</ul>
+</li>
+<li>性能优化的实验场
+<ul>
+<li>丰富的 Join 算法支持: semi join， anti-semi join， as of join</li>
+<li>窗口函数扩展：range between expr and expr</li>
+<li>窗口函数扩展：over(partition by expr order by expr where expr)</li>
+<li>minmax 索引优化</li>
+<li>bloom 索引优化</li>
+<li>分区、分桶查询优化（对Join的支持）</li>
+<li>profile based optimization</li>
+<li>vectorized execution. QIR 基于 arrow 数据结构，以向量化的方式进行数据处理</li>
+<li>JIT: QIR 更便于 JIT</li>
+</ul>
+</li>
+</ol>
+<h2 id="query-ir-de-tuo-bu-tu">Query IR 的拓扑图</h2>
+<p>本文档中的拓扑图使用 mermaid 格式生成，具体格式如下：</p>
+<ol>
+<li>每个pipeline 对应一个 subgraph， pipeline 的 父子关系使用红色连接线表示</li>
+<li>每个算子，包括 Source， Operators， Sink 对应一个 node. 使用"变量名:算子名"作为 label， 例如："user_filter: filter"， 各个算子之间的数据流使用连接线表示</li>
+<li>exchange_sender 与 exchange_receiver 之间的连线使用虚线，表示数据交换，其他的数据流使用实线。</li>
+<li>lookup_hash_table 与 build_hash_table 之间的连线使用绿线相关，表示其数据依赖关系。</li>
+<li>node 和 link 上的 label 全部使用引号包裹，以避免特殊字符的干扰。</li>
+</ol>
+<h1 id="examples">Examples</h1>
+<h2 id="example-1-jian-dan-cha-xun">Example 1: 简单查询</h2>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#65737e;">-- table: users(id, name, birthday, email)
+</span><span style="color:#b48ead;">select</span><span> name, email </span><span style="color:#b48ead;">from</span><span> users </span><span style="color:#b48ead;">where</span><span> birthday &gt; &#39;</span><span style="color:#a3be8c;">1990-01-01</span><span>&#39;;
+</span></code></pre>
+<p>其对应的 qir 代码如下：</p>
+<pre data-lang="qir" style="background-color:#2b303b;color:#c0c5ce;" class="language-qir "><code class="language-qir" data-lang="qir"><span>
+</span><span>// type users 是一个表类型信息，用于为后面的代码提供类型检查，例如字段名是否正确，数据类型是否正确等。
+</span><span>type users = table {
+</span><span>    name = &quot;users&quot;,
+</span><span>    columns = [
+</span><span>        {name = &quot;id&quot;, type = &quot;int&quot;},
+</span><span>        {name = &quot;name&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;birthday&quot;, type = &quot;date&quot;},
+</span><span>        {name = &quot;email&quot;, type = &quot;string&quot;}
+</span><span>    ]    
+</span><span>}; 
+</span><span>
+</span><span>// source1 是一个 Source operator, 其输出类型为： DataFrame {
+</span><span>//     columns = [
+</span><span>//         {name = &quot;name&quot;, type = &quot;string&quot;},
+</span><span>//         {name = &quot;birthday&quot;, type = &quot;date&quot;}
+</span><span>//         {name = &quot;email&quot;, type = &quot;string&quot;}
+</span><span>//     ]
+</span><span>// }
+</span><span>let source1 = scan(
+</span><span>    name = &quot;users&quot;, // table name
+</span><span>    table = users, 
+</span><span>    output = [&quot;name&quot;, &quot;birthday&quot;, &quot;email&quot;] ); // 从 users 表中读取数据
+</span><span>
+</span><span>/// filter1 是一个 ordinary operator, 其输出类型为： DataFrame {
+</span><span>///     columns = [
+</span><span>///         {name = &quot;name&quot;, type = &quot;string&quot;},
+</span><span>///         {name = &quot;email&quot;, type = &quot;string&quot;}
+</span><span>///     ]
+</span><span>/// }
+</span><span>let filter1 = filter(input = source1, 
+</span><span>    predictor = |row| { row.birthday &gt; date&#39;1990-01-01&#39; },     // 过滤出 birthday &gt; &#39;1990-01-01&#39; 的数据 
+</span><span>    output = [&quot;name&quot;, &quot;email&quot;] );   // 输出 name 和 email 字段
+</span><span>
+</span><span>/// sink1 是一个 sink operator, 其输出类型与输入类型相同，起到一个收集的作用
+</span><span>let sink1 = identity_sink(input = filter1); 
+</span><span>
+</span><span>let pipeline1 = pipeline {
+</span><span>    source = source1,
+</span><span>    operators = [filter1],
+</span><span>    sink = sink1
+</span><span>};
+</span><span>
+</span><span>// graph 是一个 topology 类型，用于描述整个查询的拓扑结构，也是单个 qir 文件的最终输出结果。
+</span><span>let graph = topology( main = pipeline1 );
+</span></code></pre>
+<h2 id="example-2-simple-join">Example 2: simple join</h2>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#65737e;">--- table: order_item(order_item_id: u64, order_date: date, product_id: u32, quantity: u32, amount: decimal)
+</span><span style="color:#65737e;">--- table: product(product_id: u32, product_name: string, category_id: u32)
+</span><span>
+</span><span style="color:#b48ead;">select</span><span> product_name, </span><span style="color:#96b5b4;">sum</span><span>(quantity), </span><span style="color:#96b5b4;">sum</span><span>(amount)
+</span><span style="color:#b48ead;">from</span><span> order_item </span><span style="color:#b48ead;">join</span><span> product on </span><span style="color:#d08770;">order_item</span><span>.</span><span style="color:#d08770;">product_id </span><span>= </span><span style="color:#d08770;">product</span><span>.</span><span style="color:#d08770;">product_id
+</span><span style="color:#b48ead;">group by</span><span> product_name
+</span></code></pre>
+<p>对应的 qir 代码如下：</p>
+<pre data-lang="qir" style="background-color:#2b303b;color:#c0c5ce;" class="language-qir "><code class="language-qir" data-lang="qir"><span>// 定义表结构类型
+</span><span>type order_item = table {
+</span><span>    name = &quot;order_item&quot;,
+</span><span>    columns = [
+</span><span>        {name = &quot;order_item_id&quot;, type = &quot;u64&quot;},
+</span><span>        {name = &quot;order_date&quot;, type = &quot;date&quot;},
+</span><span>        {name = &quot;product_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;quantity&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;amount&quot;, type = &quot;decimal&quot;}
+</span><span>    ]
+</span><span>};
+</span><span>
+</span><span>type product = table {
+</span><span>    name = &quot;product&quot;,
+</span><span>    columns = [
+</span><span>        {name = &quot;product_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;product_name&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;category_id&quot;, type = &quot;u32&quot;}
+</span><span>    ]
+</span><span>};
+</span><span>
+</span><span>// 源操作符
+</span><span>let order_item_source = scan(
+</span><span>    name = &quot;order_item&quot;,
+</span><span>    table = order_item,
+</span><span>    output = [&quot;product_id&quot;, &quot;quantity&quot;, &quot;amount&quot;]  // 只需要参与计算的字段
+</span><span>);
+</span><span>
+</span><span>let product_source = scan(
+</span><span>    name = &quot;product_scan&quot;,
+</span><span>    table = product,
+</span><span>    output = [&quot;product_id&quot;, &quot;product_name&quot;]       // 只需要关联字段和分组字段
+</span><span>);
+</span><span>
+</span><span>let ht_build1 = build_hash_table(
+</span><span>	input = product_source,
+</span><span>	key = [ &quot;product_id&quot; ] );
+</span><span>
+</span><span>let ht_lookup1 = lookup_hash_table( ht = ht_build1, input = order_item_source, key = [&quot;product_id&quot;],
+</span><span>	output = [ [&quot;quantity&quot;, &quot;amount&quot;], // field from lookup side
+</span><span>			   [&quot;product_name&quot;] ]	// field from build side
+</span><span> );
+</span><span>
+</span><span>let hash_aggr1 = hash_aggregator( input = h1_lookup1, 
+</span><span>	group_by = [&quot;product_name&quot;],
+</span><span>	aggregators = [
+</span><span>		sum_aggregator( name=&quot;total_quantity&quot;, field = &quot;quantity&quot; ),
+</span><span>		sum_aggregator( name=&quot;total_amount&quot;, field = &quot;amount&quot; )
+</span><span>	],
+</span><span>	output = [ &quot;product_name&quot;, &quot;total_quantity&quot;, &quot;total_amount&quot; ]
+</span><span>);
+</span><span>
+</span><span>
+</span><span>let pipeline1 = pipeline( source = product_source, sink = ht_build1 );
+</span><span>let pipeline2 = pipeline( source = order_item_source, operators = [ht_lookup1], sink = hash_aggr1, 
+</span><span>	parent = [pipeline1] );	// pipeline2 依赖 pipeline1, 仅当 pipeline1 执行完成后，才能开始执行
+</span><span>
+</span><span>
+</span><span>let graph = topology(main = pipeline2);
+</span></code></pre>
+<h2 id="example-3-join-with-filter">Example 3: join with filter</h2>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#65737e;">-- table: order_item(order_item_id, order_date, user_id, product_id, quantity, amount)
+</span><span style="color:#65737e;">-- table: users(user_id, name, sex, province, city)
+</span><span style="color:#b48ead;">select</span><span> province, city, </span><span style="color:#96b5b4;">count</span><span>(order_item_id), </span><span style="color:#96b5b4;">sum</span><span>(quantity), </span><span style="color:#96b5b4;">sum</span><span>(amount)
+</span><span style="color:#b48ead;">from</span><span> order_item </span><span style="color:#b48ead;">left join</span><span> users on </span><span style="color:#d08770;">order_item</span><span>.</span><span style="color:#d08770;">user_id </span><span>= </span><span style="color:#d08770;">users</span><span>.</span><span style="color:#d08770;">user_id
+</span><span style="color:#b48ead;">where</span><span> order_date &gt;= &#39;</span><span style="color:#a3be8c;">2025-01-1</span><span>&#39; and sex = &#39;</span><span style="color:#a3be8c;">F</span><span>&#39;
+</span><span style="color:#b48ead;">group by</span><span> province, city
+</span></code></pre>
+<pre data-lang="qir" style="background-color:#2b303b;color:#c0c5ce;" class="language-qir "><code class="language-qir" data-lang="qir"><span>// 定义表结构类型
+</span><span>type order_item = table {
+</span><span>    name = &quot;order_item&quot;,
+</span><span>    columns = [
+</span><span>        {name = &quot;order_item_id&quot;, type = &quot;u64&quot;},
+</span><span>        {name = &quot;order_date&quot;, type = &quot;date&quot;},
+</span><span>        {name = &quot;user_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;product_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;quantity&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;amount&quot;, type = &quot;decimal&quot;}
+</span><span>    ]
+</span><span>};
+</span><span>
+</span><span>type users = table {
+</span><span>    name = &quot;users&quot;,
+</span><span>    columns = [
+</span><span>        {name = &quot;user_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;name&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;sex&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;province&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;city&quot;, type = &quot;string&quot;}
+</span><span>    ]
+</span><span>};
+</span><span>
+</span><span>// 源操作符和过滤（优化版）
+</span><span>let users_scan = scan(
+</span><span>    name = &quot;users&quot;,
+</span><span>    table = users,
+</span><span>    output = [&quot;user_id&quot;, &quot;sex&quot;, &quot;province&quot;, &quot;city&quot;]
+</span><span>);
+</span><span>
+</span><span>let users_filter = filter(
+</span><span>    input = users_scan,
+</span><span>    predictor = |row| { row.sex == &quot;F&quot; },  // 提前过滤女性用户
+</span><span>    output = [&quot;user_id&quot;, &quot;province&quot;, &quot;city&quot;]
+</span><span>);
+</span><span>
+</span><span>let ht_build = build_hash_table(
+</span><span>    input = users_filter,
+</span><span>    key = [&quot;user_id&quot;]
+</span><span>);
+</span><span>
+</span><span>let order_item_scan = scan(
+</span><span>    name = &quot;order_item&quot;,
+</span><span>    table = order_item,
+</span><span>    output = [&quot;user_id&quot;, &quot;order_item_id&quot;, &quot;quantity&quot;, &quot;amount&quot;, &quot;order_date&quot;]
+</span><span>);
+</span><span>
+</span><span>let order_filter = filter(
+</span><span>    input = order_item_scan,
+</span><span>    predictor = |row| { row.order_date &gt;= date&#39;2025-01-01&#39; },
+</span><span>    output = [&quot;user_id&quot;, &quot;order_item_id&quot;, &quot;quantity&quot;, &quot;amount&quot;]
+</span><span>);
+</span><span>
+</span><span>let ht_lookup = lookup_hash_table(
+</span><span>    ht = ht_build,
+</span><span>    input = order_filter,
+</span><span>    key = [&quot;user_id&quot;],
+</span><span>    output = [
+</span><span>        [&quot;order_item_id&quot;, &quot;quantity&quot;, &quot;amount&quot;],  // 订单表字段
+</span><span>        [&quot;province&quot;, &quot;city&quot;]                     // 用户表字段（已过滤）
+</span><span>    ],
+</span><span>    join_type = &quot;inner&quot;  // 改为内连接（因为用户表已过滤）
+</span><span>);
+</span><span>
+</span><span>let hash_aggr = hash_aggregator(
+</span><span>    input = ht_lookup,
+</span><span>    group_by = [&quot;province&quot;, &quot;city&quot;],
+</span><span>    aggregators = [
+</span><span>        count_aggregator(name = &quot;total_orders&quot;, field = &quot;order_item_id&quot;),
+</span><span>        sum_aggregator(name = &quot;total_quantity&quot;, field = &quot;quantity&quot;),
+</span><span>        sum_aggregator(name = &quot;total_amount&quot;, field = &quot;amount&quot;)
+</span><span>    ],
+</span><span>    output = [&quot;province&quot;, &quot;city&quot;, &quot;total_orders&quot;, &quot;total_quantity&quot;, &quot;total_amount&quot;]
+</span><span>);
+</span><span>
+</span><span>// 流水线定义（优化版）
+</span><span>let pipeline1 = pipeline(
+</span><span>    source = users_scan,
+</span><span>    operators = [users_filter],
+</span><span>    sink = ht_build
+</span><span>);
+</span><span>
+</span><span>let pipeline2 = pipeline(
+</span><span>    source = order_item_scan,
+</span><span>    operators = [order_filter, ht_lookup, hash_aggr],
+</span><span>    sink = hash_aggr,
+</span><span>    parent = [pipeline1]  // 强依赖
+</span><span>);
+</span><span>
+</span><span>let graph = topology(main = pipeline2);
+</span></code></pre>
+<h2 id="example-4-join-with-filter-and-having">Example 4: join with filter and having</h2>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#65737e;">-- table: order_item(order_item_id, order_date, user_id, product_id, quantity, amount)
+</span><span style="color:#65737e;">-- table: users(user_id, name, sex, province, city)
+</span><span style="color:#b48ead;">select</span><span> province, city, </span><span style="color:#96b5b4;">count</span><span>(order_item_id), </span><span style="color:#96b5b4;">sum</span><span>(quantity), </span><span style="color:#96b5b4;">sum</span><span>(amount)
+</span><span style="color:#b48ead;">from</span><span> order_item </span><span style="color:#b48ead;">left join</span><span> users on </span><span style="color:#d08770;">order_item</span><span>.</span><span style="color:#d08770;">user_id </span><span>= </span><span style="color:#d08770;">users</span><span>.</span><span style="color:#d08770;">user_id
+</span><span style="color:#b48ead;">where</span><span> order_date &gt;= &#39;</span><span style="color:#a3be8c;">2025-01-1</span><span>&#39; and sex = &#39;</span><span style="color:#a3be8c;">F</span><span>&#39;
+</span><span style="color:#b48ead;">group by</span><span> province, city
+</span><span>having </span><span style="color:#96b5b4;">count</span><span>(order_item_id) &gt; </span><span style="color:#d08770;">10
+</span></code></pre>
+<p>等价的 qir 代码：</p>
+<pre data-lang="qir" style="background-color:#2b303b;color:#c0c5ce;" class="language-qir "><code class="language-qir" data-lang="qir"><span>// 定义表结构类型（与示例3相同）
+</span><span>type order_item = table {
+</span><span>    name = &quot;order_item&quot;,
+</span><span>    columns = [
+</span><span>        {name = &quot;order_item_id&quot;, type = &quot;u64&quot;},
+</span><span>        {name = &quot;order_date&quot;, type = &quot;date&quot;},
+</span><span>        {name = &quot;user_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;product_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;quantity&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;amount&quot;, type = &quot;decimal&quot;}
+</span><span>    ]
+</span><span>};
+</span><span>
+</span><span>type users = table {
+</span><span>    name = &quot;users&quot;,
+</span><span>    columns = [
+</span><span>        {name = &quot;user_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;name&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;sex&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;province&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;city&quot;, type = &quot;string&quot;}
+</span><span>    ]
+</span><span>};
+</span><span>
+</span><span>// 源操作符和过滤（继承优化逻辑）
+</span><span>let users_scan = scan(
+</span><span>    name = &quot;users&quot;,
+</span><span>    table = users,
+</span><span>    output = [&quot;user_id&quot;, &quot;sex&quot;, &quot;province&quot;, &quot;city&quot;]
+</span><span>);
+</span><span>
+</span><span>let users_filter = filter(
+</span><span>    input = users_scan,
+</span><span>    predictor = |row| { row.sex == &quot;F&quot; },
+</span><span>    output = [&quot;user_id&quot;, &quot;province&quot;, &quot;city&quot;]
+</span><span>);
+</span><span>
+</span><span>let ht_build = build_hash_table(
+</span><span>    input = users_filter,
+</span><span>    key = [&quot;user_id&quot;]
+</span><span>);
+</span><span>
+</span><span>let order_item_scan = scan(
+</span><span>    name = &quot;order_item&quot;,
+</span><span>    table = order_item,
+</span><span>    output = [&quot;user_id&quot;, &quot;order_item_id&quot;, &quot;quantity&quot;, &quot;amount&quot;, &quot;order_date&quot;]
+</span><span>);
+</span><span>
+</span><span>let order_filter = filter(
+</span><span>    input = order_item_scan,
+</span><span>    predictor = |row| { row.order_date &gt;= date&#39;2025-01-01&#39; },
+</span><span>    output = [&quot;user_id&quot;, &quot;order_item_id&quot;, &quot;quantity&quot;, &quot;amount&quot;]
+</span><span>);
+</span><span>
+</span><span>let ht_lookup = lookup_hash_table(
+</span><span>    ht = ht_build,
+</span><span>    input = order_filter,
+</span><span>    key = [&quot;user_id&quot;],
+</span><span>    output = [
+</span><span>        [&quot;order_item_id&quot;, &quot;quantity&quot;, &quot;amount&quot;],
+</span><span>        [&quot;province&quot;, &quot;city&quot;]
+</span><span>    ],
+</span><span>    join_type = &quot;inner&quot;
+</span><span>);
+</span><span>
+</span><span>// 新增 HAVING 过滤阶段
+</span><span>let hash_aggr = hash_aggregator(
+</span><span>    input = ht_lookup,
+</span><span>    group_by = [&quot;province&quot;, &quot;city&quot;],
+</span><span>    aggregators = [
+</span><span>        count_aggregator(name = &quot;total_orders&quot;, field = &quot;order_item_id&quot;),
+</span><span>        sum_aggregator(name = &quot;total_quantity&quot;, field = &quot;quantity&quot;),
+</span><span>        sum_aggregator(name = &quot;total_amount&quot;, field = &quot;amount&quot;)
+</span><span>    ],
+</span><span>    output = [&quot;province&quot;, &quot;city&quot;, &quot;total_orders&quot;, &quot;total_quantity&quot;, &quot;total_amount&quot;]
+</span><span>);
+</span><span>
+</span><span>let having_filter = filter(
+</span><span>    input = hash_aggr,
+</span><span>    predictor = |row| { row.total_orders &gt; 10 },  // HAVING 条件
+</span><span>    output = [&quot;province&quot;, &quot;city&quot;, &quot;total_orders&quot;, &quot;total_quantity&quot;, &quot;total_amount&quot;]
+</span><span>);
+</span><span>
+</span><span>// 流水线定义
+</span><span>let pipeline1 = pipeline(
+</span><span>    source = users_scan,
+</span><span>    operators = [users_filter],
+</span><span>    sink = ht_build
+</span><span>);
+</span><span>
+</span><span>let pipeline2 = pipeline(
+</span><span>    source = order_item_scan,
+</span><span>    operators = [order_filter, ht_lookup, hash_aggr, having_filter],
+</span><span>    sink = having_filter,
+</span><span>    parent = [pipeline1]
+</span><span>);
+</span><span>
+</span><span>let graph = topology(main = pipeline2);
+</span></code></pre>
+<p>对应的拓扑图为：
+<div class="mermaid">
+    ```mermaid
+graph TD
+    subgraph Pipeline1[&quot;用户表处理&quot;]
+        us1[&quot;users_scan: scan&quot;] --&gt;|&quot;读取用户数据&quot;| uf1[&quot;users_filter: filter&quot;]
+        uf1 --&gt;|&quot;过滤女性用户&quot;| hb1[&quot;ht_build: build_hash_table&quot;]
+    end
+
+    subgraph Pipeline2[&quot;订单处理&quot;]
+        ois1[&quot;order_item_scan: scan&quot;] --&gt;|&quot;读取订单数据&quot;| of1[&quot;order_filter: filter&quot;]
+        of1 --&gt;|&quot;过滤日期&quot;| hl1[&quot;ht_lookup: lookup_hash_table&quot;]
+        hl1 --&gt;|&quot;连接结果&quot;| ha1[&quot;hash_aggr: hash_aggregator&quot;]
+        ha1 --&gt;|&quot;聚合结果&quot;| hf1[&quot;having_filter: filter&quot;]
+    end
+
+    Pipeline1 --&gt;|&quot;父依赖&quot;| Pipeline2
+    hb1 -.-&gt;|&quot;哈希表依赖&quot;| hl1
+```
+</div></p>
+<h2 id="example-5-shuffle-join">Example 5: shuffle join</h2>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#65737e;">-- big table join, using shuffle join
+</span><span style="color:#65737e;">-- table: order_item(order_item_id, order_date, user_id, product_id, quantity, amount)
+</span><span style="color:#65737e;">-- table: users(user_id, name, sex, province, city)
+</span><span style="color:#b48ead;">select</span><span> province, city, </span><span style="color:#96b5b4;">count</span><span>(order_item_id), </span><span style="color:#96b5b4;">sum</span><span>(quantity), </span><span style="color:#96b5b4;">sum</span><span>(amount)
+</span><span style="color:#b48ead;">from</span><span> order_item </span><span style="color:#b48ead;">left join</span><span> users on </span><span style="color:#d08770;">order_item</span><span>.</span><span style="color:#d08770;">user_id </span><span>= </span><span style="color:#d08770;">users</span><span>.</span><span style="color:#d08770;">user_id
+</span><span style="color:#b48ead;">where</span><span> order_date &gt;= &#39;</span><span style="color:#a3be8c;">2025-01-1</span><span>&#39; and sex = &#39;</span><span style="color:#a3be8c;">F</span><span>&#39;
+</span><span style="color:#b48ead;">group by</span><span> province, city
+</span><span>having </span><span style="color:#96b5b4;">count</span><span>(order_item_id) &gt; </span><span style="color:#d08770;">10
+</span></code></pre>
+<p>对应的 qir 代码如下：</p>
+<pre data-lang="qir" style="background-color:#2b303b;color:#c0c5ce;" class="language-qir "><code class="language-qir" data-lang="qir"><span>// 定义表结构类型
+</span><span>type order_item = table {
+</span><span>    name = &quot;order_item&quot;,
+</span><span>    columns = [
+</span><span>        {name = &quot;order_item_id&quot;, type = &quot;u64&quot;},
+</span><span>        {name = &quot;order_date&quot;, type = &quot;date&quot;},
+</span><span>        {name = &quot;user_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;product_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;quantity&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;amount&quot;, type = &quot;decimal&quot;}
+</span><span>    ]
+</span><span>};
+</span><span>
+</span><span>type users = table {
+</span><span>    name = &quot;users&quot;,
+</span><span>    columns = [
+</span><span>        {name = &quot;user_id&quot;, type = &quot;u32&quot;},
+</span><span>        {name = &quot;name&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;sex&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;province&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;city&quot;, type = &quot;string&quot;}
+</span><span>    ]
+</span><span>};
+</span><span>
+</span><span>// 用户表处理流水线（哈希表构建侧）
+</span><span>let users_scan = scan(
+</span><span>    name = &quot;users&quot;,
+</span><span>    table = users,
+</span><span>    output = [&quot;user_id&quot;, &quot;sex&quot;, &quot;province&quot;, &quot;city&quot;]
+</span><span>);
+</span><span>
+</span><span>let users_filter = filter(
+</span><span>    input = users_scan,
+</span><span>    predictor = |row| { row.sex == &quot;F&quot; },
+</span><span>    output = [&quot;user_id&quot;, &quot;province&quot;, &quot;city&quot;]
+</span><span>);
+</span><span>
+</span><span>let users_exchange_sender = exchange_sender(
+</span><span>    input = users_filter,
+</span><span>    partition_by = [&quot;user_id&quot;],
+</span><span>    shuffle_mode = &quot;HASH&quot;
+</span><span>);
+</span><span>
+</span><span>let users_exchange_receiver = exchange_receiver(
+</span><span>    input = users_exchange_sender,
+</span><span>    partition_by = [&quot;user_id&quot;],
+</span><span>    shuffle_mode = &quot;HASH&quot;
+</span><span>);
+</span><span>
+</span><span>let ht_build = build_hash_table(
+</span><span>    input = users_exchange_receiver,
+</span><span>    key = [&quot;user_id&quot;]
+</span><span>);
+</span><span>
+</span><span>// 订单表处理流水线（探测侧）
+</span><span>let order_scan = scan(
+</span><span>    name = &quot;order_item&quot;,
+</span><span>    table = order_item,
+</span><span>    output = [&quot;user_id&quot;, &quot;order_item_id&quot;, &quot;quantity&quot;, &quot;amount&quot;, &quot;order_date&quot;]
+</span><span>);
+</span><span>
+</span><span>let order_filter = filter(
+</span><span>    input = order_scan,
+</span><span>    predictor = |row| { row.order_date &gt;= date&#39;2025-01-01&#39; },
+</span><span>    output = [&quot;user_id&quot;, &quot;order_item_id&quot;, &quot;quantity&quot;, &quot;amount&quot;]
+</span><span>);
+</span><span>
+</span><span>let order_exchange_sender = exchange_sender(
+</span><span>    input = order_filter,
+</span><span>    partition_by = [&quot;user_id&quot;],
+</span><span>    shuffle_mode = &quot;HASH&quot;
+</span><span>);
+</span><span>
+</span><span>let order_exchange_receiver = exchange_receiver(
+</span><span>    input = order_exchange_sender,
+</span><span>    partition_by = [&quot;user_id&quot;],
+</span><span>    shuffle_mode = &quot;HASH&quot;
+</span><span>);
+</span><span>
+</span><span>// 本地Join与聚合
+</span><span>let ht_lookup = lookup_hash_table(
+</span><span>    ht = ht_build,
+</span><span>    input = order_exchange_receiver,
+</span><span>    key = [&quot;user_id&quot;],
+</span><span>    output = [
+</span><span>        [&quot;order_item_id&quot;, &quot;quantity&quot;, &quot;amount&quot;],
+</span><span>        [&quot;province&quot;, &quot;city&quot;]
+</span><span>    ],
+</span><span>    join_type = &quot;inner&quot;
+</span><span>);
+</span><span>
+</span><span>let local_aggr = hash_aggregator(
+</span><span>    input = ht_lookup,
+</span><span>    group_by = [&quot;province&quot;, &quot;city&quot;],
+</span><span>    aggregators = [
+</span><span>        count_aggregator(name = &quot;total_orders&quot;, field = &quot;order_item_id&quot;),
+</span><span>        sum_aggregator(name = &quot;total_quantity&quot;, field = &quot;quantity&quot;),
+</span><span>        sum_aggregator(name = &quot;total_amount&quot;, field = &quot;amount&quot;)
+</span><span>    ],
+</span><span>    output = [&quot;province&quot;, &quot;city&quot;, &quot;total_orders&quot;, &quot;total_quantity&quot;, &quot;total_amount&quot;]
+</span><span>);
+</span><span>
+</span><span>// 全局聚合阶段
+</span><span>let global_exchange_sender = exchange_sender(
+</span><span>    input = local_aggr,
+</span><span>    partition_by = [&quot;province&quot;, &quot;city&quot;],
+</span><span>    shuffle_mode = &quot;HASH&quot;
+</span><span>);
+</span><span>
+</span><span>let global_exchange_receiver = exchange_receiver(
+</span><span>    input = global_exchange_sender,
+</span><span>    partition_by = [&quot;province&quot;, &quot;city&quot;],
+</span><span>    shuffle_mode = &quot;HASH&quot;
+</span><span>);
+</span><span>
+</span><span>let global_aggr = hash_aggregator(
+</span><span>    input = global_exchange_receiver,
+</span><span>    group_by = [&quot;province&quot;, &quot;city&quot;],
+</span><span>    aggregators = [
+</span><span>        sum_aggregator(name = &quot;total_orders&quot;, field = &quot;total_orders&quot;),
+</span><span>        sum_aggregator(name = &quot;total_quantity&quot;, field = &quot;total_quantity&quot;),
+</span><span>        sum_aggregator(name = &quot;total_amount&quot;, field = &quot;total_amount&quot;)
+</span><span>    ],
+</span><span>    output = [&quot;province&quot;, &quot;city&quot;, &quot;total_orders&quot;, &quot;total_quantity&quot;, &quot;total_amount&quot;]
+</span><span>);
+</span><span>
+</span><span>let having_filter = filter(
+</span><span>    input = global_aggr,
+</span><span>    predictor = |row| { row.total_orders &gt; 10 },
+</span><span>    output = [&quot;province&quot;, &quot;city&quot;, &quot;total_orders&quot;, &quot;total_quantity&quot;, &quot;total_amount&quot;]
+</span><span>);
+</span><span>
+</span><span>// 流水线定义
+</span><span>let pipeline_users = pipeline(
+</span><span>    source = users_scan,
+</span><span>    operators = [users_filter, users_exchange_sender],
+</span><span>    sink = users_exchange_sender
+</span><span>);
+</span><span>
+</span><span>let pipeline_ht = pipeline(
+</span><span>    source = users_exchange_receiver,
+</span><span>    operators = [ht_build],
+</span><span>    sink = ht_build,
+</span><span>    parent = [pipeline_users]
+</span><span>);
+</span><span>
+</span><span>let pipeline_order = pipeline(
+</span><span>    source = order_scan,
+</span><span>    operators = [order_filter, order_exchange_sender],
+</span><span>    sink = order_exchange_sender
+</span><span>);
+</span><span>
+</span><span>let pipeline_join = pipeline(
+</span><span>    source = order_exchange_receiver,
+</span><span>    operators = [ht_lookup, local_aggr, global_exchange_sender],
+</span><span>    sink = global_exchange_sender,
+</span><span>    parent = [pipeline_ht, pipeline_order]
+</span><span>);
+</span><span>
+</span><span>let pipeline_global = pipeline(
+</span><span>    source = global_exchange_receiver,
+</span><span>    operators = [global_aggr, having_filter],
+</span><span>    sink = having_filter,
+</span><span>    parent = [pipeline_join]
+</span><span>);
+</span><span>
+</span><span>let graph = topology(main = pipeline_global);
+</span></code></pre>
+<p>对应的拓扑图如下：
+<div class="mermaid">
+    ```mermaid
+graph TD
+    subgraph Pipeline1[&quot;Users预处理&quot;]
+        us1[&quot;users_scan: scan&quot;] --&gt;|&quot;原始数据&quot;| us2[&quot;users_filter: filter&quot;]
+        us2 --&gt;|&quot;过滤女性用户&quot;| us3[&quot;users_exchange_sender: exchange_sender&quot;]
+        style us3 stroke:#666,stroke-dasharray:5 5
+    end
+
+    us3 -.-&gt; ur1
+
+    subgraph Pipeline2[&quot;哈希表构建&quot;]
+        ur1[&quot;users_exchange_receiver: exchange_receiver&quot;] --&gt;|&quot;按user_id分区&quot;| ur2[&quot;ht_build: build_hash_table&quot;]
+        style ur1 stroke:#666,stroke-dasharray:5 5
+    end
+
+    subgraph Pipeline3[&quot;Orders预处理&quot;]
+        od1[&quot;order_scan: scan&quot;] --&gt;|&quot;原始订单&quot;| od2[&quot;order_filter: filter&quot;]
+        od2 --&gt;|&quot;过滤日期&quot;| od3[order_exchange_sender: exchange_sender]
+        style od3 stroke:#666,stroke-dasharray:5 5
+    end
+
+    od3 -.-&gt; or1
+
+    subgraph Pipeline4[&quot;本地Join聚合&quot;]
+        or1[&quot;order_exchange_receiver: exchange_receiver&quot;] --&gt;|&quot;按user_id分区&quot;| j1[&quot;ht_lookup: lookup_hash_table&quot;]
+        j1 -.-&gt;|&quot;哈希表依赖&quot;| ur2
+        style j1 stroke:#0F0
+        j1 --&gt;|&quot;连接结果&quot;| a1[&quot;local_aggr: hash_aggregator&quot;]
+        a1 --&gt;|&quot;本地聚合&quot;| e1[global_exchange_sender: exchange_sender]
+        style e1 stroke:#666,stroke-dasharray:5 5
+    end
+
+    e1 -.-&gt; gr1
+    
+    subgraph Pipeline5[&quot;全局聚合&quot;]
+        gr1[&quot;global_exchange_receiver: exchange_receiver&quot;] --&gt;|按省市分区| a2[&quot;global_aggr: hash_aggregator&quot;]
+        style gr1 stroke:#666,stroke-dasharray:5 5
+        a2 --&gt;|最终结果| f1[&quot;having_filter: filter&quot;]
+    end
+
+   Pipeline1 --&gt;|&quot;Shuffle(user_id)&quot;| Pipeline2
+   Pipeline3 --&gt;|&quot;Shuffle(user_id)&quot;| Pipeline4
+   Pipeline2 --&gt;|&quot;哈希表数据&quot;| Pipeline4
+   Pipeline4 --&gt;|&quot;Shuffle(province&#x2F;city)&quot;| Pipeline5
+```
+</div></p>
+<h2 id="example-6-chuang-kou-han-shu">Example 6: 窗口函数</h2>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#65737e;">-- table data(Plant: string, Date: date, mwh: f64)
+</span><span style="color:#b48ead;">SELECT </span><span>&quot;</span><span style="color:#a3be8c;">Plant</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">Date</span><span>&quot;,
+</span><span>       </span><span style="color:#96b5b4;">avg</span><span>(&quot;</span><span style="color:#a3be8c;">MWh</span><span>&quot;) OVER (
+</span><span>        PARTITION BY &quot;</span><span style="color:#a3be8c;">Plant</span><span>&quot;
+</span><span>        </span><span style="color:#b48ead;">ORDER BY </span><span>&quot;</span><span style="color:#a3be8c;">Date</span><span>&quot; </span><span style="color:#b48ead;">ASC
+</span><span>        RANGE BETWEEN INTERVAL </span><span style="color:#d08770;">3</span><span> DAYS PRECEDING
+</span><span>                  AND INTERVAL </span><span style="color:#d08770;">3</span><span> DAYS FOLLOWING)
+</span><span>        AS &quot;</span><span style="color:#a3be8c;">MWh 7-day Moving Average</span><span>&quot;
+</span><span style="color:#b48ead;">FROM </span><span>&quot;</span><span style="color:#a3be8c;">data</span><span>&quot;
+</span><span style="color:#b48ead;">ORDER BY </span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">2</span><span>;
+</span></code></pre>
+<p>对应的 qir 代码为：</p>
+<pre data-lang="qir" style="background-color:#2b303b;color:#c0c5ce;" class="language-qir "><code class="language-qir" data-lang="qir"><span>type data = table {
+</span><span>    name = &quot;data&quot;,
+</span><span>    columns = [
+</span><span>        {name = &quot;Plant&quot;, type = &quot;string&quot;},
+</span><span>        {name = &quot;Date&quot;, type = &quot;date&quot;},
+</span><span>        {name = &quot;MWh&quot;, type = &quot;f64&quot;}
+</span><span>    ]
+</span><span>};
+</span><span>
+</span><span>// 数据读取
+</span><span>let data_scan = scan(
+</span><span>    name = &quot;data&quot;,
+</span><span>    table = data,
+</span><span>    output = [&quot;Plant&quot;, &quot;Date&quot;, &quot;MWh&quot;]
+</span><span>);
+</span><span>
+</span><span>// 本地排序与窗口计算
+</span><span>let sort_op = sort(
+</span><span>    input = data_scan,
+</span><span>    columns = [
+</span><span>    	{column = &quot;Plant&quot;, direction = &quot;ASC&quot;},
+</span><span>    	{column = &quot;Date&quot;, direction = &quot;ASC&quot;}
+</span><span>    ],
+</span><span>    output = [&quot;Plant&quot;, &quot;Date&quot;, &quot;MWh&quot;]
+</span><span>);
+</span><span>
+</span><span>let window_agg = window_aggregator(
+</span><span>    input = sort_op,
+</span><span>    partition_by = [&quot;Plant&quot;],
+</span><span>    order_by = [{column = &quot;Date&quot;, direction = &quot;ASC&quot;}],
+</span><span>    frame = {
+</span><span>        type = &quot;RANGE&quot;,
+</span><span>        start = {value = 3, unit = &quot;DAY&quot;, preceding = true},
+</span><span>        end = {value = 3, unit = &quot;DAY&quot;, preceding = false}
+</span><span>    },
+</span><span>    aggregators = [
+</span><span>        avg_aggregator(
+</span><span>            name = &quot;MWh 7-day Moving Average&quot;,
+</span><span>            field = &quot;MWh&quot;
+</span><span>        )
+</span><span>    ],
+</span><span>    output = [&quot;Plant&quot;, &quot;Date&quot;, &quot;MWh 7-day Moving Average&quot;]
+</span><span>);
+</span><span>
+</span><span>
+</span><span>let sink = identity_sink(input = global_sort);
+</span><span>
+</span><span>let pipeline1 = pipeline(
+</span><span>    source = data_scan,
+</span><span>    sink = sort_op
+</span><span>);
+</span><span>
+</span><span>let pipeline2 = pipeline(
+</span><span>	input = sort_op,
+</span><span>	sink = window_agg,
+</span><span>	parent = pipeline1
+</span><span>)
+</span><span>
+</span><span>let graph = topology(main = main_pipeline);
+</span></code></pre>
+<p>对应的拓扑图为:
+<div class="mermaid">
+    ```mermaid
+graph TD
+    subgraph Pipeline1[&quot;数据预处理流水线&quot;]
+        ds1[&quot;data_scan: scan&quot;] --&gt;|&quot;读取原始数据&quot;| so1[&quot;sort_op: sort&quot;]
+        style so1 stroke:#333
+    end
+
+    subgraph Pipeline2[&quot;窗口计算流水线&quot;]
+        so1 --&gt;|&quot;排序后数据&quot;| wa1[&quot;window_agg: window_aggregator&quot;]
+    end
+
+    Pipeline1 --&gt;|&quot;父依赖&quot;| Pipeline2
+    style Pipeline1 stroke:#F00
+    style Pipeline2 stroke:#F00
+```
+</div></p>
+<p>TODO: qir 为窗口函数提供了不同的计算模式：</p>
+<ul>
+<li>as an operator: 支持流式的处理，可以满足对大数据集进行窗口计算。</li>
+<li>as an sink: 不支持流式计算，需要将整个数据集放入内存进行窗口计算。
+这一块稍后补充。</li>
+</ul>
+<h1 id="he-xin-gai-nian">核心概念</h1>
+<h2 id="topology">topology</h2>
+<p>topology 是一个完整的查询计划，由一个或多个 pipeline 组成。pipeline 之间可以有依赖关系,形成一个有向无环图(DAG)。</p>
+<h2 id="pipeline">pipeline</h2>
+<p>pipeline 是一个数据处理流水线，由 source、operators 和 sink 组成:</p>
+<ul>
+<li>source: 数据源算子，负责从存储系统（或者接收外部的请求）读取数据</li>
+<li>operators: 处理算子序列，对数据进行转换、过滤、聚合等操作</li>
+<li>sink: 汇聚算子，负责将处理结果写入存储系统或传递给下一个 pipeline</li>
+</ul>
+<p>pipeline 支持 partition，每个partition 中的算子的数据流动是在单个线程中，以小批量的方式进行流动，这种方式可以充分发挥 CPU 的
+向量化计算和 Cache 带来的性能提升。</p>
+<p>pipeline 支持分区时，sink 节点可以是分区的，或者是汇聚的。</p>
+<p>pipeline 之间可以有依赖关系:</p>
+<ul>
+<li><input disabled="" type="checkbox"/>
+<code>pipeline_a</code> 可以依赖于 <code>pipeline_b</code>: b 执行完成后，a 才能开始执行</li>
+<li><input disabled="" type="checkbox"/>
+<code>pipeline_a[partition_1]</code> 可以依赖于 <code>pipeline_b[partition_1]</code>: b 的 partition_1 执行完成后，a 的 partition_1 才能开始执行</li>
+<li><input disabled="" type="checkbox"/>
+operator 之间支持 notify 机制，下游 operator 可以向上游 operator 发送通知，例如：
+<ul>
+<li>Limit 操作，当达到指定的行数时，通知上游停止发送数据</li>
+</ul>
+</li>
+</ul>
+<h2 id="operator">operator</h2>
+<p>operator 是数据处理算子，每个算子都有明确定义的输入和输出类型。常见的算子包括:</p>
+<ul>
+<li>filter: 过滤算子</li>
+<li>join: 关联算子</li>
+<li>aggregation: 聚合算子</li>
+<li>sort: 排序算子</li>
+<li>window: 窗口算子</li>
+</ul>
+<h2 id="source">source</h2>
+<p>source 是数据源算子，负责从存储系统读取数据。常见的 source 包括:</p>
+<ul>
+<li>scan: 表扫描算子</li>
+<li>exchange_receiver: 数据交换接收算子</li>
+</ul>
+<h2 id="sink">sink</h2>
+<p>sink 是汇聚算子，负责将处理结果写入存储系统或传递给下一个 pipeline。常见的 sink 包括:</p>
+<ul>
+<li>identity_sink: 恒等汇聚算子</li>
+<li>exchange_sender: 数据交换发送算子</li>
+<li>build_hash_table: 哈希表构建算子</li>
+</ul>
+<h2 id="type-system">type system</h2>
+<ol>
+<li>data type</li>
+<li>column metadata: nullable, sort, index(minmax, bloom)</li>
+<li>table metadata: partition, bucket</li>
+<li>对性能的优化
+<ul>
+<li>表达式求值，减少运行期的解释开销</li>
+<li>nullable: 避免 null 检查</li>
+<li>排序： 如果数据已经排序，则可以选择 Merge Sort 等算法</li>
+<li>partition: 避免全表扫描</li>
+</ul>
+</li>
+</ol>
+<h2 id="partition">partition</h2>
+<p>partition 是数据分区概念，用于并行和分布式计算:</p>
+<ul>
+<li>数据可以按照指定的字段进行分区</li>
+<li>不同分区可以并行处理</li>
+<li>分区之间可以通过 exchange 算子进行数据交换</li>
+</ul>
+<h1 id="suan-zi-shuo-ming">算子说明</h1>
+<ol>
+<li>
+<p>scan 表扫描算子，用于从表中读取数据</p>
+<ul>
+<li>name: 表名</li>
+<li>table: 表类型定义，optional， 用于类型检查</li>
+<li>output: 需要输出的字段列表</li>
+</ul>
+</li>
+<li>
+<p>filter 对输入 DataFrame 进行过滤操作</p>
+<ul>
+<li>input: 输入 DataFrame</li>
+<li>predictor: 过滤函数，返回 true 表示保留，返回 false 表示丢弃</li>
+<li>output: 输出字段列表</li>
+</ul>
+</li>
+<li>
+<p>build_hash_table 构建哈希表，用于关联操作</p>
+<ul>
+<li>input: 输入 DataFrame</li>
+<li>key: 哈希表的 key 列</li>
+</ul>
+</li>
+<li>
+<p>lookup_hash_table 从哈希表中查找数据，用于关联操作</p>
+<ul>
+<li>ht: 哈希表，由 build_hash_table 构建</li>
+<li>input: 输入 DataFrame</li>
+<li>key: 关联字段</li>
+<li>output: 输出字段列表，格式为 [[lookup_side_fields]， [build_side_fields]]</li>
+<li>join_type: 连接类型，inner/left/right/semi/anti-semi/crossjoin 等</li>
+</ul>
+</li>
+<li>
+<p>hash_aggregator 哈希聚合算子</p>
+<ul>
+<li>input: 输入 DataFrame</li>
+<li>group_by: 分组字段列表</li>
+<li>aggregators: 聚合函数列表</li>
+<li>output: 输出字段列表</li>
+</ul>
+</li>
+<li>
+<p>count_aggregator 计数聚合函数</p>
+<ul>
+<li>name: 聚合结果字段名</li>
+<li>field: 要计数的字段名</li>
+</ul>
+</li>
+<li>
+<p>sum_aggregator 求和聚合函数</p>
+<ul>
+<li>name: 聚合结果字段名</li>
+<li>field: 要求和的字段名</li>
+</ul>
+</li>
+<li>
+<p>identity_sink 恒等汇聚算子</p>
+<ul>
+<li>input: 输入 DataFrame</li>
+<li>说明: 输出类型与输入类型相同，用于数据收集</li>
+</ul>
+</li>
+<li>
+<p>exchange_sender 发送端算子，用于分布式计算</p>
+<ul>
+<li>input: 输入 DataFrame</li>
+<li>partition_by: 分区字段列表</li>
+<li>shuffle_mode: "HASH" for hash shuffle， "GLOBAL" for collect all data to one partition</li>
+</ul>
+</li>
+<li>
+<p>exchange_receiver 接收端算子，用于分布式计算</p>
+<ul>
+<li>input: 输入 DataFrame， 对应于 exchange_sender 算子</li>
+<li>partition_by: 分区字段列表，需要与 exchange_sender 算子的 partition_by 一致</li>
+<li>shuffle_mode: "HASH" for hash shuffle， "GLOBAL" for collect all data to one partition，需要与 exchange_sender 算子的 shuffle_mode 一致</li>
+</ul>
+</li>
+<li>
+<p>window_aggr 带补充</p>
+</li>
+<li>
+<p>pipeline 流水线定义</p>
+<ul>
+<li>source: 源算子</li>
+<li>operators: 算子列表（可选）</li>
+<li>sink: 汇聚算子</li>
+<li>parent: 依赖的父流水线列表（可选）</li>
+</ul>
+</li>
+<li>
+<p>topology 查询拓扑结构</p>
+<ul>
+<li>main: 主流水线</li>
+<li>说明: 用于描述整个查询的拓扑结构，是单个 qir 文件的最终输出</li>
+</ul>
+</li>
+</ol>
+<p>当进行大数据量的表之间 join 时，通常会使用 shuffle join 算法，即将数据按照 join key 进行哈希分区，然后将相同 key 的数据发送到同一个节点进行 join 操作。</p>
+<h1 id="todo">TODO</h1>
+<ol>
+<li>支持 <code>SELECT sum(amount), sum(amount) FILTER (region != 'north') FROM sales;</code></li>
+<li>支持 <code>SELECT first(amount ORDER BY date ASC) FROM sales;</code></li>
+<li>提供更多基础时间窗口能力（date based）,增强对时间快速计算的支持。
+<ul>
+<li>年/年季/年月/年周/年月日 多种层次结构  <code>date_trunc</code></li>
+<li>前期、同期</li>
+<li>（年/月/周）累计、前期累计、同期累计</li>
+<li>滑动、滚动窗口</li>
+</ul>
+</li>
+<li>提供更多时序窗口能力（time based）</li>
+<li>支持更灵活的窗口函数能力。
+<ul>
+<li><code>SUM(X) OVER (PARTITION BY expr ORDER BY expr RANGE BETWEEN expr AND expr)</code></li>
+<li><code>SUM(X) OVER (PARTITION BY expr ORDER BY expr WHERE expr)</code>
+对字符串等类型而言，range bettween expr precedding 没法使用，对日期、时间等也更简洁。</li>
+</ul>
+</li>
+<li>扩展支持如下的 SQL 语法，这样，就可以处理类似于 MDX 的衍生度量（修改当前 Context 的上下文，包括增加新的维度条件，或者减少现有的维度限制，但保持当前的查询行不变）。<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span> </span><span style="color:#b48ead;">SELECT</span><span> a, b, </span><span style="color:#96b5b4;">SUM</span><span>(X),
+</span><span>           </span><span style="color:#96b5b4;">SUM</span><span>(X) FILTER (c &gt; </span><span style="color:#d08770;">10</span><span>),  </span><span style="color:#65737e;">-- SUM(X, a, b, c &gt; 10) 
+</span><span>           </span><span style="color:#96b5b4;">SUM</span><span>(X) BY a FILTER(b = </span><span style="color:#d08770;">2 </span><span>and c &gt; </span><span style="color:#d08770;">10</span><span>) </span><span style="color:#65737e;">-- SUM(X, a, b = 2, c &gt; 10)
+</span></code></pre>
+提供这种扩展能力，不仅提升了 SQL 的表达能力，而且这个可以生成一个高效的执行 plan，执行效率也能得到显著提升。</li>
+<li>支持：这个特性可以显著简化 分组小计的 SQL 查询。
+<ul>
+<li>duckdb:<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span>   </span><span style="color:#65737e;">-- the syntax () denotes the empty set (i.e., computing an ungrouped aggregate)
+</span><span>   </span><span style="color:#65737e;">-- 这个功能非常适合于进行分组小计的计算。
+</span><span style="color:#b48ead;">SELECT</span><span> city, street_name, </span><span style="color:#96b5b4;">avg</span><span>(income)
+</span><span style="color:#b48ead;">FROM</span><span> addresses
+</span><span style="color:#b48ead;">GROUP BY</span><span> GROUPING SETS ((city, street_name), (city), (street_name), ());
+</span><span>
+</span><span style="color:#b48ead;">SELECT</span><span> city, street_name, </span><span style="color:#96b5b4;">avg</span><span>(income)
+</span><span style="color:#b48ead;">FROM</span><span> addresses
+</span><span style="color:#b48ead;">GROUP BY</span><span> CUBE (city, street_name); </span><span style="color:#65737e;">-- 等效于 group by grouping sets( (city, street_name), (city), (street_name), ());
+</span><span>
+</span><span style="color:#b48ead;">SELECT</span><span> city, street_name, </span><span style="color:#96b5b4;">avg</span><span>(income)
+</span><span style="color:#b48ead;">FROM</span><span> addresses
+</span><span style="color:#b48ead;">GROUP BY</span><span> ROLLUP (city, street_name) </span><span style="color:#65737e;">-- 等效于 group by grouping sets( (city, street_name), (city), () );
+</span><span>
+</span><span style="color:#65737e;">-- grouping_id
+</span></code></pre>
+</li>
+</ul>
+</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/duck-push-vs-datafusion-pull/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/understand-svelte-rune/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>
