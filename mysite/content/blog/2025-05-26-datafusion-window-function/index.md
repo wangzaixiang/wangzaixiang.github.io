@@ -4,6 +4,9 @@ description = "本文对 datafusion 窗口函数的执行过程进行分析，�
 date = 2025-05-26
 draft = false
 template = "blog/page.html"
+
+[extra]
+toc = true
 +++
 
 # API: 使用窗口函数
