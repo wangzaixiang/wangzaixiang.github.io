@@ -41,12 +41,11 @@ datafusion 中支持4种 自定义函数：
 
       see: datafusion/physical-expr/src/window/standard.rs StandardWindowExpr::evaluate(按照这个源代码整理，与代码注释对应不上)
 
-      | [`uses_window_frame`] | [`supports_bounded_execution`] | [`include_rank`] | function_to_implement      | functions                   |
-          |-----------------------|--------------------------------|------------------|----------------------------|-----------------------------|
-      | true                  | *                              | *                | [`evaluate`]               | nth_value                   |
-      | false (default)       | *                              | true             | [`evaluate_all_with_rank`] | rank, dense_rank, cume_dist |
-      | false                 | *                              | false (default)  | [`evaluate_all`]           |                             |
-
+     | [`uses_window_frame`] | [`supports_bounded_execution`] | [`include_rank`] | function_to_implement      | functions                   |
+     |-----------------------|--------------------------------|------------------|----------------------------|-----------------------------|
+     | true                  | *                              | *                | [`evaluate`]               | nth_value                   |
+     | false (default)       | *                              | true             | [`evaluate_all_with_rank`] | rank, dense_rank, cume_dist |
+     | false                 | *                              | false (default)  | [`evaluate_all`]           |                             |
 
 UDWF 窗口函数列表：
 
@@ -69,6 +68,7 @@ UDWF 窗口函数列表：
   针对形如 SUM, COUNT 之类的函数，自定义函数参考：[advanced udaf](https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/advanced_udaf.rs)
   核心接口是 Accumulator, GroupsAccumulator
 
+{% mermaid() %}
 ```mermaid
 classDiagram
         
@@ -115,7 +115,9 @@ classDiagram
     AggregateUDFImpl .. GroupsAccumulator
         
 ```
+{% end %}
 
+{% mermaid() %}
 ```mermaid
 classDiagram
     class WindowExpr {
@@ -148,9 +150,11 @@ classDiagram
     AggregateWindowExpr <|-- PlainAggregateWindowExpr
     WindowExpr <|-- StandardWindowExpr
 ```
+{% end %}
 
 ## 物理计划生成：选择算子、WindowExpr 决策树
 
+{% mermaid() %}
 ```mermaid
 flowchart TD
     A[ 1: function type ?] == window function ==> StandardWindowExpr
@@ -161,6 +165,7 @@ flowchart TD
     C == unbounded preceding ==> plain[PlainAggregateWindowExpr]
     C == bounded ==> sliding[SlidingAggregateWindowExpr]
 ```
+{% end %}
 
 具体，可以查看如下的代码实例，通过代码的调试等方式，可以帮助我们理解不同的算子下的执行流程：
 
@@ -266,6 +271,7 @@ struct WindowAggState {
 
 ```
 
+{% mermaid() %}
 ```mermaid
 classDiagram
   class BoundedWindowAggStream {
@@ -318,19 +324,14 @@ classDiagram
   WindowState o--  WindowFn    
 
 ```
-
-1. `BoundedWindowAggStream::poll_next_inner`
-    1. poll RecordBatch from input
-    2. `BoundedWindowAggStream::compute_aggregates`
-        1. foreach window_expr, `window_expr::evaluate_stateful(partion_batches, partition_window_agg_states)`
-            1. `AggregateWindowExpr::evalute_stateful` foreach partition
-                1.
+{% end %}
 
 处理过程：
 1. 无需在读取了全部分区数据后，再进行窗口函数计算，可以在读入 batch 的过程中增量的处理。
-2. 思考：WindowAggExec 是否可以转换为 逆序后使用 BoundedWindowAggExec?
 
 # 思考
 1. 思考：支持更为灵活的 values between expr and expr ? 虽然不能匹配上述的优化，但在数据量不大的情况下，可以有更大的表现力
 2. 思考：如何高效的支持同期、同期累积等功能？
-3. datafusion 窗口函数代码改进思考
+3. 思考：WindowAggExec 是否可以转换为 逆序后使用 BoundedWindowAggExec?
+4. datafusion 窗口函数代码改进思考
+   - PlainAggregateWindowExpr 与 SlidingAggregateWindowExpr 逻辑相似，评估合并。
