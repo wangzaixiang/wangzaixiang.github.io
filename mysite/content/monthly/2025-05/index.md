@@ -23,6 +23,20 @@ template = "blog/page.html"
     - [Rust Stream API visualized and exposed](https://github.com/alexpusch/rust-magic-patterns/blob/master/rust-stream-visualized/Readme.md)
     - [使用 Stream 编写函数式的代码](https://willemvanhulle.tech/blog/func-async/)
       1. Stream ～ async iterator
+    - [Two Years of Rust](https://borretti.me/article/two-years-of-rust) 很有意思的一个资深程序员（但对rust仅有2年使用经验）的思考。
+      1. 【B站中文讲读】https://www.bilibili.com/video/BV1JGVXzAEXP?vd_source=eee72bea0d6227ec450743399f7c7b5b
+      2. 将借用检查从一种负担转化为一种类化的检查：并将复杂的借用检查引导我们对设计进行简化，采取更加正交化的设计。
+      3. linearly-types 概念：
+         > 线性类型（Linearly Types）是编程语言类型系统中的一个概念，主要用于资源管理和内存安全。它要求变量在使用时必须严格遵循“恰好一次”的规则，
+         > 即每个变量在作用域内必须被使用且仅被使用一次。这种机制常用于防止资源泄漏（如内存、文件句柄等），并支持对底层操作的高效控制。
+      4. 操作系统的线程调度永远不够快，deepseek 可以对这个开销做很入的解释。
+      5. 招聘很难吗？其实 rust 本身就帮助你进行了筛选。
+      6. 滥用macro：过度使用 macro 可能会让代码的阅读和调试成为困难，这一点，我在阅读 datafusion 源代码时也有所发现，实际上，使用函数替代结合 inline
+         机制来替代不必要的 macro，是我更喜欢的方式。
+      
+      作者对 borrow checking 有着百科全书级的理解，因为自己实现过类似的机制。这个我是深有体会的，我之前实现过一个 [easyajax](https://easyajax.sourceforge.net/),
+      所以对后续的这类组件框架就有着自己独特的理解。
+   
 3. Scala
     - Scala 3.7.0 发布。这个版本最大的特性是 [NamedTuple](https://docs.scala-lang.org/scala3/reference/other-new-features/named-tuples.html) 成为正式特性。
 
