@@ -39,6 +39,7 @@
 # scala-lang
 
 # arrow + datafusion
+- [Array](arrow_array.md)
 - [df-case-1](df-case-1.md)
 - [compare-with-duckdb](perf-vs-duckdb-1.md)
 - [Join Performance](sql-join.md)
