@@ -10,6 +10,7 @@
 - [rust 类型系统](./rust_type_system.md)
 - [unsafe: cast &T to &mut T](./rust_unsafe_cast.md)
 - [lifecycle in rust 2025](rust-2025-lifecycle.md)
+- [Rc layout](rust-rc-layout.md)
 
 # simd
 - [simd-1](simd-1.md)
