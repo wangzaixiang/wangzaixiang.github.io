@@ -1,22 +1,36 @@
 # Rc Layout
 
 ```rust
-fn main(){
-    let str1 = Rc::new(String::from("Hello World!"));
+
+    let mut string = String::with_capacity(32); // sizeof::<String> = 24
+    string.push_str("Hello World! ");
+
+    let str1 = Rc::new(string); // sizeof::<RcInner<String>> = 40
+    // memory: strong: 1, weak: 1
     assert_eq!(Rc::strong_count(&str1), 1);
     assert_eq!(Rc::weak_count(&str1), 0);
-    
-    let p1 = *(unsafe { &*(&str1 as *const Rc<_> as *const *const ()) });
+
+    let p1 = *(unsafe { &*(&str1 as *const Rc<_> as *const *const ()) }); // for debug the memory
     println!("str1 = {:p}", p1);
 
     let str2 = Rc::clone(&str1);
+    // memory: strong:2 weak: 1
     assert_eq!(Rc::strong_count(&str2), 2);
     assert_eq!(Rc::weak_count(&str2), 0);
 
     let str3 = Rc::downgrade(&str2);
+    // memory: strong:2 weak: 2
     assert_eq!(Rc::strong_count(&str1), 2);
-    assert_eq!(Rc::weak_count(&str1), 1);   
-}
+    assert_eq!(Rc::weak_count(&str1), 1);
+    
+    drop(str1);
+    // memory: strong = 1, weak = 2
+    drop(str2);
+    // memory: strong = 0, weak = 1, the value is dropped in place
+    drop(str3);
+    // memory: strong = 0, weak = 0, the RcInner is dropped
+    
+    println!("completed");
 ```
 
 查看 p1 指向的内存：
