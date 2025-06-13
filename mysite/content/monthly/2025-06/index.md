@@ -34,7 +34,16 @@ template = "blog/page.html"
        - default/ptmalloc:  单线程
        - tcmalloc: 三级 ThreadCache + CentralCache + PageHeap， 自旋锁, 小对象无锁分配，瞬态高并发
      - RingBuffer：使用数组模拟链表，更好的内存局部性
-   
+2. SIMD
+   - [simd-everywhere](https://github.com/simd-everywhere/simde) 软件仿真的方式模拟 SIMD 指令。ARM 的 SIMD 指令参考资料很难阅读，可以通过
+     这个站点，来理解这些指令是如何仿真执行的。不过，好像有不少指令并没有实现。
+   - [a plan for simd](https://linebender.org/blog/a-plan-for-simd/) `Linebender`的 SIMD 实现计划。
+     - 使用 256 bit width: 能很好的匹配 AVX2, 在 NEON 上使用2个寄存器进行模拟。考虑到 Neon 有32个128位寄存器，仍然有足够的处理能力（在M1系列芯片上，基本等效于16 x 256 的AVX2）。
+     - 文中提到 AVX512 相比 AVX256，性能提升有限，`a 512 bit vector is processed in two clock cycles (see mersenneforum post for more details), each handling 256 bits`, 
+       这种说法，但没有提到确切的信息来源。
+     - 在 [Milvis](https://mp.weixin.qq.com/s?__biz=MzUzMDI5OTA5NQ==&mid=2247487111&idx=1&sn=6d0577675df2d7649c78434d7c3aa3df&chksm=fb8cd799a5e3c39b87e6073f8b27607da43498205097d82bb4ef383ccadeb708fb48f098d0f0#rd)
+       中有 AVX2 vs AVX512 的对比，有提升 20%-65%。
+     - AVX512 可能会导致 CPU 降频，最终性能提升打了折扣。
 
 # MPP & OLAP
 
