@@ -654,7 +654,7 @@ fn countNonZeroV512_popcntAsm(bytes: &[u8]) -> usize {
 4. X86(阿里云 ecs.c7.xlarge型号，CPU为：Intel Xeon(Ice Lake) Platinum 8369B)
 5. ecs.c7.xlarge，启用 -Ctarget-cpu=native
 
-![性能对比](../simd-1.webp)
+![性能对比](simd-1.webp)
 
 更新：
 1. 在 x86 AVX512上，使用 `cargo +nightly rustc --release -- -Ctarget-cpu=native` 选项编译后的性能更佳。应该是使用到了当前CPU的全部能力,

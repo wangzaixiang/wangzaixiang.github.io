@@ -663,7 +663,7 @@ q.show_graph()
 
 
     
-![svg](../output_42_0.svg)
+![svg](output_42_0.svg)
     
 
 
