@@ -12,7 +12,7 @@ authors = ["wangzx"]
 toc = true
 +++
 
-本文承接上一片文章 [wgpu 代码阅读](@/blog/wgpu.md), 在阅读 wgpu 代码的基础上，通过一个实例来对比 CPU 和 GPU 的性能。
+本文承接上一片文章 [wgpu 代码阅读](@/blog/2024-08-10-Trying WGPU/index.md), 在阅读 wgpu 代码的基础上，通过一个实例来对比 CPU 和 GPU 的性能。
 
 算法： Mandelbrot Set，其中 CPU 版本来自 《 Programming Rust 》第二版第2章（单线程）、第19章（多线程），
 详细代码可以参考：[单线程版本](https://github.com/wangzaixiang/mandelbrot_gpu/blob/main/src/cpu.rs),

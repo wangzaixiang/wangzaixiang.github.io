@@ -335,3 +335,11 @@ classDiagram
 3. 思考：WindowAggExec 是否可以转换为 逆序后使用 BoundedWindowAggExec?
 4. datafusion 窗口函数代码改进思考
    - PlainAggregateWindowExpr 与 SlidingAggregateWindowExpr 逻辑相似，评估合并。
+
+
+# datafusion 文章系列
+1. [push vs pull](@/blog/2025-04-08-duck-push-vs-datafusion-pull/index.md)
+2. [datafusion hashjoin executor](@/blog/2025-05-08-datafusion-hashjoin/index.md)
+3. [datafusion window function executor](@/blog/2025-05-26-datafusion-window-function/index.md)
+4. [datafusion performance](@/blog/2025-06-06-datafusion-performance/index.md)
+

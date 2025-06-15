@@ -20,7 +20,7 @@ toc = true
    Mandlebrot 这个算法如何利用 SIMD 进行优化(有循环和分支处理)。
    
    不过，这里作者的写法似乎有一些 BUG， SIMD 版本并不严格对应于 scalar 版本，有些地方的处理不一致。参考我之前的文章 
-   [Mandelbrot-set CPU vs GPU comparison](@/blog/2024-08-17-mandelbrot-gpu.md)
+   [Mandelbrot-set CPU vs GPU comparison](@/blog/2024-08-17-mandelbrot-gpu/index.md)
 
 3. 现代微处理器：90分钟速成指南！介绍了现代 CPU 的一些概念，如超标量、乱序执行、分支预测、缓存等、SIMD、SMT 等技术。
    - [中文版](https://zhuanlan.zhihu.com/p/645343994)
