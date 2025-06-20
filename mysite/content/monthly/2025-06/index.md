@@ -48,6 +48,10 @@ template = "blog/page.html"
 # MPP & OLAP
 
 # Web & Frontend
+1. How Rolldown Works 
+   - [Module Loading, Dependency Graphs, and Optimization Explained](https://www.atriiy.dev/blog/rolldown-module-loader-and-dependency-graph)
+   - [Symbol Linking, CJS/ESM Resolution, and Export Analysis Explained](https://www.atriiy.dev/blog/rolldown-link-stage-symbol-linking-resolution)
+
 
 # Tools & Libraries
 
