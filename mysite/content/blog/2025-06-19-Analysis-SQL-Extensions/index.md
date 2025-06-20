@@ -9,7 +9,7 @@ template = "blog/page.html"
 toc = true
 +++
 
-1. group by grouping set, cube, rollup
+# group by grouping set, cube, rollup
    - 支持数据库
      - [duckdb](https://duckdb.org/docs/stable/sql/query_syntax/grouping_sets)
      - [postgres 9.5](https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-GROUPING-SETS)
@@ -20,13 +20,13 @@ toc = true
      - 在最小粒度上进行 group aggregate
      - 在上层粒度上进行 rollup，避免重复计算。
      - 在同一个算子中完成 grouping set 的计算。
-2. aggregate with filter
+# aggregate with filter
    - 支持数据库
      - [duckdb](https://duckdb.org/docs/stable/sql/functions/aggregates)
      - datafusion: 目前并不支持
    - 适用场景：
      - 在分组计算时，支持定义包含更多 filter 的度量计算。
-3. aggregate with rollup
+# aggregate with rollup
    ```sql
     SELECT category, product, SUM(amount) as amount, 
         SUM(amount) rollup(category) as amount_of_product,  -- 在 category 上 rollup
@@ -37,16 +37,16 @@ toc = true
    目前还没有看到哪个数据库支持这种形式的查询。其不同于 group by grouping, 后者会返回不同的分组， aggregate with rollup 是在当前的分组上
    返回 rollup 的结果。
    
-   评估：在 datafusion 中增加这个能力，并考虑在单个算子中完成计算。
-4. 结合 aggregate with filter & rollup
+   评估：在 datafusion 中增加这个能力，并考虑在单个算子中完成计算。 
+# 结合 aggregate with filter & rollup
 
    如果能够在 datafusion 中同时支持 aggregate with filter & rollup 的功能的话，那么以下的 OLAP 计算就会变得简单且高效：
    - with filter 类似于 MDX 的 `([Measure].[X], [DimMore].[m1])`
    - with rollup 类似于 MDX 的 `([Measure].[X], [Dim1].[AllDim1s])`
    - 组合： 实现二者的等效操作。
    - 限制：with filter & with rollup 都在 where 之后执行，其基础数据受 where 条件的限制，无法在 filter 中变更数据范围，虽然有这个限制，
-     仍然可以满足很大部份的 MDX 指标计算的能力
-5. More Aggregate Functions
+     仍然可以满足很大部份的 MDX 指标计算的能力 
+# More Aggregate Functions
     
    参考：https://duckdb.org/docs/stable/sql/functions/aggregates
 
@@ -68,7 +68,7 @@ toc = true
    |                          |        |                 |             |                                                                                                    |
    |                          |        |                 |             |                                                                                                    |
 
-6. as-of join
+# as-of join
    ```sql 
     SELECT h.ticker, h.when, p.price * h.shares AS value
     FROM holdings h
@@ -81,7 +81,7 @@ toc = true
    - 适用场景
      - 时点类指标。
 
-7. 高效执行 scalar subquery
+# 高效执行 scalar subquery
    使用 scalar subquery (可以出现在 SelectItem, Where 部份)，来描述计算度量，具有较强的表达能力，可以覆盖上述的 aggregate with rollup 的能力，
    以及更为复杂的一些计算场景，包括：
    - 时间快速计算，如 同期值、前期值、年（季、月）累计、同期累计值
