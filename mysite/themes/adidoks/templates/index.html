@@ -67,22 +67,21 @@
 </section>
 
 <!-- for extra.books -->
+{% if section.extra.books %}
 <section class="section section-sm">
   <div class="container books">
     <h2 class="h4 text-center">Markdown Books </h2>
     <div class="row justify-content-start text-start">
-      {% if section.extra.books %}
       {% for val in section.extra.books %}
       <div class="col-lg-5">
         <h2 class="h4">{{ val.title }}</h2>
         <p>{{ val.content | safe }}</p>
       </div>
       {% endfor %}
-      {% else %}
-      {% endif %}
     </div>
   </div>
 </section>
+{% endif %}
 
 <section class="section section-sm container-fluid">
   <div class="row justify-content-center text-center">

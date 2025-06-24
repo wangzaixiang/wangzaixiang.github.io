@@ -126,3 +126,6 @@ toc = true
         group by 1, 2;
      ```     
      错误：`This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(<subquery>)`
+   - [ ] idea: 新增一种 reduce join, outer : inner = 1: N， 将多行 inner 的数据进行聚合后，作为 inner 的输出。
+     在 join 算子中完成聚合操作，减少 join 的 output。
+   - [ ] idea：在 reduce join 中，将部份 window function 的执行优化策略引入，减少 working set 以及聚合计算量。
