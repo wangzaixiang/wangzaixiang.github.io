@@ -63,40 +63,63 @@ DAX 是 Microsoft PowerBI 产品的表达式语言，也是 PowerBI 的产品灵
 
 ## Filter Context vs Row Context
 DAX 中有两种上下文：Filter Context 和 Row Context。 这个是很容易混淆的，或者错误使用的：
-1. Filter Context: 用于对当前的数据范围进行筛选。
-   1. 在一个分析表格中，每个单元格都有自己的 Filter Context，一般由行，列，过滤器等决定。即使不同的单元格使用的是同一个计算公式，但由于
-      Filter Context 的不同，计算结果也会不同。
-   2. Filter Context 是对整个模型有效的，如果有一个筛选条件 `[table1].[col1] = value1`, 那么，这个条件会筛选 table1 中满足条件的行，
+1. column reference and measure reference.
+   - column reference: `Sales[Quantity]` or `[Quantity]` in Sales Context(比如在 Sales 表的计算列定义中)
+   - measure reference: `[Sales Amount]`
+   - table reference: `Sales`
+   - [X] column reference 与 measure reference 如果有歧义，怎么处理？DAX 会优先解析为 column reference
+
+2. Filter Context: 用于对当前的数据范围进行筛选。
+   1. Filter Context 是对整个模型有效的，如果有一个筛选条件 `[table1].[col1] = value1`, 那么，这个条件会筛选 table1 中满足条件的行，
       并根据模型中的筛选方向，传递到其他表中。可以简单的理解，通过 Filter Context, 一个模型的数据可见范围被动态的调整了，这时，任何一个表中
       的数据并不是原始表中的数据，而是经过筛选的数据。
-   3. 诸如 ALL, ALLEXCEPT, ALLSELECTED 等函数，可以用于修改 Filter Context。
-      - ALL(table) 函数，清除 table 上的所有筛选器
-      - ALL(table, column) 函数，清除 table 上的除了 column 列的所有筛选器
-      - ALLEXCEPT(table, column1, column2, ...) 函数，清除 table 上的除了 column1, column2, ... 列的所有筛选器
-      - ALLSELECTED(table) 函数，清除 table 上的所有筛选器(动态的筛选器)，但保留用户手动选择的筛选器（原始的筛选器）
-   4. CALCULATE(expr, filter1, filter2, filter3) 函数，可以用于修改 Filter Context，并在新的上下文中计算 expr 表达式的值。
-      - boolean filter: `[column] = value`
-      - table filter: `filter(table, expr)` 
-      - filter modifier:
-        - ALL、ALLEXCEPT
-        - REMOVEFILTERS(table, column*)
-        - KEEPFILTERS(expr) 保留当前的筛选器，但可以合并值，不同于 boolean filter,那个是替换筛选器。
-        - USERELATIONSHIP/CROSSFILTER -- 修改表筛选关系
-      - Calculate 会将当前的 RowContext 转换为 FilterContext。 
-   5. FILTER 函数自身并不修改 Filter Context, 而是生成一个计算表。作为 Calculate 的参数时，其会修改原始表的数据范围。
-   6. Every measure reference always has an implicit CALCULATE surrounding it.
+   2. evaluation
+      - `table reference` 在 filter context 中求值
+      - `measure reference` 在 filter context 中求值
+   3. 创建/修改 Filter Context
+      - 在一个分析表格中，每个单元格都有自己的 Filter Context，一般由行，列，过滤器等决定。即使不同的单元格使用的是同一个计算公式，但由于
+         Filter Context 的不同，计算结果也会不同。
+      - 诸如 ALL, ALLEXCEPT, ALLSELECTED 等表函数，可以用于修改 Filter Context。
+        - ALL(table) 函数，清除 table 上的所有筛选器
+        - ALL(table, column) 函数，清除 table 上的除了 column 列的所有筛选器
+        - ALLEXCEPT(table, column1, column2, ...) 函数，清除 table 上的除了 column1, column2, ... 列的所有筛选器
+        - ALLSELECTED(table) 函数，清除 table 上的所有筛选器(动态的筛选器)，但保留用户手动选择的筛选器（原始的筛选器）
+        - RelatedTable( table ) 将 当前 row context 添加到 table 的 filter 中。 
+      - CALCULATE(expr, filter1, filter2, filter3) 函数，可以用于修改 Filter Context，并在新的上下文中计算 expr 表达式的值。
+        - boolean filter: `[column] = value`
+        - table filter: `filter(table, expr)` 
+        - filter modifier:
+          - ALL、ALLEXCEPT
+          - REMOVEFILTERS(table, column*)
+          - KEEPFILTERS(expr) 保留当前的筛选器，但可以合并值，不同于 boolean filter,那个是替换筛选器。
+          - USERELATIONSHIP/CROSSFILTER -- 修改表筛选关系
+          - Calculate 会将当前的 RowContext 转换为 FilterContext。 
+      - FILTER 函数自身并不修改 Filter Context, 而是生成一个计算表。作为 Calculate 的参数时，其会修改原始表的数据范围。
+      - [ ] 表函数是否有2种语义：其一代表一个表的数据，其二代表修改在这个表上的 filter
+   4. Every measure reference always has an implicit CALCULATE surrounding it.
+      - 完成了将当前 Row Context 转化为 Filter Context，从而影响 Measure 的求值
+   5. 两种 filter
+      - column filter: 更高效
+      - table filter: a calculated table
+      
+3. Row Context
+   - 创建 RowContext
+     - 计算列在 RowContext 中求值
+     - SUMX 等 iterate 函数会创建一个新的 RowContext 
+   - column reference `tab[col]` 可以在 RowContext 中求值
+     - 如果存在 1个 `tab` 的 row context，则在其中求值
+     - 如果存在 多个 `tab` 的 row context，则在 latest 的 row context 中求值
+     - 否则无法求值
+   - 在某个求值点，可能存在 0..N 个 RowContext 和 1 个 FilterContext。
+     - EARLIER(column, number) 函数，可以在 RowContext(-number) 中的 column 列的值
+     - EALIST(column)
+   - 每个 row context 的范围是模型中的单个表，不会扩展到其他表去
+     - Related(column) 与 row context 相关的 column，适合于 N:1 的关联字段
+     - RelatedTable(table) 与 row context 相关的 table，适合于 1: N 的关联。
+       - [X] RelatedTable(table) 这里的 table 是否会受当前的 filter context 影响? Y
+       - [ ] RelatedTable(table) 这里是创建了一个新的计算表，还是更新了 filter context?
+   - Calculate 会将当前的 RowContext 转换为 FilterContext，并消除掉所有的 RowContext.
    
-2. Row Context
-   1. 在 SUMX 等遍历函数（或者计算列）中，会产生 Row Context。每个Row Context 对应于单个表中的一行。
-      - EARLIER(column, number) 函数，在 RowContext(-number) 中的 column 列的值
-      - EALIST(column)
-   2. Related(column) 函数，以当前的 Row Filter 返回当前行的关联表中的 column 列的值。
-   3. RelatedTable(table) 函数，返回当前行的关联表。
-   4. 在某个求值点，可能存在另个或多个 RowContext，如果有对应于同一个表的多个 RowContext, 那么，默认是在最内层的 RowContext 中进行计算。
-      - EARLIER(column, number) 函数，可以在 RowContext(-number) 中的 column 列的值
-      - EALIST(column)
-   5. Calculate 会将当前的 RowContext 转换为 FilterContext，并消除掉所有的 RowContext.
-
 
 其实，一个比较好的方式，是注明 DAX 函数的每个参数的求值上下文，是 Filter Context 还是 Row Context，这样就可以让这个概念
 更为清晰了。毕竟，只有少数的函数会创建新的上下文，大部分的函数都是在已有的上下文中进行计算。

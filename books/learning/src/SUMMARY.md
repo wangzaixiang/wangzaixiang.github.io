@@ -46,6 +46,7 @@
 - [Join Performance](sql-join.md)
 - [Hashjoin](./datafusion/hash-join.md)
 - [window function](./datafusion/window_function.md)
+- [datafusion-misc](datafusion-misc.md)
 
 # OLAP
 - [cube.js](olap_cube_js.md)

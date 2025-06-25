@@ -9,6 +9,10 @@ template = "blog/page.html"
 toc = true
 +++
 
+# 在一个计算流中输出多个结果
+目前的 Query 都只能输出单个结果集，如果能在一个计算图中同时输出多个结果集，在一些 BI 场景会有性能上的优化。一个典型的案例就是：在查询第一页数据的同时，
+返回总行数。目前的做法是拆分为2个独立的查询：Q1 查询第一页数据，Q2 查询总行数。如果结合到一个计算图中，则可以共享很多算子的计算，从而减少重复计算消耗。
+
 # group by grouping set, cube, rollup
    - 支持数据库
      - [duckdb](https://duckdb.org/docs/stable/sql/query_syntax/grouping_sets)
@@ -129,3 +133,4 @@ toc = true
    - [ ] idea: 新增一种 reduce join, outer : inner = 1: N， 将多行 inner 的数据进行聚合后，作为 inner 的输出。
      在 join 算子中完成聚合操作，减少 join 的 output。
    - [ ] idea：在 reduce join 中，将部份 window function 的执行优化策略引入，减少 working set 以及聚合计算量。
+
