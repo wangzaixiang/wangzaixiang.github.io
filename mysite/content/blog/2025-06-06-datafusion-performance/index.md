@@ -179,7 +179,102 @@ toc = true
 
 在 TPCH 的测试中，datafusion 整体落后于 duckdb，除 4/13 要更快一些之外，其余的 20 个查询都更慢，差距比较大的是 2/7/11/15/17/18 号查询。
 
+1. Query 1:   duckdb : datafusion =  3.33s : 4.971s (SF=10)
+   ```sql
+    select	l_returnflag,	l_linestatus,
+             sum(l_quantity) as sum_qty,
+             sum(l_extendedprice) as sum_base_price,
+             sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+             sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+             avg(l_quantity) as avg_qty,
+             avg(l_extendedprice) as avg_price,
+             avg(l_discount) as avg_disc,
+             count(*) as count_order
+    from	lineitem
+    where	l_shipdate <= date '1998-09-02'
+    group by	l_returnflag,	l_linestatus
+    order by	l_returnflag,	l_linestatus 
+   ```
+   
+   - datafusion 
+     - 算子耗时：使用 `explain analyze`
+       - DataSourceExec output_rows: 59,986,052 time_elapsed_processing: 1.029s
+       - FilterExec     output_rows: 59,142,609 elapsed_compute: 173.698ms
+       - CoalesceBatchesExec:  output_rows: 59,142,609 elapsed_compute: 624.365ms *DuckDB 没有这个开销*
+       - ProjectionExec: elapsed_compute: 448.843035ms
+       - AggregateExec:  output_rows: 4, elapsed_compute: 2.581794006s
+     - [samply profile](https://share.firefox.dev/4lrfgTI)
+   - duckdb 3.33s
+     - 算子耗时 
+       - TableScan:   output_rows: 59142609, time: 1.20s
+       - Projection:  0.12s + 0.11s
+       - HASH_GROUP_BY:  1.85s
+     - [samply profile](https://share.firefox.dev/4l0qZsr)
+   - 对比
+     - DataFusion 的 CoalesceBatchExec 开销 0.624s，在 DuckDB 没有这一步处理。
+       - 使用 `set datafusion.execution.coalesce_batches = false` 执行时，其效果与 duckdb 相似，减少了这个算子的开销
+     - ProjectionExec, DataFusion多耗时 0.218s
+       - datafusion 只计算了 `l_extendedprice * (1 - l_discount)` 耗时 475ms
+       - duckdb 有两个计算： 
+         - `a: l_extendedprice * (1 - l_discount)` 耗时 120ms
+         - `a * (1.00 + l_tax)` 耗时 0.11s
+       - 对比而言，datafusion 在表达式求值的执行效率上，要比 duckdb 慢了很多。
+     - AggregateExec:  DataFusion 多耗时：0.732s
+       - datafusion 需要在这个阶段进行更多的表达式计算，且执行效率只有 duckdb 的 25%
+2. Query 7: duckdb: datafusion = 1.987s : 5.536s
+   ```sql
+   select	supp_nation,	cust_nation,	l_year,	sum(volume) as revenue	
+   from	(	
+      select	n1.n_name as supp_nation,	n2.n_name as cust_nation,	extract(year from l_shipdate) as l_year,	l_extendedprice * (1 - l_discount) as volume	
+      from	supplier,	lineitem,	orders,	customer,	nation n1,	nation n2	
+      where	s_suppkey = l_suppkey	and o_orderkey = l_orderkey	and c_custkey = o_custkey	and s_nationkey = n1.n_nationkey
+        and c_nationkey = n2.n_nationkey	
+        and (	(n1.n_name = 'FRANCE' and n2.n_name = 'GERMANY')	or (n1.n_name = 'GERMANY' and n2.n_name = 'FRANCE')	)	
+        and l_shipdate between date '1995-01-01' and date '1996-12-31'	
+   ) as shipping	
+   group by	supp_nation,	cust_nation,	l_year	
+   order by	supp_nation,	cust_nation,	l_year;
+   ```
+   - datafusion
+     - Join Order: 
+       `nation X (nation X (customer X (orders X (filter(lineitem) X supplier))))`
+     - DataSourceExec: lineitem, output_rows: 59,986,052, time_elapsed_processing: 1.21s
+     - FilterExec lineitem, output_rows: 18,230,325, elapsed_compute: 151.385ms
+     - CoalesceBatchExec: lineitem, elapsed_compute:28.304ms
+     - DataSourceExec: Supplier, output rows: 100,000, time_elapsed_processing: 1.103ms
+     - JoinExec (lineitem * Supplier), output rows: 18,230,325  build_time: 1.902ms   join_time: 217.514ms
+     - CoalesceBatchExec( lineitem * supplier),  output rows: 18,230,325, elapsed_compute: 65.489ms
+     - DataSourceExec(orders): output_rows: 15,000,000   time_elapsed_processing: 203.315ms
+     - JoinExec( lineitem * Supplier * orders ): output_rows: 18230325, build_time: 2.245s, join_time: 554.960ms
+     - JoinExec( lineitem * supplier * orders * customers: 1,500,000): output_rows: 18,230,325, build_time: 3.510002485s, join_time: 1.391s
+     - JoinExec( lineitem * supplier * orders * customers * nation: 2): output_rows:  1,460,257    build time: 5.060385334s, join_time: 66.956ms
+     - JoinExec( lineitem * supplier * orders * customers * nation * nation): output_rows: 58365,  build time: 5.147108365s  join_time; 5.428ms
+     - [ ] datafusion 的 explain analyze 对 JOIN 的 耗时计算并不准确，其时间包括了上游数据的处理时间。实际 build time 没有这么大。
+     - [Samply Profile](https://share.firefox.dev/44D0Aes)
+   - duckdb
+     - Join Order
+       `(orders X (lineitem X (supplier X nation))) * (customer X nation)`
+     - duckdb 对 JOIN 有 right filter left 的 优化，可以大大的减少 probe side 的扫描成本
+     - 作为对比： duckdb 的 JOIN 耗时总共为 430ms。
+       - [Samply Profile](https://share.firefox.dev/4nnkj9q)
+   - 对比
+     - 对这个查询，duckdb 处理的关联顺序基本上是错误的，最佳的关联顺序应该是 `(filter(lineitem) X supplier X orders X customer X nation X nation `
+     - [ ] 尝试手动编写物理查询计划，来做一个性能对比
+     - Coalesce带来了额外的开销。
+
 后续将逐一进行性能对比分析。
+
+# 影响 datafusion 性能的主要因素
+1. CoalesceBatchExec 带来的额外开销. 参考 TPCH-Query1
+2. 公共表达式提取优化不够:  TPCH-Query1, ClickBench-Query30
+3. 对 `select * from ... limit 10` 这样的查询，查询计划不够优化，导致了大量的数据扫描。 ClickBench-Query24
+4. 对表达式求值，datafusion 的执行效率远低于 duckdb（~25%）。这个需要进一步核实，对比，在大数据量下对性能有普遍性的影响。
+5. JOIN 的性能
+   - duckdb 生成了更合理的 JOIN 顺序
+   - hashjoin 算子的执行效率不如 duckdb。 
+   - duckdb 支持 Dynamic Filter PushDown 优化，在一些场景下，可以大幅度提升性能
+
+- [ ] 如果能够提供对表达式求值的性能统计信息，对定位性能会有更好的帮助
 
 # datafusion 文章系列
 1. [push vs pull](@/blog/2025-04-08-duck-push-vs-datafusion-pull/index.md)
