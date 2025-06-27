@@ -40,7 +40,7 @@ toc = true
 2. tpch
 3. h2o
 
-## clickbench 单线程测试
+# clickbench 单线程测试
 ![comparison.clickbench.png](comparison.clickbench.png)
 
 ```sql
@@ -129,10 +129,10 @@ toc = true
 |    39 |       0.066 |           0.112 |  69.53 |                          |
 |    40 |       0.222 |           0.292 |  31.95 |                          |
 
-1. query 23
+## query 23
    - duckdb: TABLE_SCAN 11.49s, output: 7128 rows (98%)
    - datafusion:
-2. query 24: `SELECT * FROM hits WHERE URL LIKE '%google%' ORDER BY EventTime LIMIT 10`
+## query 24: `SELECT * FROM hits WHERE URL LIKE '%google%' ORDER BY EventTime LIMIT 10`
    duckdb 生成了更好的查询计划：
    ```sql
     select a.* 
@@ -141,14 +141,13 @@ toc = true
         (select file_index, file_row_number from hits where URL LIKE '%google%' ORDER BY EventTime LIMIT 10) b 
     on a.file_index = b.file_index and a.file_row_number = b.file_row_number
    ```
-   这个优化，极大的减少了 parquet 的扫描开销。
-3. query 30
+   这个优化，极大的减少了 parquet 的扫描开销。 
+## query 30
    duckdb 对公共表达式优化进行了更好的优化，将 `SUM(col + n)` 替换为 `SUM(col) + n * COUNT(col)`, 这样对 Query 30 中多达 90 个 `SUM(col + n)`
    的字段，最后优化到只有2个分组计算： `SUM(col)` 和 `COUNT(col)`。
    优化： 参考 duckdb 的表达式优化策略。
 
 # tpch benchmark
-## tpch sf=10
 ![comparison.tpch.png](comparison.tpch.png)
 这个测试在 M1-MAX 64G 上运行。
 
@@ -179,7 +178,7 @@ toc = true
 
 在 TPCH 的测试中，datafusion 整体落后于 duckdb，除 4/13 要更快一些之外，其余的 20 个查询都更慢，差距比较大的是 2/7/11/15/17/18 号查询。
 
-1. Query 1:   duckdb : datafusion =  3.33s : 4.971s (SF=10)
+## Query 1:   duckdb : datafusion =  3.33s : 4.971s (SF=10)
    ```sql
     select	l_returnflag,	l_linestatus,
              sum(l_quantity) as sum_qty,
@@ -221,7 +220,7 @@ toc = true
        - 对比而言，datafusion 在表达式求值的执行效率上，要比 duckdb 慢了很多。
      - AggregateExec:  DataFusion 多耗时：0.732s
        - datafusion 需要在这个阶段进行更多的表达式计算，且执行效率只有 duckdb 的 25%
-2. Query 7: duckdb: datafusion = 1.987s : 5.536s
+## Query 7: duckdb: datafusion = 1.987s : 5.536s
    ```sql
    select	supp_nation,	cust_nation,	l_year,	sum(volume) as revenue	
    from	(	
@@ -262,9 +261,9 @@ toc = true
      - [ ] 尝试手动编写物理查询计划，来做一个性能对比
      - Coalesce带来了额外的开销。
 
-后续将逐一进行性能对比分析。
+后续将对其他 Case 进行性能对比分析。
 
-# 影响 datafusion 性能的主要因素
+# 结论： datafusion 性能的主要因素
 1. CoalesceBatchExec 带来的额外开销. 参考 TPCH-Query1
 2. 公共表达式提取优化不够:  TPCH-Query1, ClickBench-Query30
 3. 对 `select * from ... limit 10` 这样的查询，查询计划不够优化，导致了大量的数据扫描。 ClickBench-Query24
