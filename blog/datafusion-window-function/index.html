@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>datafusion window function execution | 程序人生</title>
+<meta name="description" content="本文对 datafusion 窗口函数的执行过程进行分析，以更好的理解窗口函数的执行原理">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/datafusion-window-function/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="datafusion window function execution">
+  <meta name="twitter:description" content="本文对 datafusion 窗口函数的执行过程进行分析，以更好的理解窗口函数的执行原理">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="datafusion window function execution">
+  <meta property="og:description" content="本文对 datafusion 窗口函数的执行过程进行分析，以更好的理解窗口函数的执行原理">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/datafusion-window-function/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="datafusion window function execution">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/datafusion-window-function/"
+      },
+      "headline": "datafusion window function execution",
+      "image": ,
+      "datePublished": "2025-05-26",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "datafusion window function execution"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "datafusion window function execution",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文对 datafusion 窗口函数的执行过程进行分析，以更好的理解窗口函数的执行原理"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Datafusion Window Function",
+            "item": "https://wangzaixiang.github.io/blog/datafusion-window-function/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/datafusion-window-function/#api-shi-yong-chuang-kou-han-shu">API: 使用窗口函数</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/datafusion-window-function/#spi-chuang-jian-zi-ding-yi-de-chuang-kou-han-shu">SPI：创建自定义的窗口函数</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/datafusion-window-function/#wu-li-ji-hua-sheng-cheng-xuan-ze-suan-zi-windowexpr-jue-ce-shu">物理计划生成：选择算子、WindowExpr 决策树</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/datafusion-window-function/#suan-zi-windowaggexec-fen-xi">算子: WindowAggExec 分析</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/datafusion-window-function/#suan-zi-boundedwindowaggexec">算子： BoundedWindowAggExec</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/datafusion-window-function/#si-kao">思考</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/datafusion-window-function/#datafusion-wen-zhang-xi-lie">datafusion 文章系列</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>datafusion window function execution</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/datafusion-performance/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted May 26, 2025&nbsp;&hyphen;&nbsp;<strong>9&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/datafusion-hashjoin/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="api-shi-yong-chuang-kou-han-shu">API: 使用窗口函数</h1>
+<p>窗口函数是针对数据分析的一个 SQL 查询扩展，其执行顺序如下图中，
+<img src="https://wangzaixiang.github.io/blog/datafusion-window-function/sql-execute-plan.png" alt="SQL 执行顺序" /></p>
+<p>一般的，窗口函数的语法如下：
+<img src="https://wangzaixiang.github.io/blog/datafusion-window-function/window_expr_grammar.png" alt="window_expr_grammar.png" />
+来源：https://duckdb.org/docs/stable/sql/functions/window_functions</p>
+<p>datafusion 提供了对窗口函数的支持，不过，目前的版本支持程度仍然不如 duckdb，我目前发现的问题是： frame 中目前仅支持 literal expr,
+这限制了基于当前行的 dynamic range 的支持能力，例如，典型的 上年同期年累 这样的计算。</p>
+<p>在 duckdb 中，可以表示为</p>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#96b5b4;">SUM</span><span>( </span><span style="color:#96b5b4;">SUM</span><span>(amount) ) over (</span><span style="color:#b48ead;">order by</span><span> order_date 
+</span><span>  range between to_days( order_date - (date_trunc(&#39;</span><span style="color:#a3be8c;">year</span><span>&#39;, order_date&#39;</span><span style="color:#a3be8c;">year</span><span>&#39;) - interval </span><span style="color:#d08770;">1</span><span> year)) preceding 
+</span><span>  and interval </span><span style="color:#d08770;">1</span><span> year preceding )
+</span></code></pre>
+<p>本文分析的目的之一就是对 datafusion 的窗口函数执行机制进行研究，并评估为其添加上这类能力的可行性。</p>
+<h1 id="spi-chuang-jian-zi-ding-yi-de-chuang-kou-han-shu">SPI：创建自定义的窗口函数</h1>
+<p>datafusion 中支持4种 自定义函数：</p>
+<ul>
+<li>
+<p>udf: scalar 函数</p>
+</li>
+<li>
+<p>udtf: 表函数，如 csv_read 之类的函数</p>
+<ul>
+<li>
+<p>udwf: User Define Window Function：以 partition 为单位的窗口函数</p>
+<p>主要针对非聚合类的窗口函数，参见：</p>
+<ol>
+<li><a href="https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/simple_udwf.rs">simple udwf</a></li>
+<li><a href="https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/advanced_udwf.rs">advanced udwf</a></li>
+</ol>
+<p>see: datafusion/physical-expr/src/window/standard.rs StandardWindowExpr::evaluate(按照这个源代码整理，与代码注释对应不上)</p>
+</li>
+</ul>
+<table><thead><tr><th>[<code>uses_window_frame</code>]</th><th>[<code>supports_bounded_execution</code>]</th><th>[<code>include_rank</code>]</th><th>function_to_implement</th><th>functions</th></tr></thead><tbody>
+<tr><td>true</td><td>*</td><td>*</td><td>[<code>evaluate</code>]</td><td>nth_value</td></tr>
+<tr><td>false (default)</td><td>*</td><td>true</td><td>[<code>evaluate_all_with_rank</code>]</td><td>rank, dense_rank, cume_dist</td></tr>
+<tr><td>false</td><td>*</td><td>false (default)</td><td>[<code>evaluate_all</code>]</td><td></td></tr>
+</tbody></table>
+</li>
+</ul>
+<p>UDWF 窗口函数列表：</p>
+<table><thead><tr><th>category</th><th>functions</th><th>supported</th><th>desc</th><th>uses_window_frame</th><th>supports_bounded_execution</th><th>include_rank</th></tr></thead><tbody>
+<tr><td>ranking</td><td>cume_dist</td><td>df, duckdb</td><td>累积百分比</td><td>X</td><td>X</td><td>true</td></tr>
+<tr><td>ranking</td><td>dense_rank</td><td>df, duckdb</td><td>1,2,2,3 风格的排名</td><td>X</td><td>true</td><td>true</td></tr>
+<tr><td>ranking</td><td>rank</td><td>df, duckdb</td><td>1,2,2,4 风格的排名</td><td>X</td><td>true</td><td>true</td></tr>
+<tr><td>ranking</td><td>ntile(n)</td><td>df, duckdb</td><td>按 n 等分</td><td>X</td><td>X</td><td>X</td></tr>
+<tr><td>ranking</td><td>percent_rank</td><td>df, duckdb</td><td>排名百分比</td><td>X</td><td>X</td><td>true</td></tr>
+<tr><td>ranking</td><td>row_number</td><td>df, duckdb</td><td>行号</td><td>X</td><td>true</td><td>X</td></tr>
+<tr><td>analytical</td><td>first_value(expr)</td><td>df, duckdb</td><td></td><td>X</td><td>X</td><td>X</td></tr>
+<tr><td>analytical</td><td>lag(expr, offset, default)</td><td>df, duckdb</td><td></td><td>X</td><td>true</td><td>X</td></tr>
+<tr><td>analytical</td><td>last_value(expr)</td><td>df, duckdb</td><td></td><td>X</td><td>X</td><td>X</td></tr>
+<tr><td>analytical</td><td>lead(expr, offset, default)</td><td>df, duckdb</td><td></td><td>X</td><td>true</td><td>X</td></tr>
+<tr><td>analytical</td><td>nth_value(expr, n)</td><td>df, duckdb</td><td></td><td>true</td><td>true</td><td>X</td></tr>
+</tbody></table>
+<ul>
+<li>udaf: User Define Aggregate Function
+针对形如 SUM, COUNT 之类的函数，自定义函数参考：<a href="https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/advanced_udaf.rs">advanced udaf</a>
+核心接口是 Accumulator, GroupsAccumulator</li>
+</ul>
+<div class="mermaid">
+    ```mermaid
+classDiagram
+        
+        class WindowUDFImpl {
+            &lt;&lt;trait&gt;&gt;
+            +partition_evaluator(PartitionEvaluatorArgs args) PartitionEvaluator
+        }
+        class PartitionEvaluator {
+                &lt;&lt;trait&gt;&gt;
+                +is_causal(): bool
+                +uses_window_frame(): bool
+                +supports_bounded_execution(): bool
+                +include_rank(): bool
+                +evaluate(&amp;~ArrayRef~ values, &amp;Range~usize~ range): Result&lt;ScalarValue&gt; 
+                +evaluate_all(values:&amp;~ArrayRef~, num_rows:uszie): Result&lt;ArrayRef&gt;
+                +evaluate_all_with_rank(usize num_rows, &amp;[Range~usize~] ranks_in_partition) -&gt; Result&lt;ArrayRef&gt;
+        }
+        WindowUDFImpl .. PartitionEvaluator
+        
+        class AggregateUDFImpl {
+            &lt;&lt;trait&gt;&gt;    
+            +accumulator(AccumulatorArgs args): Result~Box~dyn Accumulator~~
+            +create_groups_accumulator(AccumulatorArgs args): Result&lt;Box&lt;dyn GroupsAccumulator&gt;&gt;
+        }
+        
+        class Accumulator {
+                &lt;&lt;trait&gt;&gt;
+                +update_batch(&amp;[ArrayRef]): Result&lt;()&gt;
+                +retract_batch(&amp;[ArrayRef]): Result&lt;()&gt;
+                +state(): Result&lt;Vec&lt;ScalaValue&gt;&gt;
+                +merge_batch(&amp;[ArrayRef]): Result&lt;()&gt;
+                +evaluate(): Result&lt;ScalaValue&gt;
+        }
+        
+        class GroupsAccumulator {
+            &lt;&lt;trait&gt;&gt;
+            +update_batch(&amp;[ArrayRef], Option&lt;&amp;BooleanArray&gt;, usize): Result&lt;()&gt;
+            +state(EmitTo): Result&lt;ArrayRef&gt;
+            +merge_batch(&amp;[ArrayRef], &amp;[usize], Option&lt;&amp;BooleanArray&gt;, usize): Result&lt;()&gt;
+            +evaluate(EmitTo): Result&lt;ArrayRef&gt;    
+        }
+
+    AggregateUDFImpl .. Accumulator
+    AggregateUDFImpl .. GroupsAccumulator
+        
+```
+</div><div class="mermaid">
+    ```mermaid
+classDiagram
+    class WindowExpr {
+        &lt;&lt;trait&gt;&gt;
+        +evaluate_args(batch: &amp;RecordBatch) Result~Vec&lt;ArrayRef&gt;~
+        +evaluate(batch: &amp;RecordBatch) Result~ArrayRef~
+        +evaluate_stateful(partition_batches: &amp;PartitionBatches, window_agg_state: &amp;mut PartitionWindowAggStates) Result~()~
+    }
+
+    note for AggregateWindowExpr &quot;for user-defined-aggregate-function&quot;
+    class AggregateWindowExpr {
+        &lt;&lt;trait&gt;&gt;
+    }
+
+    note for StandardWindowExpr &quot;for user-defined-window-function&quot;
+    class StandardWindowExpr {
+            &lt;&lt;struct&gt;&gt;
+    }
+
+    class SlidingAggregateWindowExpr {
+            &lt;&lt;struct&gt;&gt;
+    }
+
+    class PlainAggregateWindowExpr {
+            &lt;&lt;struct&gt;&gt;
+    }
+
+    WindowExpr &lt;|-- AggregateWindowExpr
+    AggregateWindowExpr &lt;|-- SlidingAggregateWindowExpr
+    AggregateWindowExpr &lt;|-- PlainAggregateWindowExpr
+    WindowExpr &lt;|-- StandardWindowExpr
+```
+</div><h2 id="wu-li-ji-hua-sheng-cheng-xuan-ze-suan-zi-windowexpr-jue-ce-shu">物理计划生成：选择算子、WindowExpr 决策树</h2>
+<div class="mermaid">
+    ```mermaid
+flowchart TD
+    A[ 1: function type ?] == window function ==&gt; StandardWindowExpr
+    A == aggregate function ==&gt; C[frame start unbounded ?]
+    A2[2: frame end bounded ?]
+    A2 == unbounded following ==&gt; WA[WindowAggExec]
+    A2 == bounded ==&gt; BWA[BoundedWindowAggExec]    
+    C == unbounded preceding ==&gt; plain[PlainAggregateWindowExpr]
+    C == bounded ==&gt; sliding[SlidingAggregateWindowExpr]
+```
+</div>
+<p>具体，可以查看如下的代码实例，通过代码的调试等方式，可以帮助我们理解不同的算子下的执行流程：</p>
+<table><thead><tr><th>function</th><th>operator</th><th>window expr</th><th>demo</th></tr></thead><tbody>
+<tr><td>aggregate</td><td>window agg exec</td><td>plain aggregate</td><td><a href="https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs">test_sum_1</a></td></tr>
+<tr><td>aggregate</td><td>window agg exec</td><td>sliding aggregate</td><td><a href="https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs">test_sum2</a></td></tr>
+<tr><td>aggregate</td><td>bounded window agg exec</td><td>plain aggregate</td><td><a href="https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs">test_sum4</a></td></tr>
+<tr><td>aggregate</td><td>bounded window agg exec</td><td>sliding aggregate</td><td><a href="https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs">test_sum3</a></td></tr>
+</tbody></table>
+<h2 id="suan-zi-windowaggexec-fen-xi">算子: WindowAggExec 分析</h2>
+<p>根据上述分析，WindowAggExec 的 frame 形如：between bounded and unbounded following</p>
+<ol>
+<li>从上游获取 RecordBatch，追加到 self.batches 中，直至全部读取完成，进入到第2步。</li>
+<li>将全部的 RecordBatch 合并为一个 RecordBatch</li>
+<li>在 batch 上求值 sort columns (partition key, maybe + order key)</li>
+<li>按照 partition key 对 batch 进行 partition，由于 batch 已经排序，因此，在batch 中每个分区的数据已经是连续存放的，一个分区的数据接着
+上一个分区的数据。每个分区可以表示为 Range<usize></li>
+<li>foreach partition，调用函数 WindowAggExec::compute_window_aggregates 进行窗口函数求值
+<ol>
+<li>foreach window_expr 调用 window_expr.evaluate(batch) 求值（多个窗口函数可以共享同一个窗口）
+<ul>
+<li>window_expr.evaluate(batch) : single partition, single window_exp
+<ul>
+<li>foreach row in batch <code>AggregateWindowExpr::get_result_column</code>
+<ol>
+<li>计算 当前行的 window range</li>
+<li>window_expr.<code>get_aggregate_result_inside_range</code>: evaluate for single row with a range(window)
+<ul>
+<li>
+<p>PlainAggregateWindowExpr::get_aggregate_result_inside_range: window 0..end end 是递增的</p>
+<p>frame: 0 .. LAST</p>
+<ol>
+<li>对比 last_range，将 shift in rows 调用 accumulator.update_batch</li>
+<li>获取 accumulator.evaluate</li>
+</ol>
+</li>
+<li>
+<p>SlidingAggregateWindowExpr::get_aggregate_result_inside_range:</p>
+<p>frame: <em>bounded</em> .. LAST</p>
+<ol>
+<li>对比 last_range，将 shift out rows 调用 accumulator.retract_batch</li>
+<li>将 shift in rows 调用 accumulator.update_batch</li>
+<li>获取 accumulator.evaluate</li>
+</ol>
+</li>
+<li>
+<p>总之： SlidingAggregateWindowExpr::get_aggregate_result_inside_range 可以覆盖 PlainAggregateWindowExpr::get_aggregate_result_inside_range 的能力。</p>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="suan-zi-boundedwindowaggexec">算子： BoundedWindowAggExec</h2>
+<p>对 frame.end 不是 unbounded following 的窗口类型，datafusion 视为 bounded window，使用 BoundedWindowAggExec 算子来处理该窗口函数的计算。</p>
+<p>根据 frame.start 的不同，会选择不同类型的 WindowExpr:</p>
+<ul>
+<li>对标准的窗口函数（UDWF），使用 StandardWindowExpr + PartitionEvaluator:<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span>  </span><span style="color:#b48ead;">select </span><span style="color:#bf616a;">*</span><span>, rank() over (partition by product_id </span><span style="color:#b48ead;">order by</span><span> order_date) as rank1 </span><span style="color:#b48ead;">from</span><span> t1
+</span></code></pre>
+</li>
+<li>对聚合类窗口函数（UDAF）, frame.start 是 unbounded preceding 的，使用 PlainAggregateWindowExpr + Accumulator<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#b48ead;">select </span><span style="color:#bf616a;">*</span><span>, </span><span style="color:#96b5b4;">sum</span><span>(amount) over (partition by product_id </span><span style="color:#b48ead;">order by</span><span> order_date rows between unbounded preceding and </span><span style="color:#d08770;">1</span><span> following) as amounts1 </span><span style="color:#b48ead;">from</span><span> t1
+</span></code></pre>
+</li>
+<li>对聚合类窗口函数（UDAF）, frame.start 不是 unbounded preceding 的，使用 SlidingAggregateWindowExpr + Accumulator<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#b48ead;">select </span><span style="color:#bf616a;">*</span><span>, </span><span style="color:#96b5b4;">sum</span><span>(amount) over (</span><span style="color:#b48ead;">order by</span><span> order_date range between interval &#39;</span><span style="color:#a3be8c;">1 days</span><span>&#39; preceding and interval &#39;</span><span style="color:#a3be8c;">1 days</span><span>&#39; following) as slide_amounts </span><span style="color:#b48ead;">from</span><span> t1
+</span></code></pre>
+</li>
+</ul>
+<p>执行流程：</p>
+<ol>
+<li>BoundedWindowAggStream 从上游读取 RecordBatch (已按 window order by 进行排序)</li>
+<li>根据 RecordBatch 更新 partition_key -&gt; PartitionBatchState( record_batch )</li>
+<li>调用 BoundedWindowAggStream::compute_aggregates 计算窗口函数
+<ol>
+<li>foreach window_expr, call window_expr.evaluate_stateful (1 window_expr, multi partition)
+<ol>
+<li>foreach partition, call window_expr.get_result_column (1 window_expr, 1 partition)
+<ol>
+<li>foreach row which is not calculated previous
+<ol>
+<li>计算 row 对应的 frame range</li>
+<li>如果 RecordBatch 满足 frame range，则调用 window_expr.get_aggregate_result_inside_range 进行聚合求值
+<ol>
+<li>相比上一行的frame，对移出的行调用 accumulator::retract_batch</li>
+<li>对移入的行调用 accumulator::update_batch</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">struct </span><span>BoundedWindowAggStream {
+</span><span>  </span><span style="color:#bf616a;">window_expr</span><span>: Vec&lt;WindowExprRef&gt;,
+</span><span>  
+</span><span>  </span><span style="color:#bf616a;">input_buffer</span><span>: RecordBatch,
+</span><span>  
+</span><span>  </span><span style="color:#bf616a;">partition_buffers</span><span>:  PartitionBatches,   </span><span style="color:#65737e;">// IndexMap&lt;PartitionKey, PartitionBatchState&gt;
+</span><span>  </span><span style="color:#bf616a;">window_agg_states</span><span>:  Vec&lt;PartitionWindowAggStates&gt;, </span><span style="color:#65737e;">// indexed by window_expr, IndexMap&lt;PartitionKey, WindowState&gt;
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">struct </span><span>PartitionBatchState {
+</span><span>  </span><span style="color:#bf616a;">record_batch</span><span>:  RecordBatch,
+</span><span>  </span><span style="color:#bf616a;">most_recent_row</span><span>: Option&lt;RecordBatch&gt;
+</span><span>  is_end: </span><span style="color:#b48ead;">bool</span><span>,
+</span><span>  </span><span style="color:#bf616a;">n_out_row</span><span>: </span><span style="color:#b48ead;">usize
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">struct </span><span>WindowState {
+</span><span>  </span><span style="color:#bf616a;">state</span><span>: WindowAggState,
+</span><span>  </span><span style="color:#bf616a;">window_fn</span><span>: WindowFn,      </span><span style="color:#65737e;">// 累加器会持有状态，通过 update_batch, retract_batch, merge_batch 更新状态
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">struct </span><span>WindowAggState {
+</span><span>  </span><span style="color:#bf616a;">window_frame_range</span><span>: Range&lt;</span><span style="color:#b48ead;">usize</span><span>&gt;,
+</span><span>  </span><span style="color:#bf616a;">window_frame_ctx</span><span>:  Option&lt;WindowFrameContext&gt;,
+</span><span>  
+</span><span>  </span><span style="color:#bf616a;">last_calculated_index</span><span>: </span><span style="color:#b48ead;">usize</span><span>,
+</span><span>  </span><span style="color:#bf616a;">offset_pruned_rows</span><span>: </span><span style="color:#b48ead;">usize</span><span>,
+</span><span>  
+</span><span>  </span><span style="color:#bf616a;">out_col</span><span>: ArrayRef,
+</span><span>  </span><span style="color:#bf616a;">n_row_result_missing</span><span>: </span><span style="color:#b48ead;">usize</span><span>,
+</span><span>  </span><span style="color:#bf616a;">is_end</span><span>: </span><span style="color:#b48ead;">bool
+</span><span>}
+</span><span>
+</span></code></pre>
+<div class="mermaid">
+    ```mermaid
+classDiagram
+  class BoundedWindowAggStream {
+          &lt;&lt;object&gt;&gt;
+          
+          window_exprs: Vec~WindowExprRef~
+          
+          input_buffer: RecordBatch
+          finished: bool
+          
+  }
+
+  class PartitionBatchState {
+          &lt;&lt;object&gt;&gt;
+          
+          record_batch: RecordBatch
+          most_recent_row: Option&lt;RecordBatch&gt;
+          is_end: bool
+          n_out_row: usize
+  }
+  
+  class WindowState {
+          &lt;&lt;object&gt;&gt;
+          state: WindowAggState
+          window_fn: WindowFn
+  }
+  class WindowAggState {
+          &lt;&lt;object&gt;&gt;
+          window_frmae_range: Range&lt;usize&gt;
+          window_frame_ctx: Option&lt;WindowFrameContext&gt;
+          
+          last_cacluated_index: usize
+          offset_pruned_rows: usize
+          out_col: ArrayRef
+          n_row_result_missing: usize
+          is_end: bool
+  }
+  class WindowFn {
+          &lt;&lt;object&gt;&gt;
+          partition_evaluator: PartitionEvaulator
+          accumulator: Accumulator
+  }      
+        
+        
+
+  BoundedWindowAggStream o-- PartitionBatchState : partition_buffers[PartitionKey]
+  BoundedWindowAggStream o-- WindowState : window_agg_state[window_expr_idx][PartitionKey]
+  
+  WindowState o--  WindowAggState
+  WindowState o--  WindowFn    
+
+```
+</div>
+<p>处理过程：</p>
+<ol>
+<li>无需在读取了全部分区数据后，再进行窗口函数计算，可以在读入 batch 的过程中增量的处理。</li>
+</ol>
+<h1 id="si-kao">思考</h1>
+<ol>
+<li>思考：支持更为灵活的 values between expr and expr ? 虽然不能匹配上述的优化，但在数据量不大的情况下，可以有更大的表现力</li>
+<li>思考：如何高效的支持同期、同期累积等功能？</li>
+<li>思考：WindowAggExec 是否可以转换为 逆序后使用 BoundedWindowAggExec?</li>
+<li>datafusion 窗口函数代码改进思考
+<ul>
+<li>PlainAggregateWindowExpr 与 SlidingAggregateWindowExpr 逻辑相似，评估合并。</li>
+</ul>
+</li>
+</ol>
+<h1 id="datafusion-wen-zhang-xi-lie">datafusion 文章系列</h1>
+<ol>
+<li><a href="https://wangzaixiang.github.io/blog/duck-push-vs-datafusion-pull/">push vs pull</a></li>
+<li><a href="https://wangzaixiang.github.io/blog/datafusion-hashjoin/">datafusion hashjoin executor</a></li>
+<li><a href="https://wangzaixiang.github.io/blog/datafusion-window-function/">datafusion window function executor</a></li>
+<li><a href="https://wangzaixiang.github.io/blog/datafusion-performance/">datafusion performance</a></li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/datafusion-performance/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/datafusion-hashjoin/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>
