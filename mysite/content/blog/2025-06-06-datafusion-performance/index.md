@@ -260,6 +260,119 @@ toc = true
      - 对这个查询，duckdb 处理的关联顺序基本上是错误的，最佳的关联顺序应该是 `(filter(lineitem) X supplier X orders X customer X nation X nation `
      - [ ] 尝试手动编写物理查询计划，来做一个性能对比
      - Coalesce带来了额外的开销。
+## Query 17: subquery duckdb 2.152s : datafusion 7.091s
+   ```sql
+   select	sum(l_extendedprice) / 7.0 as avg_yearly
+   from	lineitem,	part
+   where	p_partkey = l_partkey	and p_brand = 'Brand#23'	and p_container = 'MED BOX'
+     and l_quantity < (	select	0.2 * avg(l_quantity)	from	lineitem	where	l_partkey = p_partkey ) 
+   ```
+   - datafusion
+     ```mermaid
+        flowchart TD
+        A["ProjectionExec<br>---<br>avg_yearly:<br>CAST(sum(l_extendedprice) AS Float64) / 7"]
+        B["AggregateExec<br>---<br>aggr: sum(l_extendedprice)<br>mode: Single"]
+        C["HashJoinExec<br>---<br>on: (p_partkey = l_partkey)<br>5526rows, build: 50ms join: 5ms"]
+        D["HashJoinExec<br>---<br>on: (l_partkey = p_partkey)"<br>61385rows, build: 1.92s, join: 11ms]
+        E["ProjectionExec<br>---<br>exprs:<br>0.2 * avg(l_quantity)<br>l_partkey<br>2m rows, 15ms"]
+        F["AggregateExec<br>---<br>aggr: avg(l_quantity)<br>group_by: l_partkey<br>mode: Single<br>2m rows, 2.553s"]
+        G["DataSourceExec<br>---<br>files: 1<br>format: parquet<br>59.9m rows 1.03s"]
+        H["FilterExec<br>---<br>predicate:<br>p_brand = Brand#23<br>AND<br>p_container = MED BOX<br>2044rows, 11ms"]
+        I["DataSourceExec<br>---<br>files: 1<br>format: parquet<br>predicate applied<br>2m rows, 24.9ms"]
+        J["DataSourceExec<br>---<br>files: 1<br>format: parquet <br>59.9m rows, 500ms"]
+
+        A --> B
+        B --> C
+        C --> D
+        C --> E
+        D --> G
+        D --> H
+        H --> I
+        E --> F
+        F --> J
+     ```
+     - 两个耗时的算子： aggregate 2.553s,  hashjoin: 1.92s(JOIN顺序不忧)
+   - duckdb
+     ```mermaid
+      flowchart TD
+      A1["Total Time: 4.55s"]
+      A2["QUERY"]
+      A3["EXPLAIN_ANALYZE<br>────────────────────<br>0 Rows<br>(0.00s)"]
+      A4["PROJECTION<br>────────────────────<br>avg_yearly<br><br>1 Rows<br>(0.00s)"]
+      A5["UNGROUPED_AGGREGATE<br>────────────────────<br>Aggregates: sum(#0)<br><br>1 Rows<br>(0.00s)"]
+      A6["PROJECTION<br>────────────────────<br>l_extendedprice<br><br>5526 Rows<br>(0.00s)"]
+      A7["PROJECTION<br>────────────────────<br>#2<br><br>5526 Rows<br>(0.00s)"]
+      A8["FILTER<br>────────────────────<br>(CAST(l_quantity AS DOUBLE<br>) < SUBQUERY)<br><br>5526 Rows<br>(0.00s)"]
+      A9["RIGHT_DELIM_JOIN<br>────────────────────<br>Join Type: RIGHT<br><br>Conditions:<br>p_partkey IS NOT DISTINCT<br>FROM p_partkey<br><br>Delim Index: 1<br><br>0 Rows<br>(0.00s)"]
+      B1["HASH_JOIN<br>────────────────────<br>Join Type: INNER<br><br>Conditions:<br>l_partkey = p_partkey<br><br>61385 Rows<br>(0.28s)"]
+      B2["HASH_JOIN<br>────────────────────<br>Join Type: RIGHT<br><br>Conditions:<br>p_partkey IS NOT DISTINCT<br>FROM p_partkey<br><br>61385 Rows<br>(0.00s)"]
+      B3["HASH_GROUP_BY<br>────────────────────<br>Groups: #0<br><br>2044 Rows<br>(0.00s)"]
+      C1["TABLE_SCAN<br>────────────────────<br>Function:<br>READ_PARQUET<br><br>Projections:<br>l_partkey<br>l_quantity<br>l_extendedprice<br><br>Total Files Read: 1<br><br>59905251 Rows<br>(2.20s)"]
+      C2["TABLE_SCAN<br>────────────────────<br>Function:<br>READ_PARQUET<br><br>Projections:<br>p_partkey<br><br>Filters:<br>p_brand='Brand#23'<br>p_container='MED BOX'<br><br>Total Files Read: 1<br><br>2044 Rows<br>(1.17s)"]
+      D2["DUMMY_SCAN<br>────────────────────<br><br>0 Rows<br>(0.00s)"]
+      E1["PROJECTION<br>────────────────────<br>(0.2 * avg(l_quantity))<br>p_partkey<br><br>2044 Rows<br>(0.00s)"]
+      E2["PROJECTION<br>────────────────────<br>__internal_decompress_integral_bigint(#0, 1)<br>#1<br><br>2044 Rows<br>(0.00s)"]
+      E3["HASH_GROUP_BY<br>────────────────────<br>Groups: #0<br>Aggregates: avg(#1)<br><br>2044 Rows<br>(0.00s)"]
+      E4["PROJECTION<br>────────────────────<br>p_partkey<br>l_quantity<br><br>61385 Rows<br>(0.00s)"]
+      E5["PROJECTION<br>────────────────────<br>#0<br>__internal_compress_integral_l_uinteger(#1, 1)<br><br>61385 Rows<br>(0.00s)"]
+      E6["PROJECTION<br>────────────────────<br>l_quantity<br>p_partkey<br><br>61385 Rows<br>(0.00s)"]
+      E7["HASH_JOIN<br>────────────────────<br>Join Type: INNER<br><br>Conditions:<br>l_partkey = p_partkey<br><br>61385 Rows<br>(0.27s)"]
+      F1["TABLE_SCAN<br>────────────────────<br>Function:<br>READ_PARQUET<br><br>Projections:<br>l_partkey<br>l_quantity<br><br>Total Files Read: 1<br><br>59905251 Rows<br>(0.57s)"]
+      F2["DELIM_SCAN<br>────────────────────<br>Delim Index: 1<br><br>0 Rows<br>(0.00s)"]
+
+      A1 --> A2
+      A2 --> A3
+      A3 --> A4
+      A4 --> A5
+      A5 --> A6
+      A6 --> A7
+      A7 --> A8
+      A8 --> A9
+      A9 --> B1
+      A9 --> B2
+      A9 --> B3
+      B1 --> C1
+      B1 --> C2
+
+      B2 --> E1
+      B2 --> D2
+      E1 --> E2
+      E2 --> E3
+      E3 --> E4
+      E4 --> E5
+      E5 --> E6
+      E6 --> E7
+      E7 --> F1
+      E7 --> F2
+     ```
+## Query 18:  duckdb: 3.495s vs datafusion: 9.567s
+```sql
+select	c_name,	c_custkey,	o_orderkey,	o_orderdate,	o_totalprice,	sum(l_quantity)
+from	customer,	orders,	lineitem
+where	
+    o_orderkey in (
+        select	l_orderkey	from	lineitem	group by	l_orderkey having	sum(l_quantity) > 300
+    )	
+    and c_custkey = o_custkey	and o_orderkey = l_orderkey
+group by	c_name,	c_custkey,	o_orderkey,	o_orderdate,	o_totalprice
+order by	o_totalprice desc,	o_orderdate
+```
+- duckdb
+  ```sql
+    let a = (select	l_orderkey	from	lineitem	group by	l_orderkey having	sum(l_quantity) > 300)
+    let b = lineitem inner join(
+                (orders inner join a on orders.o_orderkey = a.o_orderkey) 
+                inner join customers c on o.custkey = c.custkey 
+            )
+  ```
+- datafusion
+  ```sql
+  let a = (select l_orderkey, sum(l_quanitity) from lineitem group by 1 having sum(l_quanitity))
+  let b = (lineitem  inner join (orders inner join customer))
+  b semi join a
+  ```
+  - [ ] BUG: set datafusion.execution.coalesce_batches = false; 执行该SQL 语句会超时
+- 结论：duckdb 对 JOIN 顺序进行了更优的优化，在这个查询中，将具有更好筛选作用的 o_orderkey in subquery 重组顺序后，使得尽早的减少了数据量，将查询大大加速。
 
 后续将对其他 Case 进行性能对比分析。
 
@@ -269,11 +382,14 @@ toc = true
 3. 对 `select * from ... limit 10` 这样的查询，查询计划不够优化，导致了大量的数据扫描。 ClickBench-Query24
 4. 对表达式求值，datafusion 的执行效率远低于 duckdb（~25%）。这个需要进一步核实，对比，在大数据量下对性能有普遍性的影响。
 5. JOIN 的性能
-   - duckdb 生成了更合理的 JOIN 顺序
+   - duckdb 生成了更合理的 JOIN 顺序，包括
+     - 选择数据量更小的边作为 build-side
+     - 重排 JOIN 的顺序，使得具有更好筛选作用的 JOIN 提前执行。 TPCH-18
    - hashjoin 算子的执行效率不如 duckdb。 
    - duckdb 支持 Dynamic Filter PushDown 优化，在一些场景下，可以大幅度提升性能
 
 - [ ] 如果能够提供对表达式求值的性能统计信息，对定位性能会有更好的帮助
+- [ ] datafusion 的 explain analyze 不能以 tree 的方式显示，可阅读性弱于 duckdb，理解耗时需要消耗更多时间。
 
 # datafusion 文章系列
 1. [push vs pull](@/blog/2025-04-08-duck-push-vs-datafusion-pull/index.md)

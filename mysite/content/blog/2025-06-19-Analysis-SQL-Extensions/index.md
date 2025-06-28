@@ -94,6 +94,7 @@ toc = true
    如果 SQL 执行引擎能够高效的执行 scalar subquery, 那么对 OLAP 分析来说，就很有价值了。
    - [SQL 子查询的优化](https://ericfu.me/subquery-optimization/)
    - 文献：[Unnesting Arbitrary Queries](https://ericfu.me/subquery-optimization/)
+   - [4.5 duck-关联子查询(binder->plan->optimize)](https://zhuanlan.zhihu.com/p/21395872495)
    
    - TPCH Query2
      ```sql

@@ -46,6 +46,18 @@ template = "blog/page.html"
      - AVX512 可能会导致 CPU 降频，最终性能提升打了折扣。
 
 # MPP & OLAP
+1. DuckDB 源代码阅读系列文章
+   - [parser](https://zhuanlan.zhihu.com/p/21013348181) 语法分析，生成AST
+   - [binder](https://zhuanlan.zhihu.com/p/21019887715), symbol(table/column) resolver
+   - [logical operators](https://zhuanlan.zhihu.com/p/21027047841) 
+   - [logical plan](https://zhuanlan.zhihu.com/p/21028438818) 
+   - [优化器](https://zhuanlan.zhihu.com/p/21030374102)
+     - [Expression Rewriter, SumRewriterOptimizer, FilterPullup](https://zhuanlan.zhihu.com/p/21100427584)
+     - [FilterPushDown](https://zhuanlan.zhihu.com/p/21179256764)
+     - [Deliminator](https://zhuanlan.zhihu.com/p/21395872495)
+     - [JoinOrder](https://zhuanlan.zhihu.com/p/24105415637)
+     - [优化器总结](https://zhuanlan.zhihu.com/p/21131398911)
+   之前我阅读了 backend 的几个算子源代码，通过这个系列，加深对前端的学习。
 
 # Web & Frontend
 1. How Rolldown Works 
