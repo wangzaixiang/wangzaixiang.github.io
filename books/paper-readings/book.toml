@@ -1,0 +1,12 @@
+[book]
+authors = ["wangzaixiang"]
+language = "zh"
+multilingual = false
+src = "src"
+title = "论文阅读笔记"
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output.html]
+additional-js = ["mermaid.min.js", "mermaid-init.js"]

@@ -76,6 +76,10 @@ content = """<a href="/inside-duckdb/index.html">inside-duckdb</a>"""
 title = "零散学习笔记"
 content = """<a href="/learning/index.html">学习笔记</a>"""
 
+[[extra.books]]
+title = "论文阅读笔记"
+content = """<a href="/paper-readings/index.html">论文阅读</a>"""
+
 #[[extra.list]]
 #title = "Full text search"
 #content = "Search your Doks site with FlexSearch. Easily customize index settings and search options to your liking."

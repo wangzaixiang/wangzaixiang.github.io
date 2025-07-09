@@ -30,5 +30,34 @@ template = "blog/page.html"
 # MPP & OLAP
 
 # Web & Frontend
+1. [Dashboard That Works: A Step-by-Step Guide for Startups in 2025](https://uxplanet.org/dashboard-that-works-a-step-by-step-guide-for-startups-in-2025-1cec1bfe7f9c)
+   
+   A truly functional dashboard: 
+   - GOALS, DATA, PEOPLE, LOGIC
+   - analysts, designers, developers
+   - work for business, not just look pretty
+   - Don't try to make a dashboard for everyone
+   - define use cases and users
+   - identify key metrics
+   - prepare data
+   - sketch a rough layout
+   - get user feedback
+   - write a solid brief for designers
+   - find the right builders
+   - Launch, watch, improve
+2. [fastplotlib](a plotting library built on WGPU)
+   - based on [pygfx](a python-graphics library visualization framework on WGPU)
+   思考：结合 Vega, Pixi, D3 等框架，思考一种描述 visualization 的最佳方式。
+   - Vega：使用 JSON 的方式，缺乏类型化约束，不便于理解、使用，部份的能力过于糖化。
+   - 使用多维空间的方式来理解 visualization
+   - 将数据（关系数据、多维数据）映射到（可视化）多维空间。
+   - 使用 react 的方式来理解 interact
+   - 更好的表示语言？
+     - JSON based
+     - more datatype: date, interval, float, decimal, more via regexp"..." style
+     - JSON constructor:   Color { r g b }
+     - functional constructor: Color(r, g, b), with fixed parameter and named parameter
+     - enum literal. .RED instead of Color.RED
+     - reference spec: global reference, document reference, scoped reference.
 
 # Tools & Libraries
