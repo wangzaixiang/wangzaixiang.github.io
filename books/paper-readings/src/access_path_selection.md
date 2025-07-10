@@ -27,3 +27,14 @@
 `COST = Page_Fetches + W * RSI_Calls`
 - Page Fetches: IO Cost
 - RSI Calls: CPU Cost
+
+## 5. Access path selection for Joins
+1. 2-way join
+   - selection 1: outer(probe side) and inner(build side)
+   - selection 2: join method (现代的数据库还有很多的方式，比如 hash-join 就是最常用的方法)
+     - nested loops
+     - merging scan
+2. N-way join is a recur 2-way join
+   - paths: 最多 `N!` 种可能性
+3. optimization
+   - 

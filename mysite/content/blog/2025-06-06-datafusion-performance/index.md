@@ -376,6 +376,9 @@ order by	o_totalprice desc,	o_orderdate
 
 后续将对其他 Case 进行性能对比分析。
 
+> 1. datafusion explain format = tree 时，HashJoin 按照 build-side, probe-side 的左右顺序。
+> 2. datafusion explain format = indent 时，HashJoin 按着 build-side, probe-side 的上下顺序
+
 # 结论： datafusion 性能的主要因素
 1. CoalesceBatchExec 带来的额外开销. 参考 TPCH-Query1
 2. 公共表达式提取优化不够:  TPCH-Query1, ClickBench-Query30

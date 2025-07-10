@@ -59,5 +59,7 @@ template = "blog/page.html"
      - functional constructor: Color(r, g, b), with fixed parameter and named parameter
      - enum literal. .RED instead of Color.RED
      - reference spec: global reference, document reference, scoped reference.
+3. [AntV G2](https://g2.antv.antgroup.com/manual/quick-start)
+   粗览一下文档和示例，G2 的概念与 vega 时非常相似的，提供2种 API: 命令式 和 DSL 式。
 
 # Tools & Libraries
