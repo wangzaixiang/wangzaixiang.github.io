@@ -279,6 +279,7 @@ toc = true
      and l_quantity < (	select	0.2 * avg(l_quantity)	from	lineitem	where	l_partkey = p_partkey ) 
    ```
    - datafusion
+     {% mermaid() %}
      ```mermaid
         flowchart TD
         A["ProjectionExec<br>---<br>avg_yearly:<br>CAST(sum(l_extendedprice) AS Float64) / 7"]
@@ -302,8 +303,10 @@ toc = true
         E --> F
         F --> J
      ```
+     {% end %}
      - 两个耗时的算子： aggregate 2.553s,  hashjoin: 1.92s(JOIN顺序不忧)
    - duckdb
+     {% mermaid() %}
      ```mermaid
       flowchart TD
       A1["Total Time: 4.55s"]
@@ -356,6 +359,7 @@ toc = true
       E7 --> F1
       E7 --> F2
      ```
+     {% end %}
 ## Query 18:  duckdb: 3.495s vs datafusion: 9.567s
 ```sql
 select	c_name,	c_custkey,	o_orderkey,	o_orderdate,	o_totalprice,	sum(l_quantity)
