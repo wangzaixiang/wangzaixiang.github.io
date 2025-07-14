@@ -236,6 +236,7 @@ toc = true
    ```
    - datafusion
      - Join Order: 
+       {% mermaid() %}
        ```mermaid
        flowchart TD
         S[supplier\n100K] -->|build| j1[Join\n18.2m]
@@ -245,6 +246,7 @@ toc = true
         N1[nation] --> f2[Filter\n2] -->|input| j4 -->|build| j5[Join\n58k]
         N2[nation] --> f3[Filter\n2] -->|input| j5 
        ```
+       {% end %}
        参考这个图：基本上，datafusion 选择了几乎最差的 join-path。
      - DataSourceExec: lineitem, output_rows: 59,986,052, time_elapsed_processing: 1.21s
      - FilterExec lineitem, output_rows: 18,230,325, elapsed_compute: 151.385ms
