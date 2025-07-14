@@ -26,6 +26,9 @@ template = "blog/page.html"
      -  Enabling -Zshare-generics got us to 29.1s (-10%)
      -  And switching away from alpine got us to 9.1s (-69%)
    - [Leaktracer: A Rust allocator to trace memory allocations](https://blog.veeso.dev/blog/en/leaktracer-a-rust-allocator-to-trace-memory-allocations/)
+2. zig
+   - [zig's new async io](https://kristoff.it/blog/zig-new-async-io/)
+   - [What is Zig's “Colorblind” Async/Await?](https://kristoff.it/blog/zig-colorblind-async-await/)
 
 # MPP & OLAP
 

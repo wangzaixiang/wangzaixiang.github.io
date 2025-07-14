@@ -236,7 +236,16 @@ toc = true
    ```
    - datafusion
      - Join Order: 
-       `nation X (nation X (customer X (orders X (filter(lineitem) X supplier))))`
+       ```mermaid
+       flowchart TD
+        S[supplier\n100K] -->|build| j1[Join\n18.2m]
+        L[lineitem\n60m] --> f1[Filter\n18.2m] -->|input| j1 -->|build| j2[Join\n18.2m]
+        O[orders\n15m] -->|input| j2 -->|build| j3[Join \n18.2m]
+        C[customer\n1.5m] -->|input| j3 -->|build| j4[Join \n1.5m]
+        N1[nation] --> f2[Filter\n2] -->|input| j4 -->|build| j5[Join\n58k]
+        N2[nation] --> f3[Filter\n2] -->|input| j5 
+       ```
+       参考这个图：基本上，datafusion 选择了几乎最差的 join-path。
      - DataSourceExec: lineitem, output_rows: 59,986,052, time_elapsed_processing: 1.21s
      - FilterExec lineitem, output_rows: 18,230,325, elapsed_compute: 151.385ms
      - CoalesceBatchExec: lineitem, elapsed_compute:28.304ms
