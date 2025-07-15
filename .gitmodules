@@ -1,0 +1,3 @@
+[submodule "private-notebook"]
+	path = private-notebook
+	url = https://github.com/wangzaixiang/private-notebook.git
