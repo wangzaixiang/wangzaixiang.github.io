@@ -65,4 +65,11 @@ template = "blog/page.html"
 3. [AntV G2](https://g2.antv.antgroup.com/manual/quick-start)
    粗览一下文档和示例，G2 的概念与 vega 时非常相似的，提供2种 API: 命令式 和 DSL 式。
 
-# Tools & Libraries
+# LLM & Agents
+1. [LLM Powered Autonomous Agents](https://lilianweng.github.io/posts/2023-06-23-agent/)
+   ![img_2.png](img_2.png)
+2. AutoGPT
+3. AnyTool
+4. HuggingGPT
+5. Understanding the planning of LLM agents: A survey
+6. https://github.com/AntonOsika/gpt-engineer
