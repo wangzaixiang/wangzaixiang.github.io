@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>LLVM 学习系列一：初读 LLVM-IR 示例代码 | 程序人生</title>
+<meta name="description" content="LLVM 学习笔记">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/learning-llvm/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="LLVM 学习系列一：初读 LLVM-IR 示例代码">
+  <meta name="twitter:description" content="LLVM 学习笔记">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="LLVM 学习系列一：初读 LLVM-IR 示例代码">
+  <meta property="og:description" content="LLVM 学习笔记">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/learning-llvm/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="LLVM 学习系列一：初读 LLVM-IR 示例代码">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/learning-llvm/"
+      },
+      "headline": "LLVM 学习系列一：初读 LLVM-IR 示例代码",
+      "image": ,
+      "datePublished": "2024-10-06",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "LLVM 学习系列一：初读 LLVM-IR 示例代码"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "LLVM 学习系列一：初读 LLVM-IR 示例代码",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "LLVM 学习笔记"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Learning Llvm",
+            "item": "https://wangzaixiang.github.io/blog/learning-llvm/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/learning-llvm/#why-learn-llvm">Why learn LLVM?</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/learning-llvm/#steps-to-learn-llvm">Steps to learn LLVM</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/learning-llvm/#comments-on-kaleidoscope-chapter-4-jit">Comments on Kaleidoscope Chapter 4: JIT</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/learning-llvm/#gong-ju-su-cha">工具速查</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>LLVM 学习系列一：初读 LLVM-IR 示例代码</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/complexity/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted October  6, 2024&nbsp;&hyphen;&nbsp;<strong>10&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/how-portable-simd-works/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="why-learn-llvm">Why learn LLVM?</h1>
+<p>在阅读 duckdb 的源代码，对 duckdb 执行向量计算的方式有初步的了解之后，思考如何在 OLAP 引擎中高效的进行向量计算，感觉引入 JIT 会是一个更佳
+的选择。</p>
+<p>尝试阅读 x86 的 SIMD 汇编代码，感觉是非常困难的，SIMD 的汇编指令非常复杂，可读性很差，而对应编译生成的 LLVM-IR 则可读性、可理解性高了很多，
+基本上，对照 LLVM-IR 文档，一遍下来就可以理解其含义。再考虑到跨 CPU 体系的兼容支持，LLVM-IR 无疑是一个更高level的，更容易理解的，同时也有
+更好的可移植性的中间表示。</p>
+<h1 id="steps-to-learn-llvm">Steps to learn LLVM</h1>
+<ol>
+<li>
+<p>初读 LLVM-IR 示例代码</p>
+<p>自己动手编写一段 Rust 代码，然后编译生成 LLVM-IR，再对照 LLVM-IR 文档，逐一阅读 IR 代码，相比直接阅读 IR 文档来说，是一个很好的场景化
+学习方式，对 IR 有了一些初步的了解后，后续再系统的学习 LLVM-IR 的知识，就显得没那么枯燥了。</p>
+<ul>
+<li>Rust 源代码<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">select</span><span>(</span><span style="color:#bf616a;">v1</span><span>: &amp;[</span><span style="color:#b48ead;">i32</span><span>], </span><span style="color:#bf616a;">v2</span><span>: &amp;[</span><span style="color:#b48ead;">i32</span><span>], </span><span style="color:#bf616a;">result</span><span>: &amp;</span><span style="color:#b48ead;">mut</span><span> [</span><span style="color:#b48ead;">bool</span><span>]) {
+</span><span>    assert!(v1.</span><span style="color:#96b5b4;">len</span><span>() == v2.</span><span style="color:#96b5b4;">len</span><span>() &amp;&amp; v1.</span><span style="color:#96b5b4;">len</span><span>() == result.</span><span style="color:#96b5b4;">len</span><span>());
+</span><span>    </span><span style="color:#b48ead;">for</span><span> i in </span><span style="color:#d08770;">0</span><span>..v1.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">if</span><span> v1[i] &gt; v2[i] {
+</span><span>            result[i] = </span><span style="color:#d08770;">true
+</span><span>        } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>            result[i] = </span><span style="color:#d08770;">false
+</span><span>        }
+</span><span>    }
+</span><span>}
+</span></code></pre>
+</li>
+<li>LLVM-IR 代码<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>; l_asm::demo1::select
+</span><span>; Function Attrs: noinline uwtable
+</span><span>define internal fastcc void @_ZN5l_asm5demo16select17h43db37ec056aed21E(
+</span><span>    ptr noalias nocapture noundef nonnull readonly align 4 %v1.0, i64 noundef %v1.1,
+</span><span>    ptr noalias nocapture noundef nonnull readonly align 4 %v2.0, i64 noundef %v2.1,
+</span><span>    ptr noalias nocapture noundef nonnull writeonly align 1 %result.0, i64 noundef %result.1) unnamed_addr #0 {
+</span><span>start:
+</span><span>  %_4 = icmp eq i64 %v1.1, %v2.1
+</span><span>  %_7 = icmp eq i64 %v1.1, %result.1
+</span><span>  %or.cond = and i1 %_4, %_7  -- i1: bit
+</span><span>  br i1 %or.cond, label %bb5.preheader.split, label %bb4  -- br type iftrue ifalse
+</span><span>
+</span><span>bb5.preheader.split:                              ; preds = %start
+</span><span>  %_218.not = icmp eq i64 %v1.1, 0
+</span><span>  br i1 %_218.not, label %bb15, label %bb13.preheader
+</span><span>
+</span><span>bb13.preheader:                                   ; preds = %bb5.preheader.split
+</span><span>  %min.iters.check = icmp ult i64 %v1.1, 32       -- unsigned less than
+</span><span>  br i1 %min.iters.check, label %bb13.preheader17, label %vector.ph
+</span><span>
+</span><span>vector.ph:                                        ; preds = %bb13.preheader
+</span><span>  %n.vec = and i64 %v1.1, -32
+</span><span>  br label %vector.body
+</span><span>
+</span><span>vector.body:                                      ; preds = %vector.body, %vector.ph
+</span><span>  %index = phi i64 [ 0, %vector.ph ], [ %index.next, %vector.body ]  -- TODO? what is phi
+</span><span>  %0 = getelementptr inbounds [0 x i32], ptr %v1.0, i64 0, i64 %index  -- %0 = %v1.0
+</span><span>  %1 = getelementptr inbounds i32, ptr %0, i64 8                       -- %1 = %0 + 32byte
+</span><span>  %2 = getelementptr inbounds i32, ptr %0, i64 16
+</span><span>  %3 = getelementptr inbounds i32, ptr %0, i64 24
+</span><span>  %wide.load = load &lt;8 x i32&gt;, ptr %0, align 4                          -- 8x32 from v1
+</span><span>  %wide.load10 = load &lt;8 x i32&gt;, ptr %1, align 4
+</span><span>  %wide.load11 = load &lt;8 x i32&gt;, ptr %2, align 4
+</span><span>  %wide.load12 = load &lt;8 x i32&gt;, ptr %3, align 4
+</span><span>  
+</span><span>  %4 = getelementptr inbounds [0 x i32], ptr %v2.0, i64 0, i64 %index
+</span><span>  %5 = getelementptr inbounds i32, ptr %4, i64 8
+</span><span>  %6 = getelementptr inbounds i32, ptr %4, i64 16
+</span><span>  %7 = getelementptr inbounds i32, ptr %4, i64 24
+</span><span>  %wide.load13 = load &lt;8 x i32&gt;, ptr %4, align 4                        -- 8x32 from v1
+</span><span>  %wide.load14 = load &lt;8 x i32&gt;, ptr %5, align 4
+</span><span>  %wide.load15 = load &lt;8 x i32&gt;, ptr %6, align 4
+</span><span>  %wide.load16 = load &lt;8 x i32&gt;, ptr %7, align 4
+</span><span>  
+</span><span>  %8 = icmp sgt &lt;8 x i32&gt; %wide.load, %wide.load13                   -- signed greater than
+</span><span>  %9 = icmp sgt &lt;8 x i32&gt; %wide.load10, %wide.load14
+</span><span>  %10 = icmp sgt &lt;8 x i32&gt; %wide.load11, %wide.load15
+</span><span>  %11 = icmp sgt &lt;8 x i32&gt; %wide.load12, %wide.load16
+</span><span>  
+</span><span>  %12 = zext &lt;8 x i1&gt; %8 to &lt;8 x i8&gt;                                 -- zero extend 8x1 to 8x8
+</span><span>  %13 = zext &lt;8 x i1&gt; %9 to &lt;8 x i8&gt;
+</span><span>  %14 = zext &lt;8 x i1&gt; %10 to &lt;8 x i8&gt;
+</span><span>  %15 = zext &lt;8 x i1&gt; %11 to &lt;8 x i8&gt;
+</span><span>  
+</span><span>  %16 = getelementptr inbounds [0 x i8], ptr %result.0, i64 0, i64 %index
+</span><span>  %17 = getelementptr inbounds i8, ptr %16, i64 8
+</span><span>  %18 = getelementptr inbounds i8, ptr %16, i64 16
+</span><span>  %19 = getelementptr inbounds i8, ptr %16, i64 24
+</span><span>  
+</span><span>  store &lt;8 x i8&gt; %12, ptr %16, align 1                               -- store 8x8 to result
+</span><span>  store &lt;8 x i8&gt; %13, ptr %17, align 1
+</span><span>  store &lt;8 x i8&gt; %14, ptr %18, align 1
+</span><span>  store &lt;8 x i8&gt; %15, ptr %19, align 1
+</span><span>  
+</span><span>  %index.next = add nuw i64 %index, 32
+</span><span>  %20 = icmp eq i64 %index.next, %n.vec
+</span><span>  br i1 %20, label %middle.block, label %vector.body, !llvm.loop !17  -- TODO what&#39;s !llvm.loop !17
+</span><span>
+</span><span>middle.block:                                     ; preds = %vector.body
+</span><span>  %cmp.n = icmp eq i64 %n.vec, %v1.1
+</span><span>  br i1 %cmp.n, label %bb15, label %bb13.preheader17
+</span><span>
+</span><span>bb13.preheader17:                                 ; preds = %bb13.preheader, %middle.block
+</span><span>  %iter.sroa.0.09.ph = phi i64 [ 0, %bb13.preheader ], [ %n.vec, %middle.block ]
+</span><span>  br label %bb13
+</span><span>
+</span><span>bb4:                                              ; preds = %start
+</span><span>; call core::panicking::panic
+</span><span>  tail call void @_ZN4core9panicking5panic17h2a3e12572053020cE(ptr noalias noundef nonnull readonly align 1 @alloc_882a6b32f40210455571ae125dfbea95, i64 noundef 66, ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_649ca88820fbe63b563e38f24e967ee7) #12
+</span><span>  unreachable
+</span><span>
+</span><span>bb15:                                             ; preds = %bb13, %middle.block, %bb5.preheader.split
+</span><span>  ret void
+</span><span>
+</span><span>bb13:                                             ; preds = %bb13.preheader17, %bb13
+</span><span>  %iter.sroa.0.09 = phi i64 [ %_0.i, %bb13 ], [ %iter.sroa.0.09.ph, %bb13.preheader17 ]
+</span><span>  %_0.i = add nuw i64 %iter.sroa.0.09, 1
+</span><span>  %21 = getelementptr inbounds [0 x i32], ptr %v1.0, i64 0, i64 %iter.sroa.0.09
+</span><span>  %_13 = load i32, ptr %21, align 4, !noundef !4
+</span><span>  %22 = getelementptr inbounds [0 x i32], ptr %v2.0, i64 0, i64 %iter.sroa.0.09
+</span><span>  %_15 = load i32, ptr %22, align 4, !noundef !4
+</span><span>  %_12 = icmp sgt i32 %_13, %_15
+</span><span>  %spec.select = zext i1 %_12 to i8
+</span><span>  %23 = getelementptr inbounds [0 x i8], ptr %result.0, i64 0, i64 %iter.sroa.0.09
+</span><span>  store i8 %spec.select, ptr %23, align 1
+</span><span>  %exitcond.not = icmp eq i64 %_0.i, %v1.1
+</span><span>  br i1 %exitcond.not, label %bb15, label %bb13, !llvm.loop !20
+</span><span>}
+</span></code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>生成 LLVM-IR （这里的 ll 代码是从 LLVM 官方的 Kaleidoscope Chapter 3 生成的，是一个很简单版的 ll 源文件了）</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span> ; file a1.ll
+</span><span> ; ModuleID = &#39;my cool jit&#39;
+</span><span> source_filename = &quot;my cool jit&quot;
+</span><span>
+</span><span> define double @foo(double %a, double %b) {
+</span><span>     entry:
+</span><span>     %multmp = fmul double %a, %a
+</span><span>     %multmp1 = fmul double 2.000000e+00, %a
+</span><span>     %multmp2 = fmul double %multmp1, %b
+</span><span>     %addtmp = fadd double %multmp, %multmp2
+</span><span>     %multmp3 = fmul double %b, %b
+</span><span>     %addtmp4 = fadd double %addtmp, %multmp3
+</span><span>     ret double %addtmp4
+</span><span> }
+</span><span>
+</span><span> declare double @cos(double)
+</span></code></pre>
+</li>
+<li>
+<p>将上述代码编译为可执行代码。</p>
+<ol>
+<li>编写一个 main 函数，调用 foo 函数<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span>  </span><span style="color:#65737e;">// file a0.c
+</span><span>  </span><span style="color:#b48ead;"># include </span><span>&lt;</span><span style="color:#a3be8c;">stdio.h</span><span>&gt;
+</span><span>
+</span><span>  </span><span style="color:#b48ead;">extern double </span><span style="color:#8fa1b3;">foo</span><span>(</span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">a</span><span>, </span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">b</span><span>);
+</span><span>
+</span><span>  </span><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">main</span><span>(){
+</span><span>  </span><span style="color:#b48ead;">double</span><span> r = </span><span style="color:#bf616a;">foo</span><span>(</span><span style="color:#d08770;">1.0</span><span>, </span><span style="color:#d08770;">2.0</span><span>);
+</span><span>  </span><span style="color:#96b5b4;">printf</span><span>(&quot;</span><span style="color:#a3be8c;">foo(1.0,2.0) = </span><span style="color:#d08770;">%lf</span><span>&quot;, r);
+</span><span>  }
+</span></code></pre>
+</li>
+<li>编译、执行<pre data-lang="shell" style="background-color:#2b303b;color:#c0c5ce;" class="language-shell "><code class="language-shell" data-lang="shell"><span>llc a1.ll -o a1.s
+</span><span>gcc -o a0 a0.c a1.s
+</span><span>./a0   # foo(1.0,2.0) = 9.000000
+</span></code></pre>
+</li>
+</ol>
+</li>
+<li>
+<p>JIT 方式</p>
+<p>本质上，JIT 执行方式与步骤3 的方式是一样的，只是 JIT 方式在运行时，编译生成的机器码，是在内存中，并 mmap 到可执行内存区域，然后直接执行。
+当然，需要处理的是一些符号连接，包括获取 生成的函数地址，也包括调用宿主环境提供的函数等。</p>
+</li>
+</ol>
+<h1 id="comments-on-kaleidoscope-chapter-4-jit">Comments on Kaleidoscope Chapter 4: JIT</h1>
+<ul>
+<li>LLVMContext:  an important class for using LLVM in a threaded context. owns core "global" data.</li>
+<li>Module: 对应于单个 ll 文件，可以包含全局变量、函数定义等。</li>
+<li>KaleidoscopeJIT： 详细的 CRC 有待整理。
+<ul>
+<li>RTDyldObjectLinkingLayer</li>
+<li>IRCompileLayer:</li>
+<li>JITDylib</li>
+<li>ResourceTracer?</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>parser =&gt; AST</li>
+<li>AST =&gt; IR</li>
+<li>IR =&gt; JIT
+<ul>
+<li>FunctionAST <code>def foo(x) x + 1</code> =&gt; IR <code>Function</code> =&gt; JIT.addModule</li>
+<li>在 Ch4 中，每个函数定义都会生成一个新的 Module，然后通过 JIT.addModule 加载到 JIT 中。这是 REPL 模式的一个选择。</li>
+<li>函数调用时，<code>foo(x)</code> 首先在当前 Module 中查找 foo (例如递归调用)，如果没有找到，则在全局的 FunctionProtos 中查找，
+此时，会在当前模块中生成一个 <code>extern</code> 函数申明。JIT 模块会负责 link。</li>
+<li>JIT 的核心接口是 addModule, 相当于 link 一个模块。</li>
+<li>JIT 可以通过 ResourceTracker 来删除部份模块，对 REPL 来说，top-level expr 会作为一个匿名模块，调用后就可以被清除掉。</li>
+<li>JIT 会处理 link: 首先从当前加载的所有模块中，自后向前搜索名字，如果没有找到，则，通过 dlsym("foo") 来查找。</li>
+<li>JIT 提供 <code>lookup(name)</code> 方法返回函数地址，可以在外部直接调用（前提是你知道如何通过 ABI 调用）</li>
+</ul>
+</li>
+</ol>
+<h1 id="gong-ju-su-cha">工具速查</h1>
+<ul>
+<li>LLVM 工具
+<ul>
+<li>llc : .ll to .s, .bc to .s</li>
+<li>lli : run .ll, .bc</li>
+<li>llvm-as: .ll to .bc</li>
+<li>llvm-dis : .bc to .ll</li>
+<li>as:  .s to .o</li>
+<li>ld: link .o to .out</li>
+<li>cc -v 可以查看完整的编译过程，每一个编译阶段的命令行。</li>
+</ul>
+</li>
+<li>Rust 编译相关
+<ol>
+<li>使用 <code>cargo rustc --target x86_64-apple-darwin --release -- --emit asm -C llvm-args=-x86-asm-syntax=intel</code> 来生成汇编代码。
+生成的汇编代码，可以在 <code>target/x86_64-apple-darwin/release/deps/</code> 目录下找到。</li>
+<li>使用选项 -C target-cpu=native 来生成针对当前 CPU 的优化代码。<code>cargo rustc --target x86_64-apple-darwin --release -- -C target-cpu=native --emit asm</code></li>
+<li>使用选项 -C target-feature=+avx2 来生成针对 AVX2 指令集的优化代码。</li>
+<li>cargo -vv 可以查看详细的执行命令行参数。</li>
+</ol>
+</li>
+<li>系列链接
+<ol>
+<li><a href="https://wangzaixiang.github.io/blog/learning-llvm/">LLVM 学习系列一：初读 LLVM-IR 示例代码</a></li>
+<li><a href="https://wangzaixiang.github.io/blog/learning-llvm-2/">LLVM 学习系列二：从一段简单的C代码来学习LLVM-IR</a></li>
+</ol>
+</li>
+</ul>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/complexity/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/how-portable-simd-works/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>
