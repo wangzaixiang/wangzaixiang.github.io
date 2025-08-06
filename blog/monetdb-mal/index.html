@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>MonetDB MAL 探究 | 程序人生</title>
+<meta name="description" content="从一些简单的案例来理解 MonetDB 的 MAL，并思考建立向量演算体系的可能性">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/monetdb-mal/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="MonetDB MAL 探究">
+  <meta name="twitter:description" content="从一些简单的案例来理解 MonetDB 的 MAL，并思考建立向量演算体系的可能性">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="MonetDB MAL 探究">
+  <meta property="og:description" content="从一些简单的案例来理解 MonetDB 的 MAL，并思考建立向量演算体系的可能性">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/monetdb-mal/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="MonetDB MAL 探究">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/monetdb-mal/"
+      },
+      "headline": "MonetDB MAL 探究",
+      "image": ,
+      "datePublished": "2024-08-08T12:00:00+00:00",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "MonetDB MAL 探究"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "MonetDB MAL 探究",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "从一些简单的案例来理解 MonetDB 的 MAL，并思考建立向量演算体系的可能性"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Monetdb Mal",
+            "item": "https://wangzaixiang.github.io/blog/monetdb-mal/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/monetdb-mal/#zhun-bei-gong-zuo">准备工作</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/monetdb-mal/#can-kao-zi-liao">参考资料</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/monetdb-mal/#jian-dan-an-li">简单案例</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/monetdb-mal/#group-by-an-li">group by 案例</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/monetdb-mal/#chuang-kou-han-shu-an-li">窗口函数案例</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/monetdb-mal/#join-an-li">join 案例</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/monetdb-mal/#shi-yong-yi-ge-il-lai-zhi-xing-sql-you-shen-me-you-dian">使用一个 IL 来执行 SQL 有什么优点？</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/monetdb-mal/#si-kao-1-yin-ru-s-expression-de-il">思考1: 引入 S-Expression 的 IL</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/monetdb-mal/#si-kao-2-yin-ru-yi-ge-geng-jia-tong-yong-de-xiang-liang-hua-yan-suan-ti-xi">思考2: 引入一个更加通用的向量化演算体系。</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>MonetDB MAL 探究</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/trying-wgpu/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted August  8, 2024 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>14&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/polars-notebook/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>MonetDB 是一个基于列存的 OLAP 数据库引擎，最近看到的很多 OLAP 引擎，包括 <a href="https://duckdb.org">DuckDB</a>、<a href="https://pola.rs">Polars</a>
+都引用了MonetDB的研究论文，这说明了 MonetDB 在 OLAP 领域的权威地位，我对 MonetDB 的实现原理也很感兴趣，本文尝试对 MAL 做一个初步的探究。</p>
+<p>MonetDB 引入了一个 MAL 的组件（Monet Assembly Language），即将SQL语言首先编译成为一种中间语言（IL)，然后再执行这个IL，这与 sqlite3
+是非常相似的。在 SQLite3中，这个IL 又成为 bytecode，相关资料可以参考：<a href="https://sqlite.org/whybytecode.html">为什么SQLite使用 Bytecode</a>。
+而在 MonetDB 中，则称之为 MAL。</p>
+<p>本文并不对 MAL 的内部实现进行深度分析，而是尝试通过一些简单的案例，来理解最终的 mal 是什么样子，是如何对应到 SQL 语句的？以终为始，如果能读懂mal
+代码，则后续可以进一步理解 MonetDB 的其他组件。</p>
+<h1 id="zhun-bei-gong-zuo">准备工作</h1>
+<p>首先参考 <a href="https://www.monetdb.org/documentation-Dec2023/user-guide/tutorials/voc-tutorial/">Tutorial</a> 在本地搭建好环境和测试数据库。</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">$</span><span> brew install monetdb
+</span><span>
+</span><span style="color:#bf616a;">$</span><span> monetdbd create /path/to/mydbfarm  -- 初始化一个数据库实例目录
+</span><span style="color:#bf616a;">$</span><span> monetdbd start /path/to/mydbfarm   -- 启动该实例
+</span><span style="color:#bf616a;">$</span><span> monetdb create voc                 -- 创建一个数据库，处在维护模式
+</span><span style="color:#bf616a;">$</span><span> monetdb release voc                -- 将数据库切换到可用模式
+</span><span>
+</span><span style="color:#bf616a;">$</span><span> wget https://dev.monetdb.org/Assets/VOC/voc_dump.zip -- 获取到示例数据库的数据脚本
+</span><span style="color:#bf616a;">$</span><span> unzip</span><span style="color:#bf616a;"> -p</span><span> voc_dump.zip voc_dump.sql | </span><span style="color:#bf616a;">mclient -u</span><span> voc</span><span style="color:#bf616a;"> -d</span><span> voc  -- 执行脚本，初始化示例数据库
+</span></code></pre>
+<h1 id="can-kao-zi-liao">参考资料</h1>
+<ul>
+<li>BAT 相关论文 <a href="https://www.researchgate.net/publication/3735086_Flattening_an_object_algebra_to_provide_performance">Flattening an object algebra to provide performance
+</a></li>
+</ul>
+<h1 id="jian-dan-an-li">简单案例</h1>
+<p>我们先来阅读一条最简单的 SQL 语句的 MAL。</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">$</span><span> mclient</span><span style="color:#bf616a;"> -u</span><span> voc</span><span style="color:#bf616a;"> -d</span><span> voc
+</span><span style="color:#bf616a;">sql</span><span>&gt; explain select * from invoices where chamber = &#39;</span><span style="color:#a3be8c;">A</span><span>&#39;;
+</span><span>
+</span><span style="color:#bf616a;">+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+</span><span>| </span><span style="color:#bf616a;">mal                                                                                                                                                                     </span><span>|
+</span><span>+=</span><span style="color:#a3be8c;">========================================================================================================================================================================+
+</span><span>| </span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">user.main</span><span>():void;                                                                                                                                              |
+</span><span>|     X_1:void := querylog.define(&quot;</span><span style="color:#a3be8c;">explain select * from invoices where chamber = &#39;A&#39;;</span><span>&quot;</span><span style="color:#bf616a;">:str, </span><span>&quot;</span><span style="color:#a3be8c;">default_pipe</span><span>&quot;:str, 36:int);                                                 |
+</span><span>| </span><span style="color:#bf616a;">barrier</span><span> X_121:bit := language.dataflow();                                                                                                                               |
+</span><span>|     </span><span style="color:#bf616a;">X_4:int</span><span> := sql.mvc();                                                                                                                                               |
+</span><span>|     </span><span style="color:#bf616a;">C_5:bat[:oid]</span><span> := sql.tid(X_4:int, &quot;</span><span style="color:#a3be8c;">sys</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">invoices</span><span>&quot;:str);                                                                                                       |
+</span><span>|     </span><span style="color:#bf616a;">X_8:bat[:int]</span><span> := sql.bind(X_4:int, &quot;</span><span style="color:#a3be8c;">sys</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">number</span><span>&quot;:str, 0:int);                                                                                 |
+</span><span>|     </span><span style="color:#bf616a;">X_15:bat[:str]</span><span> := sql.bind(X_4:int, &quot;</span><span style="color:#a3be8c;">sys</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">number_sup</span><span>&quot;:str, 0:int);                                                                            |
+</span><span>|     </span><span style="color:#bf616a;">X_20:bat[:int]</span><span> := sql.bind(X_4:int, &quot;</span><span style="color:#a3be8c;">sys</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">trip</span><span>&quot;:str, 0:int);                                                                                  |
+</span><span>|     </span><span style="color:#bf616a;">X_27:bat[:str]</span><span> := sql.bind(X_4:int, &quot;</span><span style="color:#a3be8c;">sys</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">trip_sup</span><span>&quot;:str, 0:int);                                                                              |
+</span><span>|     </span><span style="color:#bf616a;">X_34:bat[:int]</span><span> := sql.bind(X_4:int, &quot;</span><span style="color:#a3be8c;">sys</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">invoice</span><span>&quot;:str, 0:int);                                                                               |
+</span><span>|     </span><span style="color:#bf616a;">X_39:bat[:str]</span><span> := sql.bind(X_4:int, &quot;</span><span style="color:#a3be8c;">sys</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">chamber</span><span>&quot;:str, 0:int);                                                                               |
+</span><span>|     </span><span style="color:#bf616a;">C_48:bat[:oid]</span><span> := algebra.thetaselect(X_39:bat</span><span style="color:#b48ead;">[</span><span>:str</span><span style="color:#b48ead;">]</span><span>, C_5:bat</span><span style="color:#b48ead;">[</span><span>:oid</span><span style="color:#b48ead;">]</span><span>, &quot;</span><span style="color:#a3be8c;">A</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">==</span><span>&quot;:str);                                                                            |
+</span><span>|     </span><span style="color:#bf616a;">X_50:bat[:int]</span><span> := algebra.projection(C_48:bat</span><span style="color:#b48ead;">[</span><span>:oid</span><span style="color:#b48ead;">]</span><span>, X_8:bat</span><span style="color:#b48ead;">[</span><span>:int</span><span style="color:#b48ead;">]</span><span>);                                                                                                |
+</span><span>|     </span><span style="color:#bf616a;">X_51:bat[:str]</span><span> := algebra.projection(C_48:bat</span><span style="color:#b48ead;">[</span><span>:oid</span><span style="color:#b48ead;">]</span><span>, X_15:bat</span><span style="color:#b48ead;">[</span><span>:str</span><span style="color:#b48ead;">]</span><span>);                                                                                               |
+</span><span>|     </span><span style="color:#bf616a;">X_52:bat[:int]</span><span> := algebra.projection(C_48:bat</span><span style="color:#b48ead;">[</span><span>:oid</span><span style="color:#b48ead;">]</span><span>, X_20:bat</span><span style="color:#b48ead;">[</span><span>:int</span><span style="color:#b48ead;">]</span><span>);                                                                                               |
+</span><span>|     </span><span style="color:#bf616a;">X_53:bat[:str]</span><span> := algebra.projection(C_48:bat</span><span style="color:#b48ead;">[</span><span>:oid</span><span style="color:#b48ead;">]</span><span>, X_27:bat</span><span style="color:#b48ead;">[</span><span>:str</span><span style="color:#b48ead;">]</span><span>);                                                                                               |
+</span><span>|     </span><span style="color:#bf616a;">X_54:bat[:int]</span><span> := algebra.projection(C_48:bat</span><span style="color:#b48ead;">[</span><span>:oid</span><span style="color:#b48ead;">]</span><span>, X_34:bat</span><span style="color:#b48ead;">[</span><span>:int</span><span style="color:#b48ead;">]</span><span>);                                                                                               |
+</span><span>|     </span><span style="color:#bf616a;">X_55:bat[:str]</span><span> := algebra.projection(C_48:bat</span><span style="color:#b48ead;">[</span><span>:oid</span><span style="color:#b48ead;">]</span><span>, X_39:bat</span><span style="color:#b48ead;">[</span><span>:str</span><span style="color:#b48ead;">]</span><span>);                                                                                               |
+</span><span>|     </span><span style="color:#bf616a;">X_123:void</span><span> := language.pass(C_48:bat</span><span style="color:#b48ead;">[</span><span>:oid</span><span style="color:#b48ead;">]</span><span>);                                                                                                                        |
+</span><span>|     </span><span style="color:#bf616a;">X_124:void</span><span> := language.pass(X_39:bat</span><span style="color:#b48ead;">[</span><span>:str</span><span style="color:#b48ead;">]</span><span>);                                                                                                                        |
+</span><span>|     </span><span style="color:#bf616a;">X_57:bat[:str]</span><span> := bat.pack(&quot;</span><span style="color:#a3be8c;">sys.invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">sys.invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">sys.invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">sys.invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">sys.invoices</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">sys.invoices</span><span>&quot;:str);                 |
+</span><span>|     </span><span style="color:#bf616a;">X_58:bat[:str]</span><span> := bat.pack(&quot;</span><span style="color:#a3be8c;">number</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">number_sup</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">trip</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">trip_sup</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">invoice</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">chamber</span><span>&quot;:str);                                               |
+</span><span>|     </span><span style="color:#bf616a;">X_59:bat[:str]</span><span> := bat.pack(&quot;</span><span style="color:#a3be8c;">int</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">char</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">int</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">char</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">int</span><span>&quot;:str, &quot;</span><span style="color:#a3be8c;">char</span><span>&quot;:str);                                                                    |
+</span><span>|     </span><span style="color:#bf616a;">X_60:bat[:int]</span><span> := bat.pack(32:int, 1:int, 32:int, 1:int, 32:int, 1:int);                                                                                            |
+</span><span>|     </span><span style="color:#bf616a;">X_61:bat[:int]</span><span> := bat.pack(0:int, 0:int, 0:int, 0:int, 0:int, 0:int);                                                                                               |
+</span><span>| </span><span style="color:#96b5b4;">exit</span><span> X_121:bit;                                                                                                                                                         |
+</span><span>|     </span><span style="color:#bf616a;">X_56:int</span><span> := sql.resultSet(X_57:bat</span><span style="color:#b48ead;">[</span><span>:str</span><span style="color:#b48ead;">]</span><span>, X_58:bat</span><span style="color:#b48ead;">[</span><span>:str</span><span style="color:#b48ead;">]</span><span>, X_59:bat</span><span style="color:#b48ead;">[</span><span>:str</span><span style="color:#b48ead;">]</span><span>, X_60:bat</span><span style="color:#b48ead;">[</span><span>:int</span><span style="color:#b48ead;">]</span><span>, X_61:bat</span><span style="color:#b48ead;">[</span><span>:int</span><span style="color:#b48ead;">]</span><span>, X_50:bat</span><span style="color:#b48ead;">[</span><span>:int</span><span style="color:#b48ead;">]</span><span>, X_51:bat</span><span style="color:#b48ead;">[</span><span>:str</span><span style="color:#b48ead;">]</span><span>, X_52:bat</span><span style="color:#b48ead;">[</span><span>:int</span><span style="color:#b48ead;">]</span><span>, X_53:bat[ |
+</span><span style="color:#96b5b4;">:</span><span> :str], X_54:bat</span><span style="color:#b48ead;">[</span><span>:int</span><span style="color:#b48ead;">]</span><span>, X_55:bat</span><span style="color:#b48ead;">[</span><span>:str</span><span style="color:#b48ead;">]</span><span>);                                                                                                                                 </span><span style="color:#96b5b4;">:
+</span><span>| </span><span style="color:#bf616a;">end</span><span> user.main;                                                                                                                                                          |
+</span><span>| </span><span style="color:#65737e;"># inline                               0 actions 3 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># remap                                0 actions 2 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># costModel                            1 actions 2 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># coercions                            0 actions 5 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># aliases                              1 actions 9 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># evaluate                             0 actions 8 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># emptybind                            6 actions 9 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># deadcode                             6 actions 9 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># pushselect                           0 actions 18 usecs                                                                                                               |
+</span><span>| </span><span style="color:#65737e;"># aliases                              6 actions 4 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># for                                  0 actions 1 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># dict                                 0 actions 8 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># mitosis                                                                                                                                                               |
+</span><span>| </span><span style="color:#65737e;"># mergetable                           0 actions 9 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># aliases                              0 actions 1 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># constants                            0 actions 7 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># commonTerms                          0 actions 10 usecs                                                                                                               |
+</span><span>| </span><span style="color:#65737e;"># projectionpath                       0 actions 4 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># deadcode                             0 actions 3 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># matpack                              0 actions 1 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># reorder                              1 actions 11 usecs                                                                                                               |
+</span><span>| </span><span style="color:#65737e;"># dataflow                             1 actions 17 usecs                                                                                                               |
+</span><span>| </span><span style="color:#65737e;"># querylog                             0 actions 1 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># multiplex                            0 actions 1 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># generator                            0 actions 3 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># candidates                           1 actions 2 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># deadcode                             0 actions 4 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># postfix                              0 actions 5 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># profiler                             0 actions 1 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># garbageCollector                     1 actions 9 usecs                                                                                                                |
+</span><span>| </span><span style="color:#65737e;"># 29 optimizers 224 usecs                                                                                                                                               |
+</span><span style="color:#bf616a;">+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+</span><span style="color:#bf616a;">59</span><span> tuples
+</span><span>
+</span></code></pre>
+<p>下面我们会参考 <a href="https://www.monetdb.org/documentation-Dec2023/dev-guide/monetdb-internals/mal-modules/">MAL Modules</a>中
+的API文档为 MAL 代码添加上注释：</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>function user.main():void;
+</span><span>     X_1:void := querylog.define(&quot;explain select * from invoices where chamber = &#39;A&#39;;&quot;:str, &quot;default_pipe&quot;:str, 36:int);
+</span><span>
+</span><span> barrier X_121:bit := language.dataflow();  // The current guarded block is executed using dataflow control.
+</span><span>
+</span><span>     // Get the multiversion catalog context.
+</span><span>     // Needed for correct statement dependencies
+</span><span>     // (ie sql.update, should be after sql.bind in concurrent execution
+</span><span>     X_4:int := sql.mvc();
+</span><span>
+</span><span>     // Return a column with the valid tuple identifiers associated with the table sname.tname.
+</span><span>     C_5:bat[:oid] := sql.tid(X_4:int, &quot;sys&quot;:str, &quot;invoices&quot;:str);
+</span><span>
+</span><span>     // Bind the &#39;schema.table.column&#39; BAT with access kind:
+</span><span>     // 0 - base table
+</span><span>     // 1 - inserts
+</span><span>     // 2 - updates
+</span><span>     //// 对应于 select * 中的六列
+</span><span>     X_8:bat[:int] := sql.bind(X_4:int, &quot;sys&quot;:str, &quot;invoices&quot;:str, &quot;number&quot;:str, 0:int);
+</span><span>     X_15:bat[:str] := sql.bind(X_4:int, &quot;sys&quot;:str, &quot;invoices&quot;:str, &quot;number_sup&quot;:str, 0:int);
+</span><span>     X_20:bat[:int] := sql.bind(X_4:int, &quot;sys&quot;:str, &quot;invoices&quot;:str, &quot;trip&quot;:str, 0:int);
+</span><span>     X_27:bat[:str] := sql.bind(X_4:int, &quot;sys&quot;:str, &quot;invoices&quot;:str, &quot;trip_sup&quot;:str, 0:int);
+</span><span>     X_34:bat[:int] := sql.bind(X_4:int, &quot;sys&quot;:str, &quot;invoices&quot;:str, &quot;invoice&quot;:str, 0:int);
+</span><span>     X_39:bat[:str] := sql.bind(X_4:int, &quot;sys&quot;:str, &quot;invoices&quot;:str, &quot;chamber&quot;:str, 0:int);
+</span><span>
+</span><span>     // Select all head values of the first input BAT for which the tail value
+</span><span>     // obeys the relation value OP VAL and for which the head value occurs in
+</span><span>     // the tail of the second input BAT.
+</span><span>     // Input is a dense-headed BAT, output is a dense-headed BAT with in
+</span><span>     // the tail the head value of the input BAT for which the
+</span><span>     // relationship holds.  The output BAT is sorted on the tail value.
+</span><span>     //// θ select 进行过滤
+</span><span>     C_48:bat[:oid] := algebra.thetaselect(X_39:bat[:str], C_5:bat[:oid], &quot;A&quot;:str, &quot;==&quot;:str);
+</span><span>
+</span><span>     // Project left input onto right input
+</span><span>     //// X_50 到 X_55 就是从过滤后的 oid 映射到对应的列的值
+</span><span>     X_50:bat[:int] := algebra.projection(C_48:bat[:oid], X_8:bat[:int]);
+</span><span>     X_51:bat[:str] := algebra.projection(C_48:bat[:oid], X_15:bat[:str]);
+</span><span>     X_52:bat[:int] := algebra.projection(C_48:bat[:oid], X_20:bat[:int]);
+</span><span>     X_53:bat[:str] := algebra.projection(C_48:bat[:oid], X_27:bat[:str]);
+</span><span>     X_54:bat[:int] := algebra.projection(C_48:bat[:oid], X_34:bat[:int]);
+</span><span>     X_55:bat[:str] := algebra.projection(C_48:bat[:oid], X_39:bat[:str]);
+</span><span>
+</span><span>     // Cheap instruction to disgard storage while retaining the dataflow dependency
+</span><span>     X_123:void := language.pass(C_48:bat[:oid]);
+</span><span>     X_124:void := language.pass(X_39:bat[:str]);
+</span><span>
+</span><span>     // Materialize the values into a BAT. Avoiding a clash with mat.pack() in mergetable
+</span><span>     //// resultset column schema 信息
+</span><span>     X_57:bat[:str] := bat.pack(&quot;sys.invoices&quot;:str, &quot;sys.invoices&quot;:str, &quot;sys.invoices&quot;:str,
+</span><span>                                &quot;sys.invoices&quot;:str, &quot;sys.invoices&quot;:str, &quot;sys.invoices&quot;:str);
+</span><span>     //// resultset column name 信息
+</span><span>     X_58:bat[:str] := bat.pack(&quot;number&quot;:str, &quot;number_sup&quot;:str, &quot;trip&quot;:str,
+</span><span>                                &quot;trip_sup&quot;:str, &quot;invoice&quot;:str, &quot;chamber&quot;:str);
+</span><span>     //// resultset column datatype 信息
+</span><span>     X_59:bat[:str] := bat.pack(&quot;int&quot;:str, &quot;char&quot;:str, &quot;int&quot;:str, &quot;char&quot;:str, &quot;int&quot;:str, &quot;char&quot;:str);
+</span><span>
+</span><span>     //// 应该是column的元信息，具体是什么，暂时还不清楚
+</span><span>     X_60:bat[:int] := bat.pack(32:int, 1:int, 32:int, 1:int, 32:int, 1:int);
+</span><span>
+</span><span>     //// 应该是column的元信息，具体是什么，暂时还不清楚
+</span><span>     X_61:bat[:int] := bat.pack(0:int, 0:int, 0:int, 0:int, 0:int, 0:int);
+</span><span>
+</span><span> exit X_121:bit;
+</span><span>
+</span><span>     // Prepare a table result set for the client front-end
+</span><span>     X_56:int := sql.resultSet(X_57:bat[:str], X_58:bat[:str], X_59:bat[:str], X_60:bat[:int], X_61:bat[:int],
+</span><span>            X_50:bat[:int], X_51:bat[:str], X_52:bat[:int], X_53:bat[:str], X_54:bat[:int], X_55:bat[:str]);                                                                                                                                 :
+</span><span>
+</span><span>end user.main;
+</span><span>
+</span></code></pre>
+<p>整理后的处理如图：<img width="1362" alt="image" src="https://github.com/user-attachments/assets/fcc66d79-a46b-4955-ae9f-1d750c3bd46a"></p>
+<h1 id="group-by-an-li">group by 案例</h1>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>sql&gt; explain explain select chamber, sum(trip) from invoices group by chamber;
+</span><span>
+</span><span>function user.main():void;
+</span><span>    X_1:void := querylog.define(&quot;explain select chamber, sum(trip) from invoices group by chamber;&quot;:str,
+</span><span>    			&quot;default_pipe&quot;:str, 21:int);
+</span><span>barrier X_91:bit := language.dataflow();
+</span><span>    X_4:int := sql.mvc();
+</span><span>
+</span><span>    C_5:bat[:oid] := sql.tid(X_4:int, &quot;sys&quot;:str, &quot;invoices&quot;:str);
+</span><span>
+</span><span>    trip_0:bat[:int] := sql.bind(X_4:int, &quot;sys&quot;:str, &quot;invoices&quot;:str, &quot;trip&quot;:str, 0:int);
+</span><span>    chamber_0:bat[:str] := sql.bind(X_4:int, &quot;sys&quot;:str, &quot;invoices&quot;:str, &quot;chamber&quot;:str, 0:int);
+</span><span>
+</span><span>    trip_1:bat[:int] := algebra.projection(C_5:bat[:oid], trip_0:bat[:int]);
+</span><span>    chamber_1:bat[:str] := algebra.projection(C_5:bat[:oid], chamber_0:bat[:str]);
+</span><span>
+</span><span>    X_93:void := language.pass(C_5:bat[:oid]);
+</span><span>
+</span><span>	// 这个函数文档没有找到，返回的两个 BAT 暂时语义不确定，猜测： X_22: [1..N, gid], X_23: [1,n, oid]
+</span><span>	// 其中 N 是行数， n 是分组数。
+</span><span>    (X_22:bat[:oid], C_23:bat[:oid]) := group.groupdone(chamber_1:bat[:str]);
+</span><span>
+</span><span>    //// grouped [chamber]
+</span><span>    chamber_2:bat[:str] := algebra.projection(C_23:bat[:oid], chamber_1:bat[:str]);
+</span><span>
+</span><span>    X_94:void := language.pass(chamber_1:bat[:str]);
+</span><span>
+</span><span>    //// [ sum(trip) for each group ]  subsum(bid, gid, eid, skip_nils) 这个函数在官网搜不到
+</span><span>    trip_sum:bat[:hge] := aggr.subsum(trip_1:bat[:int], X_22:bat[:oid], C_23:bat[:oid], true:bit);
+</span><span>
+</span><span>    X_95:void := language.pass(C_23:bat[:oid]);
+</span><span>
+</span><span>    X_29:bat[:str] := bat.pack(&quot;sys.invoices&quot;:str, &quot;sys.%1&quot;:str);
+</span><span>    X_30:bat[:str] := bat.pack(&quot;chamber&quot;:str, &quot;%1&quot;:str);
+</span><span>    X_31:bat[:str] := bat.pack(&quot;char&quot;:str, &quot;hugeint&quot;:str);
+</span><span>    X_32:bat[:int] := bat.pack(1:int, 128:int);
+</span><span>    X_33:bat[:int] := bat.pack(0:int, 0:int);
+</span><span>exit X_91:bit;
+</span><span>    X_28:int := sql.;(X_29:bat[:str], X_30:bat[:str], X_31:bat[:str], X_32:bat[:int], X_33:bat[:int],
+</span><span>    	chamber_2:bat[:str], trip_sum:bat[:hge]);
+</span><span>end user.main;
+</span></code></pre>
+<h1 id="chuang-kou-han-shu-an-li">窗口函数案例</h1>
+<p>TODO， 后续补充</p>
+<h1 id="join-an-li">join 案例</h1>
+<p>TODO， 后续补充</p>
+<h1 id="shi-yong-yi-ge-il-lai-zhi-xing-sql-you-shen-me-you-dian">使用一个 IL 来执行 SQL 有什么优点？</h1>
+<p>Sqlite3 使用字节码，MonetDB 使用 MAL，二者是相似的，而大部份其他的数据库是基于AST的，通过将 SQL 解析成为 AST，再转换成为 Logic Plan 和 Physical Plan (也是 AST)。
+在 <a href="https://sqlite.org/whybytecode.html">为什么SQLite使用 Bytecode</a> 文中提到了
+使用字节码的优点和缺点：
+Pros:</p>
+<ul>
+<li>字节码易于理解。而 AST 相对难以展示为可读性好的表现形式。（实际上，现在很多数据库都可以以 Tree 方式来查看 Plan，这方面的差距其实不大）</li>
+<li>字节码易于调试。可以像普通的代码调试一样的进行字节码的调试。</li>
+<li>字节码可以增量式的运行。</li>
+<li>字节码更加短小。</li>
+<li>字节码更加快速。字节码相对于AST来说具有更小的解释成本
+Cons:</li>
+<li>AST 更便于在执行期后期的计划变更。尤其是根据实际数据的特征，而改变执行计划，例如调整 Join 策略等。</li>
+<li>基于数据流的处理更易于并行化。</li>
+</ul>
+<p>我觉得还有一个点，是字节码模式更擅长的，可以更好的进行自下而上的性能优化，例如我们可以针对某个特定的优化场景，设计更适合的算法，基于字节码的场景，我们可以略过前面的 AST 构建过程，
+直接手写出目标的字节码，然后独立的进行调试，进行性能压测。在达到预期目标后，调整前端的 AST 构建过程即可。</p>
+<h2 id="si-kao-1-yin-ru-s-expression-de-il">思考1: 引入 S-Expression 的 IL</h2>
+<ol>
+<li>引入一个函数式的 IL，采用类似于 S-Expression 的方式，这样 AST 与 S-IL之间的距离也相对较小，可以更方便引入新的底层函数。</li>
+<li>S-expression 是面向解释执行的，与字节码具有简单的对应关系，可以高校的执行（或者直接通过 JIT 方式执行）</li>
+<li>S-expression 可以与 AST 进行共存，这样可以在执行过程中，动态的调整 AST，再次生成 S-IL，然后执行。（类似于JVM的 JIT 优化后 hot-replace）</li>
+</ol>
+<p>这样的一个平衡，可以便于自上而下的执行（从AST -&gt; IL -&gt; 执行），也可以便于自下而上的优化，针对特定的场景，提供特定的基础操作，扩展新的 IL 操作，
+并且在开发阶段，可以直接通过 S-IL 进行调试，而不需要关心 AST 的构建过程，从而快速的验证性能优化的效果。</p>
+<h2 id="si-kao-2-yin-ru-yi-ge-geng-jia-tong-yong-de-xiang-liang-hua-yan-suan-ti-xi">思考2: 引入一个更加通用的向量化演算体系。</h2>
+<ol>
+<li>BAT 的概念是 MonetDB 的核心，后来者诸如 DuckDB, Polars 直接使用 Series + DataFrame 的概念，都弱化了 BAT. Bat 类似于一个 简化的 DataFrame
+作为基础数据结构，相比 Series 来说还是重了一些。</li>
+<li>建立向量的类型体系， 包括 vec<bool>, vec<i32>, vec&lt;vec<i32>&gt;, vec&lt;(name: i32, birthday: date)&gt; 等等， 尤其是对 Named Tuple 的支持和 Vector of Struct 的支持</li>
+<li>建立基于向量的操作体系，包括 project, semi-join, join, select 等等，这些操作，都是向量化优化的（甚至可以直接在GPU上执行）是上层SQL 执行的基础支撑</li>
+<li>上层应用可以基于基础向量演算，增加各种优化，例如 min-max 索引， bitmap 索引等，基于这些特定的索引，减少数据的扫描。</li>
+<li>对于已排序的向量，提供更多的优化，例如 merge join, merge sort 等等。甚至可以将这些信息作为类型信息，直接在编译期进行优化。
+参考： <a href="https://calcite.apache.org/docs/algebra.html">Calcite Relational Algebra</a></li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/trying-wgpu/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/polars-notebook/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

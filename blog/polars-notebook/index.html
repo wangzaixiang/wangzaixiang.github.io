@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>使用 Notebook 熟悉 Polars 的概念和 API | 程序人生</title>
+<meta name="description" content="本文是记录学习 Polars 过程中的一些笔记整理，采用 Jupyter Notebook 的形式，后续可以调整运行">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/polars-notebook/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="使用 Notebook 熟悉 Polars 的概念和 API">
+  <meta name="twitter:description" content="本文是记录学习 Polars 过程中的一些笔记整理，采用 Jupyter Notebook 的形式，后续可以调整运行">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="使用 Notebook 熟悉 Polars 的概念和 API">
+  <meta property="og:description" content="本文是记录学习 Polars 过程中的一些笔记整理，采用 Jupyter Notebook 的形式，后续可以调整运行">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/polars-notebook/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="使用 Notebook 熟悉 Polars 的概念和 API">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/polars-notebook/"
+      },
+      "headline": "使用 Notebook 熟悉 Polars 的概念和 API",
+      "image": ,
+      "datePublished": "2024-05-18T12:00:00+00:00",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "使用 Notebook 熟悉 Polars 的概念和 API"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "使用 Notebook 熟悉 Polars 的概念和 API",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文是记录学习 Polars 过程中的一些笔记整理，采用 Jupyter Notebook 的形式，后续可以调整运行"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Polars Notebook",
+            "item": "https://wangzaixiang.github.io/blog/polars-notebook/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#jie-lun-xian-xing">结论先行</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#1-contexts">1. Contexts</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#1-1-selection-context">1.1 Selection Context</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#1-2-filter-context">1.2 Filter Context</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#1-3-aggragation-context">1.3 Aggragation Context</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#2-expressions">2. Expressions</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#3-eager-or-lazy">3. Eager or Lazy</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#4-transformation">4. Transformation</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#5-window-function">5. Window Function</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#6-operator-and-functions">6. Operator and Functions</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#misc-why-an-expression-based-api-other-than-sql-in-polars">Misc: Why an Expression based API other than SQL in Polars?</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/polars-notebook/#todo">TODO</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>使用 Notebook 熟悉 Polars 的概念和 API</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/monetdb-mal/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted May 18, 2024 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>24&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/vectorize-1/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h2 id="jie-lun-xian-xing">结论先行</h2>
+<p>本 <a href="https://github.com/wangzaixiang/notebooks/blob/main/polars/polars-1.ipynb">notebook</a> 是通过 jupyter notebook 的方式，
+来学习 polars 的API，并理解其概念。</p>
+<ol>
+<li>
+<p>polars 有3种求值的上下文：</p>
+<ul>
+<li>Selection Context: <code>df.select(...)</code>, <code>df.with_columns(...)</code></li>
+<li>Filter Context:  <code>df.filter(...) </code></li>
+<li>Group By(Aggregation Context)：<code>df.group_by(...).agg(...)</code>，每一个分组可以理解为一个child dataframe</li>
+</ul>
+</li>
+<li>
+<p>在这三个上下文中，每个表达式的求值结果是 Series-N 或者 Series-1。Series-N 会自动广播为 Series-N。</p>
+<ul>
+<li>表达式可以是基本的 pl.col("name") 这种求值为 Series-N</li>
+<li>表达式可以是聚合函数，例如 pl.sum("nrs")， 求值为 Series-1</li>
+<li>可以是窗口函数，例如 pl.col("Close").last().over("YM").alias("last_close")，求值为 Series-N</li>
+<li>表达式可以是复杂的操作 pl.col("random").filter(pl.col("names").is_not_null())</li>
+<li>Series-1 的求值结果会被广播为 Series-N, 所有的 Series-N 的 N 值必须与 DataFrame 的记录数相同。否则会报错。</li>
+</ul>
+</li>
+<li>
+<p>表达式是在 dataframe 的基础上进行求值，而不是在 row based 上进行求值。即使是 Series-1 也是 (df -&gt; Series-1)，而非
+( row -&gt; Series-1 )</p>
+</li>
+<li>
+<p>polars 不同于 SQL select 的执行流程，后者有一个严格的执行顺序定义：</p>
+<ul>
+<li>from -&gt; where -&gt; group by -&gt; having -&gt; select -&gt; window -&gt; order by</li>
+<li>polars 中，每个操作是独立的，不同的顺序组合，会产生不同的结果。</li>
+<li>在 polars 中, select 求值上下文中可以求值的能力，包括了 字段级、聚合级、窗口级的能力，一定程度上比 SQL 更强大。</li>
+<li>在 filter/aggr 求值上下文中，也可以进行类似的计算。</li>
+</ul>
+</li>
+<li>
+<p>TODO</p>
+<ul>
+<li><input disabled="" type="checkbox"/>
+polars 对窗口函数的求值是如何进行的？是否最优？</li>
+<li><input disabled="" type="checkbox"/>
+polars 是否有对简单的 group_by sum 操作有进行优化，避免生成中间的 child dataframe?</li>
+<li><input disabled="" type="checkbox"/>
+对一个 join 后的 dataframe, 是否会有减枝的操作？及无用到的表会自动减枝？</li>
+</ul>
+</li>
+</ol>
+<h2 id="1-contexts">1. Contexts</h2>
+<p>如下的概念基于如下的示例数据集：</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">import </span><span>polars </span><span style="color:#b48ead;">as </span><span>pl
+</span><span style="color:#b48ead;">import </span><span>numpy </span><span style="color:#b48ead;">as </span><span>np
+</span><span>
+</span><span>df = pl.</span><span style="color:#bf616a;">DataFrame</span><span>(
+</span><span>    {
+</span><span>        &quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;: [</span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">2</span><span>, </span><span style="color:#d08770;">3</span><span>, </span><span style="color:#d08770;">None</span><span>, </span><span style="color:#d08770;">5</span><span>],
+</span><span>        &quot;</span><span style="color:#a3be8c;">names</span><span>&quot;: [&quot;</span><span style="color:#a3be8c;">foo</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">ham</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">spam</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">egg</span><span>&quot;, </span><span style="color:#d08770;">None</span><span>],
+</span><span>        &quot;</span><span style="color:#a3be8c;">random</span><span>&quot;: np.random.</span><span style="color:#bf616a;">rand</span><span>(</span><span style="color:#d08770;">5</span><span>),
+</span><span>        &quot;</span><span style="color:#a3be8c;">groups</span><span>&quot;: [&quot;</span><span style="color:#a3be8c;">A</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">A</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">B</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">C</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">B</span><span>&quot;],
+</span><span>    }
+</span><span>)
+</span><span>df
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 4)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>random</th><th>groups</th></tr><tr><td>i64</td><td>str</td><td>f64</td><td>str</td></tr></thead><tbody><tr><td>1</td><td>&quot;foo&quot;</td><td>0.998578</td><td>&quot;A&quot;</td></tr><tr><td>2</td><td>&quot;ham&quot;</td><td>0.061645</td><td>&quot;A&quot;</td></tr><tr><td>3</td><td>&quot;spam&quot;</td><td>0.927885</td><td>&quot;B&quot;</td></tr><tr><td>null</td><td>&quot;egg&quot;</td><td>0.412684</td><td>&quot;C&quot;</td></tr><tr><td>5</td><td>null</td><td>0.432504</td><td>&quot;B&quot;</td></tr></tbody></table></div>
+<h3 id="1-1-selection-context">1.1 Selection Context</h3>
+<h4 id="1-series-n-and-series-1-expression">1) Series-N and Series-1 expression</h4>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.</span><span style="color:#bf616a;">select</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">sum</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">total</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">groups</span><span>&quot;)
+</span><span>)
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 4)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>total</th><th>groups</th></tr><tr><td>i64</td><td>str</td><td>f64</td><td>str</td></tr></thead><tbody><tr><td>1</td><td>&quot;foo&quot;</td><td>2.23031</td><td>&quot;A&quot;</td></tr><tr><td>2</td><td>&quot;ham&quot;</td><td>2.23031</td><td>&quot;A&quot;</td></tr><tr><td>3</td><td>&quot;spam&quot;</td><td>2.23031</td><td>&quot;B&quot;</td></tr><tr><td>null</td><td>&quot;egg&quot;</td><td>2.23031</td><td>&quot;C&quot;</td></tr><tr><td>5</td><td>null</td><td>2.23031</td><td>&quot;B&quot;</td></tr></tbody></table></div>
+<p>解析：</p>
+<ol>
+<li>df.select( pl.col("nrs") ) 返回的结果是一个 Series，其长度为 N（记录数）</li>
+<li>df.select( pl.col("random").sum() ) 返回的结果是 Series[1] 或者 Scalar，Scalar值会广播成为 Series[N]。</li>
+</ol>
+<p>因此，在 Select 中的表达式，或者返回 Series[N]， 或者返回 Series[1]。</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.</span><span style="color:#bf616a;">select</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">sum</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;),                                </span><span style="color:#65737e;"># Scalar
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">names1</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">sort</span><span>(),                       </span><span style="color:#65737e;"># Series[N]
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">first</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">first name</span><span>&quot;),  </span><span style="color:#65737e;"># Scalar
+</span><span>    (pl.</span><span style="color:#bf616a;">mean</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;) * </span><span style="color:#d08770;">10</span><span>).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">10xnrs</span><span>&quot;),        </span><span style="color:#65737e;"># Scalar
+</span><span>)
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 5)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names1</th><th>names</th><th>first name</th><th>10xnrs</th></tr><tr><td>i64</td><td>str</td><td>str</td><td>str</td><td>f64</td></tr></thead><tbody><tr><td>11</td><td>&quot;foo&quot;</td><td>null</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>&quot;ham&quot;</td><td>&quot;egg&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>&quot;spam&quot;</td><td>&quot;foo&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>&quot;egg&quot;</td><td>&quot;ham&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>null</td><td>&quot;spam&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr></tbody></table></div>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#65737e;"># example mixes Series-N and Series-1 Expression
+</span><span>df.</span><span style="color:#bf616a;">select</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">sum</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;),                                                        </span><span style="color:#65737e;"># Scalar
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">sort</span><span>(),                                               </span><span style="color:#65737e;"># Series[N]
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">first</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">first name</span><span>&quot;),                          </span><span style="color:#65737e;"># Scalar
+</span><span>    (pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;) / pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">sum</span><span>() * </span><span style="color:#d08770;">100</span><span>).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">pecents</span><span>&quot;),   </span><span style="color:#65737e;"># Series[N] / Scalar =&gt; Series[N]
+</span><span>    (pl.</span><span style="color:#bf616a;">mean</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;) * </span><span style="color:#d08770;">10</span><span>).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">10xnrs</span><span>&quot;),                                </span><span style="color:#65737e;"># Scalar
+</span><span>)
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 5)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>first name</th><th>pecents</th><th>10xnrs</th></tr><tr><td>i64</td><td>str</td><td>str</td><td>f64</td><td>f64</td></tr></thead><tbody><tr><td>11</td><td>null</td><td>&quot;foo&quot;</td><td>37.248716</td><td>27.5</td></tr><tr><td>11</td><td>&quot;egg&quot;</td><td>&quot;foo&quot;</td><td>2.337091</td><td>27.5</td></tr><tr><td>11</td><td>&quot;foo&quot;</td><td>&quot;foo&quot;</td><td>11.178078</td><td>27.5</td></tr><tr><td>11</td><td>&quot;ham&quot;</td><td>&quot;foo&quot;</td><td>37.932039</td><td>27.5</td></tr><tr><td>11</td><td>&quot;spam&quot;</td><td>&quot;foo&quot;</td><td>11.304075</td><td>27.5</td></tr></tbody></table></div>
+<p>基于向量的广播机制，可以在单个表达式中结合使用 Series-N 表达式 和 Series-1 表达式，这种能力，要在SQL中表达出来，还是比较困难的。（<strong>从这个角度来看，
+Polars的表达能力相比 SQL 更强大一些，两者的计算模型并不相同</strong>）。</p>
+<h4 id="2-apis">2) APIS</h4>
+<p><code>df.select( ... )</code>  # 仅选择部分列</p>
+<p><code>df.with_columns( ... ) </code> # 保留所有列，并创新新的列(如果列名重复，则覆盖掉原有的列)</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.</span><span style="color:#bf616a;">with_columns</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">sum</span><span>(),   </span><span style="color:#65737e;"># 没有取别名时，这个新的列的列明也叫做 random，因此，在结果中会覆盖掉原有 random 列。
+</span><span>)
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 4)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>random</th><th>groups</th></tr><tr><td>i64</td><td>str</td><td>f64</td><td>str</td></tr></thead><tbody><tr><td>1</td><td>&quot;foo&quot;</td><td>2.23031</td><td>&quot;A&quot;</td></tr><tr><td>2</td><td>&quot;ham&quot;</td><td>2.23031</td><td>&quot;A&quot;</td></tr><tr><td>3</td><td>&quot;spam&quot;</td><td>2.23031</td><td>&quot;B&quot;</td></tr><tr><td>null</td><td>&quot;egg&quot;</td><td>2.23031</td><td>&quot;C&quot;</td></tr><tr><td>5</td><td>null</td><td>2.23031</td><td>&quot;B&quot;</td></tr></tbody></table></div>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#65737e;"># the code not works
+</span><span>df.</span><span style="color:#bf616a;">select</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;).</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">is_not_null</span><span>()),       </span><span style="color:#65737e;"># the series length is 4, not 5
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">sum</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">total</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">groups</span><span>&quot;)
+</span><span>)
+</span><span>
+</span><span style="color:#65737e;"># ComputeError: Series length 4 doesn&#39;t match the DataFrame height of 5
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>---------------------------------------------------------------------------
+</span><span>
+</span><span>ComputeError                              Traceback (most recent call last)
+</span><span>
+</span><span>Cell In[3], line 1
+</span><span>----&gt; 1 df.select(
+</span><span>      2     pl.col(&quot;nrs&quot;).filter(pl.col(&quot;names&quot;).is_not_null()),
+</span><span>      3     pl.col(&quot;names&quot;),
+</span><span>      4     pl.col(&quot;random&quot;).sum().alias(&quot;total&quot;),
+</span><span>      5     pl.col(&quot;groups&quot;)
+</span><span>      6 )
+</span><span>
+</span><span>
+</span><span>File ~/venvs/polars/lib/python3.12/site-packages/polars/dataframe/frame.py:8137, in DataFrame.select(self, *exprs, **named_exprs)
+</span><span>   8037 def select(
+</span><span>   8038     self, *exprs: IntoExpr | Iterable[IntoExpr], **named_exprs: IntoExpr
+</span><span>   8039 ) -&gt; DataFrame:
+</span><span>   8040     &quot;&quot;&quot;
+</span><span>   8041     Select columns from this DataFrame.
+</span><span>   8042 
+</span><span>   (...)
+</span><span>   8135     └───────────┘
+</span><span>   8136     &quot;&quot;&quot;
+</span><span>-&gt; 8137     return self.lazy().select(*exprs, **named_exprs).collect(_eager=True)
+</span><span>
+</span><span>
+</span><span>File ~/venvs/polars/lib/python3.12/site-packages/polars/lazyframe/frame.py:1816, in LazyFrame.collect(self, type_coercion, predicate_pushdown, projection_pushdown, simplify_expression, slice_pushdown, comm_subplan_elim, comm_subexpr_elim, no_optimization, streaming, background, _eager, **_kwargs)
+</span><span>   1813 # Only for testing purposes atm.
+</span><span>   1814 callback = _kwargs.get(&quot;post_opt_callback&quot;)
+</span><span>-&gt; 1816 return wrap_df(ldf.collect(callback))
+</span><span>
+</span><span>
+</span><span>ComputeError: Series length 4 doesn&#39;t match the DataFrame height of 5
+</span></code></pre>
+<p>这段代码无法正确执行：</p>
+<ol>
+<li>df 的长度为 5</li>
+<li><code>df.select( pl.col("nrs").filter( pl.col("names").is_not_null() )</code> 返回的 Series 长度为4。Series-N 与 DataFrame 不匹配。
+这种情况是不能使用广播的方式进行对齐的，因此，这段代码无法正确执行。</li>
+</ol>
+<h3 id="1-2-filter-context">1.2 Filter Context</h3>
+<p>Filter Context 的表达式求值为 boolean， 类似于 f: row -&gt; boolean</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;) &gt; </span><span style="color:#d08770;">2</span><span>)
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 4)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>random</th><th>groups</th></tr><tr><td>i64</td><td>str</td><td>f64</td><td>str</td></tr></thead><tbody><tr><td>3</td><td>&quot;spam&quot;</td><td>0.249306</td><td>&quot;B&quot;</td></tr><tr><td>5</td><td>null</td><td>0.252116</td><td>&quot;B&quot;</td></tr></tbody></table></div>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#65737e;"># 可以在 filter 中使用聚合函数，窗口函数，其用法与 select 中一致。
+</span><span>df.</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">sum</span><span>().</span><span style="color:#bf616a;">over</span><span>(&quot;</span><span style="color:#a3be8c;">groups</span><span>&quot;) &gt; </span><span style="color:#d08770;">0.8</span><span>)
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 4)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>random</th><th>groups</th></tr><tr><td>i64</td><td>str</td><td>f64</td><td>str</td></tr></thead><tbody><tr><td>1</td><td>&quot;foo&quot;</td><td>0.155879</td><td>&quot;A&quot;</td></tr><tr><td>2</td><td>&quot;ham&quot;</td><td>0.711329</td><td>&quot;A&quot;</td></tr></tbody></table></div>
+<p><em><strong>需要补充分析</strong></em></p>
+<p>在 Filter 中也存在 Series-N 和 Series-1 的表达式问题，可以理解为：filter 是计算出一个 Series-N[Boolean]，表达式的每一个部分或者求值为：Series-1（广播）或者 Series-N。
+当结合一些复杂的表达式时，例如 a and b or c，其中 a,b, c 可能是 Series-N， 也可能是 Series-1.
+求值方式： 1. 先对所有基础的 Logic Expression 进行求值，其或者为 Series-N, 或者为 Series-1。
+2. 广播后，再求值 Series-N</p>
+<p>问题：</p>
+<ol>
+<li>在上面的例子中，select 上下文中可以使用 filter, sum, 以及窗口函数等，那么这些函数是否在 filter 中也可以使用？</li>
+<li>如果既有 select 计算，又有 filter 计算，那么这两个计算是否有先后顺序？
+我们可以查看如下的示例：</li>
+</ol>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df1 = df.</span><span style="color:#bf616a;">select</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">sum</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;),                                </span><span style="color:#65737e;"># Scalar
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">names1</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">sort</span><span>(),                       </span><span style="color:#65737e;"># Series[N]
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">first</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">first name</span><span>&quot;),  </span><span style="color:#65737e;"># Scalar
+</span><span>    (pl.</span><span style="color:#bf616a;">mean</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;) * </span><span style="color:#d08770;">10</span><span>).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">10xnrs</span><span>&quot;),        </span><span style="color:#65737e;"># Scalar
+</span><span>) .filter(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;) &gt; </span><span style="color:#d08770;">2 </span><span>)
+</span><span>
+</span><span>df2 = df.</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;) &gt; </span><span style="color:#d08770;">2</span><span>).</span><span style="color:#bf616a;">select</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">sum</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;),                                </span><span style="color:#65737e;"># Scalar
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">names1</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">sort</span><span>(),                       </span><span style="color:#65737e;"># Series[N]
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">first</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">first name</span><span>&quot;),  </span><span style="color:#65737e;"># Scalar
+</span><span>    (pl.</span><span style="color:#bf616a;">mean</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;) * </span><span style="color:#d08770;">10</span><span>).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">10xnrs</span><span>&quot;),        </span><span style="color:#65737e;"># Scalar
+</span><span>)
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>shape: (5, 5)
+</span><span>┌─────┬────────┬───────┬────────────┬────────┐
+</span><span>│ nrs ┆ names1 ┆ names ┆ first name ┆ 10xnrs │
+</span><span>│ --- ┆ ---    ┆ ---   ┆ ---        ┆ ---    │
+</span><span>│ i64 ┆ str    ┆ str   ┆ str        ┆ f64    │
+</span><span>╞═════╪════════╪═══════╪════════════╪════════╡
+</span><span>│ 11  ┆ foo    ┆ null  ┆ foo        ┆ 27.5   │
+</span><span>│ 11  ┆ ham    ┆ egg   ┆ foo        ┆ 27.5   │
+</span><span>│ 11  ┆ spam   ┆ foo   ┆ foo        ┆ 27.5   │
+</span><span>│ 11  ┆ egg    ┆ ham   ┆ foo        ┆ 27.5   │
+</span><span>│ 11  ┆ null   ┆ spam  ┆ foo        ┆ 27.5   │
+</span><span>└─────┴────────┴───────┴────────────┴────────┘
+</span><span>shape: (2, 5)
+</span><span>┌─────┬────────┬───────┬────────────┬────────┐
+</span><span>│ nrs ┆ names1 ┆ names ┆ first name ┆ 10xnrs │
+</span><span>│ --- ┆ ---    ┆ ---   ┆ ---        ┆ ---    │
+</span><span>│ i64 ┆ str    ┆ str   ┆ str        ┆ f64    │
+</span><span>╞═════╪════════╪═══════╪════════════╪════════╡
+</span><span>│ 8   ┆ spam   ┆ null  ┆ spam       ┆ 40.0   │
+</span><span>│ 8   ┆ null   ┆ spam  ┆ spam       ┆ 40.0   │
+</span><span>└─────┴────────┴───────┴────────────┴────────┘
+</span></code></pre>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df1
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 5)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names1</th><th>names</th><th>first name</th><th>10xnrs</th></tr><tr><td>i64</td><td>str</td><td>str</td><td>str</td><td>f64</td></tr></thead><tbody><tr><td>11</td><td>&quot;foo&quot;</td><td>null</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>&quot;ham&quot;</td><td>&quot;egg&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>&quot;spam&quot;</td><td>&quot;foo&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>&quot;egg&quot;</td><td>&quot;ham&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr><tr><td>11</td><td>null</td><td>&quot;spam&quot;</td><td>&quot;foo&quot;</td><td>27.5</td></tr></tbody></table></div>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df2
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 5)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names1</th><th>names</th><th>first name</th><th>10xnrs</th></tr><tr><td>i64</td><td>str</td><td>str</td><td>str</td><td>f64</td></tr></thead><tbody><tr><td>8</td><td>&quot;spam&quot;</td><td>null</td><td>&quot;spam&quot;</td><td>40.0</td></tr><tr><td>8</td><td>null</td><td>&quot;spam&quot;</td><td>&quot;spam&quot;</td><td>40.0</td></tr></tbody></table></div>
+<p>从上面的这个例子中， 我们可以看到 调整顺序后的两个结果是完全不一样的，这个也说明了与 SQL Select 并不一样，在 Pola RS 中，
+select 与 filter 是独立的操作，df.select(...).filter(...) 与 df.filter(...).select(...) 是不一样的。</p>
+<p>这与 SQL 中 select * from table where ... 的执行顺序是不一样的。一条SQL 语句有一个预定的执行顺序，参见：
+<a href="https://pic2.zhimg.com/80/v2-8faf44f913ce39eef7bab322e4a1b4f9_1440w.webp">SELECT 语句执行流程</a>
+在这个执行流程中，select 子句是在filter 之后，然后group by，having，在 having 过滤之后执行的，但在窗口函数执行之前。
+而 polars 则完全不同，每个 data frame 操作是独立的，不同的顺序组合，会产生不同的结果。</p>
+<p>当然，在 Lazy Evaluation 中，最后执行计划会对这些操作进行优化，生成一个最优的执行计划。但逻辑上来看，这些操作是独立的。</p>
+<h3 id="1-3-aggragation-context">1.3 Aggragation Context</h3>
+<p>在 <code>group_by</code>之后， DataFrame 会转化为 GroupBy， agg 操作会再次将 GroupBy 转换为 DataFrame。</p>
+<p>每个 agg 表达式的上下文是单个分组， 其返回值是 Series-1。 如果某个表达式求值为 Series-N，将最后转换为 Series-1。（大部分是一个字符串拼接的操作）</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.</span><span style="color:#bf616a;">group_by</span><span>(&quot;</span><span style="color:#a3be8c;">groups</span><span>&quot;).</span><span style="color:#bf616a;">agg</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;),  
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;), 
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;),
+</span><span>)
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (3, 4)</small><table border="1" class="dataframe"><thead><tr><th>groups</th><th>nrs</th><th>random</th><th>names</th></tr><tr><td>str</td><td>list[i64]</td><td>list[f64]</td><td>list[str]</td></tr></thead><tbody><tr><td>&quot;A&quot;</td><td>[1, 2]</td><td>[0.830762, 0.052124]</td><td>[&quot;foo&quot;, &quot;ham&quot;]</td></tr><tr><td>&quot;C&quot;</td><td>[null]</td><td>[0.846002]</td><td>[&quot;egg&quot;]</td></tr><tr><td>&quot;B&quot;</td><td>[3, 5]</td><td>[0.249306, 0.252116]</td><td>[&quot;spam&quot;, null]</td></tr></tbody></table></div>
+<p>在 group_by 之后的 DF 其上下文为 List[(key, rows)] 的形式，在这个例子中，我们没有进行聚合操作，因此，返回的结果是每个组中的字段的一个列表形式。这个在实际中意义不大，因为数据量很大时，这个值会很长。但在这个教程中，可以帮助理解后续的聚合函数如何工作。</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.</span><span style="color:#bf616a;">group_by</span><span>(&quot;</span><span style="color:#a3be8c;">groups</span><span>&quot;).</span><span style="color:#bf616a;">agg</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">sum</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;),                                                                      </span><span style="color:#65737e;"># sum nrs by groups
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">count</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">random_count</span><span>&quot;),                                            </span><span style="color:#65737e;"># count group members
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">is_not_null</span><span>()).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">random_hasname</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">is_not_null</span><span>()).</span><span style="color:#bf616a;">sum</span><span>().name.</span><span style="color:#bf616a;">suffix</span><span>(&quot;</span><span style="color:#a3be8c;">_sum</span><span>&quot;),   </span><span style="color:#65737e;"># sum random where name != null
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">all nrs</span><span>&quot;),                                                     </span><span style="color:#65737e;"># Series-N 会自动转换为 Series-1
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">reverse</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">reversed names</span><span>&quot;),                                  </span><span style="color:#65737e;"># Series-N 会自动转换为 Series-1,
+</span><span>    (pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">is_not_null</span><span>()) / 
+</span><span>     pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">sum</span><span>() * </span><span style="color:#d08770;">100
+</span><span>    ).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">hasname_percents</span><span>&quot;),                                                        </span><span style="color:#65737e;"># 比较复杂的表达式 
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">is_not_null</span><span>())
+</span><span>      .</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;) &gt;= </span><span style="color:#d08770;">2</span><span>).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">random_hasname_tailer</span><span>&quot;)                        </span><span style="color:#65737e;"># 理解 filter 
+</span><span>)
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (3, 10)</small><table border="1" class="dataframe"><thead><tr><th>groups</th><th>nrs</th><th>random</th><th>random_count</th><th>random_hasname</th><th>random_sum</th><th>all nrs</th><th>reversed names</th><th>hasname_percents</th><th>random_hasname_tailer</th></tr><tr><td>str</td><td>i64</td><td>list[f64]</td><td>u32</td><td>list[f64]</td><td>f64</td><td>list[i64]</td><td>list[str]</td><td>list[f64]</td><td>list[f64]</td></tr></thead><tbody><tr><td>&quot;C&quot;</td><td>0</td><td>[0.846002]</td><td>1</td><td>[0.846002]</td><td>0.846002</td><td>[null]</td><td>[&quot;egg&quot;]</td><td>[100.0]</td><td>[]</td></tr><tr><td>&quot;B&quot;</td><td>8</td><td>[0.249306, 0.252116]</td><td>2</td><td>[0.249306]</td><td>0.249306</td><td>[3, 5]</td><td>[null, &quot;spam&quot;]</td><td>[49.719785]</td><td>[0.249306]</td></tr><tr><td>&quot;A&quot;</td><td>3</td><td>[0.830762, 0.052124]</td><td>2</td><td>[0.830762, 0.052124]</td><td>0.882886</td><td>[1, 2]</td><td>[&quot;ham&quot;, &quot;foo&quot;]</td><td>[94.096138, 5.903862]</td><td>[0.052124]</td></tr></tbody></table></div>
+<p>这个示例中有几个Expression的理解会比较复杂，需要理解 Series-N 和 Series-1 的计算过程。</p>
+<ol>
+<li><code>pl.sum("nrs")</code> 在当前分组中，求值为 Series-1</li>
+<li><code>pl.col("random").filter(pl.col("names").is_not_null()).sum().name.suffix("_sum")</code>
+<ol>
+<li><code>X = pl.col("random")</code> 求值为 Series-N</li>
+<li><code>Y = X.filter(pl.col("names").is_not_null())</code> 求值为 Series-N</li>
+<li><code>Y.sum()</code> 求值为 Series-1</li>
+</ol>
+</li>
+<li><code>pl.col("random").filter(pl.col("names").is_not_null()).filter(pl.col("nrs") &gt;= 2).alias("random_hasname_tailer") </code>
+<ol>
+<li><code>X = pl.col("random")</code>: Series-N</li>
+<li><code>Y = X.filter(pl.col("names").is_not_null())</code> : X 的环境中不仅仅包括 random列，也包括了其他的列。</li>
+<li><code>Z = Y.filter(pl.col("nrs") &gt;= 2)</code>  : Z：从Y 中派生出来，Y 中也包含了其他的列。</li>
+</ol>
+</li>
+</ol>
+<p>这个 filter 的上下文确实非常强大，后续在阅读代码时，需要理解这个执行的逻辑。</p>
+<h2 id="2-expressions">2. Expressions</h2>
+<p>理解了 context 之后，expression 的多样性就显得没有那么复杂了，否则的话，一大堆的 expression 会让人眼花缭乱。</p>
+<p>可以分为如下几类：</p>
+<ul>
+<li>operators: +, -, *, / etc.</li>
+<li>column selections: p.col("name"), p.all()</li>
+<li>functions, case when,</li>
+<li>casting</li>
+<li>strings</li>
+<li>aggregations</li>
+<li>missing data</li>
+<li>window functions</li>
+<li>folds</li>
+<li>lists</li>
+<li>UDF</li>
+<li>struts</li>
+</ul>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 4)</small><table border="1" class="dataframe"><thead><tr><th>nrs</th><th>names</th><th>random</th><th>groups</th></tr><tr><td>i64</td><td>str</td><td>f64</td><td>str</td></tr></thead><tbody><tr><td>1</td><td>&quot;foo&quot;</td><td>0.332095</td><td>&quot;A&quot;</td></tr><tr><td>2</td><td>&quot;ham&quot;</td><td>0.807228</td><td>&quot;A&quot;</td></tr><tr><td>3</td><td>&quot;spam&quot;</td><td>0.174601</td><td>&quot;B&quot;</td></tr><tr><td>null</td><td>&quot;egg&quot;</td><td>0.839158</td><td>&quot;C&quot;</td></tr><tr><td>5</td><td>null</td><td>0.498681</td><td>&quot;B&quot;</td></tr></tbody></table></div>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>out = df.</span><span style="color:#bf616a;">group_by</span><span>(&quot;</span><span style="color:#a3be8c;">groups</span><span>&quot;).</span><span style="color:#bf616a;">agg</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">sum</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;),  </span><span style="color:#65737e;"># sum nrs by groups
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">count</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">count</span><span>&quot;),  </span><span style="color:#65737e;"># count group members
+</span><span>    </span><span style="color:#65737e;"># sum random where name != null
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">is_not_null</span><span>()).</span><span style="color:#bf616a;">sum</span><span>().name.</span><span style="color:#bf616a;">suffix</span><span>(&quot;</span><span style="color:#a3be8c;">_sum</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">reverse</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">reversed names</span><span>&quot;),
+</span><span>)
+</span><span style="color:#96b5b4;">print</span><span>(out)
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>shape: (3, 5)
+</span><span>┌────────┬─────┬───────┬────────────┬────────────────┐
+</span><span>│ groups ┆ nrs ┆ count ┆ random_sum ┆ reversed names │
+</span><span>│ ---    ┆ --- ┆ ---   ┆ ---        ┆ ---            │
+</span><span>│ str    ┆ i64 ┆ u32   ┆ f64        ┆ list[str]      │
+</span><span>╞════════╪═════╪═══════╪════════════╪════════════════╡
+</span><span>│ A      ┆ 3   ┆ 2     ┆ 1.139323   ┆ [&quot;ham&quot;, &quot;foo&quot;] │
+</span><span>│ C      ┆ 0   ┆ 1     ┆ 0.839158   ┆ [&quot;egg&quot;]        │
+</span><span>│ B      ┆ 8   ┆ 2     ┆ 0.174601   ┆ [null, &quot;spam&quot;] │
+</span><span>└────────┴─────┴───────┴────────────┴────────────────┘
+</span></code></pre>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.</span><span style="color:#bf616a;">select</span><span>( pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">filter</span><span>( pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;) &gt;= </span><span style="color:#d08770;">3 </span><span>) )
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 1)</small><table border="1" class="dataframe"><thead><tr><th>names</th></tr><tr><td>str</td></tr></thead><tbody><tr><td>&quot;spam&quot;</td></tr><tr><td>null</td></tr></tbody></table></div>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.</span><span style="color:#bf616a;">filter</span><span>( pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;) &gt;=</span><span style="color:#d08770;">3 </span><span>).</span><span style="color:#bf616a;">select</span><span>( pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;) )
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 1)</small><table border="1" class="dataframe"><thead><tr><th>names</th></tr><tr><td>str</td></tr></thead><tbody><tr><td>&quot;spam&quot;</td></tr><tr><td>null</td></tr></tbody></table></div>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>out = df.</span><span style="color:#bf616a;">group_by</span><span>(&quot;</span><span style="color:#a3be8c;">groups</span><span>&quot;).</span><span style="color:#bf616a;">agg</span><span>(
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">nrs</span><span>&quot;).</span><span style="color:#bf616a;">sum</span><span>(),  </span><span style="color:#65737e;"># sum nrs by groups
+</span><span>    pl.</span><span style="color:#bf616a;">count</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">count</span><span>&quot;),  </span><span style="color:#65737e;"># count group members
+</span><span>    </span><span style="color:#65737e;"># sum random where name != null
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">random</span><span>&quot;).</span><span style="color:#bf616a;">filter</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">is_not_null</span><span>()).</span><span style="color:#bf616a;">sum</span><span>().name.</span><span style="color:#bf616a;">suffix</span><span>(&quot;</span><span style="color:#a3be8c;">_sum</span><span>&quot;),
+</span><span>    pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">names</span><span>&quot;).</span><span style="color:#bf616a;">reverse</span><span>().</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">reversed names</span><span>&quot;),
+</span><span>)
+</span><span style="color:#96b5b4;">print</span><span>(out)
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>shape: (3, 5)
+</span><span>┌────────┬─────┬───────┬────────────┬────────────────┐
+</span><span>│ groups ┆ nrs ┆ count ┆ random_sum ┆ reversed names │
+</span><span>│ ---    ┆ --- ┆ ---   ┆ ---        ┆ ---            │
+</span><span>│ str    ┆ i64 ┆ u32   ┆ f64        ┆ list[str]      │
+</span><span>╞════════╪═════╪═══════╪════════════╪════════════════╡
+</span><span>│ A      ┆ 3   ┆ 2     ┆ 1.139323   ┆ [&quot;ham&quot;, &quot;foo&quot;] │
+</span><span>│ C      ┆ 0   ┆ 1     ┆ 0.839158   ┆ [&quot;egg&quot;]        │
+</span><span>│ B      ┆ 8   ┆ 2     ┆ 0.174601   ┆ [null, &quot;spam&quot;] │
+</span><span>└────────┴─────┴───────┴────────────┴────────────────┘
+</span></code></pre>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>
+</span></code></pre>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>datetime </span><span style="color:#b48ead;">import </span><span>date ;
+</span><span>df2 = (
+</span><span>    pl.</span><span style="color:#bf616a;">date_range</span><span>(
+</span><span>        </span><span style="color:#bf616a;">start</span><span>=</span><span style="color:#bf616a;">date</span><span>(</span><span style="color:#d08770;">2021</span><span>, </span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">1</span><span>),
+</span><span>        </span><span style="color:#bf616a;">end</span><span>=</span><span style="color:#bf616a;">date</span><span>(</span><span style="color:#d08770;">2021</span><span>, </span><span style="color:#d08770;">12</span><span>, </span><span style="color:#d08770;">31</span><span>),
+</span><span>        </span><span style="color:#bf616a;">interval</span><span>=&quot;</span><span style="color:#a3be8c;">1d</span><span>&quot;,
+</span><span>        </span><span style="color:#bf616a;">eager</span><span>=</span><span style="color:#d08770;">True</span><span>,
+</span><span>    )
+</span><span>    .</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">time</span><span>&quot;)
+</span><span>    .</span><span style="color:#bf616a;">to_frame</span><span>()
+</span><span>)
+</span><span>
+</span><span>df2
+</span></code></pre>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (365, 1)</small><table border="1" class="dataframe"><thead><tr><th>time</th></tr><tr><td>date</td></tr></thead><tbody><tr><td>2021-01-01</td></tr><tr><td>2021-01-02</td></tr><tr><td>2021-01-03</td></tr><tr><td>2021-01-04</td></tr><tr><td>2021-01-05</td></tr><tr><td>&hellip;</td></tr><tr><td>2021-12-27</td></tr><tr><td>2021-12-28</td></tr><tr><td>2021-12-29</td></tr><tr><td>2021-12-30</td></tr><tr><td>2021-12-31</td></tr></tbody></table></div>
+<h2 id="3-eager-or-lazy">3. Eager or Lazy</h2>
+<h2 id="4-transformation">4. Transformation</h2>
+<h2 id="5-window-function">5. Window Function</h2>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>apple_stocks = (
+</span><span>    pl.</span><span style="color:#bf616a;">scan_csv</span><span>(&quot;</span><span style="color:#a3be8c;">./apple_stock.csv</span><span>&quot;)
+</span><span>)
+</span></code></pre>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>q = (apple_stocks
+</span><span>    .</span><span style="color:#bf616a;">select</span><span>( pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">Date</span><span>&quot;).str.</span><span style="color:#bf616a;">to_datetime</span><span>(&quot;</span><span style="color:#d08770;">%Y</span><span style="color:#a3be8c;">-</span><span style="color:#d08770;">%m</span><span style="color:#a3be8c;">-</span><span style="color:#d08770;">%d</span><span>&quot;), &quot;</span><span style="color:#a3be8c;">Close</span><span>&quot;)
+</span><span>    .</span><span style="color:#bf616a;">with_columns</span><span>(pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">Date</span><span>&quot;).dt.</span><span style="color:#bf616a;">to_string</span><span>(&quot;</span><span style="color:#d08770;">%Y</span><span style="color:#a3be8c;">-</span><span style="color:#d08770;">%m</span><span>&quot;).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">YM</span><span>&quot;))
+</span><span>    .</span><span style="color:#bf616a;">sort</span><span>(&quot;</span><span style="color:#a3be8c;">Date</span><span>&quot;)
+</span><span>    .</span><span style="color:#bf616a;">with_columns</span><span>( pl.</span><span style="color:#bf616a;">col</span><span>(&quot;</span><span style="color:#a3be8c;">Close</span><span>&quot;).</span><span style="color:#bf616a;">last</span><span>().</span><span style="color:#bf616a;">over</span><span>(&quot;</span><span style="color:#a3be8c;">YM</span><span>&quot;).</span><span style="color:#bf616a;">alias</span><span>(&quot;</span><span style="color:#a3be8c;">last_close</span><span>&quot;) )
+</span><span>    .</span><span style="color:#bf616a;">select</span><span>(&quot;</span><span style="color:#a3be8c;">YM</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">last_close</span><span>&quot;)
+</span><span>    .</span><span style="color:#bf616a;">unique</span><span>().</span><span style="color:#bf616a;">sort</span><span>(&quot;</span><span style="color:#a3be8c;">YM</span><span>&quot;)
+</span><span>)
+</span></code></pre>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>q.</span><span style="color:#bf616a;">show_graph</span><span>()
+</span><span>
+</span><span style="color:#65737e;"># q.explain()
+</span></code></pre>
+<p><img src="https://wangzaixiang.github.io/blog/polars-notebook/output_42_0.svg" alt="svg" /></p>
+<h2 id="6-operator-and-functions">6. Operator and Functions</h2>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>
+</span></code></pre>
+<h2 id="misc-why-an-expression-based-api-other-than-sql-in-polars">Misc: Why an Expression based API other than SQL in Polars?</h2>
+<p>The short answer:</p>
+<ol>
+<li>Is Polars DSL a superset of SQL? Many DSL capabilities can't be expressed in SQL.</li>
+<li>What capabilities can be expressed by SQL but not by Polars DSL?</li>
+</ol>
+<p>In terms of ease of use, SQL is undoubtedly a more concise expression, while DSL is slightly redundant. However, for complex logic, SQL may use complex nesting to represent it, while DSLs can be more concise in this regard.</p>
+<h3 id="todo">TODO</h3>
+<ol>
+<li>
+<p><input disabled="" type="checkbox"/>
+Supplemented the analysis of Polars' execution process and performance optimization strategy</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"/>
+Is it OK to further test the JOIN performance of Polars?</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"/>
+How to read Polars' query plan</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"/>
+Think about how to optimize further data: for example, how to optimize indexed datasets (including min-max indexes, bloom indexes, bitmap indexes, etc.)</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"/>
+What can polars do in our multidimensional model queries?</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"/>
+window functions.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span> 1. Use polars to query the wide table and cache it in a parquet file.
+</span><span> 2. 查询时，从缓存的parquet 中读取数据。
+</span><span> 3. aggregate 查询时，自动缓存聚合的结果数据。
+</span><span> 4. 使用 LRU 机制管理缓存数据。</span></code></pre>
+</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/monetdb-mal/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/vectorize-1/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>
