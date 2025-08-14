@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>DOM 更新技术对比：Virtual DOM or Incremental DOM | 程序人生</title>
+<meta name="description" content="WEB 前端开发中，DOM 的增量更新技术是一个重要的技术，本文对比了 Virtual DOM 和其他技术的优缺点。">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/virtual-dom/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="DOM 更新技术对比：Virtual DOM or Incremental DOM">
+  <meta name="twitter:description" content="WEB 前端开发中，DOM 的增量更新技术是一个重要的技术，本文对比了 Virtual DOM 和其他技术的优缺点。">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="DOM 更新技术对比：Virtual DOM or Incremental DOM">
+  <meta property="og:description" content="WEB 前端开发中，DOM 的增量更新技术是一个重要的技术，本文对比了 Virtual DOM 和其他技术的优缺点。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/virtual-dom/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="DOM 更新技术对比：Virtual DOM or Incremental DOM">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/virtual-dom/"
+      },
+      "headline": "DOM 更新技术对比：Virtual DOM or Incremental DOM",
+      "image": ,
+      "datePublished": "2024-09-12",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "DOM 更新技术对比：Virtual DOM or Incremental DOM"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "DOM 更新技术对比：Virtual DOM or Incremental DOM",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "WEB 前端开发中，DOM 的增量更新技术是一个重要的技术，本文对比了 Virtual DOM 和其他技术的优缺点。"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Virtual Dom",
+            "item": "https://wangzaixiang.github.io/blog/virtual-dom/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/virtual-dom/#links">Links</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>DOM 更新技术对比：Virtual DOM or Incremental DOM</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/how-portable-simd-works/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted September 12, 2024 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>7&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/duckdb-links/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>DOM 更新技术本身是一步技术演进历史，本文收集了从远古时间 到 最新的技术，并整理了我对其的理解。目前还只是一个提纲，后续有时间会慢慢细化。</p>
+<ol>
+<li>
+<p>直接、命令式操作 DOM 时代</p>
+<p>命令式编程的时代，也是 UI 的传统时代，无比黑暗、无趣的时代。从 Motif 到 Win32，都是这种风格的编程模式。</p>
+<ul>
+<li>innerHTML 操作：简单、粗暴</li>
+<li>诞生了 jquery 这一王者</li>
+</ul>
+</li>
+<li>
+<p>React 时代: ui = f(state)</p>
+<p>进入到了函数式编程的时代，不仅WEB，桌面 GUI 也开始以 React 风格为主，如 Flutter, Slint 等。</p>
+<ol>
+<li>React Virtual DOM<pre data-lang="javascript" style="background-color:#2b303b;color:#c0c5ce;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">render</span><span>() {
+</span><span>   </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">vdom </span><span>= </span><span style="color:#8fa1b3;">f</span><span>(</span><span style="color:#bf616a;">state</span><span>)
+</span><span>   </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">delta </span><span>= </span><span style="color:#8fa1b3;">diff</span><span>(</span><span style="color:#bf616a;">dom</span><span>, </span><span style="color:#bf616a;">vdom</span><span>)
+</span><span>   </span><span style="color:#8fa1b3;">patch</span><span>(</span><span style="color:#bf616a;">dom</span><span>, </span><span style="color:#bf616a;">delta</span><span>)
+</span><span>}
+</span><span style="color:#65737e;">// Loop: event -&gt; change state -&gt; render 
+</span></code></pre>
+</li>
+<li>incremental DOM<pre data-lang="javascript" style="background-color:#2b303b;color:#c0c5ce;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">render</span><span>() {
+</span><span>   </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">delta </span><span>= </span><span style="color:#8fa1b3;">f</span><span>(</span><span style="color:#bf616a;">state</span><span>, </span><span style="color:#bf616a;">dom</span><span>) </span><span style="color:#65737e;">// compute virtual dom side by side dom
+</span><span>   </span><span style="color:#8fa1b3;">patch</span><span>(</span><span style="color:#bf616a;">dom</span><span>, </span><span style="color:#bf616a;">delta</span><span>)
+</span><span>}
+</span><span style="color:#65737e;">// Loop: event -&gt; change state -&gt; render 
+</span></code></pre>
+通过在计算 virtual dom 时，即与 DOM 进行比较，由于在大部份情况下，变更紧紧是一小部份，因此，可以减少内存的占用。这种模式感觉应该
+是对 virtual dom 的一种有效优化，但在实际生态中，好像并没有太多的实现。</li>
+<li>Lit-Style<pre data-lang="javascript" style="background-color:#2b303b;color:#c0c5ce;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">render</span><span>() {
+</span><span>   </span><span style="color:#b48ead;">let </span><span>[</span><span style="color:#bf616a;">static_parts</span><span>, [</span><span style="color:#bf616a;">position</span><span>, </span><span style="color:#bf616a;">state</span><span>]] = </span><span style="color:#8fa1b3;">f</span><span>(</span><span style="color:#bf616a;">state</span><span>); </span><span style="color:#65737e;">// 得益于 lit template
+</span><span>   </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">old_state </span><span>= </span><span style="color:#bf616a;">dom</span><span>[</span><span style="color:#bf616a;">position</span><span>];  </span><span style="color:#65737e;">// dynamic 部份会有多个
+</span><span>   </span><span style="color:#b48ead;">if</span><span>(</span><span style="color:#bf616a;">old_state </span><span>!= </span><span style="color:#bf616a;">state</span><span>) {
+</span><span>      </span><span style="color:#8fa1b3;">update</span><span>(</span><span style="color:#bf616a;">position</span><span>, </span><span style="color:#bf616a;">state</span><span>);
+</span><span>   }
+</span><span>} 
+</span></code></pre>
+Lit 基于 template，由于可以识别 template 的静态部份（不会变化）和动态部份（会响应数据的变化），
+Lit 在 render 后，会追踪动态部份，检查动态部份依赖的数据是否发生变化，做出响应的更新。（参见很早期我编写的一篇文章：
+<a href="/blog/litelement">LitElement &amp; LitHtml 探秘</a> )
+缺点：每次 render 函数调用都会执行，逐一检查动态部份是否发生变化，这个过程还是略显多余。
+优点：算是一种相对简单的平衡，即没有大量的 virtual dom 的内存占用(static部份是共享的，不会重复占用内存)，
+也简化了 DOM 的 diff过程。</li>
+<li>Solid-Style/Svelte-Style<pre data-lang="javascript" style="background-color:#2b303b;color:#c0c5ce;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">render</span><span>(){
+</span><span>  </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">dom </span><span>= </span><span style="color:#8fa1b3;">f</span><span>(</span><span style="color:#bf616a;">state</span><span>);
+</span><span>  </span><span style="color:#8fa1b3;">createEffect</span><span>( () </span><span style="color:#b48ead;">=&gt; </span><span>{ </span><span style="color:#65737e;">// 对每一个动态部份，追踪其依赖的数据
+</span><span>     </span><span style="color:#bf616a;">dom1 </span><span>= </span><span style="color:#8fa1b3;">f1</span><span>(</span><span style="color:#bf616a;">state1</span><span>);  </span><span style="color:#65737e;">// 当子状态发生后变化时，更新 dom1
+</span><span>  } );
+</span><span>}
+</span></code></pre>
+这一类的框架，在 Lit 的基础上更进一步：在后续响应式变化时，render 函数不再执行，而是每个动态部份独立响应。当然，做到这一点是
+依赖于对模版的编译的。即将模版中的动态部份、静态部份在编译期即进行了分离，并生成对应的响应式代码。
+当然，对一些复杂的结构，需要进一步展开其响应式机制。</li>
+<li>未来发展预测
+在编译期进行更多的优化，从而避免在运行期做不必要的计算，这个方向应该还有不少空间，例如：诸如 Solid 目前设计（我的猜测），还是采用
+动态的 track 方式来跟踪变化的依赖，在依赖发生变化时，重新计算，从重新刷新依赖关系。这个对于一些静态的依赖关系，可以在编译期直接确定，
+进而减少 track 的开销。</li>
+</ol>
+</li>
+</ol>
+<p>最新的发展，这种 React 风格也逐步的占领了桌面 GUI 的领域，如 Flutter, Slint 等。在最近留意的一个框架 dioxuslabs 中，更是把
+这个带入到 Rust + WASM + (Web/TUI/GUI)的风格中，令 Rustacean 们也有了一种新的选择。</p>
+<h1 id="links">Links</h1>
+<ol>
+<li>
+<p>React
+<a href="https://www.slideshare.net/slideshow/react-preso-v2/26589373">Rethinking Best Practices</a></p>
+</li>
+<li>
+<p>Svelte 系列</p>
+<ol>
+<li><a href="https://svelte.dev/blog/virtual-dom-is-pure-overhead">Virtual DOM is pure overhead</a></li>
+<li><a href="https://svelte.dev/blog/svelte-3-rethinking-reactivity">Rethinking reactivity</a></li>
+<li><a href="https://svelte.dev/blog/runes">Rethinking 'Rethinking reactivity'</a></li>
+</ol>
+</li>
+<li>
+<p>SolidJS</p>
+<ol>
+<li><a href="https://dev.to/ryansolid/a-hands-on-introduction-to-fine-grained-reactivity-3ndf">A Hands-on Introduction to Fine-Grained Reactivity</a>
+我设计的 Variable Manager 设计方案，在很多特性上，与这篇文章的设计思路是一致的。包括：
+<ul>
+<li>dynamic dependency tracking。memoization 和 effect 都类似于VM 中的 binding。</li>
+<li>batched updates. 类似于 VM 中的 transaction。
+只是，本文更为微观，面向 synchronous，而 vm 更为宏观，面向 asynchronous。
+只是，Solid的处理中应该使用了 weak reference，当 effect 回收时，这个计算也自动销毁了。</li>
+</ul>
+</li>
+<li><a href="https://dev.to/ryansolid/building-a-reactive-library-from-scratch-1i0p">Building a Reactive Library from Scratch</a></li>
+<li><a href="https://angularindepth.com/posts/1289/solidjs-reactivity-to-rendering">SolidJS: Reactivity to Rendering</a>
+<ol>
+<li>example1<pre data-lang="javascript" style="background-color:#2b303b;color:#c0c5ce;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span style="color:#b48ead;">const </span><span style="color:#8fa1b3;">Greeting </span><span>= (</span><span style="color:#bf616a;">props</span><span>) </span><span style="color:#b48ead;">=&gt; </span><span>(
+</span><span>    &lt;&gt;</span><span style="color:#bf616a;">Hi </span><span>&lt;</span><span style="color:#bf616a;">span</span><span>&gt;{props.</span><span style="color:#bf616a;">name</span><span>}&lt;/</span><span style="color:#96b5b4;">span&gt;&lt;</span><span>/&gt;
+</span><span>);
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">App</span><span>(() =&gt; {
+</span><span>   const [</span><span style="color:#bf616a;">visible</span><span>, </span><span style="color:#bf616a;">setVisible</span><span>] = createSignal(false),
+</span><span>   [</span><span style="color:#bf616a;">name</span><span>, </span><span style="color:#bf616a;">setName</span><span>] = createSignal(&quot;Josephine&quot;);
+</span><span>
+</span><span>   return (
+</span><span>      &lt;div onClick={() =&gt; setName(&quot;Geraldine&quot;)}&gt;{
+</span><span>      visible() &amp;&amp; &lt;Greeting name={ name } /&gt;
+</span><span>      }&lt;/div&gt;
+</span><span>   );
+</span><span>});
+</span></code></pre>
+等效于代码:<pre data-lang="javascript" style="background-color:#2b303b;color:#c0c5ce;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span style="color:#b48ead;">const </span><span style="color:#8fa1b3;">Greeting </span><span>= (</span><span style="color:#bf616a;">props</span><span>) </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>    </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">t1 </span><span>= </span><span style="color:#ebcb8b;">Text</span><span>();
+</span><span>    [</span><span style="color:#bf616a;">name</span><span>, </span><span style="color:#bf616a;">setName</span><span>] = </span><span style="color:#d08770;">null</span><span>; </span><span style="color:#65737e;">// signal from props.
+</span><span>    </span><span style="color:#8fa1b3;">createEffect</span><span>(() </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>       </span><span style="color:#bf616a;">t1</span><span>.data = </span><span style="color:#bf616a;">$name</span><span>;
+</span><span>    });
+</span><span>    </span><span style="color:#b48ead;">return </span><span>[ </span><span style="color:#ebcb8b;">Text</span><span>(&quot;</span><span style="color:#a3be8c;">Hi </span><span>&quot;), </span><span style="color:#8fa1b3;">Span</span><span>(</span><span style="color:#bf616a;">t1</span><span>) ];
+</span><span>};
+</span><span>
+</span><span style="color:#b48ead;">const </span><span style="color:#8fa1b3;">App </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>   </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">els </span><span>= </span><span style="color:#8fa1b3;">computeEffect</span><span>( ()</span><span style="color:#b48ead;">=&gt;</span><span>{
+</span><span>       </span><span style="color:#b48ead;">if</span><span>( </span><span style="color:#8fa1b3;">visble</span><span>() ){
+</span><span>            </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">el </span><span>= </span><span style="color:#8fa1b3;">Greeting</span><span>();
+</span><span>            </span><span style="color:#8fa1b3;">computeEffect</span><span>(() </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>               </span><span style="color:#bf616a;">el</span><span>.</span><span style="color:#8fa1b3;">propSet</span><span>(&quot;</span><span style="color:#a3be8c;">name</span><span>&quot;, </span><span style="color:#8fa1b3;">name</span><span>());
+</span><span>            });
+</span><span>            </span><span style="color:#b48ead;">return </span><span>[ </span><span style="color:#bf616a;">el </span><span>];
+</span><span>       }
+</span><span>       </span><span style="color:#b48ead;">else </span><span>{
+</span><span>          </span><span style="color:#b48ead;">return </span><span>[];
+</span><span>       }
+</span><span>   })
+</span><span>   { </span><span style="color:#bf616a;">div </span><span>{
+</span><span>      ...</span><span style="color:#bf616a;">els 
+</span><span>     } 
+</span><span>   }
+</span><span>}
+</span></code></pre>
+</li>
+<li></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p>Angular</p>
+<ol>
+<li><a href="https://angularindepth.com/posts/300/big-picture-overview">Change Detection Big Picture - overview</a></li>
+<li><a href="https://angularindepth.com/posts/301/big-picture-operations">Change Detection Big Picture - Operations</a></li>
+<li><a href="https://angularindepth.com/posts/302/big-picture-unidirectional-data-flow">Change Detection Big Picture - Unidirectional data flow</a></li>
+<li><a href="https://angularindepth.com/posts/303/big-picture-rendering-cycle">Change Detection Big Picture - Rendering cycle</a></li>
+<li><a href="https://angularindepth.com/posts/304/running-change-detection-components-tree">Change Detection Big Picture - Components tree</a></li>
+</ol>
+</li>
+<li>
+<p>Lit 的做法</p>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/zhazhanitian/p/14421993.html">增量DOM与虚拟DOM</a></p>
+</li>
+<li>
+<p>Incremental-DOM https://google.github.io/incremental-dom/</p>
+</li>
+<li>
+<p><a href="https://raphlinus.github.io/rust/gui/2022/05/07/ui-architecture.html">Xilem: an architecture for UI in Rust</a></p>
+<p>Xilem 是一个很类似于 Flutter/SwiftUI 的 Rust GUI 框架，其核心也是一个增量更新的架构，在 <a href="https://github.com/linebender/xilem/blob/main/ARCHITECTURE.md">Xilem架构</a>
+中有很多这方面的思考，可以作为对 UI 的增量更新的参考。</p>
+</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/how-portable-simd-works/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/duckdb-links/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>
