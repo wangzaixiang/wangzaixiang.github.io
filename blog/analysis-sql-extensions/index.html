@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>面向分析场景的 SQL 扩展思考 | 程序人生</title>
+<meta name="description" content="datafusion 性能分析">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/analysis-sql-extensions/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="面向分析场景的 SQL 扩展思考">
+  <meta name="twitter:description" content="datafusion 性能分析">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="面向分析场景的 SQL 扩展思考">
+  <meta property="og:description" content="datafusion 性能分析">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/analysis-sql-extensions/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="面向分析场景的 SQL 扩展思考">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/analysis-sql-extensions/"
+      },
+      "headline": "面向分析场景的 SQL 扩展思考",
+      "image": ,
+      "datePublished": "2025-06-06",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "面向分析场景的 SQL 扩展思考"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "面向分析场景的 SQL 扩展思考",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "datafusion 性能分析"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Analysis Sql Extensions",
+            "item": "https://wangzaixiang.github.io/blog/analysis-sql-extensions/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/analysis-sql-extensions/#zai-yi-ge-ji-suan-liu-zhong-shu-chu-duo-ge-jie-guo">在一个计算流中输出多个结果</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/analysis-sql-extensions/#group-by-grouping-set-cube-rollup">group by grouping set, cube, rollup</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/analysis-sql-extensions/#aggregate-with-filter">aggregate with filter</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/analysis-sql-extensions/#aggregate-with-rollup">aggregate with rollup</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/analysis-sql-extensions/#jie-he-aggregate-with-filter-rollup">结合 aggregate with filter &amp; rollup</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/analysis-sql-extensions/#more-aggregate-functions">More Aggregate Functions</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/analysis-sql-extensions/#as-of-join">as-of join</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/analysis-sql-extensions/#gao-xiao-zhi-xing-scalar-subquery">高效执行 scalar subquery</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>面向分析场景的 SQL 扩展思考</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/compare-vega-d3-echart/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted June  6, 2025&nbsp;&hyphen;&nbsp;<strong>7&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/datafusion-performance/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="zai-yi-ge-ji-suan-liu-zhong-shu-chu-duo-ge-jie-guo">在一个计算流中输出多个结果</h1>
+<p>目前的 Query 都只能输出单个结果集，如果能在一个计算图中同时输出多个结果集，在一些 BI 场景会有性能上的优化。一个典型的案例就是：在查询第一页数据的同时，
+返回总行数。目前的做法是拆分为2个独立的查询：Q1 查询第一页数据，Q2 查询总行数。如果结合到一个计算图中，则可以共享很多算子的计算，从而减少重复计算消耗。</p>
+<h1 id="group-by-grouping-set-cube-rollup">group by grouping set, cube, rollup</h1>
+<ul>
+<li>支持数据库
+<ul>
+<li><a href="https://duckdb.org/docs/stable/sql/query_syntax/grouping_sets">duckdb</a></li>
+<li><a href="https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-GROUPING-SETS">postgres 9.5</a></li>
+<li><a href="https://dev.mysql.com/blog-archive/improvements-to-rollup-in-mysql/">mysql 8.0.19</a></li>
+<li>datafusion: 目前并不支持</li>
+</ul>
+</li>
+<li>使用场景：将分组、小计、合计等多个查询在同一个 SQL 中完成。</li>
+<li>性能优化：
+<ul>
+<li>在最小粒度上进行 group aggregate</li>
+<li>在上层粒度上进行 rollup，避免重复计算。</li>
+<li>在同一个算子中完成 grouping set 的计算。</li>
+</ul>
+</li>
+</ul>
+<h1 id="aggregate-with-filter">aggregate with filter</h1>
+<ul>
+<li>支持数据库
+<ul>
+<li><a href="https://duckdb.org/docs/stable/sql/functions/aggregates">duckdb</a></li>
+<li>datafusion: 目前并不支持</li>
+</ul>
+</li>
+<li>适用场景：
+<ul>
+<li>在分组计算时，支持定义包含更多 filter 的度量计算。</li>
+</ul>
+</li>
+</ul>
+<h1 id="aggregate-with-rollup">aggregate with rollup</h1>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span> </span><span style="color:#b48ead;">SELECT</span><span> category, product, </span><span style="color:#96b5b4;">SUM</span><span>(amount) as amount, 
+</span><span>     </span><span style="color:#96b5b4;">SUM</span><span>(amount) rollup(category) as amount_of_product,  </span><span style="color:#65737e;">-- 在 category 上 rollup
+</span><span>     </span><span style="color:#96b5b4;">SUM</span><span>(amount) rollup(product) as amount_of_category,  </span><span style="color:#65737e;">-- 在 product 上 rollup
+</span><span> </span><span style="color:#b48ead;">FROM</span><span> orders
+</span><span> </span><span style="color:#b48ead;">GROUP BY</span><span> category, product
+</span></code></pre>
+<p>目前还没有看到哪个数据库支持这种形式的查询。其不同于 group by grouping, 后者会返回不同的分组， aggregate with rollup 是在当前的分组上
+返回 rollup 的结果。</p>
+<p>评估：在 datafusion 中增加这个能力，并考虑在单个算子中完成计算。</p>
+<h1 id="jie-he-aggregate-with-filter-rollup">结合 aggregate with filter &amp; rollup</h1>
+<p>如果能够在 datafusion 中同时支持 aggregate with filter &amp; rollup 的功能的话，那么以下的 OLAP 计算就会变得简单且高效：</p>
+<ul>
+<li>with filter 类似于 MDX 的 <code>([Measure].[X], [DimMore].[m1])</code></li>
+<li>with rollup 类似于 MDX 的 <code>([Measure].[X], [Dim1].[AllDim1s])</code></li>
+<li>组合： 实现二者的等效操作。</li>
+<li>限制：with filter &amp; with rollup 都在 where 之后执行，其基础数据受 where 条件的限制，无法在 filter 中变更数据范围，虽然有这个限制，
+仍然可以满足很大部份的 MDX 指标计算的能力</li>
+</ul>
+<h1 id="more-aggregate-functions">More Aggregate Functions</h1>
+<p>参考：https://duckdb.org/docs/stable/sql/functions/aggregates</p>
+<table><thead><tr><th>function</th><th>duckdb</th><th>duckdb-order-by</th><th>datafusion</th><th>description</th></tr></thead><tbody>
+<tr><td>any_value(arg)</td><td>Y</td><td>Y</td><td>N</td><td>Returns the first non-null value from arg, support order by</td></tr>
+<tr><td>arbitrary(arg)</td><td>Y</td><td>Y</td><td>first_value</td><td>Returns the first value(null or non-null) from arg, support order by</td></tr>
+<tr><td>arg_max/min(arg, val)</td><td>Y</td><td>Y</td><td>N</td><td>Finds the row with the maximum val and calculates the arg expression at that row. support order by</td></tr>
+<tr><td>arg_max/min(arg, val, n)</td><td>Y</td><td>Y</td><td>N</td><td>return a List of N</td></tr>
+<tr><td>arg_max_null(arg, val)</td><td>Y</td><td>Y</td><td>N</td><td>ignore rows where val is null</td></tr>
+<tr><td>array_agg(arg)/list</td><td>Y</td><td>Y</td><td>Y</td><td></td></tr>
+<tr><td>bit_and/or/xor(arg)</td><td>Y</td><td>N</td><td>Y</td><td></td></tr>
+<tr><td>bool_and/or(arg)</td><td>Y</td><td>N</td><td>Y</td><td></td></tr>
+<tr><td>count(*)/count(val)</td><td>Y</td><td>N</td><td>Y</td><td></td></tr>
+<tr><td>max(arg)</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>max(arg, n)</td><td></td><td></td><td>N</td><td></td></tr>
+<tr><td>max_by(arg, val, n)</td><td></td><td></td><td>N</td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody></table>
+<h1 id="as-of-join">as-of join</h1>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span> </span><span style="color:#b48ead;">SELECT </span><span style="color:#d08770;">h</span><span>.</span><span style="color:#d08770;">ticker</span><span>, </span><span style="color:#d08770;">h</span><span>.</span><span style="color:#d08770;">when</span><span>, </span><span style="color:#d08770;">p</span><span>.</span><span style="color:#d08770;">price </span><span style="color:#bf616a;">* </span><span style="color:#d08770;">h</span><span>.</span><span style="color:#d08770;">shares </span><span>AS value
+</span><span> </span><span style="color:#b48ead;">FROM</span><span> holdings h
+</span><span> ASOF </span><span style="color:#b48ead;">JOIN</span><span> prices p </span><span style="color:#65737e;">-- 关联到 1 条 prices 记录，去 p.when 中最大的记录， inner join 丢弃找不到的 join, or left join 采用 outer join
+</span><span>      ON </span><span style="color:#d08770;">h</span><span>.</span><span style="color:#d08770;">ticker </span><span>= </span><span style="color:#d08770;">p</span><span>.</span><span style="color:#d08770;">ticker
+</span><span>      AND </span><span style="color:#d08770;">h</span><span>.</span><span style="color:#d08770;">when </span><span>&gt;= </span><span style="color:#d08770;">p</span><span>.</span><span style="color:#d08770;">when</span><span>;
+</span></code></pre>
+<ul>
+<li>支持数据库
+<ul>
+<li><a href="https://duckdb.org/docs/stable/guides/sql_features/asof_join#inner-asof-joins">duckdb</a></li>
+</ul>
+</li>
+<li>适用场景
+<ul>
+<li>时点类指标。</li>
+</ul>
+</li>
+</ul>
+<h1 id="gao-xiao-zhi-xing-scalar-subquery">高效执行 scalar subquery</h1>
+<p>使用 scalar subquery (可以出现在 SelectItem, Where 部份)，来描述计算度量，具有较强的表达能力，可以覆盖上述的 aggregate with rollup 的能力，
+以及更为复杂的一些计算场景，包括：</p>
+<ul>
+<li>时间快速计算，如 同期值、前期值、年（季、月）累计、同期累计值</li>
+<li>组内占比</li>
+</ul>
+<p>如果 SQL 执行引擎能够高效的执行 scalar subquery, 那么对 OLAP 分析来说，就很有价值了。</p>
+<ul>
+<li>
+<p><a href="https://ericfu.me/subquery-optimization/">SQL 子查询的优化</a></p>
+</li>
+<li>
+<p>文献：<a href="https://ericfu.me/subquery-optimization/">Unnesting Arbitrary Queries</a></p>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/p/21395872495">4.5 duck-关联子查询(binder-&gt;plan-&gt;optimize)</a></p>
+</li>
+<li>
+<p>TPCH Query2</p>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#b48ead;">select</span><span>	s_acctbal,	s_name,	n_name,	p_partkey,	p_mfgr,	s_address,	s_phone,	s_comment	
+</span><span style="color:#b48ead;">from</span><span>	part,	supplier,	partsupp,	nation,	region	
+</span><span style="color:#b48ead;">where</span><span>	p_partkey = ps_partkey	and s_suppkey = ps_suppkey	and p_size = </span><span style="color:#d08770;">15	</span><span>and p_type like &#39;</span><span style="color:#a3be8c;">%BRASS</span><span>&#39;	
+</span><span>   and s_nationkey = n_nationkey	and n_regionkey = r_regionkey	and r_name = &#39;</span><span style="color:#a3be8c;">EUROPE</span><span>&#39;	
+</span><span>   and ps_supplycost = (	
+</span><span>       </span><span style="color:#b48ead;">select	</span><span style="color:#96b5b4;">min</span><span>(ps_supplycost)	</span><span style="color:#b48ead;">from</span><span>	partsupp,	supplier,	nation,	region	
+</span><span>       </span><span style="color:#b48ead;">where</span><span>	p_partkey = ps_partkey	</span><span style="color:#65737e;">-- p_partkey is from outer part
+</span><span>           and s_suppkey = ps_suppkey	and s_nationkey = n_nationkey	
+</span><span>           and n_regionkey = r_regionkey	and r_name = &#39;</span><span style="color:#a3be8c;">EUROPE</span><span>&#39;	
+</span><span>  )	
+</span><span style="color:#b48ead;">order by</span><span>	s_acctbal </span><span style="color:#b48ead;">desc</span><span>,	n_name,	s_name,	p_partkey;
+</span></code></pre>
+<p>对这个子查询, duckdb 和 datafusion 都具有良好的优化能力。</p>
+</li>
+<li>
+<p>datafusion 48.0.0 暂不支持如下的查询（duckdb支持，但其查询计划不是很好阅读）：</p>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span>   </span><span style="color:#b48ead;">select 
+</span><span>       </span><span style="color:#d08770;">o1</span><span>.</span><span style="color:#d08770;">o_custkey</span><span>,
+</span><span>       </span><span style="color:#d08770;">o1</span><span>.</span><span style="color:#d08770;">o_orderdate</span><span>, 
+</span><span>       </span><span style="color:#96b5b4;">sum</span><span>(</span><span style="color:#d08770;">o1</span><span>.</span><span style="color:#d08770;">o_totalprice</span><span>),
+</span><span>       (
+</span><span>           </span><span style="color:#b48ead;">select </span><span style="color:#96b5b4;">sum</span><span>(</span><span style="color:#d08770;">o2</span><span>.</span><span style="color:#d08770;">o_totalprice</span><span>)
+</span><span>           </span><span style="color:#b48ead;">from</span><span> orders o2
+</span><span>           </span><span style="color:#b48ead;">where 	</span><span style="color:#d08770;">o2</span><span>.</span><span style="color:#d08770;">o_custkey </span><span>= </span><span style="color:#d08770;">o1</span><span>.</span><span style="color:#d08770;">o_custkey 
+</span><span>               and </span><span style="color:#d08770;">o2</span><span>.</span><span style="color:#d08770;">o_orderdate </span><span>&gt;= date_trunc(&#39;</span><span style="color:#a3be8c;">year</span><span>&#39;, </span><span style="color:#d08770;">o1</span><span>.</span><span style="color:#d08770;">o_orderdate</span><span>) 
+</span><span>               and </span><span style="color:#d08770;">o2</span><span>.</span><span style="color:#d08770;">o_orderdate </span><span>&lt;= </span><span style="color:#d08770;">o1</span><span>.</span><span style="color:#d08770;">o_orderdate
+</span><span>       ) as &quot;</span><span style="color:#a3be8c;">年累计</span><span>&quot;
+</span><span>   </span><span style="color:#b48ead;">from</span><span> orders o1 
+</span><span>   </span><span style="color:#b48ead;">where 
+</span><span>       </span><span style="color:#d08770;">o1</span><span>.</span><span style="color:#d08770;">o_orderdate </span><span>&lt;= </span><span style="color:#b48ead;">date</span><span>&#39;</span><span style="color:#a3be8c;">1992-02-10</span><span>&#39; 
+</span><span>       and </span><span style="color:#d08770;">o1</span><span>.</span><span style="color:#d08770;">o_custkey </span><span>in (</span><span style="color:#d08770;">3689999</span><span>, </span><span style="color:#d08770;">7800163</span><span>)
+</span><span>   </span><span style="color:#b48ead;">group by </span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">2</span><span>;
+</span></code></pre>
+<p>错误：<code>This feature is not implemented: Physical plan does not support logical expression ScalarSubquery(&lt;subquery&gt;)</code></p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"/>
+idea: 新增一种 reduce join, outer : inner = 1: N， 将多行 inner 的数据进行聚合后，作为 inner 的输出。
+在 join 算子中完成聚合操作，减少 join 的 output。</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"/>
+idea：在 reduce join 中，将部份 window function 的执行优化策略引入，减少 working set 以及聚合计算量。</p>
+</li>
+</ul>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/compare-vega-d3-echart/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/datafusion-performance/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>
