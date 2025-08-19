@@ -228,8 +228,8 @@ option = {
 # Performance Compare
 在这个[项目](https://github.com/wangzaixiang/compare-chart)中，我对这3个框架, 基于 Stacked Area Chart 进行了一个简单的性能对比(36,600个数据点)：
 对比结果：
-[Safari Results](https://github.com/wangzaixiang/compare-chart/raw/main/doc/result_safari.png)
-[Chrome Results](https://github.com/wangzaixiang/compare-chart/raw/main/doc/result_chrome.png)
+![Safari Results](https://github.com/wangzaixiang/compare-chart/raw/main/doc/result_safari.png)
+![Chrome Results](https://github.com/wangzaixiang/compare-chart/raw/main/doc/result_chrome.png)
 
 在 Stacked Area Chart 这个场景中, Vega(基于Canvas) 略优于 D3(基于svg)，远优于 Echart(~16x fast)。我之前有一个担心：Vega采用 Reactive Dataflow graph
 的方式是否会存在性能问题，通过这个测试，消除了我的这个担心。完全可以放心的将 reactive dataflow 这种模式推广应用到更多的 UI 领域。
