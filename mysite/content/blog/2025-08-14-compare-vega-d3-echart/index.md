@@ -232,4 +232,6 @@ option = {
 ![Chrome Results](https://github.com/wangzaixiang/compare-chart/raw/main/doc/result_chrome.png)
 
 在 Stacked Area Chart 这个场景中, Vega(基于Canvas) 略优于 D3(基于svg)，远优于 Echart(~16x fast)。我之前有一个担心：Vega采用 Reactive Dataflow graph
-的方式是否会存在性能问题，通过这个测试，消除了我的这个担心。完全可以放心的将 reactive dataflow 这种模式推广应用到更多的 UI 领域。
+的方式是否会存在性能问题，通过这个测试，消除了我的这个担心。完全可以放心的将 reactive dataflow 这种模式推广应用到更多的 UI 领域 
+
+我在思考应用于 low code 这一类的 应用中，基于声明式的方式来描述 UI 的交互行为，从而避免引入复杂的脚本，在带来强表达能力的同时，平衡配置的简单性、设计时的可视化、工具化能力。希望后续有机会能够落地
