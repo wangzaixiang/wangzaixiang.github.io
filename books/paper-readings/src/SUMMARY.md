@@ -6,3 +6,4 @@
 
 # Visualization
 - [How Vega works](./how-vega-works.md)
+- [vega-json-to-canvas-flow.md](vega-json-to-canvas-flow.md)
