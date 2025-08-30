@@ -51,3 +51,8 @@
 # OLAP
 - [cube.js](olap_cube_js.md)
 
+# AI
+- [图解大模型：生成式AI原理与实践](./llm/handon-llm.md)
+
+# Misc
+- [webcomponent](./webcomponent.md)

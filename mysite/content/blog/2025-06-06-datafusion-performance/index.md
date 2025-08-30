@@ -234,8 +234,23 @@ toc = true
    group by	supp_nation,	cust_nation,	l_year	
    order by	supp_nation,	cust_nation,	l_year;
    ```
+   - relation graph
+     {% mermaid() %}
+     ```mermaid
+     flowchart TD
+       lineitem[lineitem 60m filtered 18.2m] --- orders[orders 15m] --- customer[customer 1.5m] --- nation_2[nation2 25 filtered 2]
+       lineitem --- supplier[supplier 100K] --- nation_1[nation1 25 filtered 2]
+     ```
+     {% end %}
    - datafusion
      - Join Order: 
+        {% mermaid() %}
+        ```mermaid
+         flowchart TD
+           lineitem[lineitem 60m filtered 18.2m] ---|2| orders[orders 15m] ---|3| customer[customer 1.5m] ---|4| nation_2[nation2 25 filtered 2]
+           lineitem ---|1| supplier[supplier 100K] ---|5| nation_1[nation1 25 filtered 2]
+       ```
+       {% end %}
        {% mermaid() %}
        ```mermaid
        flowchart TD
@@ -264,6 +279,14 @@ toc = true
    - duckdb
      - Join Order
        `(orders X (lineitem X (supplier X nation))) * (customer X nation)`
+       {% mermaid() %}
+       ```mermaid
+       flowchart TD
+       lineitem[lineitem 60m filtered 18.2m] ---|3| orders[orders 15m] ---|5| customer[customer 1.5m] ---|4| nation_2[nation2 25 filtered 2]
+       lineitem ---|2| supplier[supplier 100K] ---|1| nation_1[nation1 25 filtered 2]
+       ```
+       {% end %}
+
      - duckdb 对 JOIN 有 right filter left 的 优化，可以大大的减少 probe side 的扫描成本
      - 作为对比： duckdb 的 JOIN 耗时总共为 430ms。
        - [Samply Profile](https://share.firefox.dev/4nnkj9q)
@@ -271,6 +294,42 @@ toc = true
      - 对这个查询，duckdb 处理的关联顺序基本上是错误的，最佳的关联顺序应该是 `(filter(lineitem) X supplier X orders X customer X nation X nation `
      - [ ] 尝试手动编写物理查询计划，来做一个性能对比
      - Coalesce带来了额外的开销。
+     - 使用 CTE 方式改写上面的 SQL
+       ```sql
+        with j1 as (
+            select s.s_suppkey, n1.n_name as supp_nation from supplier s join nation n1 on s.s_nationkey = n1.n_nationkey
+            where n1.n_name in ('FRANCE', 'GERMANY')
+        ),
+        j2 as (
+            select c.c_custkey, n2.n_name as cust_nation from customer c join nation n2 on c.c_nationkey = n2.n_nationkey
+            where n2.n_name in ('FRANCE', 'GERMANY')
+        ),
+        j3 as (
+            select o.o_orderkey, j2.cust_nation from orders o join j2 on o.o_custkey = j2.c_custkey
+        ),
+        j4 as (
+            select extract(year from l_shipdate) as l_year,
+            l_extendedprice * (1 - l_discount) as volume, j1.supp_nation, l.l_orderkey
+            from lineitem l join j1 on l.l_suppkey = j1.s_suppkey
+            where l_shipdate between date '1995-01-01' and date '1996-12-31'
+        ),
+        j5 as (
+            select l_year, volume, supp_nation, cust_nation
+            from j4 join j3 on l_orderkey = j3.o_orderkey
+        )
+        select      supp_nation,    cust_nation,    l_year, sum(volume) as revenue
+        from j5
+        where (supp_nation = 'FRANCE' and cust_nation = 'GERMANY') or (supp_nation = 'GERMANY' and cust_nation = 'FRANCE')
+        group by     supp_nation,    cust_nation,    l_year
+        order by     supp_nation,    cust_nation,    l_year            
+       ```
+       这个 SQL 理论上是针对这个 case 的最佳执行计划，在 duckdb 中与原始版本几乎一致（1.98s 优化并不明显），datafusion 中执行时间提升到 2.90s(改写前：5.536s)
+       这也验证了 join 的顺序对性能的影响是显著的
+       > 为什么这个最优化的查询计划仍然不如 duckdb? 经过查看执行计划，datafusion 仍然没有正确的处理 build side 和 probe side, 选择了
+       > 数据量更大的一端作为 build side， 目前，datafusion 无法在 SQL 中使用 tips 进行调整。
+     
+     这个案例是一个很好的学习 Join 优化的案例，我会结合这个案例来阅读论文 《Dynamic Programming Strikes Back》 以加深对这方面知识的理解。     
+
 ## Query 17: subquery duckdb 2.152s : datafusion 7.091s
    ```sql
    select	sum(l_extendedprice) / 7.0 as avg_yearly

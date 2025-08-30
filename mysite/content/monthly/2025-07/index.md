@@ -29,6 +29,16 @@ template = "blog/page.html"
 2. zig
    - [zig's new async io](https://kristoff.it/blog/zig-new-async-io/)
    - [What is Zig's “Colorblind” Async/Await?](https://kristoff.it/blog/zig-colorblind-async-await/)
+3. Java
+   - [小红书JDK升级带来10%整体性能提升，这份升级指南收好了！](https://mp.weixin.qq.com/s/qxDNW5Ss3r4zhPSCqdXvqw) 千年的JDK8问题
+     - [G1: Parallel Full GC for G1](https://openjdk.org/jeps/307)  
+     - G1: Initiating Heap Occupancy Percent
+     - G1: 提前回收大对象
+     总的感觉来说，对大型系统，Java的GC仍然带来了一定程度的不可控因素，所有的 GC 调优其实都是在这个不确定性上跳舞，获得或多或少的改进，
+     但仍然是存在不确定性。这就是在一个低维度的挣扎。（不过，作为应用层的编程语言，不采纳 GC 的成本可能更高 ）
+     - Java 的优点和缺点可能是现在的生态，在不需要那么臃肿的场景下，可能会越来越臃肿。
+   - [从 Java 迁移到 Swift: 密码监控服务](https://www.swift.org/blog/swift-at-apple-migrating-the-password-monitoring-service-from-java/)
+     
 
 # MPP & OLAP
 
@@ -65,4 +75,13 @@ template = "blog/page.html"
 3. [AntV G2](https://g2.antv.antgroup.com/manual/quick-start)
    粗览一下文档和示例，G2 的概念与 vega 时非常相似的，提供2种 API: 命令式 和 DSL 式。
 
-# Tools & Libraries
+# LLM & Agents
+1. [LLM Powered Autonomous Agents](https://lilianweng.github.io/posts/2023-06-23-agent/)
+   ![img_2.png](img_2.png)
+2. AutoGPT
+3. AnyTool
+4. HuggingGPT
+5. Understanding the planning of LLM agents: A survey
+6. https://github.com/AntonOsika/gpt-engineer
+7. JoyAgent
+8. Gaia benchmark: a benchmark for General AI Assistants
