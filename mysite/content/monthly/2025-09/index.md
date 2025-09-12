@@ -11,6 +11,10 @@ template = "blog/page.html"
 # Mpp & OLAP
 
 # Web & Frontend
+1. [12 Revolutionary Web APIs That Will Replace Your JavaScript Libraries in 2026](https://medium.com/@orami98/12-revolutionary-web-apis-that-will-replace-your-javascript-libraries-in-2026-bf95b64ce1e3)
+   - Declarative Shadow DOM: Component isolation without frameworks.
+   - View Transition API(document.startViewTransition) without JS Frameworks.
+   - 
 
 # AI & Agent
 1. task weaver

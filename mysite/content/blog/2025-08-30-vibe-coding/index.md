@@ -69,7 +69,7 @@ CC 编写、修正完成的。
     - 追求极致成为可能的风格，没有做不到，就怕想不到。当然，这里也对架构师提出了更高的要求，你的远见、创意决定了最终的可能性。
     - 大胆重构、创新。
 
-## 2. 规格定义前置且更加详细
+## 2. Spec-First
 
 ### 从过程式设计转向函数式规格
 
@@ -82,62 +82,59 @@ CC 编写、修正完成的。
   个人规划都符合相同的逻辑 ）。
   在 VibeCode 模式下，这个风格就成为显学了，因为这也是你驱动 AI 工作的基本方式，为 AI 提供明确、清晰的指令，是有效产出的必备技能。
 
-### VibeCode 编程中的规格类型体系
 
-在vibe编程中，规格定义变得更加重要和详细，需要按不同层次来组织：
+### 不同任务下的规格定义
 
-#### 功能层面规格
+在vibe编程中，规格定义变得更加重要，根据不同的任务，需要相应的规格定义：
 
-- **Use Case** - 用户使用场景和交互流程
-- **User Story** - 以用户为中心的功能需求描述
-- **Business Logic** - 核心业务逻辑规则
-- **Workflow** - 业务流程和状态转换
+- 功能规格
+  - Use Case - 用户使用场景和交互流程
+  - User Story - 以用户为中心的功能需求描述
+  - Business Logic - Rules, Workflow etc.
+- 接口规格
+  - CLI: 命令行接口设计（参数、选项、输出格式）
+  - API: restful style, RPC style
+    - Contract Spec: pre-condition, post-condition, invariant
+  - SPI: 面向 OCP 扩展的接口设计。
+  - Configuration - 配置文件格式定义。很多复杂的系统，配置文件应该面向用户进行设计，是软件的架构的一个投影。
+- Data 规格
+  - Entity-Relation Model / Database Schema 
+  - Class Model
+  - Domain Model: Entity(lifecycle, query, command), Value, Event, Service etc.
+  - C4 Model: Context， Container, Component, Class
+  - CRC(Class Responsibility Card): 职责优先
+- QA
+  - Test Case - 单元测试、集成测试用例, TDD, BDD etc
+  - Performance - 性能指标和基准测试
+  - Security - 安全策略和权限控制
+  - Error Handling - 异常处理和错误恢复策略
+  - Version Compatible: 版本兼容策略
+- Dev Ops
+  - Logging/Monitoring - 日志记录和监控指标
+  - Deployment - 部署流程和环境配置
+  - Visibility/Observability - 可观测性要求
+  - Backup/Recovery - 备份和恢复策略
+- Others
+  - 依赖相关：希望选择的框架、库，以及不希望使用的框架、库
+  - 构建工具
+  - 目录结构
+  - 代码：编程语言选择，编程风格选择（我更偏向于functional），代码风格（缩进、命名等）
 
-#### 接口层面规格
+### 以交互、增量的方式进行 Spec 定义
+整理一份良好定义的 Spec 来作为下一阶段的任务开发（包括编码、测试）自身成为了 Vibe Coding 中最为重要的工作，对于复杂系统而言，这个是最大的挑战，
+事实上，大部份的软件（尤其是历史悠久的系统）存在或多或少的问题：包括 bug，安全漏洞，难以维护、难以扩展 等问题，很多人会简单的归类为软件代码太乱太复杂，
+大部份的日常工作也是在代码层面的修修补补。但实际上，绝大部分的问题其实应该归根为设计上的问题，包括：
+- 需求设计的问题：概念定义是否清晰、系统内是否有一致的概念。
+- 架构设计的问题：层次结构、职责、契约是否清晰定义。
 
-- **CLI** - 命令行接口设计（参数、选项、输出格式）
-- **API** - RESTful/GraphQL接口规范
-- **UI/UX** - 用户界面交互规范（如果涉及前端）
-- **Integration** - 第三方系统集成接口
+区分一个问题到底是代码层面的问题还是设计层面的问题，我的判断方式是：如果是代码问题，那么这应该是一个局部的（不会在其他地方反复重复同样或者相似的问题）、
+可以快速修复并避免反复发生的问题，也就是说，是修复成本不高，并且修复后不会带来新的复杂性的问题，这些可以归结为简单的编码质量问题，而如果出现如下特征：
+- 存在很多相似问题（是面性问题，而非点性问题）
+- 问题无法彻底修复
+- 问题修复后，系统的复杂性进一步恶化
+那么这其实是一个设计层面的问题：如果不从概念定义、架构设计层面彻底的解决，而是单纯的补丁方式解决问题，最终会导致整个系统的复杂性提升、技术包袱越来越沉重。
 
-#### 数据层面规格
 
-- **Data Model/Schema** - 数据结构和关系定义
-- **Database** - 数据库设计规范（表结构、索引、约束）
-- **Configuration** - 配置文件格式和默认值
-- **Input/Output Format** - 数据输入输出格式规范
-
-#### 质量层面规格
-
-- **Test Case** - 单元测试、集成测试用例
-- **Performance** - 性能指标和基准测试
-- **Security** - 安全策略和权限控制
-- **Error Handling** - 异常处理和错误恢复策略
-
-#### 运维层面规格
-
-- **Logging/Monitoring** - 日志记录和监控指标
-- **Deployment** - 部署流程和环境配置
-- **Visibility/Observability** - 可观测性要求
-- **Backup/Recovery** - 备份和恢复策略
-
-#### 合规层面规格
-
-- **Documentation** - 文档结构和内容要求
-- **Compliance/Standards** - 行业标准和合规要求
-- **Accessibility** - 可访问性规范
-- **Internationalization** - 国际化和本地化要求
-
-### VibeCode 编程中的关键规格类型
-
-在vibe编程实践中，以下几类规格特别重要：
-
-1. **Functional Specification（功能规格）** - 明确"做什么"而非"怎么做"
-2. **Contract Definition（契约定义）** - API、数据格式、接口约定
-3. **Quality Gates（质量门禁）** - 性能、安全、测试的明确标准
-4. **Behavioral Specification（行为规格）** - 系统在各种场景下的预期行为
-
-在 VibeCode 开发中，逐渐建立一套完善的 spec 描述体系，作为对 AI 的清晰指令，必然会提升我们的开发速度、质量。
 
 ## 3. 角色和技能要求的深刻变化
 
@@ -260,30 +257,32 @@ Vibe Coding
 TODO 这一节内容将持续更新。
 
 
-## 7. 全面拥抱 AI 的业务变革
+# 全面拥抱 AI 的业务变革
 
-### 业务流程全面AI化
+## 业务流程全面AI化
 
 - **售前阶段**：AI辅助需求分析和方案设计
 - **运维客服**：智能化故障诊断和用户服务
 - **定制开发**：快速响应个性化需求
 - **业务应用**：数据解释、AI报告生成
 
-### 传统软件的AI重做机遇
+## 传统软件的AI重做机遇
 
 - 以AI-first的思路重新设计传统软件
 - 在业务中深度嵌入AI能力，而非简单的功能叠加
 - 追求极致的用户体验设计
 
-## 8. 学习和成长路径的重构
+TODO：本章内容带补充
 
-### 学习重心转移
+# 学习和成长路径的重构
+
+## 学习重心转移
 
 - 从"学语法→学框架→做项目"变成"学需求分析→学系统设计→学AI协作"
 - 更注重跨领域知识的整合能力
 - 代码所有权观念淡化，更关注系统的目标设计、架构设计，更关注系统的简单行、优美性和价值。
 
-### 新的学习方法：向 AI 发问
+## 新的学习方法：利用 AI 整理学习资料
 
 作为一名架构师，你可能已经在某些领域拥有了深度的理解、认知，在这些方面，你是 master，而 AI 是你的 assistant，但在你熟悉的领域之外，你的知识、
 能力则可能远逊于 LLM 了。今天的 LLM 可能已经在我们所知的所有领域都是一个好学生了，而你，则只是在很狭窄的几个领域内擅长，当然，在这些领域内，
@@ -291,12 +290,23 @@ TODO 这一节内容将持续更新。
 
 这个时候，我完全可以通过向 AI 进行发问，让其帮我整理出我最关心的一些问题的答案，有的时候，尤其是在一些具有可迁移性的领域，是非常有价值的。
 
-比如说，我是一名资深的 JavaScript 工程师，我现在需要学习 Python，那么，我可以让 AI 帮我整理出：
+案例1: 比如说，我是一名资深的 JavaScript 工程师，我现在需要学习 Python，那么，我可以让 AI 帮我整理出：
 
 - 基本的语法、数据类型、数据结构、控制流对比。
 - 高级特性：如反射、元编程等对比。
   通过对比的方式，来学习一门新的语言，简直是太方便了。这个案例可以查看[Python for Javascript Developers](https://github.com/wangzaixiang/learning-language/blob/main/python-for-javascript/src/introduction.md)
   文档，这是我通过 AI 来编写的一篇对比两种语言的文档输出。
+
+案例2: 在 medium 上有一篇很好的技术文章：[12 Revolutionary Web APIs That Will Replace Your JavaScript Libraries in 2026](https://medium.com/@orami98/12-revolutionary-web-apis-that-will-replace-your-javascript-libraries-in-2026-bf95b64ce1e3)
+介绍了12个新的 Web API，对于WEB 应用来说，了解最新的浏览器能力，并合理的应用，对提高我们应用的能力，以及简化应用开发的复杂性会带来巨大的改变。
+但是这篇文章有一个缺陷：没有提供一个测试、验证的示例，对我们来理解这些API 有一定的困难。这个时候，我可以请求 AI:
+
+- 根据文章内容，对每一个 API，生成一个 example，以帮助我进行理解（帮助我们建立对 API 能力的基本认知，并通过案例边改边学）。
+- 对每一个API，为我提供官方的文档链接（学习新技术的最佳实践就是阅读其官方资料，或得一个相对完整的认知）
+
+我将这个例子放到了 [twelve-revolutionary-web-api](https://github.com/wangzaixiang/twelve-revolutionary-web-api) 项目。
+
+如果没有 AI 的辅助，我要理解这12个 API 需要花费的时间可能会多很多倍，而现在，我的学习时间就显著降低，而且效果还更好了。 
 
 # Vibe Coding  开发的护城河机制
 
