@@ -80,6 +80,10 @@ content = """<a href="/learning/index.html">学习笔记</a>"""
 title = "论文阅读笔记"
 content = """<a href="/paper-readings/index.html">论文阅读</a>"""
 
+[[extra.books]]
+title = "JavaScript模块系统"
+content = """<a href="/javascript-modules/index.html">JavaScript模块系统</a>"""
+
 #[[extra.list]]
 #title = "Full text search"
 #content = "Search your Doks site with FlexSearch. Easily customize index settings and search options to your liking."
