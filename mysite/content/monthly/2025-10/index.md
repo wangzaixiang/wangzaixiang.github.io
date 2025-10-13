@@ -15,7 +15,7 @@ template = "blog/page.html"
      - Cons: more complex analysis, potentially more memory and CPU overhead, risk of regressions for big codebases
    - [Polonius Book](https://rust-lang.github.io/polonius/)
 2. Zig
-   - [Zig 0.15.2 Released]() 据说又是一个破坏性的版本。 
+   - Zig 0.15.2 Released 据说又是一个破坏性的版本。 
 
 # Mpp & OLAP
 1. DataFusion 有一段时间没有跟进 DataFusion 的新特性了。
