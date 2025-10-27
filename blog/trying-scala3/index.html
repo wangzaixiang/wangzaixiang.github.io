@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>Scala3 浅尝 | 程序人生</title>
+<meta name="description" content="Scala 3.0 新特性体验">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/trying-scala3/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="Scala3 浅尝">
+  <meta name="twitter:description" content="Scala 3.0 新特性体验">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="Scala3 浅尝">
+  <meta property="og:description" content="Scala 3.0 新特性体验">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/trying-scala3/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="Scala3 浅尝">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/trying-scala3/"
+      },
+      "headline": "Scala3 浅尝",
+      "image": ,
+      "datePublished": "2022-07-10T12:00:00+00:00",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "Scala3 浅尝"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Scala3 浅尝",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "Scala 3.0 新特性体验"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Trying Scala3",
+            "item": "https://wangzaixiang.github.io/blog/trying-scala3/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/trying-scala3/#idezhi-chi">IDE支持</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/trying-scala3/#macro-qian-yi">Macro 迁移</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/trying-scala3/#ru-he-diao-shi-macro">如何调试Macro：</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/trying-scala3/#shi-yong-inline-macro">试用 Inline + Macro</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/trying-scala3/#ji-yu-xin-de-context-functions-chuang-jian-dsl">基于新的Context Functions 创建 DSL</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/trying-scala3/#null-safe">Null Safe</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>Scala3 浅尝</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/vectorize-1/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted July 10, 2022 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>12&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/agile-rd/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>Scala3 从2021-05-14 正式发布 3.0.0 至今，已发布了 3.0.1， 3.0.2， 3.1.0， 3.1.1， 3.1.2， 3.1.3 等6个小版本，
+预计7月份很快就迎来3.2.0的版本。之前有不少的Scala2.12/2.13的使用经验，但由于最近没有实际应用的项目，故一直没有机会动手体会Scala3。
+最近闲暇时间，动手把之前的几个库迁移到Scala3上，将部份经验记录一下。</p>
+<blockquote>
+<p>2024-08-21 补充
+这篇文章写于2022-05,现在时间又过去了2年多，Scala3 LTS 版本也出来了，社区已经基本转向 Scala3了，IdeaJ 对 Scala3 的支持
+也趋于稳定。我也在23年开始带领了一个团队，将一个核心的产品转儿使用 Scala3 进行了重构，取得了良好的成绩。</p>
+<p>可能是我个人有偏见：使用Java，太容易受不良习惯的左右，是在很难编写出好的代码呢，而应用Scala，我们通过施加一些简单的限制原则，
+就可以强迫开发人员改变习惯，编写成可读性、可维护性显著改进的代码。</p>
+<p>很希望后续能够在这方面总结经验，分享，并进一步推广函数式编程实践。</p>
+</blockquote>
+<h2 id="idezhi-chi">IDE支持</h2>
+<p>学习一个新的编程语言，如果有一个好的IDE支持，会顺手很多。之前一直在 ideaj 这个工具中编写 scala 2 的代码。目前的 ideaj 对 Scala3
+的支持算得上“能用”的阶段，还有不少瑕疵，期待在新的版本中能够加速优化。说实在的，目前的IDE水平对Scala3的推广还是会有很多的阻碍：
+大家对IDE的依赖是相当强的。</p>
+<p>一些瑕疵：</p>
+<ol>
+<li>对新的缩进语法的编辑支持一般，比如 Copy - Paste 操作不能很好的处理 indent 语法。</li>
+<li>对 V3 的一些语法，如extension等，语法导航能力较弱，也缺乏类型提示的功能。很多在IDE中的类型推导都弱化到了 <code>any</code></li>
+<li>对 Macro 的部份语法支持不够，例如 <code>'[t]</code> 这样的类型模式匹配。</li>
+</ol>
+<p>整体评估：ideaj 的 Scala3 支持，“可用”，不够优秀。</p>
+<h2 id="macro-qian-yi">Macro 迁移</h2>
+<p>大部份的Scala2 的代码都可以较为简单的迁移到 Scala3，甚至于直接把源代码复制过来。官方提供了一个很好的迁移指导：
+<a href="https://link.zhihu.com/?target=https%3A//docs.scala-lang.org/scala3/guides/migration/compatibility-intro.html">Compatibility Reference</a></p>
+<p>不过，我在迁移 <a href="https://github.com/wangzaixiang/scala-sql">scala-sql</a> 库的过程中，还是强迫自己放弃了Scala2的兼容语法，
+强迫自己来体会 Scala3 的新风格，比如：</p>
+<ol>
+<li>新的缩进语法。写的越多，确实会越喜欢，这个倒是很符合“简洁”的味道。</li>
+<li>使用 enum 来替代传统的 ADT 实现。（更好）</li>
+<li>使用新的 given/using 替代 implicit。 （个人是有些怀念2.13的一个关键词，搞定一切的模式的。）</li>
+<li>新的 extension。（更好）</li>
+</ol>
+<p>上述的转变并不难，最难的还是macro的迁移：scala-sql 项目中广泛使用 Macro 来简化重复性代码的编写工作，也是框架既“简单实用”，又“功能强大”的关键措施。
+Scala3的Macro可以说是一次颠覆性的实现，完全不兼容于Scala2，概念虽然有很多是相同的，但API却完全不同了。
+我是差不多花了2个周末才完成了第一个Macro的迁移，不过，后面的速度就越来越快了，慢慢摸到了一些门道。这一块，我也整理了一些文档，后续可以最进一步的分享。</p>
+<p><img src="/images/scala3-macros.jpg" alt="Scala3 Macro 核心对象关系图" /></p>
+<h2 id="ru-he-diao-shi-macro">如何调试Macro：</h2>
+<p>编写Macro的重要方式是善用调试器，在调试中，了解各个数据结构。这相比啃文档或者直接看源代码，可能会更有效很多。</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">sbt -J-agentlib</span><span>:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+</span></code></pre>
+<p>开启 IDEA 的远程调试，这样，在sbt中执行 compile 命令时，就可以调试到我们的macro代码了。</p>
+<h2 id="shi-yong-inline-macro">试用 Inline + Macro</h2>
+<p>结合 Macro 和 inline，是一个非常有意思的实践，在scala-sql 的2.0.X版本实践中，生成的 <code>ResultSetMapper[T]</code> 实现，
+如果从最终实现的字节码来看，是不够理想的：</p>
+<ol>
+<li>需要在运行期完成 数据库字段名 和 对象字段名 的映射关系，以满足 诸如从 is_active 到 isActive的映射。</li>
+<li>调用 caseFieldGet 方法，完成从 rs 中获取值，以及没有该字段时，default 值的处理。</li>
+</ol>
+<p>这个过程时有额外的开销的。虽然相对数据库IO而言，可以忽略。</p>
+<p>在迁移到 Scala3的过程中，我尝试结合Macro + inline 的方式，最终实现了一个“zero-cost”的ResultSetMapper实现。</p>
+<blockquote>
+<p>眼下Java的框架风格是无视cost，每一个框架喜欢在调用栈上层层加码，随便看看那个Spring的StackTrace都是几十层楼高。再回到 zero-cost 的时代，
+感觉是那么的清爽。</p>
+</blockquote>
+<p>譬如：对如下的Case Class类，</p>
+<pre data-lang="scala" style="background-color:#2b303b;color:#c0c5ce;" class="language-scala "><code class="language-scala" data-lang="scala"><span>@</span><span style="color:#bf616a;">UseColumnMapper</span><span>(classOf[</span><span style="color:#ebcb8b;">Camel2UnderscoreMapper</span><span>])
+</span><span>    </span><span style="color:#b48ead;">case class</span><span style="color:#ebcb8b;"> Test1</span><span>(
+</span><span>        </span><span style="color:#bf616a;">id</span><span>: </span><span style="color:#b48ead;">Int</span><span>,
+</span><span>        </span><span style="color:#bf616a;">name</span><span>: </span><span style="color:#ebcb8b;">String</span><span>,
+</span><span>        </span><span style="color:#bf616a;">isActive</span><span>: </span><span style="color:#b48ead;">Boolean</span><span>,
+</span><span>        </span><span style="color:#bf616a;">tinyInt</span><span>: </span><span style="color:#b48ead;">Byte</span><span>,
+</span><span>        </span><span style="color:#bf616a;">smallInt</span><span>: </span><span style="color:#b48ead;">Short</span><span>,
+</span><span>        </span><span style="color:#bf616a;">normalInt</span><span>: </span><span style="color:#b48ead;">Int</span><span>,
+</span><span>        </span><span style="color:#bf616a;">bigInt</span><span>: </span><span style="color:#b48ead;">Long</span><span>,
+</span><span>        </span><span style="color:#bf616a;">floatValue</span><span>: </span><span style="color:#b48ead;">Float</span><span>,
+</span><span>        </span><span style="color:#bf616a;">doubleValue</span><span>: </span><span style="color:#b48ead;">Double</span><span>,
+</span><span>        </span><span style="color:#bf616a;">decimalValue</span><span>: </span><span style="color:#ebcb8b;">BigDecimal</span><span>,
+</span><span>        </span><span style="color:#bf616a;">birthday</span><span>: java.sql.</span><span style="color:#ebcb8b;">Date</span><span>,
+</span><span>        </span><span style="color:#bf616a;">createdAt</span><span>: java.sql.</span><span style="color:#ebcb8b;">Timestamp</span><span>,
+</span><span>        </span><span style="color:#bf616a;">updatedAt</span><span>: java.sql.</span><span style="color:#ebcb8b;">Timestamp</span><span>,
+</span><span>        </span><span style="color:#bf616a;">blobValue</span><span>: </span><span style="color:#ebcb8b;">Array</span><span>[</span><span style="color:#b48ead;">Byte</span><span>],
+</span><span>        </span><span style="color:#bf616a;">emptyValue</span><span>: </span><span style="color:#ebcb8b;">String</span><span>|</span><span style="color:#ebcb8b;">Null</span><span>,   </span><span style="color:#65737e;">// or using Option[String]
+</span><span>        </span><span style="color:#bf616a;">emptyInt</span><span>: </span><span style="color:#b48ead;">Int</span><span>|</span><span style="color:#ebcb8b;">Null </span><span style="color:#65737e;">// or using Option[Int]
+</span><span>     ) derives ResultSetMapper
+</span></code></pre>
+<p>其对应的ResultSetMapper代码如下（对 生成的代码进行反编译的效果：）：</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#ebcb8b;">ResultSetMapper</span><span> var5 = </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">ResultSetMapper</span><span>(</span><span style="color:#bf616a;">this</span><span>) </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;"> </span><span style="color:#b48ead;">public </span><span style="color:#ebcb8b;">Test1 </span><span style="color:#8fa1b3;">from</span><span style="color:#eff1f5;">(</span><span style="color:#b48ead;">final </span><span style="color:#ebcb8b;">ResultSet </span><span style="color:#bf616a;">rs</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">int</span><span style="color:#eff1f5;"> var2 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getInt</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">id</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">String</span><span style="color:#eff1f5;"> var3 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getString</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">name</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">boolean</span><span style="color:#eff1f5;"> var4 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getBoolean</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">is_active</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">byte</span><span style="color:#eff1f5;"> var5 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getByte</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">tiny_int</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">short</span><span style="color:#eff1f5;"> var6 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getShort</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">small_int</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">int</span><span style="color:#eff1f5;"> var7 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getInt</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">normal_int</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">long</span><span style="color:#eff1f5;"> var8 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getLong</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">big_int</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">float</span><span style="color:#eff1f5;"> var10 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getFloat</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">float_value</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">double</span><span style="color:#eff1f5;"> var11 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getDouble</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">double_value</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">BigDecimal</span><span style="color:#eff1f5;"> it </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getBigDecimal</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">decimal_value</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    scala.math.</span><span style="color:#ebcb8b;">BigDecimal</span><span style="color:#eff1f5;"> var13 </span><span>=</span><span style="color:#eff1f5;"> it </span><span>!= </span><span style="color:#d08770;">null </span><span>?</span><span style="color:#eff1f5;"> scala.package..</span><span style="color:#d08770;">MODULE</span><span style="color:#eff1f5;">$.</span><span style="color:#bf616a;">BigDecimal</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">apply</span><span style="color:#eff1f5;">(it) </span><span>: </span><span style="color:#d08770;">null</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">Date</span><span style="color:#eff1f5;"> var15 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getDate</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">birthday</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">Timestamp</span><span style="color:#eff1f5;"> var16 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getTimestamp</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">created_at</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">Timestamp</span><span style="color:#eff1f5;"> var17 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getTimestamp</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">updated_at</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">byte[]</span><span style="color:#eff1f5;"> var18 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getBytes</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">blob_value</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">Object</span><span style="color:#eff1f5;"> var10000;
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">try </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">       </span><span style="color:#ebcb8b;">String</span><span style="color:#eff1f5;"> vx </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getString</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">empty_value</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">       var10000 </span><span>=</span><span style="color:#eff1f5;"> vx </span><span>== </span><span style="color:#d08770;">null </span><span>? </span><span style="color:#eff1f5;">scala.</span><span style="color:#ebcb8b;">None</span><span style="color:#eff1f5;">..</span><span style="color:#d08770;">MODULE</span><span style="color:#eff1f5;">$ </span><span>: </span><span style="color:#eff1f5;">scala.</span><span style="color:#ebcb8b;">Some</span><span style="color:#eff1f5;">..</span><span style="color:#d08770;">MODULE</span><span style="color:#eff1f5;">$.</span><span style="color:#bf616a;">apply</span><span style="color:#eff1f5;">(vx);
+</span><span style="color:#eff1f5;">    } </span><span style="color:#b48ead;">catch </span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">SQLException </span><span style="color:#bf616a;">var26</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">       var10000 </span><span>= </span><span style="color:#eff1f5;">scala.</span><span style="color:#ebcb8b;">None</span><span style="color:#eff1f5;">..</span><span style="color:#d08770;">MODULE</span><span style="color:#eff1f5;">$;
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">Object</span><span style="color:#eff1f5;"> var19 </span><span>=</span><span style="color:#eff1f5;"> var10000;
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">try </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">       </span><span style="color:#b48ead;">int</span><span style="color:#eff1f5;"> v </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">getInt</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">empty_int</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">       var10000 </span><span>=</span><span style="color:#eff1f5;"> rs.</span><span style="color:#bf616a;">wasNull</span><span style="color:#eff1f5;">() </span><span>? </span><span style="color:#eff1f5;">scala.</span><span style="color:#ebcb8b;">None</span><span style="color:#eff1f5;">..</span><span style="color:#d08770;">MODULE</span><span style="color:#eff1f5;">$ </span><span>: </span><span style="color:#eff1f5;">scala.</span><span style="color:#ebcb8b;">Some</span><span style="color:#eff1f5;">..</span><span style="color:#d08770;">MODULE</span><span style="color:#eff1f5;">$.</span><span style="color:#bf616a;">apply</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">BoxesRunTime</span><span style="color:#eff1f5;">.</span><span style="color:#bf616a;">boxToInteger</span><span style="color:#eff1f5;">(v));
+</span><span style="color:#eff1f5;">    } </span><span style="color:#b48ead;">catch </span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">SQLException </span><span style="color:#bf616a;">var25</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">       var10000 </span><span>= </span><span style="color:#eff1f5;">scala.</span><span style="color:#ebcb8b;">None</span><span style="color:#eff1f5;">..</span><span style="color:#d08770;">MODULE</span><span style="color:#eff1f5;">$;
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">Object</span><span style="color:#eff1f5;"> var22 </span><span>=</span><span style="color:#eff1f5;"> var10000;
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">return new </span><span style="color:#ebcb8b;">Test1</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">this</span><span style="color:#eff1f5;">.$outer.</span><span style="color:#bf616a;">wsql_test$WsqlTest$_$_$Test1$$$$outer</span><span style="color:#eff1f5;">(), var2, var3, var4, var5, var6, var7, var8, var10, var11, var13, var15, var16, var17, var18, (</span><span style="color:#ebcb8b;">Option</span><span style="color:#eff1f5;">)var19, (</span><span style="color:#ebcb8b;">Option</span><span style="color:#eff1f5;">)var22);
+</span><span style="color:#eff1f5;"> }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">}</span><span>;
+</span></code></pre>
+<p>这个生成的代码质量，基本上是 zero-cost 的了，达到了“手写代码”的质量。相比 Java的基于反射的大部分框架，scala-sql 生成的代码质量更优，
+更享受了编译时期的静态类型检查福利。</p>
+<blockquote>
+<p>实现如上的清洁代码生成，我们并不需要编写复杂的Macro代码（如果这么做，Macro的代码会复杂很多，而且也不便于调试），
+而是，在Macro中生成对 inline 函数的调用，利用inline展开能力，实现最终的清爽代码。
+例如，对基础数据类型（值类型），且有缺省值时（deff），其使用如下的inline代码，实际上并不会产生一次函数调用，
+而是将如下的代码嵌入到 from(rs: ResultSet)中。</p>
+</blockquote>
+<pre data-lang="scala" style="background-color:#2b303b;color:#c0c5ce;" class="language-scala "><code class="language-scala" data-lang="scala"><span style="color:#b48ead;">private</span><span> inline </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">withDefaultOptionAnyVal</span><span>[</span><span style="color:#ebcb8b;">T</span><span>](inline </span><span style="color:#bf616a;">name</span><span>:</span><span style="color:#ebcb8b;">String</span><span>, inline </span><span style="color:#bf616a;">deff</span><span>: </span><span style="color:#ebcb8b;">Option</span><span>[</span><span style="color:#ebcb8b;">T</span><span>], </span><span style="color:#bf616a;">rs</span><span>: </span><span style="color:#ebcb8b;">ResultSet</span><span>)
+</span><span>                                       (using JdbcValueAccessor[</span><span style="color:#ebcb8b;">T</span><span>]): </span><span style="color:#ebcb8b;">Option</span><span>[</span><span style="color:#ebcb8b;">T</span><span>] =
+</span><span>  </span><span style="color:#b48ead;">try
+</span><span>    </span><span style="color:#b48ead;">val </span><span style="color:#bf616a;">v </span><span>= rs.get[</span><span style="color:#ebcb8b;">T</span><span>](name)
+</span><span>    </span><span style="color:#b48ead;">if</span><span> rs.wasNull then deff </span><span style="color:#b48ead;">else </span><span>Some(v.nn)
+</span><span>  </span><span style="color:#b48ead;">catch
+</span><span>    </span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">ex</span><span>: </span><span style="color:#ebcb8b;">SQLException </span><span style="color:#b48ead;">=&gt;</span><span> deff
+</span></code></pre>
+<h2 id="ji-yu-xin-de-context-functions-chuang-jian-dsl">基于新的Context Functions 创建 DSL</h2>
+<p>最近在规划开发一个新的接口自动化测试平台， 规划的特性非常有吸引力：</p>
+<ul>
+<li>能够支持 HTTP 接口 和 Dubbo 接口。</li>
+<li>能够配置单接口的测试用例 和 多接口流程的测试用例</li>
+<li>可以配置请求、配置对结果的断言（基于 wjson 提供的强大的 JSON 表达能力）</li>
+<li>可以配置依赖的数据库、以及对服务执行完后的数据库结果进行校验。</li>
+<li>可以为接口调用配置 Mock 依赖，Mock依赖只需要使用 JSON 进行配置即可（基于wjson提供的简单而强大的模式匹配能力）</li>
+</ul>
+<p>在研发上述原形信息时，我们苦于如何提供一个有好的 User Interface 以让研发、测试人员能够简单的使用上述能力？
+虽然我们的最终版本会提供基于WEB的用户界面，但作为一个原型产品，我们选择 Scala DSL 来达成上述目标。</p>
+<pre data-lang="scala" style="background-color:#2b303b;color:#c0c5ce;" class="language-scala "><code class="language-scala" data-lang="scala"><span>testcase( name=&quot;</span><span style="color:#a3be8c;">test1</span><span>&quot;, business=&quot;</span><span style="color:#a3be8c;">..</span><span>&quot;, project=&quot;</span><span style="color:#a3be8c;">...</span><span>&quot;, service=&quot;</span><span style="color:#a3be8c;">..</span><span>&quot; method=&quot;</span><span style="color:#a3be8c;">...</span><span>&quot;) {
+</span><span>
+</span><span>  reuse(atomic = </span><span style="color:#d08770;">6600</span><span>)
+</span><span>  prepareDB {
+</span><span>    dataset(ref = &quot;</span><span style="color:#a3be8c;">base-dataset1</span><span>&quot; )
+</span><span>    </span><span style="color:#96b5b4;">sql</span><span>&quot;&quot;&quot;
+</span><span style="color:#a3be8c;">    insert into table1 values(...);
+</span><span style="color:#a3be8c;">    </span><span>&quot;&quot;&quot;
+</span><span>  }
+</span><span>
+</span><span>  prepareMocks {
+</span><span>    mockset( ref = &quot;</span><span style="color:#a3be8c;">basic-mocks</span><span>&quot; )
+</span><span>    mock( service=&quot;</span><span style="color:#a3be8c;">..</span><span>&quot;, method=&quot;</span><span style="color:#a3be8c;">...</span><span>&quot; ){
+</span><span>      request( </span><span style="color:#96b5b4;">rejson</span><span>&quot;&quot;&quot;</span><span style="color:#a3be8c;"> {...}
+</span><span style="color:#a3be8c;">      </span><span>&quot;&quot;&quot;)
+</span><span>      response( </span><span style="color:#96b5b4;">json</span><span>&quot;&quot;&quot;</span><span style="color:#a3be8c;">....</span><span>&quot;&quot;&quot; ) 
+</span><span>    }
+</span><span>  }
+</span><span>
+</span><span>}
+</span></code></pre>
+<p>Scala3的Context Function让 DSL变得更为简单，这一块目前还没有投产，等我们的案例完成后，我再补充上具体的demo。</p>
+<h2 id="null-safe">Null Safe</h2>
+<p>这个特性目前还是实验性质的，也是我非常感兴趣的一个特性。在Java中， null 和 NPE 真是一个普遍的错误使用模式。
+Kotlin/Dart等语言都拥抱 Null Safe了。所以 Explicit Null 这个特性刚刚出来，我是非常兴奋的。
+也乘着这次的机会，把 scala-sql 3 编译切到这个模式，还真的发现了之前存在一些代码，是没有很好的处理 null的。
+这个暂时放到 scala3-nullsafe 分支之中，稳定后会合并到 master.</p>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/vectorize-1/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/agile-rd/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>
