@@ -20,6 +20,18 @@ template = "blog/page.html"
      - 但将成本原因归结于 async 却是头痛开错了药方，虽然杀鸡用了牛刀，但杀不死鸡并不是牛刀的问题，而是作者在 async 框架中使用了 sync 的 postgres 库，而又只配置了较小的线程，
        导致大部份线程实际上处在 Blocking 状态，导致 RTT 大幅提升。
      这种错误的归因，其危害不亚于选择笨重的框架。
+   - [Rust Compiler Time Function Evaluation](https://medium.com/@theopinionatedev/why-const-evaluation-ctfe-is-the-next-big-compiler-war-473fd8d6a8e5)
+     介绍了 CTFE 的原理，以及和 C++/Zig/D 语言的对比。
+   - [GUII Just Ended Cross-Platform Comproise](https://medium.com/@the_atomic_architect/rust-gpui-ends-cross-platform-compromise-5d0ee9924517)
+     Zed 项目中的 GUI 框架，目前还处在开发阶段，只支持 MacOS。
+   - [Fory: 又一个序列化框架](https://fory.apache.org/blog/fory_rust_versatile_serialization_framework/)
+     与 Rust 结合精密，但支持 Java/Python/C++/Go 等语言。
+     - schema less
+     - no code generation （using Rust Macro）
+     - no version mismatches
+     我最好奇的是，它居然 TPS 比 protobuf 高（但对比数据中 protobuf 又和 JSON 相差不大）？这个有疑点。
+   - [How to avoid fighting Rust's borrow checker](https://qouteall.fun/qouteall-blog/2025/How%20to%20Avoid%20Fighting%20Rust%20Borrow%20Checker)
+   
 2. Zig
    - Zig 0.15.2 Released 据说又是一个破坏性的版本。 
 
@@ -42,9 +54,13 @@ template = "blog/page.html"
    
 
 # Web & Frontend
+1. [RippleJs](https://www.ripplejs.com) 一个试图结合 React, Solid, Svelte 的新组件框架，使用了自定义的语言（类似 JSX）。
+   > 对我来说，我还是倾向于不创造一门语言。
 
 # AI & Agent
 - [graphflow: multi agent flow](https://ai.gopubby.com/graphflow-rust-native-orchestration-for-multi-agent-workflows-6143a9b767ad)
   正好最近我们也设计了一个基于 flow 的多 agent 框架，再看看这篇文章，感觉这个设计还是太粗糙了些。
+- [Build a Coding Agent in Rust](https://blog.0xshadow.dev/posts/coding-agent-in-rust/coding-agent-in-rust-introduction/)
+  一个与 claude code CLI  相似的实现
 
 # Misc
