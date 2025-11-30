@@ -1,6 +1,5 @@
 _site/
 public/
-/books/**/book/
 .DS_Store
 /mysite/static/wjson/
 /mysite/static/inside-duckdb/
@@ -12,3 +11,4 @@ public/
 /mysite/static/paper-reading/
 /.idea/
 /private-notebook
+book/
