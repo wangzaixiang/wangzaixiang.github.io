@@ -1,7 +1,6 @@
 [book]
 authors = ["wangzaixiang"]
 language = "zh"
-multilingual = false
 src = "src"
 title = "论文阅读笔记"
 

@@ -1,6 +1,5 @@
 [book]
 authors = ["wangzaixiang"]
 language = "zh_cn"
-multilingual = false
 src = "src"
 title = "奥数秒题集"

@@ -1,7 +1,6 @@
 [book]
 authors = ["wangzaixiang"]
 language = "zh-CN"
-multilingual = false
 src = "src"
 title = "JavaScript 模块化开发指南"
 description = "深入理解 JavaScript 模块系统：从基础概念到现代工具链"

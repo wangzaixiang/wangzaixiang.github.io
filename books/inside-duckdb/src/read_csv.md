@@ -69,11 +69,11 @@
   ```
   
   CSVGlobalState:
-    - fileScans: vector<shared_ptr<CSVFileScan>> ; 每一个 csv 文件一个 CSVFileScan
+    - fileScans: `vector<shared_ptr<CSVFileScan>>` ; 每一个 csv 文件一个 CSVFileScan
       - file_path
       - file_size: 文件大小
       - buffer_manager: 管理文件的多个 buffer
-        - cacheed_buffers: vector<CSVBuffer>  -- 每个 CSVBuffer 对应一个 PipelineExecutor
+        - cacheed_buffers: `vector<CSVBuffer>`  -- 每个 CSVBuffer 对应一个 PipelineExecutor
           - buffer_idx
           - actual_buffer_size
           - handle  -- 指向 buffer 数据
