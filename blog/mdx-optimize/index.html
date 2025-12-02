@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>MDX 执行引擎优化思路 ... | 程序人生</title>
+<meta name="description" content="本文记录在MDX优化过程中的一些思考">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/mdx-optimize/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="MDX 执行引擎优化思路 ...">
+  <meta name="twitter:description" content="本文记录在MDX优化过程中的一些思考">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="MDX 执行引擎优化思路 ...">
+  <meta property="og:description" content="本文记录在MDX优化过程中的一些思考">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/mdx-optimize/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="MDX 执行引擎优化思路 ...">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/mdx-optimize/"
+      },
+      "headline": "MDX 执行引擎优化思路 ...",
+      "image": ,
+      "datePublished": "2024-08-10T12:00:00+00:00",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "MDX 执行引擎优化思路 ..."
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "MDX 执行引擎优化思路 ...",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文记录在MDX优化过程中的一些思考"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Mdx Optimize",
+            "item": "https://wangzaixiang.github.io/blog/mdx-optimize/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#evaluationcontext-you-hua">EvaluationContext 优化</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#you-hua-1-slice">优化1: slice</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#you-hua-2-bao-cun-wei-duo-ge-filteredmember">优化2: 保存为 多个 FilteredMember。</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#xia-chen-an-xu-zhan-kai">下沉按需展开</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#filter-han-shu-you-hua">filter 函数优化</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#you-hua-xiang-guan">优化相关</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#segment-cache">segment cache</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#qiu-zhi-you-hua">求值优化</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#pi-liang-jia-zai">批量加载</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#ytd-mtd-deng-chuang-kou-lei-han-shu-de-ji-suan-you-hua">YTD, MTD 等窗口类函数的计算优化。</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/mdx-optimize/#loadtuples-han-shu-ding-yi">LoadTuples 函数定义</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>MDX 执行引擎优化思路 ...</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/rust-cpp-comparison/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted August 10, 2024 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>20&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/trying-wgpu/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h2 id="evaluationcontext-you-hua">EvaluationContext 优化</h2>
+<ul>
+<li>AllMembers</li>
+<li>Member(u32)  -- native member</li>
+<li>CalcMemberInCube(u32)</li>
+<li>CalcMemberInQuery(u32)</li>
+<li>SlicedMembers -- 全局的 slice 筛选，会同时跨多个维度</li>
+<li>FilteredMembers(u32) -- 单维度的筛选上下文</li>
+<li>ReservedLevel(u32)   -- pseudo</li>
+<li>_ReservedOther(u32)
+通过扩展 MemberFilter 的能力，支持更好的 filter pushdown 能力。解决目前，不能有效或正确的下沉。</li>
+</ul>
+<p>当 MDX 查询中涉及到 filter 轴时，如果简单的展开集合，filter 集合会放大 MDX 的计算。
+例如： filter 集合 为 1000 时，会导致每个 cell 的计算都会进行1000次的计算。</p>
+<h2 id="you-hua-1-slice">优化1: slice</h2>
+<p>当 filter 集合不是一个正交集合时，会在 Context 中保存为 sliced: Set[Tuple]</p>
+<ol>
+<li>如果当前 Context 中 filter 的所有维度，其值为 SlicedMembers 时， 会将完整的集合下沉。</li>
+<li>如果filter轴中部分维度的值为 SlicedMembers 时，会根据这些维度，生成一个新的下沉条件。</li>
+</ol>
+<h2 id="you-hua-2-bao-cun-wei-duo-ge-filteredmember">优化2: 保存为 多个 FilteredMember。</h2>
+<p>filterMember 会直接传递到 cellRequest，而无需展开。</p>
+<h2 id="xia-chen-an-xu-zhan-kai">下沉按需展开</h2>
+<p>当计算 expr 时， 在表达式中，需要获取 dim1 维度的当前值进行计算时，而这个维度在 slice 或 FilterMember中时，需要对其展开：</p>
+<p>此时， slice 和 filter 仍然会传递到 cellRequest 中 (计算度量 与 计算成员的优先级问题，需要有 expr 的再聚合方式)。</p>
+<h2 id="filter-han-shu-you-hua">filter 函数优化</h2>
+<p>尝试将 filter 函数优化成为支持如下能力的函数，可以快速执行一个 tuple load.</p>
+<ul>
+<li>loadTuple 函数设计方案，能尽量下称到 SQL 执行</li>
+</ul>
+<h2 id="you-hua-xiang-guan">优化相关</h2>
+<ol>
+<li>member cache</li>
+<li>tuple cache</li>
+<li>segment cache</li>
+<li>compute cache</li>
+<li>公共表达式消除</li>
+<li>batch-fetch buffer optimization</li>
+<li>profile support</li>
+<li>向量化优化</li>
+</ol>
+<h2 id="segment-cache">segment cache</h2>
+<ol>
+<li>
+<p>Cell Request</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>
+</span><span style="color:#65737e;">// 存储 查询生命周期相关的信息， slice, filter 信息可以在这里保存
+</span><span style="color:#b48ead;">struct </span><span>QueryContext {
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">// 存储 模型模型生命周期相关的信息，例如 member 可以在这里进行 cache
+</span><span style="color:#b48ead;">struct </span><span>CubeContext {
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">struct </span><span>EvalContext {
+</span><span>     </span><span style="color:#bf616a;">members</span><span>: Vec&lt;MemberValue&gt;,
+</span><span>     </span><span style="color:#bf616a;">slicer</span><span>:  Slicer, 
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">struct </span><span>CellRequest {
+</span><span>    </span><span style="color:#bf616a;">members</span><span>: Vec&lt;MemberValue&gt;,
+</span><span>    </span><span style="color:#bf616a;">pattern</span><span>: BitMap,     </span><span style="color:#65737e;">// 1: equals for AllMember, SlicedMember, FilterMember, 0: same shape for PrimaryMember, HierarchyMember
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">enum </span><span>MemberValue {
+</span><span>    AllMember,
+</span><span>    SlicedMember(&amp;Slicer),    </span><span style="color:#65737e;">// 在 slice 中指定
+</span><span>    PrimaryMember(</span><span style="color:#b48ead;">usize</span><span>),   </span><span style="color:#65737e;">// 对应于非层次维度下的一个基础成员（sql 绑定单个字段）
+</span><span>    HierarchyMember(</span><span style="color:#b48ead;">usize</span><span>), </span><span style="color:#65737e;">// 对应于层次维度下的一个成员（sql 绑定多个字段）
+</span><span>    FilterMember(&amp;Filter),    </span><span style="color:#65737e;">// 对应于一个 filter member, 例如 it &gt; &#39;2023-01-01&#39; and it &lt; &#39;2023-12-31&#39;
+</span><span>    CalcMember(&amp;CalcMember),  </span><span style="color:#65737e;">// 对应于一个计算成员， 在 CellRequest 中，不会出现
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">// MemberValue 可以编码为 MemberValue16, MemberValue32
+</span><span>
+</span><span>
+</span><span style="color:#b48ead;">trait </span><span>CellRequestBuffer {
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">cellRequest_exists</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">request</span><span>: &amp;CellRequest) -&gt; </span><span style="color:#b48ead;">bool</span><span>;
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">add_cellRequest</span><span>(&amp;</span><span style="color:#b48ead;">mut </span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">request</span><span>: &amp;CellRequest, value);
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">trait </span><span>SegmentLoader {
+</span><span>   </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">load</span><span>(</span><span style="color:#bf616a;">requestBuffer</span><span>: CellRequestBuffer) -&gt; Segment;
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">trait </span><span>Segment {
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">cellRequest_matches</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">request</span><span>: &amp;CellRequest) -&gt; </span><span style="color:#b48ead;">bool</span><span>;
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">get_cell</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">request</span><span>: &amp;CellRequest) -&gt; Option[Value];
+</span><span>}
+</span></code></pre>
+<ol>
+<li>MemberValue16
+bit0: 0: 1: ALL(0)/PrimaryMember(n)  最多可表示 32K 成员
+bit1: 1:
+10_b13 SliceMember(0)/FilteredMember(n) -- 最多 16K 个切片成员
+11_b13 CalMember(n) -- 最多 16K 个计算成员</li>
+<li>MemberValue32
+做多可表示 2^31（ 2G 个成员 ）</li>
+</ol>
+<p>在一个查询中，可能会构造当量的 CellRequest, 且出现重复请求的情况很多，因此，需要一个非常高效的 hashmap 来进行缓存。</p>
+<ol>
+<li>MemberValue 尽可能编码为 i16/i32, 减少内存占用，并且机制 hash 计算。</li>
+<li>cellRequest 以 trait 设计，提供几个精简的实现，最小化内存使用：
+<ul>
+<li>CompactCellRequest32: 32 字节大小， 最多支持 15个 维度， 每个 member 支持 2字节编码或 4字节编码。 pattern 使用 2 字节。
+其中 2字节可表示 2^15 个 成员（Slice/Filter/ALL 保留若干成员）， 可处理大部份的小维度。 4字节可表示 2^31 个 member。</li>
+<li>CompactCellRequest64: 64 字节大小，最多支持 30 个 维度。 bitmap 使用 4字节。</li>
+<li>CompactCellRequest128: 128 字节大小，最多支持 60 个维度。 bitmap 使用 8字节。</li>
+<li>CellRequestN: 支持任意的维度数量，但是内存占用较大，不适合大部份的场景。</li>
+</ul>
+</li>
+</ol>
+<p>结合 Rust 的 HashMap 实现，可以实现一个高效的缓存：</p>
+<ol>
+<li>存储结构紧凑，内存使用少</li>
+<li>hash 效率高</li>
+<li>内存连续性好（大部份的 CellRequest 是一个纯值对象，没有二次引用）</li>
+<li>结合 HashMap 的 SIMD 实现，查找效率高</li>
+<li><input disabled="" type="checkbox"/>
+cell request 是从 Context 演变来的，需要设计 Context 的存储机制，使得这个转换几乎0成本</li>
+</ol>
+<p>与 Java实现对比：</p>
+<ol>
+<li>RolapEvaluator 可以通过 savepoint/restore 机制来实现共享一个 evaluator， 以节省内存使用。更换一个 member 需要在 history 中增加
+SET_CONTEXT index member 3个对象， 至少24字节，当有2-3个字段更新时，这个成本还不如直接创建一个新的 Context 轻量</li>
+</ol>
+</li>
+<li>
+<p>Expr cache
+当 EvalContext 中包括至少1个计算成员时， 可以对 Expr 进行缓存，以减少计算成员的计算成本。</p>
+<p>对当前 MDX， 每一个 AST node 都可以生成一个 计算度量，有一个查询级的 ExprId，以及 Expr 的依赖维度列表。
+eval(Expr)时， 会根据 (ExprId, EvalContext.with(expr.dependencies)) 来查找缓存。</p>
+<p>不是所有的 Expr 都会进入这个缓存，一般的，系统中部分 expr 会根据规则，进入这个缓存。可以在 MDX 中使用特殊的函数来控制这个规则。例如：</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>  (/*expr-cache*/ expr )
+</span></code></pre>
+</li>
+<li>
+<p>segment cache</p>
+<ol>
+<li>
+<p>可以在多个 MDX query之间共享 segment cache.</p>
+<pre data-lang="scala" style="background-color:#2b303b;color:#c0c5ce;" class="language-scala "><code class="language-scala" data-lang="scala"><span>
+</span><span>key: (cubeId, cubeVersion, shape, </span><span style="color:#ebcb8b;">CellRequestCrossJoin</span><span>):
+</span><span>  cubeId
+</span><span>  cubeVersion： 每次抽取后，cubeVersion + </span><span style="color:#d08770;">1
+</span><span>  shape
+</span><span>  requests: 仅对 CrossJoin Bag 进行缓存，存储各个维度的 值
+</span><span>value: </span><span style="color:#ebcb8b;">SegmentData</span><span>( HashMap[ compact_cell_data, </span><span style="color:#ebcb8b;">Value</span><span>] )
+</span></code></pre>
+<p>segment cache：(or using rocksdb as storage.)</p>
+<ol>
+<li>in memory</li>
+<li>in files</li>
+</ol>
+<p>1个shape 可能对应多个 Segment, 是否需要进行合并。</p>
+</li>
+<li>
+<p>自动的 aggregation
+对宽表进行查看时，可以识别每个查询使用到的维度，预先按这些维度进行聚合。再在聚合后的结果上进行查询。</p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="qiu-zhi-you-hua">求值优化</h2>
+<ol>
+<li>
+<p>公共表达式提取</p>
+<p>关于公共表达式提取，有两种方式：</p>
+<ol>
+<li>简单提取：如果两个 AST 结构相同并且具有相同的类型，则可以共享同一个 AST tree。
+evaluate( tree1, context ) 完成后，可以将  contetx 和 value 保存到 tree中。当再次执行这 evaluate 时，如果 context 没有变化，则无需重复计算。</li>
+<li>优化提取：当前仅当检测到 两个 AST 会共享同一个 context 时，才共享同一个 AST Tree。
+做一个改写， 在 第一个 AST 中， 改写为 { val x = ..., x }，后续直接引用 x 即可。</li>
+</ol>
+</li>
+<li>
+<p>表达式是调用者求值，还是函数求值。</p>
+<ol>
+<li>可以标记 函数的参数，是否可以由调用者求值（在调用者的 context 中），还是由函数求值，如果由函数求值，则函数可能会改变 context。
+进行这个标记，可以帮助进行公共表达式的提取优化。</li>
+</ol>
+</li>
+<li>
+<p>表达式相关维度。
+部分的 tree，求值时，仅引来 context 的部分维度，这时，即使context 的其他维度发生变化时，其值仍然不变。
+将这个 mask 存储在 tree 中，则求值的时候， 可以更好的进行优化。</p>
+<pre data-lang="scala" style="background-color:#2b303b;color:#c0c5ce;" class="language-scala "><code class="language-scala" data-lang="scala"><span>  </span><span style="color:#b48ead;">class</span><span style="color:#ebcb8b;"> Expr</span><span>:
+</span><span>    </span><span style="color:#b48ead;">val </span><span style="color:#bf616a;">mask</span><span>: </span><span style="color:#ebcb8b;">Set</span><span>[</span><span style="color:#ebcb8b;">Dimension</span><span>] = Set.empty
+</span><span>    </span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">lastContext</span><span>: </span><span style="color:#ebcb8b;">Context 
+</span><span>    </span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">lastResult</span><span>: </span><span style="color:#ebcb8b;">Value
+</span><span>    
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">evaluation</span><span>(</span><span style="color:#b48ead;">implicit</span><span> context) = 
+</span><span>      </span><span style="color:#b48ead;">if</span><span> context == lastContext then lastResult
+</span><span>      </span><span style="color:#b48ead;">else
+</span><span>          </span><span style="color:#b48ead;">val </span><span style="color:#bf616a;">depContext </span><span>= context.keepOnly(mask) </span><span style="color:#65737e;">// 清理无关维度
+</span><span>          cache[depContext] </span><span style="color:#b48ead;">match 
+</span><span>            </span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">x </span><span style="color:#b48ead;">=&gt;</span><span> x
+</span><span>            </span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">_ </span><span style="color:#b48ead;">=&gt;</span><span> realyEvaluation(context)
+</span></code></pre>
+</li>
+</ol>
+<p>对函数的参数，可以分为3类：</p>
+<ol>
+<li>
+<p>在 caller context 中提前求值。</p>
+</li>
+<li>
+<p>在 caller context 中延迟求值。（例如 iif 函数）</p>
+</li>
+<li>
+<p>在 callee context 中求值。（例如 filter 函数的 conditional）</p>
+</li>
+<li>
+<p>在一个表达式求值时，如果求值 f(a, b, c)，在 caller context 中求值的表达式可以进行 公共表达式提取，这个过程可以递归向下。</p>
+</li>
+<li>
+<p>如果两个表达式完全相同，但可能运行于不同的 context， 则可以按 (mask, mask(context)) 进行cache。</p>
+</li>
+<li>
+<p>由于伪求值阶段的存在，对 pseudo value 是否 cache? 如果不 cache，则在伪求值阶段会重复计算。如果 cache，则什么时候清理掉这个 cache。</p>
+</li>
+</ol>
+<h2 id="pi-liang-jia-zai">批量加载</h2>
+<p>在 MDX 执行过程中，会涉及到 loadCell 的调用，简单加载模式中，每次 loadCell 都会发起一个SQL语句，并
+同步等待结果返回， 这种方式实现简单，但由于一次查询过程中，这样的 loadCell 会发起上百次，上千次，乃至上百万次，上千万次，
+会存在很严重的性能问题。</p>
+<p>优化方案：</p>
+<ol>
+<li>执行过程中，requestCell 并不真实发起请求，而是将其放入到一个buffer中，并返回一个 pseudo value
+同时增加一个 dirtyCount.</li>
+<li>如果表达式计算过程中，dirtyCount 没有增加，则这次计算时有效的，可以直接作为返回值，并进行 cache。
+否则这个返回值也是一个 pseudo value，不能进行 cache.</li>
+<li>在计算结束后，将 buffer 中的 requestCell 进行批量处理，发起一个 SQL 请求，保存查询结果，并重新发起计算，
+直到 dirtyCount = 0 为止。</li>
+</ol>
+<p>每个批次，对应于一个 SegmentLoad，他可能返回超过请求 cell 数量的结果.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>
+</span><span>    def cellRequest( cell: CellRequest):
+</span><span>      cellCache.get(cell) match
+</span><span>        case x =&gt; x
+</span><span>        case None =&gt;
+</span><span>          cellRequests.add(cell) // also increase dirty
+</span><span>          PseudoValue
+</span><span>    
+</span><span>    class CellRequestBuffer:
+</span><span>        var dirtyCount: Int = 0
+</span><span>        
+</span><span>        def add(cell: CellRequest): Unit
+</span><span>
+</span></code></pre>
+<p>CellRequestBuffer 会按 cell 的 pattern 进行分组记录， 具备一下特性的 cell 可以归入统一分组：</p>
+<ol>
+<li>如果 cell1.dim1 的值 为 ALL, 则 cell2.dim1 == cell2.dim1</li>
+<li>如果 cell1.dim1 的值 为 PrimaryMember, 则 cell2.dim1 也是 PrimaryMember(两者值不一定相等)</li>
+<li>如果 cell1.dim1 为 HierarchyMember, 则 cell2.dim1 也是 HierarchyMember(两者值不一定相等)</li>
+<li>如果 cell1.dim1 为 FilterMember，则 cell2.dim1 == cell1.dim1</li>
+<li>如果 cell1.slice 不为空，则 cell2.slice == cell1.slice</li>
+</ol>
+<p>由两种方式可以组织 buffer:</p>
+<ol>
+<li>List[CellRequest] 这种方式保存的数量一般会限制在 1000 以内
+对应的SQL 为：<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span>    </span><span style="color:#b48ead;">SELECT</span><span> d1, d2, d3, </span><span style="color:#96b5b4;">SUM</span><span>(m1) 
+</span><span>    </span><span style="color:#b48ead;">from</span><span> cube
+</span><span>    </span><span style="color:#b48ead;">where</span><span> (d1, d2, d3) in ( (v1, v2, v3), (v4, v5, v6) ... )
+</span><span>        and (f1 &gt; f1_0 and f1 &lt; f1_1)  </span><span style="color:#65737e;">-- filter field
+</span><span>        and (s1, s2, s3) in ( (s1_0, s2_0, s3_0), (s1_1, s2_1, s3_1) ... ) </span><span style="color:#65737e;">-- slice
+</span></code></pre>
+</li>
+<li>Map[ Dim, Set[Member] ] 当 List[CellRequest] 达到一定值时，调整为这个结构。
+对应的SQL 为：<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span>    </span><span style="color:#b48ead;">SELECT</span><span> d1, d2, d3, </span><span style="color:#96b5b4;">SUM</span><span>(m1)
+</span><span>    </span><span style="color:#b48ead;">from</span><span> cube
+</span><span>    </span><span style="color:#b48ead;">where</span><span> d1 in (...) and d2 in (...) and d3 in (...)
+</span><span>        and (f1 &gt; f1_0 and f1 &lt; f1_1)  </span><span style="color:#65737e;">-- filter field
+</span><span>        and (s1, s2, s3) in ( (s1_0, s2_0, s3_0), (s1_1, s2_1, s3_1) ... ) </span><span style="color:#65737e;">-- slice
+</span></code></pre>
+后者对应的 segment，可能会返回超过请求的数据，可以匹配更多的 cellRequest 请求。</li>
+</ol>
+<h2 id="ytd-mtd-deng-chuang-kou-lei-han-shu-de-ji-suan-you-hua">YTD, MTD 等窗口类函数的计算优化。</h2>
+<p>典型的，例如计算 <code>stdev</code> 聚合方式时，可以参照 《Efficient Processing of Window Functions in Analytical SQL Queries
+》 论文中的优化方式，极少计算量。</p>
+<h2 id="loadtuples-han-shu-ding-yi">LoadTuples 函数定义</h2>
+<p>多维查询时，基于事实表的 tuples 会比 crossjoin 有多个数量级上的下降，而在多事实情况下， <code>nonEmptyCrossJoin</code> 的语义并不清晰，因此，
+我设计了新的 loadTuples 语义：</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>loadTuples(
+</span><span>  &quot;dimension:&quot;,    [Dim1], [Dim2], [NS1],  ...,  // 元组中使用的维度，是否支持显示给定层次？
+</span><span>  &quot;showEmpty:&quot;,    true,   false,  false,  ...,  // 各个维度是否容许显示空成员，命名集也可以考虑支持 showEmpty
+</span><span>  &quot;showSubTotal:&quot;, false,  true,   false,  ...,  // 各个维度是否显示小计，命名集明确不支持小计
+</span><span>  &quot;dimensionContext&quot;: null, ([Dim1]), null, ..., // 显示空成员时维度的筛选上下文，或许可以省略，从Schema中可以获得。
+</span><span>
+</span><span>  &quot;where:&quot;,        boolean-expression,           // 筛选Bool表达式
+</span><span>  &quot;sorts:&quot;,       expr1, expr2, ..., DESC|ASC|BDESC|BASC  // 排序设定
+</span><span>  &quot;viewIds:&quot;, viewId1, viewId2, ...              // 从那些事实表中加载维度组合。
+</span><span>)
+</span></code></pre>
+<p>说明
+新定义的 LoadTuples 函数比较复杂，综合了如下的能力：</p>
+<ul>
+<li>显示空成员的维度：在 showEmpty = true 中指定需要显示空成员的维度，其他为不显示空成员的维度。（目前仅支持显示空成员的维度之间的筛选，
+不显示空成员的维度不参与显示空成员的维度的筛选）</li>
+<li>不显示空成员的维度</li>
+<li>分组小计。（对单层次维度，创建 aggreate 计算成员 或者映射到 All ， 对多层次维度，如果该维度有过滤，则使用 VisualTotal 函数）</li>
+<li>多事实表逻辑。 当选择 viewId1, viewId2 等多事实表时，维度组合符合如下逻辑：
+<ul>
+<li>如果 viewId1 包含的轴上维度(D_i, D_j, D_k) 与 viewId2 的轴上维度一致时， 二者是一个 union 关系（去除重复）</li>
+<li>如果 viewId1 包含的轴上维度(D_i, D_j, Dk)是 ViewId2 (D_i, D_j, D_k, D_l)的子集时，如果 (D_i, D_j, Dk)组合在 (D_i, D_j, D_k, D_l) 中已存在，则不再重复出现。</li>
+<li>否则同时包含viewId1的元组和viewId2的元组。</li>
+</ul>
+</li>
+<li>筛选能力：
+<ul>
+<li>对维度值进行过滤的筛选条件可以直接下沉（包括WHERE区的条件）</li>
+<li>使用基本度量作为过滤条件，与元组的部分维度相关，可以考虑使用窗口函数 + having子句进行下沉</li>
+<li>更为复杂的计算度量暂时不能下沉，在 MDX 引擎中执行。</li>
+</ul>
+</li>
+<li>排序能力：
+<ul>
+<li>可以对维度值进行过滤（下沉）</li>
+<li>可以对基本度量（与部分维度相关），可以考虑使用窗口函数 进行下沉</li>
+<li>更为复杂的计算度量暂时不能下称，在 MDX 引擎中执行。</li>
+</ul>
+</li>
+</ul>
+<p>预期的优势：</p>
+<ol>
+<li>新的 loadTuple 函数基本涵盖了目前仪表盘构建轴上元组的大部份能力（并在排序上有所超越）</li>
+<li>对多事实的处理、筛选能力、排序能力有更好的下沉能力，可以获得更好的查询性能。</li>
+<li>即使考虑到复杂的Where条件，loadTuple仍然有更好的下沉能力，在下沉SQL的基础上，再结合不能下沉的 filter + sort 处理，整体性能会比现有的不能下沉的场景有更好的性能。</li>
+<li>对比现有的 crossjoin / nonEmptyCrossJoin/ dim.members，有更为清晰的查询语义，便于整个查询的质量提升</li>
+</ol>
+<p>Where 轴上的条件，在多事实表情况下，需要进行的处理逻辑包括：</p>
+<ol>
+<li>
+<p>如果 viewId1 不包含 dim1, 则在 WHERE 条件应用到 viewId1时，需要对 Bool 表达式进行如下的改写：</p>
+<ul>
+<li>如果 表达式 dim1.currentMember oper literal 使用了viewId中不存在的字段，这个表达式改写为 UNUSED</li>
+<li>UNUSED and any  --&gt;  any</li>
+<li>UNUSED or any   --&gt; any</li>
+<li>NOT UNUSED      --&gt; UNUSED
+最后逐步的进行化简，如果最后化简的表达式不包含 UNUSED，则可以直接下沉。如果化简后为 UNUSED，则化简为 true.</li>
+</ul>
+</li>
+<li>
+<p>计算成员
+在不显示空成员时，如果维度有计算成员，则在 LoadTuples 中需要补充计算成员。
+（D_1, D_2, D_3, ..., D_n）中，如果 D_2, D_3有计算成员，则需要补充成员：filter( { (D1, D4) } * { D2.calcMembers, D2.calcMemers },  [Measures].[Fact Count] &gt; 0 )</p>
+</li>
+<li>
+<p>筛选条件下沉
+以 f1 &amp;&amp; f2 &amp;&amp; (f3 || f4) 为例, f1 , f2 可以独立下沉， f3 || f4 只能作为整体下沉，具备下沉的 bool 表达式 f 满足：</p>
+<ul>
+<li>f 是 TOP 层的自成员，且 TOP 层的各个自成员之间是 and 关系。</li>
+<li>f 形如 dim1.currentMember.caption operate constant 且 dim1 在不显示空成员中，则 f 可以下沉</li>
+<li>f 形如 <code>[Measures].[X]</code> operator constant 且 X 是基本度量，则 f 可以下沉</li>
+<li>f 形如 (<code>[Measures].[X], [Dim1].[All Dim1s]</code>) operator constant 且 X 是基本度量，则 f 可以下沉。</li>
+<li>f 是2 AND (3 与 4的组合)，则 f 可以下沉。</li>
+</ul>
+<p>具备下沉条件的表达式将在如下环节执行：</p>
+<ul>
+<li>非空基本元组（非计算成员）在 SQL 中执行</li>
+<li>如果该字段有计算成员，且显示计算成员，则在补充计算成员的元组前，进行过滤。</li>
+<li>新增分组小计的元组，在新增前，进行过滤。
+不具备下沉条件的表达式，统一在最后的 MDX 过滤阶段进行过滤。</li>
+</ul>
+</li>
+<li>
+<p>计算元组时，自动携带辅助的计算（可用于MDX过滤阶段、MDX排序阶段）
+在计算元组的值时，可以附带计算用于后续处理所需的值，例如 filter, order-by。
+在 MDX 过滤阶段，对给定元组，如果需要对特定值进行求值，可以使用 tuple.properties.get( expression ) 先获取值，如果已有值的话，则无需额外求值。</p>
+</li>
+</ol>
+
+<img src="https:&#x2F;&#x2F;wangzaixiang.github.io&#x2F;processed_images&#x2F;loadTuples.60a78fbdca665da6.png" />
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/rust-cpp-comparison/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/trying-wgpu/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

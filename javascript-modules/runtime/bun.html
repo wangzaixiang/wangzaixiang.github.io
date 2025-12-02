@@ -1,0 +1,1012 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Bun的模块系统 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="bun的模块系统"><a class="header" href="#bun的模块系统">Bun的模块系统</a></h1>
+<p>Bun 是一个现代的 JavaScript/TypeScript 运行时和包管理器，由 Jarred Sumner 开发。它以极速性能为目标，原生支持 TypeScript、JSX，并提供了一套完整的工具链，包括打包器、测试运行器和包管理器。</p>
+<h2 id="bun-模块系统特点"><a class="header" href="#bun-模块系统特点">Bun 模块系统特点</a></h2>
+<h3 id="核心设计理念"><a class="header" href="#核心设计理念">核心设计理念</a></h3>
+<h4 id="1-速度优先"><a class="header" href="#1-速度优先">1. <strong>速度优先</strong></a></h4>
+<ul>
+<li><strong>Zig 编写</strong>：使用 Zig 语言编写，性能极佳</li>
+<li><strong>JavaScriptCore 引擎</strong>：使用 Safari 的 JavaScript 引擎</li>
+<li><strong>原生优化</strong>：针对模块加载和执行进行了大量优化</li>
+</ul>
+<h4 id="2-现代标准支持"><a class="header" href="#2-现代标准支持">2. <strong>现代标准支持</strong></a></h4>
+<ul>
+<li><strong>原生 ES 模块</strong>：完全支持 ES 模块语法</li>
+<li><strong>TypeScript 内置</strong>：无需额外配置即可运行 TypeScript</li>
+<li><strong>JSX 原生支持</strong>：直接运行 JSX 代码</li>
+</ul>
+<h4 id="3-nodejs-兼容性"><a class="header" href="#3-nodejs-兼容性">3. <strong>Node.js 兼容性</strong></a></h4>
+<ul>
+<li><strong>API 兼容</strong>：兼容大部分 Node.js API</li>
+<li><strong>npm 生态</strong>：支持现有的 npm 包</li>
+<li><strong>无缝迁移</strong>：现有 Node.js 项目可以轻松迁移</li>
+</ul>
+<h2 id="基础模块语法"><a class="header" href="#基础模块语法">基础模块语法</a></h2>
+<h3 id="es-模块支持"><a class="header" href="#es-模块支持"><strong>ES 模块支持</strong></a></h3>
+<pre><code class="language-typescript">// math.ts
+export function add(a: number, b: number): number {
+  return a + b;
+}
+
+export const PI = 3.14159;
+
+export default class Calculator {
+  multiply(a: number, b: number): number {
+    return a * b;
+  }
+}
+
+// app.ts
+import Calculator, { add, PI } from './math.ts';
+import * as math from './math.ts';
+
+const calc = new Calculator();
+console.log(add(2, 3));
+console.log(calc.multiply(4, 5));
+</code></pre>
+<h3 id="typescript-零配置支持"><a class="header" href="#typescript-零配置支持"><strong>TypeScript 零配置支持</strong></a></h3>
+<pre><code class="language-typescript">// 无需 tsconfig.json 即可运行
+// types.ts
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export type UserResponse = {
+  user: User;
+  token: string;
+};
+
+// api.ts
+import type { UserResponse } from './types.ts';
+
+export async function fetchUser(id: number): Promise&lt;UserResponse&gt; {
+  const response = await fetch(`/api/users/${id}`);
+  return response.json();
+}
+
+// 直接运行：bun run api.ts
+</code></pre>
+<h3 id="jsx-原生支持"><a class="header" href="#jsx-原生支持"><strong>JSX 原生支持</strong></a></h3>
+<pre><code class="language-tsx">// component.tsx
+interface Props {
+  name: string;
+  count: number;
+}
+
+export function Counter({ name, count }: Props) {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Hello {name}!&lt;/h1&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+// app.tsx
+import { Counter } from './component.tsx';
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Counter name="World" count={42} /&gt;
+    &lt;/div&gt;
+  );
+}
+
+// 直接运行：bun run app.tsx
+</code></pre>
+<h2 id="内置模块和-api"><a class="header" href="#内置模块和-api">内置模块和 API</a></h2>
+<h3 id="bun-专有-api"><a class="header" href="#bun-专有-api"><strong>Bun 专有 API</strong></a></h3>
+<pre><code class="language-typescript">// 文件操作 - Bun.file API
+const file = Bun.file('./data.json');
+const contents = await file.text();
+const data = await file.json();
+
+// 写入文件
+await Bun.write('./output.txt', 'Hello Bun!');
+await Bun.write('./data.json', { message: 'Hello' });
+
+// 密码哈希
+const password = 'secret123';
+const hash = await Bun.password.hash(password);
+const isValid = await Bun.password.verify(password, hash);
+
+// 环境变量
+const port = Bun.env.PORT || '3000';
+const isDev = Bun.env.NODE_ENV === 'development';
+</code></pre>
+<h3 id="高性能-http-服务器"><a class="header" href="#高性能-http-服务器"><strong>高性能 HTTP 服务器</strong></a></h3>
+<pre><code class="language-typescript">// server.ts
+const server = Bun.serve({
+  port: 3000,
+  async fetch(req) {
+    const url = new URL(req.url);
+    
+    if (url.pathname === '/api/hello') {
+      return new Response(JSON.stringify({ message: 'Hello Bun!' }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    if (url.pathname === '/') {
+      return new Response('Hello World!');
+    }
+    
+    return new Response('Not Found', { status: 404 });
+  },
+});
+
+console.log(`Server running on http://localhost:${server.port}`);
+</code></pre>
+<h3 id="websocket-支持"><a class="header" href="#websocket-支持"><strong>WebSocket 支持</strong></a></h3>
+<pre><code class="language-typescript">// websocket-server.ts
+const server = Bun.serve({
+  port: 3001,
+  async fetch(req, server) {
+    const success = server.upgrade(req);
+    if (success) {
+      return undefined;
+    }
+    return new Response('Upgrade failed', { status: 500 });
+  },
+  websocket: {
+    message(ws, message) {
+      console.log('Received:', message);
+      ws.send(`Echo: ${message}`);
+    },
+    open(ws) {
+      console.log('WebSocket opened');
+      ws.subscribe('chat');
+    },
+    close(ws, code, message) {
+      console.log('WebSocket closed');
+    }
+  }
+});
+
+// 客户端代码
+const ws = new WebSocket('ws://localhost:3001');
+ws.onmessage = (event) =&gt; {
+  console.log('Received:', event.data);
+};
+ws.send('Hello WebSocket!');
+</code></pre>
+<h2 id="包管理和依赖"><a class="header" href="#包管理和依赖">包管理和依赖</a></h2>
+<h3 id="bun-install---极速包管理"><a class="header" href="#bun-install---极速包管理"><strong>bun install - 极速包管理</strong></a></h3>
+<pre><code class="language-bash"># 安装依赖（比 npm 快 20-100 倍）
+bun install
+
+# 安装特定包
+bun add react react-dom
+bun add -d typescript @types/react
+
+# 移除包
+bun remove lodash
+
+# 全局安装
+bun add -g typescript
+</code></pre>
+<h3 id="兼容-packagejson"><a class="header" href="#兼容-packagejson"><strong>兼容 package.json</strong></a></h3>
+<pre><code class="language-json">{
+  "name": "my-bun-app",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist",
+    "test": "bun test",
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/express": "^4.17.17"
+  },
+  "trustedDependencies": ["esbuild"]
+}
+</code></pre>
+<h3 id="workspaces-支持"><a class="header" href="#workspaces-支持"><strong>workspaces 支持</strong></a></h3>
+<pre><code class="language-json">// 根目录 package.json
+{
+  "name": "monorepo",
+  "workspaces": ["packages/*"],
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
+
+// packages/app/package.json
+{
+  "name": "@monorepo/app",
+  "dependencies": {
+    "@monorepo/shared": "workspace:*"
+  }
+}
+
+// packages/shared/package.json
+{
+  "name": "@monorepo/shared",
+  "exports": {
+    ".": "./index.ts"
+  }
+}
+</code></pre>
+<h2 id="模块解析和导入"><a class="header" href="#模块解析和导入">模块解析和导入</a></h2>
+<h3 id="nodejs-兼容导入"><a class="header" href="#nodejs-兼容导入"><strong>Node.js 兼容导入</strong></a></h3>
+<pre><code class="language-typescript">// 兼容 Node.js 模块
+import fs from 'fs';
+import path from 'path';
+import { readFile } from 'fs/promises';
+
+// 兼容 CommonJS
+const express = require('express');
+const lodash = require('lodash');
+
+// Bun 特有的快速导入
+import { Database } from 'bun:sqlite';
+import { spawn } from 'bun:subprocess';
+</code></pre>
+<h3 id="路径解析增强"><a class="header" href="#路径解析增强"><strong>路径解析增强</strong></a></h3>
+<pre><code class="language-typescript">// bun.config.js 或 bunfig.toml
+export default {
+  preload: ['./setup.ts'],
+  external: ['sharp', 'canvas'],
+  define: {
+    __VERSION__: JSON.stringify('1.0.0'),
+    __DEV__: 'true'
+  }
+};
+
+// 使用路径别名
+// tsconfig.json 中的 paths 会被自动识别
+import { utils } from '@/utils';
+import { components } from '~/components';
+</code></pre>
+<h3 id="动态导入和懒加载"><a class="header" href="#动态导入和懒加载"><strong>动态导入和懒加载</strong></a></h3>
+<pre><code class="language-typescript">// 条件导入
+async function loadRenderer(type: 'server' | 'client') {
+  if (type === 'server') {
+    const { ServerRenderer } = await import('./server-renderer.ts');
+    return new ServerRenderer();
+  } else {
+    const { ClientRenderer } = await import('./client-renderer.ts');
+    return new ClientRenderer();
+  }
+}
+
+// 插件系统
+class PluginLoader {
+  private plugins = new Map&lt;string, any&gt;();
+  
+  async loadPlugin(name: string, path: string) {
+    try {
+      const plugin = await import(path);
+      this.plugins.set(name, plugin.default || plugin);
+      console.log(`Plugin ${name} loaded`);
+    } catch (error) {
+      console.error(`Failed to load plugin ${name}:`, error);
+    }
+  }
+  
+  getPlugin(name: string) {
+    return this.plugins.get(name);
+  }
+}
+</code></pre>
+<h2 id="内置工具链"><a class="header" href="#内置工具链">内置工具链</a></h2>
+<h3 id="bunbuild---内置打包器"><a class="header" href="#bunbuild---内置打包器"><strong>Bun.build - 内置打包器</strong></a></h3>
+<pre><code class="language-typescript">// build.ts
+await Bun.build({
+  entrypoints: ['./src/index.ts'],
+  outdir: './dist',
+  target: 'browser', // 'browser' | 'bun' | 'node'
+  format: 'esm',     // 'esm' | 'cjs' | 'iife'
+  minify: true,
+  sourcemap: 'external',
+  splitting: true,   // 代码分割
+  
+  // 环境变量处理
+  env: 'inline',     // 'inline' | 'PUBLIC_*' | 'disable'
+  
+  // 插件系统
+  plugins: [
+    {
+      name: 'custom-plugin',
+      setup(build) {
+        build.onLoad({ filter: /\.custom$/ }, async (args) =&gt; {
+          const contents = await Bun.file(args.path).text();
+          return {
+            contents: `export default ${JSON.stringify(contents)}`,
+            loader: 'js'
+          };
+        });
+      }
+    }
+  ],
+  
+  // 外部依赖
+  external: ['react', 'react-dom']
+});
+</code></pre>
+<h3 id="macros---构建时代码生成"><a class="header" href="#macros---构建时代码生成"><strong>Macros - 构建时代码生成</strong></a></h3>
+<pre><code class="language-typescript">// database.ts (macro 文件)
+export function sql(strings: TemplateStringsArray, ...values: any[]) {
+  // 构建时执行，生成优化的 SQL 查询代码
+  const query = strings.reduce((acc, str, i) =&gt; {
+    return acc + str + (values[i] ? `$${i + 1}` : '');
+  }, '');
+  
+  return {
+    query,
+    params: values,
+    execute: (db: any) =&gt; db.prepare(query).all(...values)
+  };
+}
+
+// app.ts
+import { sql } from './database.ts' with { type: 'macro' };
+
+// 这会在构建时展开为优化的代码
+const users = await sql`SELECT * FROM users WHERE id = ${userId}`;
+
+// 构建后生成的代码类似：
+// const users = await db.prepare("SELECT * FROM users WHERE id = $1").all(userId);
+</code></pre>
+<h3 id="内置测试运行器"><a class="header" href="#内置测试运行器"><strong>内置测试运行器</strong></a></h3>
+<pre><code class="language-typescript">// math.test.ts
+import { expect, test, describe, beforeAll, afterAll } from 'bun:test';
+import { add, subtract } from './math.ts';
+
+describe('Math functions', () =&gt; {
+  test('addition', () =&gt; {
+    expect(add(2, 3)).toBe(5);
+    expect(add(-1, 1)).toBe(0);
+  });
+  
+  test('subtraction', () =&gt; {
+    expect(subtract(5, 3)).toBe(2);
+    expect(subtract(1, 1)).toBe(0);
+  });
+  
+  test('async operation', async () =&gt; {
+    const result = await fetch('https://httpbin.org/json');
+    const data = await result.json();
+    expect(data).toHaveProperty('slideshow');
+  });
+});
+
+// 运行测试：bun test
+// 并行运行，速度极快
+</code></pre>
+<h3 id="性能基准测试"><a class="header" href="#性能基准测试"><strong>性能基准测试</strong></a></h3>
+<pre><code class="language-typescript">// benchmark.ts
+import { bench, run } from 'bun:test';
+
+bench('string concatenation', () =&gt; {
+  let result = '';
+  for (let i = 0; i &lt; 1000; i++) {
+    result += 'a';
+  }
+});
+
+bench('array join', () =&gt; {
+  const arr = [];
+  for (let i = 0; i &lt; 1000; i++) {
+    arr.push('a');
+  }
+  arr.join('');
+});
+
+bench('template literal', () =&gt; {
+  let result = '';
+  for (let i = 0; i &lt; 1000; i++) {
+    result = `${result}a`;
+  }
+});
+
+await run();
+</code></pre>
+<h2 id="数据库集成"><a class="header" href="#数据库集成">数据库集成</a></h2>
+<h3 id="内置-sqlite"><a class="header" href="#内置-sqlite"><strong>内置 SQLite</strong></a></h3>
+<pre><code class="language-typescript">// database.ts
+import { Database } from 'bun:sqlite';
+
+const db = new Database('mydb.sqlite');
+
+// 创建表
+db.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL
+  )
+`);
+
+// 预编译语句（性能最佳）
+const insertUser = db.prepare('INSERT INTO users (name, email) VALUES (?, ?)');
+const getUserById = db.prepare('SELECT * FROM users WHERE id = ?');
+const getAllUsers = db.prepare('SELECT * FROM users');
+
+// 插入数据
+insertUser.run('John Doe', 'john@example.com');
+
+// 查询数据
+const user = getUserById.get(1);
+const users = getAllUsers.all();
+
+// 事务支持
+const insertManyUsers = db.transaction((users) =&gt; {
+  for (const user of users) {
+    insertUser.run(user.name, user.email);
+  }
+});
+
+insertManyUsers([
+  { name: 'Alice', email: 'alice@example.com' },
+  { name: 'Bob', email: 'bob@example.com' }
+]);
+
+db.close();
+</code></pre>
+<h3 id="orm-集成示例"><a class="header" href="#orm-集成示例"><strong>ORM 集成示例</strong></a></h3>
+<pre><code class="language-typescript">// user.model.ts
+interface User {
+  id?: number;
+  name: string;
+  email: string;
+  createdAt?: Date;
+}
+
+class UserModel {
+  private db: Database;
+  
+  constructor(db: Database) {
+    this.db = db;
+    this.init();
+  }
+  
+  private init() {
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+  }
+  
+  create(user: Omit&lt;User, 'id' | 'createdAt'&gt;): User {
+    const stmt = this.db.prepare('INSERT INTO users (name, email) VALUES (?, ?) RETURNING *');
+    return stmt.get(user.name, user.email) as User;
+  }
+  
+  findById(id: number): User | null {
+    const stmt = this.db.prepare('SELECT * FROM users WHERE id = ?');
+    return stmt.get(id) as User | null;
+  }
+  
+  findAll(): User[] {
+    const stmt = this.db.prepare('SELECT * FROM users ORDER BY created_at DESC');
+    return stmt.all() as User[];
+  }
+  
+  update(id: number, updates: Partial&lt;User&gt;): User | null {
+    const fields = Object.keys(updates).map(key =&gt; `${key} = ?`).join(', ');
+    const values = Object.values(updates);
+    const stmt = this.db.prepare(`UPDATE users SET ${fields} WHERE id = ? RETURNING *`);
+    return stmt.get(...values, id) as User | null;
+  }
+  
+  delete(id: number): boolean {
+    const stmt = this.db.prepare('DELETE FROM users WHERE id = ?');
+    const result = stmt.run(id);
+    return result.changes &gt; 0;
+  }
+}
+
+// 使用示例
+import { Database } from 'bun:sqlite';
+
+const db = new Database('app.db');
+const userModel = new UserModel(db);
+
+const newUser = userModel.create({
+  name: 'Alice Smith',
+  email: 'alice@example.com'
+});
+
+console.log('Created user:', newUser);
+</code></pre>
+<h2 id="开发工具和调试"><a class="header" href="#开发工具和调试">开发工具和调试</a></h2>
+<h3 id="热重载开发"><a class="header" href="#热重载开发"><strong>热重载开发</strong></a></h3>
+<pre><code class="language-typescript">// dev-server.ts
+const server = Bun.serve({
+  port: 3000,
+  development: true, // 启用开发模式
+  
+  async fetch(req) {
+    const url = new URL(req.url);
+    
+    // API 路由
+    if (url.pathname.startsWith('/api/')) {
+      // 动态导入，支持热重载
+      const handler = await import(`./api${url.pathname.replace('/api', '')}.ts`);
+      return handler.default(req);
+    }
+    
+    // 静态文件服务
+    return new Response(Bun.file('./public/index.html'));
+  }
+});
+
+// 文件监听器
+const watcher = Bun.watch({
+  recursive: true,
+  paths: ['./src'],
+  onchange(event, path) {
+    console.log(`File changed: ${path}`);
+    // 可以发送 WebSocket 消息通知客户端刷新
+  }
+});
+
+console.log(`Dev server running on http://localhost:${server.port}`);
+</code></pre>
+<h3 id="调试和日志"><a class="header" href="#调试和日志"><strong>调试和日志</strong></a></h3>
+<pre><code class="language-typescript">// logger.ts
+class Logger {
+  private isDev = Bun.env.NODE_ENV === 'development';
+  
+  info(message: string, ...args: any[]) {
+    if (this.isDev) {
+      console.log(`[INFO] ${new Date().toISOString()} - ${message}`, ...args);
+    }
+  }
+  
+  error(message: string, error?: Error) {
+    console.error(`[ERROR] ${new Date().toISOString()} - ${message}`);
+    if (error &amp;&amp; this.isDev) {
+      console.error(error.stack);
+    }
+  }
+  
+  perf&lt;T&gt;(name: string, fn: () =&gt; T): T {
+    if (!this.isDev) return fn();
+    
+    const start = performance.now();
+    const result = fn();
+    const end = performance.now();
+    
+    console.log(`[PERF] ${name}: ${(end - start).toFixed(2)}ms`);
+    return result;
+  }
+}
+
+export const logger = new Logger();
+
+// 使用示例
+import { logger } from './logger.ts';
+
+logger.perf('database-query', () =&gt; {
+  return db.prepare('SELECT * FROM users').all();
+});
+</code></pre>
+<h2 id="性能优化"><a class="header" href="#性能优化">性能优化</a></h2>
+<h3 id="预编译和缓存"><a class="header" href="#预编译和缓存"><strong>预编译和缓存</strong></a></h3>
+<pre><code class="language-typescript">// 利用 Bun 的编译缓存
+// bun.config.js
+export default {
+  // 预加载模块，提高启动速度
+  preload: [
+    './src/setup.ts',
+    './src/config.ts'
+  ],
+  
+  // 编译目标
+  target: 'bun',
+  
+  // 外部依赖（不编译）
+  external: ['sharp', 'canvas'],
+  
+  // 压缩
+  minify: {
+    whitespace: true,
+    identifiers: true,
+    syntax: true
+  }
+};
+</code></pre>
+<h3 id="内存和性能监控"><a class="header" href="#内存和性能监控"><strong>内存和性能监控</strong></a></h3>
+<pre><code class="language-typescript">// monitor.ts
+class PerformanceMonitor {
+  private metrics = new Map&lt;string, number[]&gt;();
+  
+  measure&lt;T&gt;(name: string, fn: () =&gt; T): T {
+    const start = performance.now();
+    
+    try {
+      const result = fn();
+      const duration = performance.now() - start;
+      this.recordMetric(name, duration);
+      return result;
+    } catch (error) {
+      const duration = performance.now() - start;
+      this.recordMetric(`${name}-error`, duration);
+      throw error;
+    }
+  }
+  
+  async measureAsync&lt;T&gt;(name: string, fn: () =&gt; Promise&lt;T&gt;): Promise&lt;T&gt; {
+    const start = performance.now();
+    
+    try {
+      const result = await fn();
+      const duration = performance.now() - start;
+      this.recordMetric(name, duration);
+      return result;
+    } catch (error) {
+      const duration = performance.now() - start;
+      this.recordMetric(`${name}-error`, duration);
+      throw error;
+    }
+  }
+  
+  private recordMetric(name: string, value: number) {
+    if (!this.metrics.has(name)) {
+      this.metrics.set(name, []);
+    }
+    this.metrics.get(name)!.push(value);
+  }
+  
+  getStats(name: string) {
+    const values = this.metrics.get(name) || [];
+    if (values.length === 0) return null;
+    
+    const sum = values.reduce((a, b) =&gt; a + b, 0);
+    const avg = sum / values.length;
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    
+    return { avg, min, max, count: values.length };
+  }
+  
+  getMemoryUsage() {
+    return {
+      rss: process.memoryUsage.rss(),
+      heapUsed: process.memoryUsage().heapUsed,
+      heapTotal: process.memoryUsage().heapTotal,
+      external: process.memoryUsage().external
+    };
+  }
+}
+
+export const monitor = new PerformanceMonitor();
+</code></pre>
+<h2 id="生产环境部署"><a class="header" href="#生产环境部署">生产环境部署</a></h2>
+<h3 id="docker-配置"><a class="header" href="#docker-配置"><strong>Docker 配置</strong></a></h3>
+<pre><code class="language-dockerfile"># Dockerfile
+FROM oven/bun:1.0-alpine
+
+WORKDIR /app
+
+# 复制依赖文件
+COPY package.json bun.lockb ./
+
+# 安装依赖
+RUN bun install --frozen-lockfile --production
+
+# 复制源码
+COPY src/ ./src/
+
+# 构建应用
+RUN bun build src/index.ts --outdir dist --target bun
+
+# 设置环境变量
+ENV NODE_ENV=production
+
+# 暴露端口
+EXPOSE 3000
+
+# 启动应用
+CMD ["bun", "run", "dist/index.js"]
+</code></pre>
+<h3 id="部署脚本"><a class="header" href="#部署脚本"><strong>部署脚本</strong></a></h3>
+<pre><code class="language-typescript">// deploy.ts
+import { $ } from 'bun';
+
+async function deploy() {
+  console.log('Starting deployment...');
+  
+  // 运行测试
+  await $`bun test`;
+  console.log('✅ Tests passed');
+  
+  // 构建生产版本
+  await $`bun run build:prod`;
+  console.log('✅ Build completed');
+  
+  // 构建 Docker 镜像
+  await $`docker build -t myapp:latest .`;
+  console.log('✅ Docker image built');
+  
+  // 推送到仓库（如果需要）
+  if (Bun.env.PUSH_TO_REGISTRY === 'true') {
+    await $`docker push myapp:latest`;
+    console.log('✅ Image pushed to registry');
+  }
+  
+  console.log('🚀 Deployment completed!');
+}
+
+deploy().catch(console.error);
+</code></pre>
+<h2 id="最佳实践总结"><a class="header" href="#最佳实践总结">最佳实践总结</a></h2>
+<h3 id="性能优化-1"><a class="header" href="#性能优化-1"><strong>性能优化</strong></a></h3>
+<ol>
+<li><strong>利用 Bun 的速度优势</strong> - 充分使用内置 API</li>
+<li><strong>合理使用 Macros</strong> - 在构建时生成优化代码</li>
+<li><strong>数据库连接复用</strong> - 使用连接池和预编译语句</li>
+<li><strong>避免不必要的依赖</strong> - 利用 Bun 的内置功能</li>
+</ol>
+<h3 id="开发体验"><a class="header" href="#开发体验"><strong>开发体验</strong></a></h3>
+<ol>
+<li><strong>零配置 TypeScript</strong> - 直接运行 .ts 文件</li>
+<li><strong>热重载开发</strong> - 使用 <code>--watch</code> 标志</li>
+<li><strong>内置测试工具</strong> - 使用 <code>bun test</code> 进行快速测试</li>
+<li><strong>一体化工具链</strong> - 减少工具配置复杂度</li>
+</ol>
+<h3 id="生产环境"><a class="header" href="#生产环境"><strong>生产环境</strong></a></h3>
+<ol>
+<li><strong>容器化部署</strong> - 使用官方 Docker 镜像</li>
+<li><strong>环境变量管理</strong> - 合理配置生产环境变量</li>
+<li><strong>监控和日志</strong> - 实施完善的监控体系</li>
+<li><strong>渐进式迁移</strong> - 从 Node.js 逐步迁移到 Bun</li>
+</ol>
+<h3 id="生态兼容性"><a class="header" href="#生态兼容性"><strong>生态兼容性</strong></a></h3>
+<ol>
+<li><strong>Node.js API 兼容</strong> - 大部分现有代码可直接运行</li>
+<li><strong>npm 包支持</strong> - 兼容现有的 npm 生态</li>
+<li><strong>框架支持</strong> - 支持 React、Vue、Express 等主流框架</li>
+<li><strong>工具集成</strong> - 与现有开发工具链良好集成</li>
+</ol>
+<p>Bun 代表了 JavaScript 运行时的下一代发展方向，通过极致的性能优化、现代化的工具链和优秀的开发体验，为 JavaScript 开发者提供了一个全新的选择。</p>
+<hr>
+<p><strong>下一章</strong>: <a href="../best-practices/design.html">最佳实践</a> →</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../runtime/deno.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../best-practices/design.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../runtime/deno.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../best-practices/design.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,699 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>simd-1 - learning</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-6a75639e.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-ee0f8769.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                        <a href="/" class="icon-button"> Home </a>
+                    </div>
+
+                    <h1 class="menu-title">learning</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="simd-1"><a class="header" href="#simd-1">simd-1</a></h1>
+<p>这个例子摘自实验项目</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[inline(never)]
+fn aggregate_data(orders: &amp;Orders) -&gt; (f64, u32) {
+    let mut total_amount = 0.0;
+    let mut count = 0;
+    for i in 0..orders.order_id.len() {
+        total_amount += orders.amount[i];
+        count += 1;
+    }
+    (total_amount, count)
+}
+
+
+// 1G 数据，耗时 260ms
+#[inline(never)]
+fn aggregate_data_simd(orders: &amp;Orders) -&gt; (f64, u32) {
+    let mut total_amount = 0.0;
+    let mut count = 0;
+
+    let length = orders.order_id.len() &amp; (!0x0F); // 16 is better than 32, same as 8
+    for i in (0..length).step_by(16) {
+        let amount= f64x16::from_slice(&amp;orders.amount[i..]);
+        let zero = f64x16::splat(0.0);
+        total_amount += amount.reduce_sum();        // x86 上 reduce_sum 不支持向量化，还是多次累加
+        count += amount.simd_ne(zero).to_bitmask().count_ones(); // x86 有 popcnt 指令
+    }
+
+    for i in length..orders.order_id.len() {
+        total_amount += orders.amount[i];
+        count += 1;
+    }
+    (total_amount, count)
+}
+
+#[inline(never)]
+fn aggregate_data_simd2(orders: &amp;Orders) -&gt; (f64, u32) {
+    let mut total_amount = 0.0;
+    let mut count = 0;
+
+    let length = orders.order_id.len() &amp; (!0x0F); // 16 is better than 32, same as 8
+
+    let mut aggr1 = f64x16::splat(0.0);
+    // let mut aggr2 = f64x16::splat(0.0);
+    let zero = f64x16::splat(0.0);
+
+    for i in (0..length).step_by(16) {
+        let amount1= f64x16::from_slice(&amp;orders.amount[i..]);
+        // let amount2= f64x16::from_slice(&amp;orders.amount[i+16 ..]);
+        aggr1 = aggr1 + amount1;
+        // aggr2 = aggr2 + amount2;
+        count += amount1.simd_ne(zero).to_bitmask().count_ones(); // x86 有 popcnt 指令
+        // count += amount2.simd_ne(zero).to_bitmask().count_ones(); // x86 有 popcnt 指令
+    }
+
+    total_amount = aggr1.reduce_sum() ;
+    for i in length..orders.order_id.len() {
+        total_amount += orders.amount[i];
+        count += 1;
+    }
+    (total_amount, count)
+}
+<span class="boring">}</span></code></pre>
+<p>分别运行 1B(10亿) 的数据，耗时如下：</p>
+<ol>
+<li>aggregate_data  947ms （0.9ns/iter)</li>
+<li>aggregate_data_simd 260ms</li>
+<li>aggregate_data_simd2 160ms</li>
+</ol>
+<h2 id="x86_64-查看生成的汇编代码"><a class="header" href="#x86_64-查看生成的汇编代码">x86_64 查看生成的汇编代码：</a></h2>
+<ol>
+<li>aggregate_data 进行了循环展开，一次循环处理了 4个 f64 数据，但没有使用 SIMD 指令。
+<pre><code class="language-asm"> LBB24_10:
+     vmovsd	xmm2, qword ptr [rdx + 8*rsi]
+     vmovsd	xmm3, qword ptr [rdx + 8*rsi + 8]
+     vaddsd	xmm0, xmm0, xmm2    // xmm0 += amount[i]
+     vcmpneqsd	k0, xmm1, xmm2  
+     kmovw	edi, k0
+     add	edi, eax                // edi = count + (amount[i] != 0)
+     vaddsd	xmm0, xmm0, xmm3    // xmm0 += amount[i+1]
+     vcmpneqsd	k0, xmm1, xmm3
+     kmovw	eax, k0
+     vmovsd	xmm2, qword ptr [rdx + 8*rsi + 16]
+     vaddsd	xmm0, xmm0, xmm2    // xmm0 += amount[i+2]
+     vcmpneqsd	k0, xmm1, xmm2
+     kmovw	r9d, k0         // 
+     add	r9d, eax            // r9d = (amount[i+1] != 0) + (amount[i+2] != 0)
+     add	r9d, edi            // r9d = count + (amount[i] != 0) + (amount[i+1] != 0) + (amount[i+2] != 0)
+     vmovsd	xmm2, qword ptr [rdx + 8*rsi + 24]
+     add	rsi, 4
+     vaddsd	xmm0, xmm0, xmm2 // xmm0 += amount[i+3]
+     vcmpneqsd	k0, xmm1, xmm2
+     kmovw	eax, k0
+     add	eax, r9d          // count += (amount[i+3] != 0)
+     cmp	r8, rsi
+     jne	LBB24_10
+</code></pre>
+<ul>
+<li>进行了循环展开，一次循环处理了 4个 f64 数据</li>
+<li>没有使用 SIMD 指令</li>
+<li>上述指令具有一定的并行性。IPC &gt; 1</li>
+</ul>
+</li>
+<li>aggregate_data_simd 显示在一次循环中处理 16个 f64 数据
+开启 avx512f 指令集，以及 popcnt 特性，生成的代码如下：
+<pre><code class="language-asm">LBB25_8:
+   cmp	rcx, rsi
+   ja	LBB25_12
+   cmp	r10, 15
+   jbe	LBB25_13
+   dec	r8
+   vaddsd	xmm3, xmm1, qword ptr [r9 + 8*rcx]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 8]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 16]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 24]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 32]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 40]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 48]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 56]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 64]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 72]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 80]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 88]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 96]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 104]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 112]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 120]  ; xmm3 = amount[i] + amount[i+1] + ... + amount[i+15]
+   vcmpneqpd	k0, zmm2, zmmword ptr [r9 + 8*rcx]
+   vcmpneqpd	k1, zmm2, zmmword ptr [r9 + 8*rcx + 64]
+   vaddsd	xmm0, xmm0, xmm3
+   kunpckbw	k0, k1, k0
+   kmovw	r11d, k0
+   popcnt	r11d, r11d                               ; r11d = popcnt(k0)
+   add	eax, r11d
+   add	r10, -16
+   add	rcx, 16
+   test	r8, r8
+   jne	LBB25_8
+</code></pre>
+<ul>
+<li>f64 加法没有利用到 SIMD 指令</li>
+<li>count 计算使用到 zmm 寄存器进行 SIMD 比较。</li>
+<li>使用了 popcnt 指令来计算 count</li>
+</ul>
+</li>
+<li>aggregate_data_simd2
+<pre><code class="language-asm">LBB26_8:
+   cmp	rcx, rsi
+   ja	LBB26_12
+   cmp	r10, 15
+   jbe	LBB26_13
+   dec	r8
+   vmovupd	zmm3, zmmword ptr [r9 + 8*rcx]
+   vmovupd	zmm4, zmmword ptr [r9 + 8*rcx + 64]
+   vaddpd	zmm0, zmm0, zmm4
+   vaddpd	zmm1, zmm1, zmm3
+   vcmpneqpd	k0, zmm3, zmm2
+   vcmpneqpd	k1, zmm4, zmm2
+   kunpckbw	k0, k1, k0
+   kmovw	r11d, k0
+   popcnt	r11d, r11d
+   add	eax, r11d
+   add	r10, -16
+   add	rcx, 16
+   test	r8, r8
+   jne	LBB26_8   
+</code></pre>
+<ul>
+<li>加法充分使用到 SIMD 指令</li>
+<li>count 充分利用 popcnt 指令</li>
+</ul>
+</li>
+</ol>
+<h2 id="arm64-查看生成的汇编代码"><a class="header" href="#arm64-查看生成的汇编代码">ARM64 查看生成的汇编代码：</a></h2>
+<ol>
+<li>
+<p>aggregate_data</p>
+</li>
+<li>
+<p>aggregate_data_simd</p>
+</li>
+<li>
+<p>aggregate_data_simd2</p>
+<pre><code class="language-asm">; x11: &amp;orders.amount[i..]
+; x8: i
+; x12: orders.order_id.len() - i
+; x9: 循环次数
+; aggr1: f64x16 = v18, v23, v22, v20, v21, v19, v17, v0
+; count_aggr: i64x16 = v3, v4, v2, v1, v6, v5, v16, v7
+LBB26_3:
+    cmp	x8, x1
+    b.hi	LBB26_14
+    cmp	x12, #15
+    b.ls	LBB26_15
+    ldp	q25, q24, [x11, #64]       ; q24, q25, q26, q27, q28, q29, q30, q31: amount1: f64x16
+    ldp	q27, q26, [x11, #32]
+    ldp	q28, q29, [x11]
+    fadd.2d	v23, v23, v29          ; v23, v18, v22, v20, v21, v19, v17, v0  aggr1: f64x16
+    fadd.2d	v18, v18, v28
+    fadd.2d	v22, v22, v27
+    fadd.2d	v20, v20, v26
+    fadd.2d	v21, v21, v25
+    fadd.2d	v19, v19, v24
+    ldp	q31, q30, [x11, #96]      ; 这条指令是否可以提前，以便更好的利用流水线？
+    fadd.2d	v17, v17, v31
+    fadd.2d	v0, v0, v30
+    fcmeq.2d	v30, v30, #0.0
+    mvn.16b	v30, v30。            ； v30, v31, v24, v25, v28, v29, v27, v26: amount1.simd_ne(zero)
+    fcmeq.2d	v31, v31, #0.0
+    mvn.16b	v31, v31
+    fcmeq.2d	v24, v24, #0.0
+    mvn.16b	v24, v24
+    fcmeq.2d	v25, v25, #0.0
+    mvn.16b	v25, v25
+    fcmeq.2d	v28, v28, #0.0
+    mvn.16b	v28, v28
+    fcmeq.2d	v29, v29, #0.0
+    mvn.16b	v29, v29
+    fcmeq.2d	v27, v27, #0.0
+    mvn.16b	v27, v27
+    fcmeq.2d	v26, v26, #0.0
+    mvn.16b	v26, v26
+    sub.2d	v3, v3, v26        ; v3, v4, v2, v1, v6, v5, v16, v7: count_aggr += amount1.simd_ne(zero)
+    sub.2d	v4, v4, v27
+    sub.2d	v2, v2, v29
+    sub.2d	v1, v1, v28
+    sub.2d	v6, v6, v25
+    sub.2d	v5, v5, v24
+    add	x11, x11, #128        ; x11: &amp;orders.amount, x12
+    sub	x12, x12, #16
+    sub.2d	v16, v16, v31
+    add	x8, x8, #16           ; x8, x9
+    sub.2d	v7, v7, v30
+    sub	x9, x9, #1
+    cbnz	x9, LBB26_3
+</code></pre>
+<p>对应的 LLVM-IR 代码如下：</p>
+<pre><code class="language-llvm-ir">; vector_example1::aggregate_data_simd2
+; Function Attrs: noinline uwtable
+define internal fastcc { double, i32 } @_ZN15vector_example120aggregate_data_simd217hf7a44556b264af6cE(ptr noalias nocapture noundef readonly align 8 dereferenceable(72) %orders) unnamed_addr #2 personality ptr @rust_eh_personality {
+start:
+  %_73 = alloca [48 x i8], align 8
+  %0 = getelementptr inbounds i8, ptr %orders, i64 16             ; &amp;orders.order_id.len
+  %order_id_len = load i64, ptr %0, align 8, !noundef !3          ; orders.order_id.len
+  %length16 = and i64 %order_id_len, -16                          ; %length16 = orders.order_id.len &amp; !0x0F
+  %_57.not34 = icmp ult i64 %order_id_len, 16                     ; orders.order_id.len &lt; 16
+  br i1 %_57.not34, label %bb12, label %bb11.lr.ph
+
+bb11.lr.ph:                                       ; preds = %start
+  %d.i.i23 = lshr i64 %order_id_len, 4
+  %1 = getelementptr inbounds i8, ptr %orders, i64 64       ; &amp;orders.total_amount.len
+  %total_amount_len = load i64, ptr %1, align 8, !noundef !3
+  %2 = getelementptr inbounds i8, ptr %orders, i64 56       ; &amp;order.total_amount.ptr
+  %total_amount_ptr = load ptr, ptr %2, align 8, !nonnull !3
+  br label %bb11
+
+bb12:                                             ; preds = %simd_block, %start   ; orders.order_id.len &lt; 16
+  %count_aggr.sroa.0.0.lcssa = phi &lt;16 x i64&gt; [ zeroinitializer, %start ], [ %50, %simd_block ]
+  %aggr1.sroa.0.0.lcssa = phi &lt;16 x double&gt; [ zeroinitializer, %start ], [ %47, %simd_block ]
+  %3 = tail call double @llvm.vector.reduce.fadd.v16f64(double 0.000000e+00, &lt;16 x double&gt; %aggr1.sroa.0.0.lcssa)   ; total_amount
+  %4 = tail call i64 @llvm.vector.reduce.add.v16i64(&lt;16 x i64&gt; %count_aggr.sroa.0.0.lcssa)
+  %5 = trunc i64 %4 to i32                        ; count
+  %_9640.not = icmp eq i64 %length16, %order_id_len
+  br i1 %_9640.not, label %bb29, label %bb27.lr.ph
+
+bb27.lr.ph:                                       ; preds = %bb12   ; remaining &gt; 0
+  %6 = getelementptr inbounds i8, ptr %orders, i64 64
+  %_100 = load i64, ptr %6, align 8, !noundef !3
+  %7 = getelementptr inbounds i8, ptr %orders, i64 56
+  %_102 = load ptr, ptr %7, align 8, !nonnull !3
+  %8 = or disjoint i64 %length16, 1
+  %umax = tail call i64 @llvm.umax.i64(i64 %order_id_len, i64 %8)
+  %9 = xor i64 %length16, -1
+  %10 = add i64 %umax, %9
+  %11 = tail call i64 @llvm.usub.sat.i64(i64 %_100, i64 %length16)
+  %umin = tail call i64 @llvm.umin.i64(i64 %10, i64 %11)
+  %12 = add i64 %umin, 1
+  %min.iters.check = icmp ult i64 %12, 17
+  br i1 %min.iters.check, label %bb27.preheader, label %vector.ph
+
+bb27.preheader:                                   ; preds = %middle.block, %bb27.lr.ph
+  %total_amount.sroa.0.043.ph = phi double [ %3, %bb27.lr.ph ], [ %35, %middle.block ]
+  %count.sroa.0.042.ph = phi i32 [ %5, %bb27.lr.ph ], [ %37, %middle.block ]
+  %iter.sroa.0.041.ph = phi i64 [ %length16, %bb27.lr.ph ], [ %ind.end, %middle.block ]
+  br label %bb27
+
+vector.ph:                                        ; preds = %bb27.lr.ph
+  %n.mod.vf = and i64 %12, 15
+  %13 = icmp eq i64 %n.mod.vf, 0
+  %14 = select i1 %13, i64 16, i64 %n.mod.vf
+  %n.vec = sub i64 %12, %14
+  %ind.end = add i64 %length16, %n.vec
+  %15 = insertelement &lt;4 x i32&gt; &lt;i32 poison, i32 0, i32 0, i32 0&gt;, i32 %5, i64 0
+  br label %unroll_16_body
+
+unroll_16_body:                                      ; preds = %unroll_16_body, %vector.ph
+  %index = phi i64 [ 0, %vector.ph ], [ %index.next, %unroll_16_body ]
+  %vec.phi = phi double [ %3, %vector.ph ], [ %35, %unroll_16_body ]
+  %vec.phi62 = phi &lt;4 x i32&gt; [ %15, %vector.ph ], [ %28, %unroll_16_body ]
+  %vec.phi63 = phi &lt;4 x i32&gt; [ zeroinitializer, %vector.ph ], [ %29, %unroll_16_body ]
+  %vec.phi64 = phi &lt;4 x i32&gt; [ zeroinitializer, %vector.ph ], [ %30, %unroll_16_body ]
+  %vec.phi65 = phi &lt;4 x i32&gt; [ zeroinitializer, %vector.ph ], [ %31, %unroll_16_body ]
+  %offset.idx = add i64 %length16, %index
+  %16 = getelementptr inbounds [0 x double], ptr %_102, i64 0, i64 %offset.idx
+  %17 = getelementptr inbounds i8, ptr %16, i64 32
+  %18 = getelementptr inbounds i8, ptr %16, i64 64
+  %19 = getelementptr inbounds i8, ptr %16, i64 96
+  %wide.load = load &lt;4 x double&gt;, ptr %16, align 8
+  %wide.load66 = load &lt;4 x double&gt;, ptr %17, align 8
+  %wide.load67 = load &lt;4 x double&gt;, ptr %18, align 8
+  %wide.load68 = load &lt;4 x double&gt;, ptr %19, align 8
+  %20 = fcmp une &lt;4 x double&gt; %wide.load, zeroinitializer
+  %21 = fcmp une &lt;4 x double&gt; %wide.load66, zeroinitializer
+  %22 = fcmp une &lt;4 x double&gt; %wide.load67, zeroinitializer
+  %23 = fcmp une &lt;4 x double&gt; %wide.load68, zeroinitializer
+  %24 = zext &lt;4 x i1&gt; %20 to &lt;4 x i32&gt;
+  %25 = zext &lt;4 x i1&gt; %21 to &lt;4 x i32&gt;
+  %26 = zext &lt;4 x i1&gt; %22 to &lt;4 x i32&gt;
+  %27 = zext &lt;4 x i1&gt; %23 to &lt;4 x i32&gt;
+  %28 = add &lt;4 x i32&gt; %vec.phi62, %24
+  %29 = add &lt;4 x i32&gt; %vec.phi63, %25
+  %30 = add &lt;4 x i32&gt; %vec.phi64, %26
+  %31 = add &lt;4 x i32&gt; %vec.phi65, %27
+  %32 = tail call double @llvm.vector.reduce.fadd.v4f64(double %vec.phi, &lt;4 x double&gt; %wide.load)
+  %33 = tail call double @llvm.vector.reduce.fadd.v4f64(double %32, &lt;4 x double&gt; %wide.load66)
+  %34 = tail call double @llvm.vector.reduce.fadd.v4f64(double %33, &lt;4 x double&gt; %wide.load67)
+  %35 = tail call double @llvm.vector.reduce.fadd.v4f64(double %34, &lt;4 x double&gt; %wide.load68)
+  %index.next = add nuw i64 %index, 16
+  %36 = icmp eq i64 %index.next, %n.vec
+  br i1 %36, label %middle.block, label %unroll_16_body, !llvm.loop !824
+
+middle.block:                                     ; preds = %unroll_16_body
+  %bin.rdx = add &lt;4 x i32&gt; %29, %28
+  %bin.rdx69 = add &lt;4 x i32&gt; %30, %bin.rdx
+  %bin.rdx70 = add &lt;4 x i32&gt; %31, %bin.rdx69
+  %37 = tail call i32 @llvm.vector.reduce.add.v4i32(&lt;4 x i32&gt; %bin.rdx70)
+  br label %bb27.preheader
+
+bb11:                                             ; preds = %bb11.lr.ph, %simd_block
+  %aggr1.sroa.0.038 = phi &lt;16 x double&gt; [ zeroinitializer, %bb11.lr.ph ], [ %47, %simd_block ]
+  %count_aggr.sroa.0.037 = phi &lt;16 x i64&gt; [ zeroinitializer, %bb11.lr.ph ], [ %50, %simd_block ]
+  %iter2.sroa.0.036 = phi i64 [ %d.i.i23, %bb11.lr.ph ], [ %38, %simd_block ]
+  %iter1.sroa.0.035 = phi i64 [ 0, %bb11.lr.ph ], [ %_59, %simd_block ]
+  %_59 = add nuw i64 %iter1.sroa.0.035, 16
+  %38 = add nsw i64 %iter2.sroa.0.036, -1
+  %_66 = icmp ugt i64 %iter1.sroa.0.035, %total_amount_len
+  br i1 %_66, label %bb14, label %bb15, !prof !45
+
+bb29:                                             ; preds = %unroll_1_body, %bb12
+  %count.sroa.0.0.lcssa = phi i32 [ %5, %bb12 ], [ %count.sroa.0.1, %unroll_1_body ]
+  %total_amount.sroa.0.0.lcssa = phi double [ %3, %bb12 ], [ %41, %unroll_1_body ]
+  %39 = insertvalue { double, i32 } poison, double %total_amount.sroa.0.0.lcssa, 0
+  %40 = insertvalue { double, i32 } %39, i32 %count.sroa.0.0.lcssa, 1
+  ret { double, i32 } %40
+
+bb27:                                             ; preds = %bb27.preheader, %unroll_1_body
+  %total_amount.sroa.0.043 = phi double [ %41, %unroll_1_body ], [ %total_amount.sroa.0.043.ph, %bb27.preheader ]
+  %count.sroa.0.042 = phi i32 [ %count.sroa.0.1, %unroll_1_body ], [ %count.sroa.0.042.ph, %bb27.preheader ]
+  %iter.sroa.0.041 = phi i64 [ %_0.i, %unroll_1_body ], [ %iter.sroa.0.041.ph, %bb27.preheader ]
+  %_105 = icmp ult i64 %iter.sroa.0.041, %_100
+  br i1 %_105, label %unroll_1_body, label %panic
+
+unroll_1_body:                                             ; preds = %bb27
+  %_0.i = add nuw i64 %iter.sroa.0.041, 1
+  %_28 = getelementptr inbounds [0 x double], ptr %_102, i64 0, i64 %iter.sroa.0.041
+  %_27 = load double, ptr %_28, align 8, !noundef !3
+  %41 = fadd double %total_amount.sroa.0.043, %_27
+  %_29 = fcmp une double %_27, 0.000000e+00
+  %42 = zext i1 %_29 to i32
+  %count.sroa.0.1 = add i32 %count.sroa.0.042, %42
+  %_96 = icmp ult i64 %_0.i, %order_id_len
+  br i1 %_96, label %bb27, label %bb29, !llvm.loop !825
+
+panic:                                            ; preds = %bb27
+; call core::panicking::panic_bounds_check
+  tail call void @_ZN4core9panicking18panic_bounds_check17h4e300ecacdcb485dE(i64 noundef %iter.sroa.0.041, i64 noundef %_100, ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_1d64afd2f4d6487c2fc52f49f157fb70) #25
+  unreachable
+
+bb15:                                             ; preds = %bb11
+  %_68 = sub nuw i64 %total_amount_len, %iter1.sroa.0.035
+  %_71 = icmp ugt i64 %_68, 15
+  br i1 %_71, label %simd_block, label %bb18, !prof !162
+
+bb14:                                             ; preds = %bb11
+; call core::slice::index::slice_start_index_len_fail
+  tail call void @_ZN4core5slice5index26slice_start_index_len_fail17hc58130d6bde59316E(i64 noundef %iter1.sroa.0.035, i64 noundef %total_amount_len, ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_a51f3018634c16dde71b5ca2d7634a49) #25
+  unreachable
+
+bb18:                                             ; preds = %bb15
+  call void @llvm.lifetime.start.p0(i64 48, ptr nonnull %_73)
+  store ptr @alloc_9050ad19dc66bd48e533c9ef9ae2a705, ptr %_73, align 8
+  %43 = getelementptr inbounds i8, ptr %_73, i64 8
+  store i64 1, ptr %43, align 8
+  %44 = getelementptr inbounds i8, ptr %_73, i64 32
+  store ptr null, ptr %44, align 8
+  %45 = getelementptr inbounds i8, ptr %_73, i64 16
+  store ptr inttoptr (i64 8 to ptr), ptr %45, align 8
+  %46 = getelementptr inbounds i8, ptr %_73, i64 24
+  store i64 0, ptr %46, align 8
+; call core::panicking::panic_fmt
+  call void @_ZN4core9panicking9panic_fmt17hf449f69c28a45a63E(ptr noalias nocapture noundef nonnull readonly align 8 dereferenceable(48) %_73, ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_aff0730a47fd28b03378033af17e580b) #25
+  unreachable
+
+simd_block:                                             ; preds = %bb15
+  %_69 = getelementptr inbounds double, ptr %total_amount_ptr, i64 %iter1.sroa.0.035
+  %_77.sroa.0.0.copyload = load &lt;16 x double&gt;, ptr %_69, align 8
+  %47 = fadd &lt;16 x double&gt; %aggr1.sroa.0.038, %_77.sroa.0.0.copyload
+  %48 = fcmp une &lt;16 x double&gt; %_77.sroa.0.0.copyload, zeroinitializer
+  %49 = zext &lt;16 x i1&gt; %48 to &lt;16 x i64&gt;
+  %50 = add &lt;16 x i64&gt; %count_aggr.sroa.0.037, %49
+  %_57.not = icmp eq i64 %38, 0
+  br i1 %_57.not, label %bb12, label %bb11
+}
+
+</code></pre>
+<p>对应的 CFG 如下：</p>
+</li>
+</ol>
+<pre class="mermaid">%% 
+   flowchart TD
+    start[MStart] --&gt;|len &lt; 16| bb12
+    start --&gt;|len &gt;= 16| bb11_lr_ph
+
+    bb11_lr_ph --&gt; bb11
+    bb12 --&gt; bb29
+    bb12 --&gt;|has_remain| bb27_lr_ph
+
+    bb27_lr_ph --&gt; bb27_preheader
+    bb27_lr_ph --&gt; vector_ph
+    vector_ph --&gt; unroll_16_body
+
+    bb27_preheader --&gt; bb27
+
+    unroll_16_body --&gt; middle_block
+    middle_block --&gt; bb27_preheader
+    unroll_16_body --&gt; unroll_16_body
+
+    bb11 --&gt;|&amp;orders.amount i.. 越界| bb14
+    bb11 --&gt; bb15
+
+    bb29 --&gt; END[End]
+    bb27 --&gt; unroll_1_body
+    bb27 --&gt; panic --&gt; unreachable[Unreachable]
+
+    unroll_1_body --&gt; bb27
+    unroll_1_body --&gt; bb29
+
+    bb15 --&gt; simd_block
+    bb15 --&gt; bb18 --&gt; unreachable
+
+    bb14 --&gt; unreachable
+
+    simd_block --&gt; bb12
+    simd_block --&gt; bb11
+</pre>
+
+<p><img src="simd-1-cfg.png" alt="img.png"></p>
+<ul>
+<li><input disabled="" type="checkbox"> 阅读 LLVM-IR 代码，需要有一个 CFG 工具，以及可以对 变量， block 进行重命名的工具。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="rust-rc-layout.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="demo-llvm-ir.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="rust-rc-layout.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="demo-llvm-ir.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-025d9952.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,950 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>ES模块基础 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="es模块基础"><a class="header" href="#es模块基础">ES模块基础</a></h1>
+<p>ES模块（ECMAScript Modules，简称ESM）是JavaScript的官方模块系统，在ES6（ES2015）中正式引入。它提供了一种标准化的方式来组织和重用JavaScript代码。</p>
+<h2 id="什么是es模块"><a class="header" href="#什么是es模块">什么是ES模块</a></h2>
+<p>ES模块是JavaScript语言层面的模块系统，具有以下特点：</p>
+<ul>
+<li><strong>静态结构</strong>: 模块的导入导出关系在编译时确定</li>
+<li><strong>严格模式</strong>: 模块代码自动运行在严格模式下</li>
+<li><strong>顶层作用域</strong>: 每个模块都有自己的顶层作用域</li>
+<li><strong>异步加载</strong>: 支持异步模块加载</li>
+<li><strong>树摇友好</strong>: 支持静态分析和死代码消除</li>
+</ul>
+<h2 id="基本语法"><a class="header" href="#基本语法">基本语法</a></h2>
+<h3 id="导出export"><a class="header" href="#导出export">导出（Export）</a></h3>
+<p>ES模块提供了多种导出方式：</p>
+<h4 id="1-命名导出named-exports"><a class="header" href="#1-命名导出named-exports">1. 命名导出（Named Exports）</a></h4>
+<pre><code class="language-javascript">// math.js
+
+// 导出变量
+export const PI = 3.14159;
+export let counter = 0;
+
+// 导出函数
+export function add(a, b) {
+    return a + b;
+}
+
+export function multiply(a, b) {
+    return a * b;
+}
+
+// 导出类
+export class Calculator {
+    add(a, b) {
+        return a + b;
+    }
+}
+
+// 批量导出
+const subtract = (a, b) =&gt; a - b;
+const divide = (a, b) =&gt; a / b;
+
+export { subtract, divide };
+</code></pre>
+<h4 id="2-默认导出default-export"><a class="header" href="#2-默认导出default-export">2. 默认导出（Default Export）</a></h4>
+<pre><code class="language-javascript">// user.js
+
+// 默认导出类
+export default class User {
+    constructor(name, email) {
+        this.name = name;
+        this.email = email;
+    }
+    
+    getInfo() {
+        return `${this.name} &lt;${this.email}&gt;`;
+    }
+}
+
+// 或者导出函数
+// export default function createUser(name, email) {
+//     return new User(name, email);
+// }
+
+// 或者导出值
+// export default {
+//     apiUrl: 'https://api.example.com',
+//     timeout: 5000
+// };
+</code></pre>
+<h4 id="3-混合导出"><a class="header" href="#3-混合导出">3. 混合导出</a></h4>
+<pre><code class="language-javascript">// api.js
+
+// 默认导出
+class ApiClient {
+    constructor(baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+    
+    async get(endpoint) {
+        const response = await fetch(`${this.baseUrl}${endpoint}`);
+        return response.json();
+    }
+}
+
+export default ApiClient;
+
+// 同时提供命名导出
+export const DEFAULT_TIMEOUT = 5000;
+export const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
+
+export function createApiClient(baseUrl) {
+    return new ApiClient(baseUrl);
+}
+</code></pre>
+<h3 id="导入import"><a class="header" href="#导入import">导入（Import）</a></h3>
+<h4 id="1-导入命名导出"><a class="header" href="#1-导入命名导出">1. 导入命名导出</a></h4>
+<pre><code class="language-javascript">// main.js
+
+// 导入特定的命名导出
+import { add, multiply, PI } from './math.js';
+
+console.log(add(2, 3)); // 5
+console.log(multiply(4, 5)); // 20
+console.log(PI); // 3.14159
+
+// 导入时重命名
+import { add as sum, multiply as product } from './math.js';
+
+console.log(sum(2, 3)); // 5
+console.log(product(4, 5)); // 20
+
+// 导入所有命名导出
+import * as MathUtils from './math.js';
+
+console.log(MathUtils.add(2, 3)); // 5
+console.log(MathUtils.PI); // 3.14159
+</code></pre>
+<h4 id="2-导入默认导出"><a class="header" href="#2-导入默认导出">2. 导入默认导出</a></h4>
+<pre><code class="language-javascript">// app.js
+
+// 导入默认导出
+import User from './user.js';
+
+const user = new User('John', 'john@example.com');
+console.log(user.getInfo());
+
+// 默认导出可以用任意名称
+import MyUser from './user.js'; // 同样有效
+</code></pre>
+<h4 id="3-混合导入"><a class="header" href="#3-混合导入">3. 混合导入</a></h4>
+<pre><code class="language-javascript">// client.js
+
+// 同时导入默认导出和命名导出
+import ApiClient, { DEFAULT_TIMEOUT, createApiClient } from './api.js';
+
+const client = new ApiClient('https://api.example.com');
+const anotherClient = createApiClient('https://another-api.com');
+
+console.log(`Default timeout: ${DEFAULT_TIMEOUT}ms`);
+</code></pre>
+<h4 id="4-仅导入模块无绑定"><a class="header" href="#4-仅导入模块无绑定">4. 仅导入模块（无绑定）</a></h4>
+<pre><code class="language-javascript">// 仅执行模块代码，不导入任何绑定
+import './polyfills.js';
+import './init-global-config.js';
+</code></pre>
+<h2 id="模块的执行特性"><a class="header" href="#模块的执行特性">模块的执行特性</a></h2>
+<h3 id="1-严格模式"><a class="header" href="#1-严格模式">1. 严格模式</a></h3>
+<p>ES模块代码自动运行在严格模式下，这带来了更严格的语法检查和更安全的执行环境：</p>
+<p><strong>严格模式的主要特征：</strong></p>
+<ul>
+<li>禁止使用未声明的变量</li>
+<li>禁止删除不可删除的属性</li>
+<li>函数参数名必须唯一</li>
+<li>禁止八进制字面量</li>
+<li><code>this</code>在函数中不会自动指向全局对象</li>
+</ul>
+<pre><code class="language-javascript">// module.js
+// 模块代码自动运行在严格模式下
+
+// 以下代码在模块中会报错
+// undeclaredVariable = 'value'; // ReferenceError
+// delete Object.prototype; // TypeError
+
+console.log(this); // undefined（非浏览器环境）
+</code></pre>
+<h3 id="2-顶层作用域"><a class="header" href="#2-顶层作用域">2. 顶层作用域</a></h3>
+<pre><code class="language-javascript">// module1.js
+var globalVar = 'module1';
+let moduleVar = 'private to module1';
+
+export { moduleVar };
+
+// module2.js
+var globalVar = 'module2'; // 不会与module1冲突
+let moduleVar = 'private to module2';
+
+export { moduleVar };
+
+// main.js
+import { moduleVar as var1 } from './module1.js';
+import { moduleVar as var2 } from './module2.js';
+
+console.log(var1); // 'private to module1'
+console.log(var2); // 'private to module2'
+</code></pre>
+<h3 id="3-模块单例"><a class="header" href="#3-模块单例">3. 模块单例</a></h3>
+<pre><code class="language-javascript">// counter.js
+let count = 0;
+
+export function increment() {
+    return ++count;
+}
+
+export function getCount() {
+    return count;
+}
+
+// module1.js
+import { increment } from './counter.js';
+console.log(increment()); // 1
+
+// module2.js
+import { increment, getCount } from './counter.js';
+console.log(increment()); // 2
+console.log(getCount()); // 2
+</code></pre>
+<h2 id="在html中使用es模块"><a class="header" href="#在html中使用es模块">在HTML中使用ES模块</a></h2>
+<h3 id="1-基本用法"><a class="header" href="#1-基本用法">1. 基本用法</a></h3>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;ES Modules Demo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- 使用type="module"标识ES模块 --&gt;
+    &lt;script type="module" src="./main.js"&gt;&lt;/script&gt;
+    
+    &lt;!-- 内联模块脚本 --&gt;
+    &lt;script type="module"&gt;
+        import { greet } from './utils.js';
+        greet('World');
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3 id="2-模块脚本的特性"><a class="header" href="#2-模块脚本的特性">2. 模块脚本的特性</a></h3>
+<pre><code class="language-html">&lt;!-- ES模块脚本的特点 --&gt;
+&lt;script type="module"&gt;
+    // 1. 自动延迟执行（相当于defer）
+    console.log('Module script executed');
+    
+    // 2. 严格模式
+    console.log(this); // undefined
+    
+    // 3. 支持顶层await（现代浏览器）
+    const data = await fetch('/api/data').then(r =&gt; r.json());
+    console.log(data);
+&lt;/script&gt;
+
+&lt;!-- 传统脚本（用于对比） --&gt;
+&lt;script&gt;
+    console.log('Regular script executed first');
+&lt;/script&gt;
+</code></pre>
+<h3 id="3-浏览器兼容性处理"><a class="header" href="#3-浏览器兼容性处理">3. 浏览器兼容性处理</a></h3>
+<pre><code class="language-html">&lt;!-- 现代浏览器使用ES模块 --&gt;
+&lt;script type="module" src="./modern-app.js"&gt;&lt;/script&gt;
+
+&lt;!-- 旧浏览器降级方案 --&gt;
+&lt;script nomodule src="./legacy-app.js"&gt;&lt;/script&gt;
+</code></pre>
+<h2 id="nodejs中的es模块"><a class="header" href="#nodejs中的es模块">Node.js中的ES模块</a></h2>
+<h3 id="1-启用es模块"><a class="header" href="#1-启用es模块">1. 启用ES模块</a></h3>
+<p>方式1：使用<code>.mjs</code>扩展名</p>
+<pre><code class="language-javascript">// app.mjs
+import { readFile } from 'fs/promises';
+
+const content = await readFile('./package.json', 'utf-8');
+console.log(content);
+</code></pre>
+<p>方式2：在<code>package.json</code>中设置<code>"type": "module"</code></p>
+<pre><code class="language-json">{
+  "type": "module",
+  "main": "app.js"
+}
+</code></pre>
+<pre><code class="language-javascript">// app.js (现在作为ES模块运行)
+import { readFile } from 'fs/promises';
+
+const content = await readFile('./package.json', 'utf-8');
+console.log(content);
+</code></pre>
+<h3 id="2-内置模块的导入"><a class="header" href="#2-内置模块的导入">2. 内置模块的导入</a></h3>
+<pre><code class="language-javascript">// Node.js内置模块
+import { readFile, writeFile } from 'fs/promises';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+// 获取当前文件路径（在ES模块中__dirname不可用）
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const filePath = join(__dirname, 'data.txt');
+const data = await readFile(filePath, 'utf-8');
+</code></pre>
+<h2 id="es模块的优势"><a class="header" href="#es模块的优势">ES模块的优势</a></h2>
+<h3 id="1-静态分析"><a class="header" href="#1-静态分析">1. 静态分析</a></h3>
+<pre><code class="language-javascript">// 静态结构使工具能够分析依赖关系
+import { usedFunction } from './utils.js';
+// import { unusedFunction } from './utils.js'; // 可以被工具检测并移除
+
+// 动态导入无法进行静态分析
+// const moduleName = getModuleName();
+// import(moduleName); // 运行时确定
+</code></pre>
+<h3 id="2-树摇tree-shaking"><a class="header" href="#2-树摇tree-shaking">2. 树摇（Tree Shaking）</a></h3>
+<pre><code class="language-javascript">// utils.js
+export function add(a, b) { return a + b; }
+export function subtract(a, b) { return a - b; }
+export function multiply(a, b) { return a * b; }
+export function divide(a, b) { return a / b; }
+
+// main.js
+import { add, multiply } from './utils.js';
+// 打包工具可以自动移除unused的subtract和divide函数
+
+console.log(add(2, 3));
+console.log(multiply(4, 5));
+</code></pre>
+<h3 id="3-循环依赖处理"><a class="header" href="#3-循环依赖处理">3. 循环依赖处理</a></h3>
+<pre><code class="language-javascript">// a.js
+import { b } from './b.js';
+export const a = 'a';
+console.log('a.js:', b);
+
+// b.js
+import { a } from './a.js';
+export const b = 'b';
+console.log('b.js:', a); // undefined（但不会报错）
+
+// ES模块能够优雅处理循环依赖
+</code></pre>
+<p><strong>ES模块循环依赖处理机制：</strong></p>
+<ol>
+<li><strong>模块记录创建</strong>: 在解析阶段，所有模块都会创建模块记录，但不立即执行</li>
+<li><strong>深度优先遍历</strong>: 按照依赖图进行深度优先遍历，确定执行顺序</li>
+<li><strong>实时绑定</strong>: 通过live binding机制，即使在循环依赖中也能获取到最终的导出值</li>
+<li><strong>延迟访问</strong>: 在模块完全初始化之前访问导出可能得到undefined，但不会抛出错误</li>
+</ol>
+<p>这种机制使得ES模块能够安全地处理循环依赖，详细内容请参阅<a href="./circular-deps.html">循环依赖章节</a>。</p>
+<h2 id="常见模式和最佳实践"><a class="header" href="#常见模式和最佳实践">常见模式和最佳实践</a></h2>
+<h3 id="1-重新导出re-exports"><a class="header" href="#1-重新导出re-exports">1. 重新导出（Re-exports）</a></h3>
+<pre><code class="language-javascript">// components/index.js - 统一导出文件
+export { Button } from './Button.js';
+export { Input } from './Input.js';
+export { Modal } from './Modal.js';
+
+// 或者使用通配符重新导出
+export * from './Button.js';
+export * from './Input.js';
+
+// 重新导出并重命名
+export { default as MyButton } from './Button.js';
+</code></pre>
+<h3 id="2-条件导出"><a class="header" href="#2-条件导出">2. 条件导出</a></h3>
+<pre><code class="language-javascript">// config.js
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+if (isDevelopment) {
+    // 动态导入开发工具
+    const devTools = await import('./dev-tools.js');
+    devTools.setupDevMode();
+}
+
+export const config = {
+    apiUrl: isDevelopment ? 'http://localhost:3000' : 'https://api.prod.com'
+};
+</code></pre>
+<h3 id="3-工厂函数模式"><a class="header" href="#3-工厂函数模式">3. 工厂函数模式</a></h3>
+<pre><code class="language-javascript">// database.js
+export function createDatabase(config) {
+    return {
+        connect() {
+            console.log(`Connecting to ${config.host}:${config.port}`);
+        },
+        
+        query(sql) {
+            console.log(`Executing: ${sql}`);
+        }
+    };
+}
+
+// main.js
+import { createDatabase } from './database.js';
+
+const db = createDatabase({
+    host: 'localhost',
+    port: 5432
+});
+
+db.connect();
+</code></pre>
+<h2 id="live-binding实时绑定"><a class="header" href="#live-binding实时绑定">Live Binding（实时绑定）</a></h2>
+<p>Live Binding是ES模块的一个核心特性，它使得导入的绑定与导出的绑定保持<strong>实时同步</strong>。这与CommonJS的值复制完全不同。</p>
+<h3 id="什么是live-binding"><a class="header" href="#什么是live-binding">什么是Live Binding</a></h3>
+<p>Live Binding意味着导入的变量是对导出变量的<strong>实时引用</strong>，而不是值的拷贝。当导出模块中的值发生变化时，导入模块中的对应变量也会自动更新。</p>
+<h3 id="live-binding-vs-值复制"><a class="header" href="#live-binding-vs-值复制">Live Binding vs 值复制</a></h3>
+<h4 id="commonjs值复制"><a class="header" href="#commonjs值复制">CommonJS（值复制）</a></h4>
+<pre><code class="language-javascript">// counter.js (CommonJS)
+let count = 0;
+
+function increment() {
+    count++;
+}
+
+function getCount() {
+    return count;
+}
+
+// 导出的是值的副本
+module.exports = { count, increment, getCount };
+</code></pre>
+<pre><code class="language-javascript">// main.js (CommonJS)
+const { count, increment, getCount } = require('./counter');
+
+console.log(count); // 0
+increment();
+console.log(count); // 0 ← 还是0，因为是值复制
+console.log(getCount()); // 1 ← 通过函数才能获取最新值
+</code></pre>
+<h4 id="es模块live-binding"><a class="header" href="#es模块live-binding">ES模块（Live Binding）</a></h4>
+<pre><code class="language-javascript">// counter.mjs (ES模块)
+export let count = 0;
+
+export function increment() {
+    count++;
+}
+
+export function decrement() {
+    count--;
+}
+
+export function reset() {
+    count = 0;
+}
+</code></pre>
+<pre><code class="language-javascript">// main.mjs (ES模块)
+import { count, increment, decrement, reset } from './counter.mjs';
+
+console.log(count); // 0
+
+increment();
+console.log(count); // 1 ← 自动更新！
+
+increment();
+increment();
+console.log(count); // 3 ← 继续同步！
+
+decrement();
+console.log(count); // 2 ← 实时反映变化
+
+reset();
+console.log(count); // 0 ← 重置后也同步
+</code></pre>
+<h3 id="live-binding的工作原理"><a class="header" href="#live-binding的工作原理">Live Binding的工作原理</a></h3>
+<pre><code class="language-javascript">// 演示Live Binding的内部机制
+
+// module-a.mjs
+export let sharedValue = 'initial';
+export let counter = 0;
+
+export function updateValue(newValue) {
+    sharedValue = newValue;
+    counter++;
+    console.log(`模块A: 值更新为 ${sharedValue}, 计数器: ${counter}`);
+}
+
+export function getTimestamp() {
+    return Date.now();
+}
+</code></pre>
+<pre><code class="language-javascript">// module-b.mjs  
+import { sharedValue, counter, updateValue } from './module-a.mjs';
+
+export function showValues() {
+    console.log(`模块B看到: ${sharedValue}, 计数器: ${counter}`);
+}
+
+export function triggerUpdate() {
+    updateValue('从模块B更新');
+}
+</code></pre>
+<pre><code class="language-javascript">// main.mjs
+import { sharedValue, counter, updateValue } from './module-a.mjs';
+import { showValues, triggerUpdate } from './module-b.mjs';
+
+console.log('=== Live Binding 演示 ===');
+
+console.log(`主模块初始值: ${sharedValue}, 计数器: ${counter}`);
+
+// 从主模块更新
+updateValue('从主模块更新');
+console.log(`主模块更新后: ${sharedValue}, 计数器: ${counter}`);
+
+// 从模块B更新
+triggerUpdate();
+console.log(`B模块更新后: ${sharedValue}, 计数器: ${counter}`);
+
+// 显示所有模块都看到相同的值
+showValues();
+
+// 执行结果：
+// 主模块初始值: initial, 计数器: 0
+// 模块A: 值更新为 从主模块更新, 计数器: 1
+// 主模块更新后: 从主模块更新, 计数器: 1
+// 模块A: 值更新为 从模块B更新, 计数器: 2
+// B模块更新后: 从模块B更新, 计数器: 2
+// 模块B看到: 从模块B更新, 计数器: 2
+</code></pre>
+<h3 id="live-binding的重要特征"><a class="header" href="#live-binding的重要特征">Live Binding的重要特征</a></h3>
+<h4 id="1-只读性"><a class="header" href="#1-只读性">1. 只读性</a></h4>
+<pre><code class="language-javascript">// readonly-demo.mjs
+export let value = 'original';
+
+export function setValue(newValue) {
+    value = newValue;
+}
+</code></pre>
+<pre><code class="language-javascript">// main.mjs
+import { value, setValue } from './readonly-demo.mjs';
+
+console.log(value); // 'original'
+
+// 以下操作会报错！
+// value = 'modified'; // TypeError: Assignment to constant variable.
+
+// 只能通过导出模块的函数来修改
+setValue('modified');
+console.log(value); // 'modified' ← Live Binding生效
+</code></pre>
+<h4 id="2-时间敏感性"><a class="header" href="#2-时间敏感性">2. 时间敏感性</a></h4>
+<pre><code class="language-javascript">// timing-demo.mjs
+export let asyncValue = 'loading...';
+
+// 模拟异步操作
+setTimeout(() =&gt; {
+    asyncValue = 'loaded!';
+    console.log('异步操作完成，值已更新');
+}, 1000);
+
+export function getCurrentValue() {
+    return asyncValue;
+}
+</code></pre>
+<pre><code class="language-javascript">// main.mjs
+import { asyncValue, getCurrentValue } from './timing-demo.mjs';
+
+console.log('立即读取:', asyncValue); // 'loading...'
+
+setTimeout(() =&gt; {
+    console.log('1秒后读取:', asyncValue); // 'loaded!' ← Live Binding自动更新
+}, 1500);
+
+// 也可以通过函数获取
+setTimeout(() =&gt; {
+    console.log('通过函数:', getCurrentValue()); // 'loaded!'
+}, 1500);
+</code></pre>
+<h4 id="3-循环依赖中的live-binding"><a class="header" href="#3-循环依赖中的live-binding">3. 循环依赖中的Live Binding</a></h4>
+<pre><code class="language-javascript">// circular-a.mjs
+import { bValue, setBValue } from './circular-b.mjs';
+
+export let aValue = 'from-a';
+
+export function setAValue(newValue) {
+    aValue = newValue;
+}
+
+export function showBValue() {
+    console.log('A模块看到B的值:', bValue);
+}
+
+// 初始化时调用B模块的函数
+setBValue('a-modified-b');
+</code></pre>
+<pre><code class="language-javascript">// circular-b.mjs  
+import { aValue, setAValue } from './circular-a.mjs';
+
+export let bValue = 'from-b';
+
+export function setBValue(newValue) {
+    bValue = newValue;
+}
+
+export function showAValue() {
+    console.log('B模块看到A的值:', aValue);
+}
+
+// 初始化时调用A模块的函数
+setAValue('b-modified-a');
+</code></pre>
+<pre><code class="language-javascript">// main.mjs
+import { aValue, showBValue } from './circular-a.mjs';
+import { bValue, showAValue } from './circular-b.mjs';
+
+console.log('主模块看到:');
+console.log('A值:', aValue); // 'b-modified-a'
+console.log('B值:', bValue); // 'a-modified-b'
+
+showAValue(); // B模块看到A的值: b-modified-a
+showBValue(); // A模块看到B的值: a-modified-b
+</code></pre>
+<h3 id="live-binding的优势"><a class="header" href="#live-binding的优势">Live Binding的优势</a></h3>
+<h4 id="1-状态同步"><a class="header" href="#1-状态同步">1. 状态同步</a></h4>
+<pre><code class="language-javascript">// state-manager.mjs
+export let appState = {
+    user: null,
+    theme: 'light',
+    language: 'en'
+};
+
+export function login(user) {
+    appState.user = user;
+    console.log('用户已登录:', user.name);
+}
+
+export function setTheme(theme) {
+    appState.theme = theme;
+    console.log('主题已切换:', theme);
+}
+
+export function setLanguage(language) {
+    appState.language = language;
+    console.log('语言已切换:', language);
+}
+</code></pre>
+<pre><code class="language-javascript">// ui-components.mjs
+import { appState } from './state-manager.mjs';
+
+export function renderHeader() {
+    const { user, theme } = appState;
+    console.log(`渲染头部: 用户=${user?.name || '未登录'}, 主题=${theme}`);
+}
+
+export function renderSidebar() {
+    const { language, theme } = appState;
+    console.log(`渲染侧边栏: 语言=${language}, 主题=${theme}`);
+}
+</code></pre>
+<pre><code class="language-javascript">// main.mjs
+import { login, setTheme, setLanguage } from './state-manager.mjs';
+import { renderHeader, renderSidebar } from './ui-components.mjs';
+
+// 初始渲染
+renderHeader(); // 渲染头部: 用户=未登录, 主题=light
+renderSidebar(); // 渲染侧边栏: 语言=en, 主题=light
+
+// 状态变化
+login({ name: 'Alice', id: 1 });
+renderHeader(); // 渲染头部: 用户=Alice, 主题=light ← 自动更新
+
+setTheme('dark');
+renderHeader(); // 渲染头部: 用户=Alice, 主题=dark ← 继续同步
+renderSidebar(); // 渲染侧边栏: 语言=en, 主题=dark ← 同时更新
+</code></pre>
+<h4 id="2-热重载支持"><a class="header" href="#2-热重载支持">2. 热重载支持</a></h4>
+<pre><code class="language-javascript">// hot-reload-demo.mjs
+export let moduleVersion = '1.0.0';
+export let featureFlags = {
+    newUI: false,
+    experimentalAPI: true
+};
+
+// 模拟热重载更新
+if (import.meta.hot) {
+    import.meta.hot.accept(() =&gt; {
+        moduleVersion = '1.0.1';
+        featureFlags.newUI = true;
+        console.log('模块已热重载更新');
+    });
+}
+</code></pre>
+<h3 id="live-binding的注意事项"><a class="header" href="#live-binding的注意事项">Live Binding的注意事项</a></h3>
+<h4 id="1-性能考虑"><a class="header" href="#1-性能考虑">1. 性能考虑</a></h4>
+<pre><code class="language-javascript">// 避免在热点路径中频繁访问Live Binding
+import { heavyComputedValue } from './expensive-module.mjs';
+
+// ❌ 不好的做法
+for (let i = 0; i &lt; 1000000; i++) {
+    if (heavyComputedValue &gt; threshold) {
+        // 每次循环都访问Live Binding
+    }
+}
+
+// ✅ 更好的做法
+const cachedValue = heavyComputedValue;
+for (let i = 0; i &lt; 1000000; i++) {
+    if (cachedValue &gt; threshold) {
+        // 使用缓存的值
+    }
+}
+</code></pre>
+<h4 id="2-调试技巧"><a class="header" href="#2-调试技巧">2. 调试技巧</a></h4>
+<pre><code class="language-javascript">// debug-utils.mjs
+export let debugMode = false;
+export let logLevel = 'info';
+
+export function enableDebug() {
+    debugMode = true;
+    logLevel = 'debug';
+}
+
+export function log(message, level = 'info') {
+    if (debugMode &amp;&amp; shouldLog(level)) {
+        console.log(`[${level.toUpperCase()}] ${message}`);
+    }
+}
+
+function shouldLog(level) {
+    const levels = { debug: 0, info: 1, warn: 2, error: 3 };
+    return levels[level] &gt;= levels[logLevel];
+}
+</code></pre>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>ES模块是现代JavaScript开发的基础设施，提供了：</p>
+<ul>
+<li>✅ <strong>标准化语法</strong>: 官方标准，广泛支持</li>
+<li>✅ <strong>静态结构</strong>: 编译时优化，支持树摇</li>
+<li>✅ <strong>严格模式</strong>: 更安全的代码执行环境</li>
+<li>✅ <strong>作用域隔离</strong>: 避免全局变量污染</li>
+<li>✅ <strong>异步加载</strong>: 更好的性能和用户体验</li>
+<li>✅ <strong>工具友好</strong>: 丰富的开发工具生态</li>
+</ul>
+<p>掌握ES模块的基础语法和特性是现代JavaScript开发的必备技能。在下一章中，我们将深入探讨导入导出的高级用法。</p>
+<hr>
+<p><strong>下一章</strong>: <a href="./import-export.html">导入与导出</a> →</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../concepts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../esm/import-export.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../concepts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../esm/import-export.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

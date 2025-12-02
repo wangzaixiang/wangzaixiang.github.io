@@ -1,0 +1,1155 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>模块懒加载实现 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="模块懒加载实现"><a class="header" href="#模块懒加载实现">模块懒加载实现</a></h1>
+<p>本章将深入探讨JavaScript模块懒加载的实现方案，包括代码分割、动态导入、预加载策略和性能优化技巧。</p>
+<h2 id="懒加载概述"><a class="header" href="#懒加载概述">懒加载概述</a></h2>
+<h3 id="什么是懒加载"><a class="header" href="#什么是懒加载">什么是懒加载</a></h3>
+<p>懒加载（Lazy Loading）是一种优化策略，将资源的加载推迟到实际需要时才进行。在模块化开发中，懒加载可以：</p>
+<ul>
+<li>减少初始加载时间</li>
+<li>降低内存占用</li>
+<li>按需加载功能模块</li>
+<li>改善用户体验</li>
+</ul>
+<h3 id="懒加载的应用场景"><a class="header" href="#懒加载的应用场景">懒加载的应用场景</a></h3>
+<ol>
+<li><strong>路由级别</strong>：页面路由按需加载</li>
+<li><strong>组件级别</strong>：复杂组件延迟加载</li>
+<li><strong>功能模块</strong>：可选功能的动态加载</li>
+<li><strong>第三方库</strong>：大型依赖的延迟引入</li>
+</ol>
+<h2 id="基础实现方案"><a class="header" href="#基础实现方案">基础实现方案</a></h2>
+<h3 id="1-动态导入基础"><a class="header" href="#1-动态导入基础">1. 动态导入基础</a></h3>
+<pre><code class="language-javascript">// 传统的静态导入
+import { heavyFunction } from './heavy-module.js';
+
+// 动态导入 - 返回Promise
+const loadHeavyModule = async () =&gt; {
+  const { heavyFunction } = await import('./heavy-module.js');
+  return heavyFunction;
+};
+
+// 使用示例
+async function handleClick() {
+  const heavyFunction = await loadHeavyModule();
+  const result = heavyFunction(data);
+  console.log(result);
+}
+</code></pre>
+<h3 id="2-条件懒加载"><a class="header" href="#2-条件懒加载">2. 条件懒加载</a></h3>
+<pre><code class="language-javascript">// 基于条件的懒加载
+class FeatureManager {
+  private loadedModules = new Map();
+
+  async loadFeature(featureName: string, condition: boolean) {
+    if (!condition) return null;
+    
+    if (this.loadedModules.has(featureName)) {
+      return this.loadedModules.get(featureName);
+    }
+
+    let module;
+    switch (featureName) {
+      case 'charts':
+        module = await import('./features/charts.js');
+        break;
+      case 'editor':
+        module = await import('./features/editor.js');
+        break;
+      case 'analytics':
+        module = await import('./features/analytics.js');
+        break;
+      default:
+        throw new Error(`Unknown feature: ${featureName}`);
+    }
+
+    this.loadedModules.set(featureName, module);
+    return module;
+  }
+}
+
+// 使用示例
+const featureManager = new FeatureManager();
+
+// 基于用户权限加载功能
+if (user.hasPermission('analytics')) {
+  const analytics = await featureManager.loadFeature('analytics', true);
+  analytics.initialize();
+}
+</code></pre>
+<h2 id="react中的懒加载"><a class="header" href="#react中的懒加载">React中的懒加载</a></h2>
+<h3 id="1-组件懒加载"><a class="header" href="#1-组件懒加载">1. 组件懒加载</a></h3>
+<pre><code class="language-jsx">// React.lazy 基础用法
+import React, { Suspense, lazy } from 'react';
+
+// 懒加载组件
+const LazyComponent = lazy(() =&gt; import('./HeavyComponent'));
+const LazyModal = lazy(() =&gt; import('./Modal'));
+
+function App() {
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    &lt;div&gt;
+      &lt;Suspense fallback={&lt;div&gt;Loading component...&lt;/div&gt;}&gt;
+        &lt;LazyComponent /&gt;
+      &lt;/Suspense&gt;
+      
+      {showModal &amp;&amp; (
+        &lt;Suspense fallback={&lt;div&gt;Loading modal...&lt;/div&gt;}&gt;
+          &lt;LazyModal onClose={() =&gt; setShowModal(false)} /&gt;
+        &lt;/Suspense&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<h3 id="2-高级懒加载hook"><a class="header" href="#2-高级懒加载hook">2. 高级懒加载Hook</a></h3>
+<pre><code class="language-typescript">// useLazyComponent Hook
+import { useState, useCallback, ComponentType } from 'react';
+
+type LazyComponentLoader&lt;T = {}&gt; = () =&gt; Promise&lt;{ default: ComponentType&lt;T&gt; }&gt;;
+
+interface UseLazyComponentReturn&lt;T&gt; {
+  LazyComponent: ComponentType&lt;T&gt; | null;
+  loading: boolean;
+  error: Error | null;
+  loadComponent: () =&gt; Promise&lt;void&gt;;
+}
+
+function useLazyComponent&lt;T = {}&gt;(
+  loader: LazyComponentLoader&lt;T&gt;
+): UseLazyComponentReturn&lt;T&gt; {
+  const [LazyComponent, setLazyComponent] = useState&lt;ComponentType&lt;T&gt; | null&gt;(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState&lt;Error | null&gt;(null);
+
+  const loadComponent = useCallback(async () =&gt; {
+    if (LazyComponent) return; // 已加载
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const module = await loader();
+      setLazyComponent(() =&gt; module.default);
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  }, [loader, LazyComponent]);
+
+  return { LazyComponent, loading, error, loadComponent };
+}
+
+// 使用示例
+function FeaturePage() {
+  const { 
+    LazyComponent: ChartComponent, 
+    loading, 
+    error, 
+    loadComponent 
+  } = useLazyComponent(() =&gt; import('./ChartComponent'));
+
+  return (
+    &lt;div&gt;
+      &lt;button onClick={loadComponent}&gt;
+        Load Chart Component
+      &lt;/button&gt;
+      
+      {loading &amp;&amp; &lt;div&gt;Loading chart...&lt;/div&gt;}
+      {error &amp;&amp; &lt;div&gt;Error loading chart: {error.message}&lt;/div&gt;}
+      {ChartComponent &amp;&amp; &lt;ChartComponent data={data} /&gt;}
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<h3 id="3-路由懒加载"><a class="header" href="#3-路由懒加载">3. 路由懒加载</a></h3>
+<pre><code class="language-jsx">// React Router懒加载
+import { Routes, Route } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+
+// 懒加载页面组件
+const HomePage = lazy(() =&gt; import('./pages/HomePage'));
+const AboutPage = lazy(() =&gt; import('./pages/AboutPage'));
+const ProfilePage = lazy(() =&gt; import('./pages/ProfilePage'));
+const AdminPage = lazy(() =&gt; import('./pages/AdminPage'));
+
+// 加载提示组件
+function PageLoader() {
+  return (
+    &lt;div className="page-loader"&gt;
+      &lt;div className="spinner" /&gt;
+      &lt;p&gt;Loading page...&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+function AppRouter() {
+  return (
+    &lt;Suspense fallback={&lt;PageLoader /&gt;}&gt;
+      &lt;Routes&gt;
+        &lt;Route path="/" element={&lt;HomePage /&gt;} /&gt;
+        &lt;Route path="/about" element={&lt;AboutPage /&gt;} /&gt;
+        &lt;Route path="/profile" element={&lt;ProfilePage /&gt;} /&gt;
+        &lt;Route path="/admin" element={&lt;AdminPage /&gt;} /&gt;
+      &lt;/Routes&gt;
+    &lt;/Suspense&gt;
+  );
+}
+</code></pre>
+<h2 id="高级懒加载策略"><a class="header" href="#高级懒加载策略">高级懒加载策略</a></h2>
+<h3 id="1-预加载策略"><a class="header" href="#1-预加载策略">1. 预加载策略</a></h3>
+<pre><code class="language-typescript">// 智能预加载管理器
+class PreloadManager {
+  private preloadCache = new Map&lt;string, Promise&lt;any&gt;&gt;();
+  private priorityQueue: string[] = [];
+
+  // 预加载资源
+  preload(modulePath: string, priority: 'high' | 'low' = 'low'): Promise&lt;any&gt; {
+    if (this.preloadCache.has(modulePath)) {
+      return this.preloadCache.get(modulePath)!;
+    }
+
+    const promise = import(modulePath);
+    this.preloadCache.set(modulePath, promise);
+
+    if (priority === 'high') {
+      this.priorityQueue.unshift(modulePath);
+    } else {
+      this.priorityQueue.push(modulePath);
+    }
+
+    return promise;
+  }
+
+  // 在空闲时间预加载
+  preloadOnIdle(modules: string[]): void {
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() =&gt; {
+        modules.forEach(module =&gt; this.preload(module, 'low'));
+      });
+    } else {
+      // 降级方案
+      setTimeout(() =&gt; {
+        modules.forEach(module =&gt; this.preload(module, 'low'));
+      }, 100);
+    }
+  }
+
+  // 基于用户交互预加载
+  preloadOnHover(element: HTMLElement, modulePath: string): void {
+    element.addEventListener('mouseenter', () =&gt; {
+      this.preload(modulePath, 'high');
+    }, { once: true });
+  }
+
+  // 基于网络状态的智能预加载
+  smartPreload(modules: string[]): void {
+    if ('connection' in navigator) {
+      const connection = (navigator as any).connection;
+      
+      // 快速网络连接时预加载更多
+      if (connection.effectiveType === '4g') {
+        modules.forEach(module =&gt; this.preload(module));
+      } else if (connection.effectiveType === '3g') {
+        // 3G网络只预加载高优先级模块
+        modules.slice(0, 2).forEach(module =&gt; this.preload(module));
+      }
+    }
+  }
+}
+
+// 使用示例
+const preloadManager = new PreloadManager();
+
+// 页面加载后预加载下一可能访问的页面
+useEffect(() =&gt; {
+  preloadManager.preloadOnIdle([
+    './pages/ProfilePage',
+    './pages/SettingsPage'
+  ]);
+}, []);
+
+// 悬停时预加载
+useEffect(() =&gt; {
+  const profileLink = document.querySelector('[data-route="/profile"]');
+  if (profileLink) {
+    preloadManager.preloadOnHover(profileLink, './pages/ProfilePage');
+  }
+}, []);
+</code></pre>
+<h3 id="2-渐进式加载"><a class="header" href="#2-渐进式加载">2. 渐进式加载</a></h3>
+<pre><code class="language-typescript">// 渐进式模块加载器
+class ProgressiveLoader {
+  async loadModuleProgressively&lt;T&gt;(
+    modulePath: string,
+    onProgress?: (progress: number) =&gt; void
+  ): Promise&lt;T&gt; {
+    // 模拟加载进度（实际中可能需要自定义加载器）
+    const steps = [
+      { progress: 0.2, message: 'Downloading module...' },
+      { progress: 0.5, message: 'Parsing module...' },
+      { progress: 0.8, message: 'Initializing...' },
+      { progress: 1.0, message: 'Complete!' }
+    ];
+
+    for (const step of steps) {
+      await this.delay(100); // 模拟加载时间
+      onProgress?.(step.progress);
+    }
+
+    return import(modulePath);
+  }
+
+  private delay(ms: number): Promise&lt;void&gt; {
+    return new Promise(resolve =&gt; setTimeout(resolve, ms));
+  }
+}
+
+// 使用示例
+function ProgressiveLoadingComponent() {
+  const [progress, setProgress] = useState(0);
+  const [module, setModule] = useState(null);
+
+  const loadModule = async () =&gt; {
+    const loader = new ProgressiveLoader();
+    const loadedModule = await loader.loadModuleProgressively(
+      './heavy-module.js',
+      setProgress
+    );
+    setModule(loadedModule);
+  };
+
+  return (
+    &lt;div&gt;
+      {progress &lt; 1 &amp;&amp; (
+        &lt;div className="progress-bar"&gt;
+          &lt;div 
+            className="progress-fill" 
+            style={{ width: `${progress * 100}%` }}
+          /&gt;
+          &lt;span&gt;{Math.round(progress * 100)}%&lt;/span&gt;
+        &lt;/div&gt;
+      )}
+      {module &amp;&amp; &lt;div&gt;Module loaded successfully!&lt;/div&gt;}
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<h3 id="3-缓存优化"><a class="header" href="#3-缓存优化">3. 缓存优化</a></h3>
+<pre><code class="language-typescript">// 模块缓存管理器
+class ModuleCacheManager {
+  private cache = new Map&lt;string, any&gt;();
+  private metadata = new Map&lt;string, { 
+    lastAccessed: number; 
+    accessCount: number; 
+    size: number 
+  }&gt;();
+
+  async getModule&lt;T&gt;(modulePath: string): Promise&lt;T&gt; {
+    // 检查缓存
+    if (this.cache.has(modulePath)) {
+      this.updateMetadata(modulePath);
+      return this.cache.get(modulePath);
+    }
+
+    // 加载模块
+    const module = await import(modulePath);
+    
+    // 缓存模块
+    this.cache.set(modulePath, module);
+    this.metadata.set(modulePath, {
+      lastAccessed: Date.now(),
+      accessCount: 1,
+      size: this.estimateSize(module)
+    });
+
+    // 检查缓存大小限制
+    this.evictIfNecessary();
+
+    return module;
+  }
+
+  private updateMetadata(modulePath: string): void {
+    const meta = this.metadata.get(modulePath);
+    if (meta) {
+      meta.lastAccessed = Date.now();
+      meta.accessCount++;
+    }
+  }
+
+  private estimateSize(module: any): number {
+    // 简单的大小估算
+    return JSON.stringify(module).length;
+  }
+
+  private evictIfNecessary(): void {
+    const maxCacheSize = 10 * 1024 * 1024; // 10MB
+    let currentSize = 0;
+
+    for (const [, meta] of this.metadata) {
+      currentSize += meta.size;
+    }
+
+    if (currentSize &gt; maxCacheSize) {
+      // LRU淘汰策略
+      const entries = Array.from(this.metadata.entries())
+        .sort(([, a], [, b]) =&gt; a.lastAccessed - b.lastAccessed);
+
+      const toEvict = entries.slice(0, Math.ceil(entries.length * 0.2));
+      for (const [modulePath] of toEvict) {
+        this.cache.delete(modulePath);
+        this.metadata.delete(modulePath);
+      }
+    }
+  }
+
+  // 预热缓存
+  async warmUp(modulePaths: string[]): Promise&lt;void&gt; {
+    const promises = modulePaths.map(path =&gt; this.getModule(path));
+    await Promise.allSettled(promises);
+  }
+
+  // 清理缓存
+  clear(): void {
+    this.cache.clear();
+    this.metadata.clear();
+  }
+}
+
+// 全局缓存实例
+export const moduleCache = new ModuleCacheManager();
+</code></pre>
+<h2 id="性能监控与优化"><a class="header" href="#性能监控与优化">性能监控与优化</a></h2>
+<h3 id="1-加载性能监控"><a class="header" href="#1-加载性能监控">1. 加载性能监控</a></h3>
+<pre><code class="language-typescript">// 模块加载性能监控
+class ModulePerformanceMonitor {
+  private metrics = new Map&lt;string, {
+    loadTime: number;
+    loadCount: number;
+    errors: number;
+    averageLoadTime: number;
+  }&gt;();
+
+  async monitorLoad&lt;T&gt;(modulePath: string, loader: () =&gt; Promise&lt;T&gt;): Promise&lt;T&gt; {
+    const startTime = performance.now();
+    
+    try {
+      const result = await loader();
+      const loadTime = performance.now() - startTime;
+      
+      this.recordSuccess(modulePath, loadTime);
+      return result;
+    } catch (error) {
+      this.recordError(modulePath);
+      throw error;
+    }
+  }
+
+  private recordSuccess(modulePath: string, loadTime: number): void {
+    const existing = this.metrics.get(modulePath);
+    
+    if (existing) {
+      existing.loadCount++;
+      existing.averageLoadTime = (existing.averageLoadTime * (existing.loadCount - 1) + loadTime) / existing.loadCount;
+    } else {
+      this.metrics.set(modulePath, {
+        loadTime,
+        loadCount: 1,
+        errors: 0,
+        averageLoadTime: loadTime
+      });
+    }
+  }
+
+  private recordError(modulePath: string): void {
+    const existing = this.metrics.get(modulePath);
+    if (existing) {
+      existing.errors++;
+    } else {
+      this.metrics.set(modulePath, {
+        loadTime: 0,
+        loadCount: 0,
+        errors: 1,
+        averageLoadTime: 0
+      });
+    }
+  }
+
+  getReport(): Record&lt;string, any&gt; {
+    const report: Record&lt;string, any&gt; = {};
+    
+    for (const [modulePath, metrics] of this.metrics) {
+      report[modulePath] = {
+        ...metrics,
+        successRate: metrics.loadCount / (metrics.loadCount + metrics.errors)
+      };
+    }
+    
+    return report;
+  }
+
+  // 找出性能瓶颈
+  getSlowModules(threshold: number = 1000): string[] {
+    return Array.from(this.metrics.entries())
+      .filter(([, metrics]) =&gt; metrics.averageLoadTime &gt; threshold)
+      .map(([modulePath]) =&gt; modulePath);
+  }
+}
+
+// 使用示例
+const monitor = new ModulePerformanceMonitor();
+
+async function loadModuleWithMonitoring(modulePath: string) {
+  return monitor.monitorLoad(modulePath, () =&gt; import(modulePath));
+}
+</code></pre>
+<h3 id="2-自适应加载策略"><a class="header" href="#2-自适应加载策略">2. 自适应加载策略</a></h3>
+<pre><code class="language-typescript">// 自适应模块加载器
+class AdaptiveModuleLoader {
+  private networkSpeed: 'slow' | 'medium' | 'fast' = 'medium';
+  private userEngagement: 'low' | 'medium' | 'high' = 'medium';
+
+  constructor() {
+    this.detectNetworkSpeed();
+    this.trackUserEngagement();
+  }
+
+  async loadModule&lt;T&gt;(
+    modulePath: string, 
+    options: {
+      priority?: 'low' | 'medium' | 'high';
+      fallback?: () =&gt; Promise&lt;T&gt;;
+    } = {}
+  ): Promise&lt;T&gt; {
+    const strategy = this.getLoadingStrategy(options.priority);
+    
+    try {
+      switch (strategy) {
+        case 'immediate':
+          return await import(modulePath);
+          
+        case 'deferred':
+          await this.delay(500); // 延迟加载
+          return await import(modulePath);
+          
+        case 'conditional':
+          if (this.shouldLoadModule()) {
+            return await import(modulePath);
+          } else if (options.fallback) {
+            return await options.fallback();
+          }
+          throw new Error('Module loading skipped');
+          
+        default:
+          return await import(modulePath);
+      }
+    } catch (error) {
+      if (options.fallback) {
+        return await options.fallback();
+      }
+      throw error;
+    }
+  }
+
+  private getLoadingStrategy(priority?: 'low' | 'medium' | 'high'): 'immediate' | 'deferred' | 'conditional' {
+    // 高优先级模块立即加载
+    if (priority === 'high') return 'immediate';
+    
+    // 慢网络下延迟加载低优先级模块
+    if (this.networkSpeed === 'slow' &amp;&amp; priority === 'low') {
+      return 'conditional';
+    }
+    
+    // 低参与度用户延迟加载
+    if (this.userEngagement === 'low') {
+      return 'deferred';
+    }
+    
+    return 'immediate';
+  }
+
+  private detectNetworkSpeed(): void {
+    if ('connection' in navigator) {
+      const connection = (navigator as any).connection;
+      const effectiveType = connection.effectiveType;
+      
+      if (effectiveType === '4g') {
+        this.networkSpeed = 'fast';
+      } else if (effectiveType === '3g') {
+        this.networkSpeed = 'medium';
+      } else {
+        this.networkSpeed = 'slow';
+      }
+    }
+  }
+
+  private trackUserEngagement(): void {
+    let interactionCount = 0;
+    const startTime = Date.now();
+
+    ['click', 'keydown', 'scroll'].forEach(event =&gt; {
+      document.addEventListener(event, () =&gt; {
+        interactionCount++;
+      });
+    });
+
+    // 5秒后评估用户参与度
+    setTimeout(() =&gt; {
+      const timeSpent = Date.now() - startTime;
+      const engagementScore = interactionCount / (timeSpent / 1000);
+      
+      if (engagementScore &gt; 2) {
+        this.userEngagement = 'high';
+      } else if (engagementScore &gt; 0.5) {
+        this.userEngagement = 'medium';
+      } else {
+        this.userEngagement = 'low';
+      }
+    }, 5000);
+  }
+
+  private shouldLoadModule(): boolean {
+    return this.networkSpeed !== 'slow' &amp;&amp; this.userEngagement !== 'low';
+  }
+
+  private delay(ms: number): Promise&lt;void&gt; {
+    return new Promise(resolve =&gt; setTimeout(resolve, ms));
+  }
+}
+
+// 使用示例
+const adaptiveLoader = new AdaptiveModuleLoader();
+
+// 高优先级模块（立即加载）
+const criticalModule = await adaptiveLoader.loadModule('./critical-module.js', {
+  priority: 'high'
+});
+
+// 低优先级模块（可能延迟或跳过）
+const optionalModule = await adaptiveLoader.loadModule('./optional-module.js', {
+  priority: 'low',
+  fallback: () =&gt; Promise.resolve({ default: () =&gt; 'Fallback content' })
+});
+</code></pre>
+<h2 id="构建工具集成"><a class="header" href="#构建工具集成">构建工具集成</a></h2>
+<h3 id="1-webpack代码分割"><a class="header" href="#1-webpack代码分割">1. Webpack代码分割</a></h3>
+<pre><code class="language-javascript">// webpack.config.js
+module.exports = {
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        // 供应商代码分割
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+        // 异步代码分割
+        async: {
+          chunks: 'async',
+          minSize: 30000,
+          maxSize: 244000,
+        },
+        // 公共代码分割
+        common: {
+          name: 'common',
+          minChunks: 2,
+          chunks: 'all',
+          enforce: true
+        }
+      }
+    }
+  },
+  
+  // 动态导入支持
+  plugins: [
+    new webpack.optimize.SplitChunksPlugin({
+      chunks: 'async',
+      name: (module, chunks, cacheGroupKey) =&gt; {
+        const moduleFileName = module
+          .identifier()
+          .split('/')
+          .reduceRight(item =&gt; item);
+        return `${cacheGroupKey}-${moduleFileName}`;
+      }
+    })
+  ]
+};
+</code></pre>
+<h3 id="2-rollup懒加载配置"><a class="header" href="#2-rollup懒加载配置">2. Rollup懒加载配置</a></h3>
+<pre><code class="language-javascript">// rollup.config.js
+export default {
+  input: 'src/main.js',
+  output: {
+    dir: 'dist',
+    format: 'es',
+    // 动态导入作为单独的chunk
+    chunkFileNames: 'chunks/[name]-[hash].js'
+  },
+  plugins: [
+    // 代码分割插件
+    resolve(),
+    commonjs(),
+    // 自定义动态导入处理
+    {
+      name: 'dynamic-import-handler',
+      generateBundle(options, bundle) {
+        // 处理动态导入的chunk
+        Object.keys(bundle).forEach(fileName =&gt; {
+          const chunk = bundle[fileName];
+          if (chunk.type === 'chunk' &amp;&amp; chunk.isDynamicEntry) {
+            // 添加预加载提示
+            chunk.code = `/* webpackPreload: true */ ${chunk.code}`;
+          }
+        });
+      }
+    }
+  ]
+};
+</code></pre>
+<h2 id="实际应用案例"><a class="header" href="#实际应用案例">实际应用案例</a></h2>
+<h3 id="1-电商网站的懒加载策略"><a class="header" href="#1-电商网站的懒加载策略">1. 电商网站的懒加载策略</a></h3>
+<pre><code class="language-typescript">// 电商网站模块懒加载方案
+class EcommerceModuleLoader {
+  private moduleCache = new Map();
+
+  // 商品列表页面的懒加载
+  async loadProductCatalog() {
+    const modules = await Promise.allSettled([
+      import('./components/ProductGrid'),
+      import('./components/FilterPanel'),
+      import('./components/SortDropdown')
+    ]);
+
+    return {
+      ProductGrid: modules[0].status === 'fulfilled' ? modules[0].value.default : null,
+      FilterPanel: modules[1].status === 'fulfilled' ? modules[1].value.default : null,
+      SortDropdown: modules[2].status === 'fulfilled' ? modules[2].value.default : null
+    };
+  }
+
+  // 购物车相关功能的懒加载
+  async loadCartFeatures() {
+    return import('./features/cart').then(module =&gt; ({
+      Cart: module.Cart,
+      CartItem: module.CartItem,
+      CartSummary: module.CartSummary,
+      useCart: module.useCart
+    }));
+  }
+
+  // 支付流程的懒加载
+  async loadPaymentFlow(paymentMethod: string) {
+    switch (paymentMethod) {
+      case 'stripe':
+        return import('./payment/StripePayment');
+      case 'paypal':
+        return import('./payment/PayPalPayment');
+      case 'alipay':
+        return import('./payment/AlipayPayment');
+      default:
+        return import('./payment/DefaultPayment');
+    }
+  }
+
+  // 管理后台功能的懒加载
+  async loadAdminFeatures(userRole: string) {
+    if (userRole !== 'admin') return null;
+
+    const [
+      { AdminDashboard },
+      { ProductManager },
+      { OrderManager },
+      { UserManager }
+    ] = await Promise.all([
+      import('./admin/Dashboard'),
+      import('./admin/ProductManager'),
+      import('./admin/OrderManager'),
+      import('./admin/UserManager')
+    ]);
+
+    return {
+      AdminDashboard,
+      ProductManager,
+      OrderManager,
+      UserManager
+    };
+  }
+}
+
+// 使用示例
+const moduleLoader = new EcommerceModuleLoader();
+
+// 页面级别的懒加载
+function ProductPage() {
+  const [modules, setModules] = useState(null);
+
+  useEffect(() =&gt; {
+    moduleLoader.loadProductCatalog().then(setModules);
+  }, []);
+
+  if (!modules) return &lt;div&gt;Loading...&lt;/div&gt;;
+
+  return (
+    &lt;div&gt;
+      {modules.ProductGrid &amp;&amp; &lt;modules.ProductGrid /&gt;}
+      {modules.FilterPanel &amp;&amp; &lt;modules.FilterPanel /&gt;}
+      {modules.SortDropdown &amp;&amp; &lt;modules.SortDropdown /&gt;}
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<h3 id="2-多语言网站的懒加载"><a class="header" href="#2-多语言网站的懒加载">2. 多语言网站的懒加载</a></h3>
+<pre><code class="language-typescript">// 多语言资源懒加载
+class I18nLazyLoader {
+  private loadedLanguages = new Set&lt;string&gt;();
+  private languageCache = new Map&lt;string, any&gt;();
+
+  async loadLanguage(locale: string): Promise&lt;any&gt; {
+    // 检查缓存
+    if (this.languageCache.has(locale)) {
+      return this.languageCache.get(locale);
+    }
+
+    // 检查是否已在加载中
+    if (this.loadedLanguages.has(locale)) {
+      return new Promise(resolve =&gt; {
+        const checkCache = () =&gt; {
+          if (this.languageCache.has(locale)) {
+            resolve(this.languageCache.get(locale));
+          } else {
+            setTimeout(checkCache, 50);
+          }
+        };
+        checkCache();
+      });
+    }
+
+    this.loadedLanguages.add(locale);
+
+    try {
+      // 动态加载语言包
+      const translations = await import(`./locales/${locale}.json`);
+      this.languageCache.set(locale, translations.default);
+      return translations.default;
+    } catch (error) {
+      // 降级到英语
+      if (locale !== 'en') {
+        return this.loadLanguage('en');
+      }
+      throw error;
+    }
+  }
+
+  // 预加载用户可能需要的语言
+  async preloadLanguages(preferredLanguages: string[]): Promise&lt;void&gt; {
+    const promises = preferredLanguages.map(lang =&gt; 
+      this.loadLanguage(lang).catch(() =&gt; null) // 忽略加载失败
+    );
+    await Promise.allSettled(promises);
+  }
+
+  // 智能语言切换
+  async switchLanguage(locale: string): Promise&lt;any&gt; {
+    const translations = await this.loadLanguage(locale);
+    
+    // 更新页面语言
+    document.documentElement.lang = locale;
+    
+    // 触发语言更新事件
+    window.dispatchEvent(new CustomEvent('languageChanged', {
+      detail: { locale, translations }
+    }));
+
+    return translations;
+  }
+}
+
+// React Hook for i18n lazy loading
+function useI18nLazy(locale: string) {
+  const [translations, setTranslations] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const loader = useRef(new I18nLazyLoader());
+
+  useEffect(() =&gt; {
+    setLoading(true);
+    loader.current.loadLanguage(locale)
+      .then(setTranslations)
+      .finally(() =&gt; setLoading(false));
+  }, [locale]);
+
+  const switchLanguage = useCallback((newLocale: string) =&gt; {
+    return loader.current.switchLanguage(newLocale);
+  }, []);
+
+  return { translations, loading, switchLanguage };
+}
+</code></pre>
+<h2 id="最佳实践总结"><a class="header" href="#最佳实践总结">最佳实践总结</a></h2>
+<h3 id="1-懒加载策略选择"><a class="header" href="#1-懒加载策略选择">1. 懒加载策略选择</a></h3>
+<ul>
+<li><strong>路由级别</strong>：适合页面较多的应用</li>
+<li><strong>组件级别</strong>：适合复杂的交互组件</li>
+<li><strong>功能级别</strong>：适合可选功能模块</li>
+<li><strong>资源级别</strong>：适合大型依赖库</li>
+</ul>
+<h3 id="2-性能优化技巧"><a class="header" href="#2-性能优化技巧">2. 性能优化技巧</a></h3>
+<ul>
+<li><strong>预加载</strong>：基于用户行为预测需要的模块</li>
+<li><strong>缓存策略</strong>：合理使用内存和持久化缓存</li>
+<li><strong>降级方案</strong>：提供加载失败时的备选方案</li>
+<li><strong>监控指标</strong>：跟踪加载性能和成功率</li>
+</ul>
+<h3 id="3-用户体验考虑"><a class="header" href="#3-用户体验考虑">3. 用户体验考虑</a></h3>
+<ul>
+<li><strong>加载指示器</strong>：提供清晰的加载状态反馈</li>
+<li><strong>渐进增强</strong>：确保核心功能在模块加载前可用</li>
+<li><strong>错误处理</strong>：优雅处理加载失败的情况</li>
+<li><strong>无感知切换</strong>：尽量减少用户等待时间</li>
+</ul>
+<h3 id="4-开发工具集成"><a class="header" href="#4-开发工具集成">4. 开发工具集成</a></h3>
+<ul>
+<li><strong>构建优化</strong>：配置合适的代码分割策略</li>
+<li><strong>开发调试</strong>：使用开发工具监控模块加载</li>
+<li><strong>测试策略</strong>：模拟不同网络条件进行测试</li>
+<li><strong>性能监控</strong>：建立完善的性能监控体系</li>
+</ul>
+<p>通过合理应用这些懒加载技术，我们可以显著提升应用的性能和用户体验，同时保持代码的可维护性。</p>
+<hr>
+<p><strong>下一章</strong>: <a href="../appendix/tools-comparison.html">模块相关工具对比</a> →</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../examples/large-project.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../appendix/tools-comparison.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../examples/large-project.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../appendix/tools-comparison.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
