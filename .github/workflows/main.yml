@@ -9,7 +9,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
       - name: mdbook
-        uses: peaceiris/actions-mdbook@v4
+        uses: peaceiris/actions-mdbook@v3
         with:
           mdbook-version: 'latest'
       - name: Install cargo-binstall
