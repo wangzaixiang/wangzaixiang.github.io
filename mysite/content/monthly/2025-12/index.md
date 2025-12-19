@@ -8,6 +8,27 @@ template = "blog/page.html"
 
 # Languages
 ## Rust
+1. [ECS vs Actor Model in Rust](https://medium.com/@theopinionatedev/ecs-vs-actor-model-in-rust-the-architecture-showdown-abd1d241014e)
+
+   | Feature                  | ECS                            | Actor Model             |
+   |--------------------------|--------------------------------|-------------------------|
+   | CPU Throughput           | 🔥 Extremely high              | ⚡ Medium                |
+   | Memory layout            | Contiguous, cache-hot          | Scattered               |
+   | Async workflows          | ❌ Hard                         | ✅ Natural               |
+   | Distributed systems.     | ❌ No                           | ✅ Perfect               |
+   | Scaling across machines. | ❌ Not applicable               | ✅ Built for this        |
+   | Data-driven workloads.   | ✅ Best in class                | ❌ Inefficient           |
+   | Isolation                | ❌ Shared memory model          | ✅ Strong isolation      |
+   | Parallelism.             | Automatic via borrows          | Actor-per-thread        |
+   | Ideal Use.               | Simulation, compute, pipelines | Services, orchestration |
+   
+   - 从性能的角度，ECS 类似于列存，适合于 OLAP 型的批量、高吞吐应用，而 Actor Model 类似于行存，更适合 OLTP 型的小交互，大并发交互式应用。
+   - Bevy 等 ECS 架构可以通过借用分析来识别可并行的操作（如果两个操作在数据访问上没有借用冲突，则可以并行），而 Actor Model 则通过消息传递来实现运行时隔离。
+   - 从扩展性的角度对比
+     - Actor 天然匹配水平扩展。
+     - ECS 高度匹配垂直扩展（单机多核）。
+     - ECS 对 OCP 原则的支持更好（通过组件组合实现新功能），而 Actor Model 则更依赖于继承和多态。
+     - 康威定律：ECS 可以更好的支持单实体多组件跨团队的独立开发，而 Actor Model 则更适以实体为单位的团队划分。
  
 ## Scala
 
