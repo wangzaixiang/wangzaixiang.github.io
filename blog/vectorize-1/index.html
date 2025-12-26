@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>向量学习 | 程序人生</title>
+<meta name="description" content="本文记录学习向量化过程中的一些资料、示例代码、实际效果，以加深对这项技术的理解">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/vectorize-1/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="向量学习">
+  <meta name="twitter:description" content="本文记录学习向量化过程中的一些资料、示例代码、实际效果，以加深对这项技术的理解">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="向量学习">
+  <meta property="og:description" content="本文记录学习向量化过程中的一些资料、示例代码、实际效果，以加深对这项技术的理解">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/vectorize-1/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="向量学习">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/vectorize-1/"
+      },
+      "headline": "向量学习",
+      "image": ,
+      "datePublished": "2024-05-13T12:00:00+00:00",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "向量学习"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "向量学习",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文记录学习向量化过程中的一些资料、示例代码、实际效果，以加深对这项技术的理解"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Vectorize 1",
+            "item": "https://wangzaixiang.github.io/blog/vectorize-1/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vectorize-1/#hou-xu-wo-hui-shou-ji-ji-yu-xiang-liang-ji-suan-de-yi-xi-lie-suan-fa-zheng-li-yi-ge-ti-gang-li-ru">后续，我会收集基于向量计算的一系列算法，整理一个提纲，例如:</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>向量学习</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/polars-notebook/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted May 13, 2024 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>16&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/trying-scala3/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>本文是想通过案例来学习 vectorize 的 使用、效果，以加深对这项技术的理解。
+这个例子是 参考: <a href="https://zhuanlan.zhihu.com/p/605743800">ucasfl：ClickHouse 系列 - 向量化执行引擎介绍</a> 中介绍的 countBytes 函数，
+我使用 rust portable Simd 库来进行练习。</p>
+<p>代码可以 从这里访问：<a href="https://play.rust-lang.org/?version=nightly&amp;mode=release&amp;edition=2021&amp;gist=e5f7c81e71e467adad2d372d13625f16">playground</a></p>
+<p>或者参考如下代码：</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>#![</span><span style="color:#bf616a;">feature</span><span>(portable_simd)]
+</span><span>#![</span><span style="color:#bf616a;">feature</span><span>(stdsimd)]
+</span><span>
+</span><span style="color:#b48ead;">use </span><span>std::mem::{size_of};
+</span><span style="color:#b48ead;">use </span><span>std::simd::{SimdPartialEq, ToBitMask};
+</span><span style="color:#b48ead;">use </span><span>std::simd::{u8x16, u8x32, u8x64};
+</span><span style="color:#b48ead;">use </span><span>std::simd::Simd;
+</span><span>
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">fill_data</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;</span><span style="color:#b48ead;">mut</span><span> [</span><span style="color:#b48ead;">u8</span><span>]) {
+</span><span>    </span><span style="color:#b48ead;">for</span><span> i in </span><span style="color:#d08770;">0</span><span>..bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> random = rand::random::&lt;</span><span style="color:#b48ead;">u16</span><span>&gt;();
+</span><span>        bytes[i] = </span><span style="color:#b48ead;">if</span><span> random % </span><span style="color:#d08770;">8 </span><span>&lt; </span><span style="color:#d08770;">4 </span><span>{ </span><span style="color:#d08770;">0 </span><span>} </span><span style="color:#b48ead;">else </span><span>{ random as </span><span style="color:#b48ead;">u8 </span><span>};
+</span><span>    }
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> bytes = [</span><span style="color:#d08770;">0</span><span>; </span><span style="color:#d08770;">1024</span><span>];
+</span><span>    </span><span style="color:#b48ead;">let</span><span> random = rand::random::&lt;</span><span style="color:#b48ead;">usize</span><span>&gt;();
+</span><span>    </span><span style="color:#96b5b4;">fill_data</span><span>(&amp;</span><span style="color:#b48ead;">mut</span><span> bytes);
+</span><span>    {
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZero_inline</span><span>&quot;, </span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            countNonZero_inline(&amp;bytes)
+</span><span>        });
+</span><span>    }
+</span><span>
+</span><span>    println!();
+</span><span>
+</span><span>    {
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV128_countOnes_inline</span><span>&quot;, </span><span style="color:#d08770;">16</span><span>,</span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            countNonZeroV128_countOnes_inline(&amp;bytes)
+</span><span>        });
+</span><span>
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV256_countOnes_inline</span><span>&quot;, </span><span style="color:#d08770;">32</span><span>,</span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            countNonZeroV256_countOnes_inline(&amp;bytes)
+</span><span>        });
+</span><span>
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV512_countOnes_inline</span><span>&quot;, </span><span style="color:#d08770;">64</span><span>,</span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            countNonZeroV512_countOnes_inline(&amp;bytes)
+</span><span>        });
+</span><span>    }
+</span><span>
+</span><span>    println!();
+</span><span>
+</span><span>
+</span><span>    #[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>    {
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV128_popcnt_intrins_inline</span><span>&quot;, </span><span style="color:#d08770;">16</span><span>, </span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            countNonZeroV128_popcnt_intrins_inline(&amp;bytes)
+</span><span>        });
+</span><span>
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV256_popcnt_intrins_inline</span><span>&quot;, </span><span style="color:#d08770;">32</span><span>, </span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            countNonZeroV256_popcnt_intrins_inline(&amp;bytes)
+</span><span>        });
+</span><span>
+</span><span>        </span><span style="color:#65737e;">// require 256bit AVX2
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV256_popcnt_intrins_x86</span><span>&quot;, </span><span style="color:#d08770;">32</span><span>, </span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            </span><span style="color:#b48ead;">unsafe </span><span>{ countNonZeroV256_popcnt_intrins_x86(&amp;bytes) }
+</span><span>        });
+</span><span>
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV512_popcnt_intrins_inline</span><span>&quot;, </span><span style="color:#d08770;">64</span><span>, </span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            countNonZeroV512_popcnt_intrins_inline(&amp;bytes)
+</span><span>        });
+</span><span>
+</span><span>        </span><span style="color:#65737e;">// require 512bit AVX2
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV512_popcnt_intrins_x86</span><span>&quot;, </span><span style="color:#d08770;">32</span><span>, </span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            </span><span style="color:#b48ead;">unsafe </span><span>{ countNonZeroV512_popcnt_intrins_x86(&amp;bytes) }
+</span><span>        });
+</span><span>    }
+</span><span>    println!();
+</span><span>
+</span><span>
+</span><span>    #[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>    {
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV128_popcntAsm_inline</span><span>&quot;, </span><span style="color:#d08770;">16</span><span>, </span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            countNonZeroV128_popcntAsm_inline(&amp;bytes)
+</span><span>        });
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV256_popcntAsm_inline</span><span>&quot;, </span><span style="color:#d08770;">32</span><span>, </span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            countNonZeroV128_popcntAsm_inline(&amp;bytes)
+</span><span>        });
+</span><span>        </span><span style="color:#96b5b4;">run1</span><span>(&quot;</span><span style="color:#a3be8c;">countNonZeroV512_popcntAsm_inline</span><span>&quot;, </span><span style="color:#d08770;">64</span><span>, </span><span style="color:#d08770;">1_000_000</span><span>, || {
+</span><span>            bytes[random % </span><span style="color:#d08770;">1024</span><span>] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            countNonZeroV128_popcntAsm_inline(&amp;bytes)
+</span><span>        });
+</span><span>    }
+</span><span>    println!();
+</span><span>
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">run1</span><span>&lt;F&gt;(</span><span style="color:#bf616a;">label</span><span>: &amp;</span><span style="color:#b48ead;">str</span><span>, </span><span style="color:#bf616a;">width</span><span>: </span><span style="color:#b48ead;">usize</span><span>, </span><span style="color:#bf616a;">loops</span><span>: </span><span style="color:#b48ead;">usize</span><span>, </span><span style="color:#b48ead;">mut </span><span style="color:#bf616a;">f</span><span>: F) </span><span style="color:#b48ead;">where</span><span> F: FnMut()-&gt;</span><span style="color:#b48ead;">usize  </span><span>{
+</span><span>    </span><span style="color:#b48ead;">let</span><span> time0 = std::time::Instant::now();
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> time1 = time0;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> end = time0 + std::time::Duration::from_secs(</span><span style="color:#d08770;">5</span><span>);
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> sum = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> n = </span><span style="color:#d08770;">0</span><span style="color:#b48ead;">usize</span><span>;
+</span><span>    </span><span style="color:#b48ead;">loop </span><span>{
+</span><span>        </span><span style="color:#b48ead;">for</span><span> _i in </span><span style="color:#d08770;">0</span><span>..loops {
+</span><span>            sum += </span><span style="color:#96b5b4;">f</span><span>();
+</span><span>        }
+</span><span>        n += loops;
+</span><span>        time1 = std::time::Instant::now();
+</span><span>        </span><span style="color:#b48ead;">if</span><span> time1 &gt;= end {
+</span><span>            </span><span style="color:#b48ead;">break</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> elapsed = time1 - time0;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> avg = elapsed.</span><span style="color:#96b5b4;">as_nanos</span><span>() as </span><span style="color:#b48ead;">f64 </span><span>/ n as </span><span style="color:#b48ead;">f64</span><span>;
+</span><span>    println!(&quot;</span><span style="color:#a3be8c;">{label:32}</span><span style="color:#96b5b4;">\t</span><span style="color:#a3be8c;">lane width: </span><span style="color:#d08770;">{width}</span><span style="color:#96b5b4;">\t</span><span style="color:#a3be8c;">sum:{sum:16}</span><span style="color:#96b5b4;">\t</span><span style="color:#a3be8c;">times:</span><span style="color:#d08770;">{elapsed:?}</span><span style="color:#96b5b4;">\t</span><span style="color:#a3be8c;">time:</span><span style="color:#d08770;">{avg:?}</span><span style="color:#a3be8c;">ns/iter</span><span>&quot;);
+</span><span>}
+</span><span>
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZero_inline</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">for </span><span>&amp;byte in bytes {
+</span><span>        </span><span style="color:#b48ead;">if</span><span> byte != </span><span style="color:#d08770;">0 </span><span>{
+</span><span>            count += </span><span style="color:#d08770;">1</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZero</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">for </span><span>&amp;byte in bytes {
+</span><span>        </span><span style="color:#b48ead;">if</span><span> byte != </span><span style="color:#d08770;">0 </span><span>{
+</span><span>            count += </span><span style="color:#d08770;">1</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV128_popcnt_intrins_inline</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x16;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += </span><span style="color:#b48ead;">unsafe </span><span>{ std::arch::x86_64::_popcnt64(bits as </span><span style="color:#b48ead;">i64</span><span>) as </span><span style="color:#b48ead;">usize </span><span>};
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV256_popcnt_intrins_inline</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x32;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += </span><span style="color:#b48ead;">unsafe </span><span>{ std::arch::x86_64::_popcnt64(bits as </span><span style="color:#b48ead;">i64</span><span>) as </span><span style="color:#b48ead;">usize </span><span>};
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">unsafe fn </span><span style="color:#8fa1b3;">countNonZeroV256_popcnt_intrins_x86</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">use </span><span>core::arch::x86_64::*;
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = __m256i;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#96b5b4;">_mm256_setzero_si256</span><span>() ;
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#96b5b4;">_mm256_loadu_epi8</span><span>(bytes.</span><span style="color:#96b5b4;">as_ptr</span><span>().</span><span style="color:#96b5b4;">add</span><span>(i) as </span><span style="color:#b48ead;">*const i8</span><span>);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> mask = </span><span style="color:#96b5b4;">_mm256_cmp_epi8_mask</span><span>(chunk, zero, </span><span style="color:#d08770;">_MM_CMPINT_NE</span><span>);
+</span><span>
+</span><span>        count +=  mask.</span><span style="color:#96b5b4;">count_ones</span><span>() as </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>        i += </span><span style="color:#d08770;">32</span><span>;
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV512_popcnt_intrins_inline</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x64;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += </span><span style="color:#b48ead;">unsafe </span><span>{ std::arch::x86_64::_popcnt64(bits as </span><span style="color:#b48ead;">i64</span><span>) as </span><span style="color:#b48ead;">usize </span><span>};
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">unsafe fn </span><span style="color:#8fa1b3;">countNonZeroV512_popcnt_intrins_x86</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">use </span><span>core::arch::x86_64::*;
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = __m512i;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#96b5b4;">_mm512_setzero_si512</span><span>() ;
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#96b5b4;">_mm512_loadu_epi8</span><span>(bytes.</span><span style="color:#96b5b4;">as_ptr</span><span>().</span><span style="color:#96b5b4;">add</span><span>(i) as </span><span style="color:#b48ead;">*const i8</span><span>);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> mask = </span><span style="color:#96b5b4;">_mm512_cmp_epi8_mask</span><span>(chunk, zero, </span><span style="color:#d08770;">_MM_CMPINT_NE</span><span>);
+</span><span>
+</span><span>        count +=  mask.</span><span style="color:#96b5b4;">count_ones</span><span>() as </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>        i += </span><span style="color:#d08770;">64</span><span>;
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">////
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV128_popcnt_intrins</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x16;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += </span><span style="color:#b48ead;">unsafe </span><span>{ std::arch::x86_64::_popcnt64(bits as </span><span style="color:#b48ead;">i64</span><span>) as </span><span style="color:#b48ead;">usize </span><span>};
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV256_popcnt_intrins</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x32;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += </span><span style="color:#b48ead;">unsafe </span><span>{ std::arch::x86_64::_popcnt64(bits as </span><span style="color:#b48ead;">i64</span><span>) as </span><span style="color:#b48ead;">usize </span><span>};
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV512_popcnt_intrins</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x64;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += </span><span style="color:#b48ead;">unsafe </span><span>{ std::arch::x86_64::_popcnt64(bits as </span><span style="color:#b48ead;">i64</span><span>) as </span><span style="color:#b48ead;">usize </span><span>};
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV128_countOnes_inline</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = Simd&lt;</span><span style="color:#b48ead;">u8</span><span>, 16&gt;;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits = cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += bits.</span><span style="color:#96b5b4;">count_ones</span><span>() as </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV256_countOnes_inline</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = Simd&lt;</span><span style="color:#b48ead;">u8</span><span>, 32&gt;;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits = cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += bits.</span><span style="color:#96b5b4;">count_ones</span><span>() as </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV512_countOnes_inline</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = Simd&lt;</span><span style="color:#b48ead;">u8</span><span>, 64&gt;;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits = cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += bits.</span><span style="color:#96b5b4;">count_ones</span><span>() as </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">//// no-inline
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV128_countOnes</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = Simd&lt;</span><span style="color:#b48ead;">u8</span><span>, 16&gt;;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits = cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += bits.</span><span style="color:#96b5b4;">count_ones</span><span>() as </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV256_countOnes</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = Simd&lt;</span><span style="color:#b48ead;">u8</span><span>, 32&gt;;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits = cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += bits.</span><span style="color:#96b5b4;">count_ones</span><span>() as </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV512_countOnes</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = Simd&lt;</span><span style="color:#b48ead;">u8</span><span>, 64&gt;;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits = cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>
+</span><span>        count += bits.</span><span style="color:#96b5b4;">count_ones</span><span>() as </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV128_popcntAsm_inline</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">use </span><span>core::arch::asm;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x16;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>        </span><span style="color:#b48ead;">let</span><span> n: </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>
+</span><span>        </span><span style="color:#65737e;">// count += unsafe { std::arch::x86_64::_popcnt32(bits as i32) as usize };
+</span><span>        </span><span style="color:#b48ead;">unsafe </span><span>{ asm! {
+</span><span>        &quot;</span><span style="color:#a3be8c;">popcnt {y}, {x}</span><span>&quot;, x = in(reg) bits, y = </span><span style="color:#96b5b4;">out</span><span>(reg) n
+</span><span>        } }
+</span><span>        count += n;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV256_popcntAsm_inline</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">use </span><span>core::arch::asm;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x32;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>        </span><span style="color:#b48ead;">let</span><span> n: </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>
+</span><span>        </span><span style="color:#65737e;">// count += unsafe { std::arch::x86_64::_popcnt32(bits as i32) as usize };
+</span><span>        </span><span style="color:#b48ead;">unsafe </span><span>{ asm! {
+</span><span>        &quot;</span><span style="color:#a3be8c;">popcnt {y}, {x}</span><span>&quot;, x = in(reg) bits, y = </span><span style="color:#96b5b4;">out</span><span>(reg) n
+</span><span>        } }
+</span><span>        count += n;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(always)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV512_popcntAsm_inline</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">use </span><span>core::arch::asm;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x64;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>        </span><span style="color:#b48ead;">let</span><span> n: </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>
+</span><span>        </span><span style="color:#65737e;">// count += unsafe { std::arch::x86_64::_popcnt32(bits as i32) as usize };
+</span><span>        </span><span style="color:#b48ead;">unsafe </span><span>{ asm! {
+</span><span>        &quot;</span><span style="color:#a3be8c;">popcnt {y}, {x}</span><span>&quot;, x = in(reg) bits, y = </span><span style="color:#96b5b4;">out</span><span>(reg) n
+</span><span>        } }
+</span><span>        count += n;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">/// no-inline
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV128_popcntAsm</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">use </span><span>core::arch::asm;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x16;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>        </span><span style="color:#b48ead;">let</span><span> n: </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>
+</span><span>        </span><span style="color:#65737e;">// count += unsafe { std::arch::x86_64::_popcnt32(bits as i32) as usize };
+</span><span>        </span><span style="color:#b48ead;">unsafe </span><span>{ asm! {
+</span><span>        &quot;</span><span style="color:#a3be8c;">popcnt {y}, {x}</span><span>&quot;, x = in(reg) bits, y = </span><span style="color:#96b5b4;">out</span><span>(reg) n
+</span><span>        } }
+</span><span>        count += n;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV256_popcntAsm</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">use </span><span>core::arch::asm;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x32;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>        </span><span style="color:#b48ead;">let</span><span> n: </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>
+</span><span>        </span><span style="color:#65737e;">// count += unsafe { std::arch::x86_64::_popcnt32(bits as i32) as usize };
+</span><span>        </span><span style="color:#b48ead;">unsafe </span><span>{ asm! {
+</span><span>        &quot;</span><span style="color:#a3be8c;">popcnt {y}, {x}</span><span>&quot;, x = in(reg) bits, y = </span><span style="color:#96b5b4;">out</span><span>(reg) n
+</span><span>        } }
+</span><span>        count += n;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>#[</span><span style="color:#bf616a;">cfg</span><span>(target_arch = &quot;</span><span style="color:#a3be8c;">x86_64</span><span>&quot;)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">countNonZeroV512_popcntAsm</span><span>(</span><span style="color:#bf616a;">bytes</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">usize </span><span>{
+</span><span>    </span><span style="color:#b48ead;">use </span><span>core::arch::asm;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">type </span><span>VT = u8x64;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> zero = </span><span style="color:#d08770;">VT</span><span>::splat(</span><span style="color:#d08770;">0</span><span>);
+</span><span>    </span><span style="color:#b48ead;">while</span><span> i + size_of::&lt;VT&gt;() &lt;= bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> chunk = </span><span style="color:#d08770;">VT</span><span>::from_slice(&amp;bytes[i..]);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> cmp = chunk.</span><span style="color:#96b5b4;">simd_ne</span><span>(zero);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> bits: </span><span style="color:#b48ead;">u64 </span><span>= cmp.</span><span style="color:#96b5b4;">to_bitmask</span><span>() as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>        </span><span style="color:#b48ead;">let</span><span> n: </span><span style="color:#b48ead;">usize</span><span>;
+</span><span>
+</span><span>        </span><span style="color:#65737e;">// count += unsafe { std::arch::x86_64::_popcnt32(bits as i32) as usize };
+</span><span>        </span><span style="color:#b48ead;">unsafe </span><span>{ asm! {
+</span><span>        &quot;</span><span style="color:#a3be8c;">popcnt {y}, {x}</span><span>&quot;, x = in(reg) bits, y = </span><span style="color:#96b5b4;">out</span><span>(reg) n
+</span><span>        } }
+</span><span>        count += n;
+</span><span>        i += size_of::&lt;VT&gt;();
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">if</span><span> i &lt; bytes.</span><span style="color:#96b5b4;">len</span><span>() {
+</span><span>        count += countNonZero_inline(&amp;bytes[i..]);
+</span><span>    }
+</span><span>    count
+</span><span>}
+</span><span>
+</span></code></pre>
+<ol>
+<li>128bit: u8x16</li>
+<li>256bit: u8x32</li>
+<li>512bit: u8x64</li>
+</ol>
+<p>这个实现中，对如何进行整数的1位统计分别使用了3种方法：</p>
+<ul>
+<li>count_ones。看rust得实现，采用的算法并不算太高效</li>
+<li>尝试使用  std::arch::x86_64::_popcnt64(bits as i64)</li>
+<li>尝试使用 asm 嵌入 popcnt 指令。</li>
+</ul>
+<p>后面发现，其实可以使用 <code>-Ctarget-cpu=native</code> 来识别 popcnt 特性，从而自动生成 popcnt的代码，这种情况下，可以获得很好的执行效果。</p>
+<p>分别在3个平台上进行了测试：</p>
+<ol>
+<li>M1-MAX</li>
+<li>X86 on M1-MAX(Rosetta 2)</li>
+<li>X86(内部虚拟机)</li>
+<li>X86(阿里云 ecs.c7.xlarge型号，CPU为：Intel Xeon(Ice Lake) Platinum 8369B)</li>
+<li>ecs.c7.xlarge，启用 -Ctarget-cpu=native</li>
+</ol>
+<p><img src="https://wangzaixiang.github.io/blog/vectorize-1/simd-1.webp" alt="性能对比" /></p>
+<p>更新：</p>
+<ol>
+<li>在 x86 AVX512上，使用 <code>cargo +nightly rustc --release -- -Ctarget-cpu=native</code> 选项编译后的性能更佳。应该是使用到了当前CPU的全部能力,
+512bit向量下，达到了11.7ns。<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">cargo</span><span> +nightly rustc</span><span style="color:#bf616a;"> -Z</span><span> build-std</span><span style="color:#bf616a;"> --target</span><span> x86_64-unknown-linux-gnu</span><span style="color:#bf616a;"> --release</span><span>  -- -Ctarget-cpu=native
+</span></code></pre>
+</li>
+</ol>
+<p>结论分析：</p>
+<ol>
+<li>向量化的版本相比普通循环的版本，有接近10倍的提升。(M1 提升：4倍，X86提升：9倍）portable_simd 实际使用的是 128bit 的向量，
+但可以使用256/512位的API，此时，它会进行展开。</li>
+<li>我之前有个误解，portable_simd无法使用到 AVX512等能力。实际上并不然，只要编译时指定 target-cpu，是可以使用到 avx2, avx512等向量能力的。
+portable_simd 是开发向量化算法首选，毕竟可移植性是一个很重要的需求。</li>
+<li>在部份场合下，rustc会自动向量化，简单场景下效果会和手动向量化效果差不多。但有不少限制，复杂一些算法，可能无法自动向量化。</li>
+<li>尝试使用 x86 私有的 256位向量/512位向量能力，发现性能反而有下降，查看原因是 rustc 没有为 <em>mm_xxx</em> intrinsc 指令生成内联，
+产生了 function call 的开销，这导致了性能的下降。</li>
+<li>编写测试代码时，前面的版本，inline时进行了过度的优化（指针对当前的场景进行了特定的优化），其不具备可复制性，干扰了测试。
+调整后的测试数据要好理解很多。（之前的部份优化，导致 512bit 可以优化到4n s 以内，后实际发现是测试代码触发了rustc进行了逻辑优化，
+少执行了不少循环。调整后的代码增加了数据的混乱，避免过度优化）。</li>
+<li>使用嵌入汇编后，可能会影响编译器的进一步优化，在案列中，asm版本，在支持 AVX512的CPU上并非最佳，我估计是没有进行循环展开导致的。</li>
+</ol>
+<h2 id="hou-xu-wo-hui-shou-ji-ji-yu-xiang-liang-ji-suan-de-yi-xi-lie-suan-fa-zheng-li-yi-ge-ti-gang-li-ru">后续，我会收集基于向量计算的一系列算法，整理一个提纲，例如:</h2>
+<ol>
+<li>C++中的向量计算https://www.zhihu.com/question/450069375/answer/3258826060?utm_psn=1714201317017481216</li>
+<li>hash 向量算法：是否可以设计一个可基于 SIMD 的hash算法（不是对单个值计算hash，而是对向量计算hash向量）？</li>
+<li>hash join的 向量算法
+<ol>
+<li><a href="https://www.cockroachlabs.com/blog/vectorized-hash-joiner/">40x faster hash joiner with vectorized execution</a></li>
+<li>源头：Balancing vectorized query execution with bandwidth-optimized storage (已收藏到 ivySCI 库中第5.4节：Optimizing Hash-Join)，比较难读。</li>
+<li><a href="https://groups.csail.mit.edu/cag/6.893-f2000/vectorhashjoin.pdf">A Vectorized Hash-Join</a></li>
+</ol>
+</li>
+<li>binary search 的向量算法</li>
+<li>Simd-json 中的向量计算</li>
+<li>加密解密中的向量计算</li>
+<li>Swiss Table中的向量计算等。Rust HashMap就是基于这个结构的。</li>
+<li>base64<a href="https://link.zhihu.com/?target=https%3A//mcyoung.xyz/2023/11/27/simd-base64/">Designing a SIMD Algorithm from Scratch · mcyoung</a>非常好的一篇讲解 vectorize 的文章。
+以 base64 decode为例构造一个向量实现，我觉得 encode 也适合构造一个向量实现，可以拿来练手。</li>
+<li>Intel 向量指令 https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html</li>
+<li>https://github.com/cloudwego/sonic-rs/blob/main/docs/performance_zh.md sonic-rs如何利用SIMD来加速JSON解析</li>
+</ol>
+<p>zig 语言有内置的 SIMD 支持，在 Parker Liu 的专栏，有很多值得学习的干货：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/687938028">Zig语言的SIMD并行计算优化初探</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/688345298">Zig语言的SIMD并行计算优化初探--矩阵转置</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/688719072">Zig语言的SIMD并行计算优化初探--高通DSP的矩阵转置</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/690008262">Zig语言的SIMD并行计算优化初探--并行排序</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/695321017">Zig语言的SIMD并行计算优化初探--混合快速排序</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/696657692">Zig语言的SIMD并行计算优化初探--多向量并行排序</a></li>
+</ol>
+<p>也欢迎各位帮忙补充你所知道的应用向量计算的算法。</p>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/polars-notebook/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/trying-scala3/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

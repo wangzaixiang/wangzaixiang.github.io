@@ -1,0 +1,1209 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>duckdb 源代码阅读笔记</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-6d36c627.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-2f4679b7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                        <a href="/" class="icon-button"> Home </a>
+                    </div>
+
+                    <h1 class="menu-title">duckdb 源代码阅读笔记</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="前言"><a class="header" href="#前言">前言</a></h1>
+<p><a href="duckdb.org">duckdb</a> 是一款优秀的 OLAP 数据库，有如下的特点：</p>
+<ul>
+<li>
+<p>快速。</p>
+<p>我之前进行了一次 OLAP 数据库的性能测试，对比了包括 ClickHouse, DuckDB, StarRocks, DorisDB, DataFusion， Pola.rs 在内的
+几款数据库， DuckDB 在好几项测试中，都处在领先位置。</p>
+<p><img src="images/mpp_compare.webp" alt="img.png"></p>
+</li>
+<li>
+<p>轻量</p>
+<p>DuckDB 的二进制文件大小只有 40MB 左右，没有任何依赖。相比 clickhouse(~440M) 来说，小了一个数量级。</p>
+<p>而且，DuckDB 无需任何配置，即可使用，可处理 csv、parquet、json 等格式的文件数据，也可以使用 duckdb 自身的数据库格式，其使用
+风格非常类似于 sqlite, 是一个 serverless 风格的数据库，也非常适合于嵌入式应用。</p>
+<p>除了发布版本的的轻量之外，duckdb 的源代码量也很轻量，并且可以在各种平台中编译，源代码的结构较为清晰，适合于学习。</p>
+</li>
+<li>
+<p>SQL 支持能力强。</p>
+<p>作为一款轻量的数据库，我很惊讶于 duckdb 对 SQL 的支持程度：</p>
+<ul>
+<li>比如 <a href="#前言">JOIN 支持</a>，很多的数据库都不支持 Full Join，Semi Join, Anti Join
+等操作（虽然可以使用其他方式进行改写，但既不自然，也不便于性能优化）</li>
+<li><a href="https://duckdb.org/docs/sql/query_syntax/setops">集合操作</a>：支持 Union, Union All, Intersect, Except 等操作。后两者很多数据库都不支持。</li>
+<li>窗口函数的支持力度。mysql 算是支持比较好的，但无法表示出“同期年累积值”（去年1月1日至1年前的今天）这样的窗口范围。ClickHouse 则对基于
+日期的窗口计算乏善可陈。在这方面, DuckDB 的支持力度是最好的。</li>
+<li><a href="https://duckdb.org/docs/sql/query_syntax/with">CTE 支持</a>。 没有 CTE 的 SQL 语句，很多时候会变得难以阅读，难以维护。我们在处理类似于 PowerBI 的双向筛选时，生成了非常复杂的 SQL 语句，
+要理解这条 SQL 语句，有时1-2小时都讲不出清楚，但采用 CTE 后就变得简单、清晰很多。duckdb 良好的支持 CTE，并且有<a href="https://duckdb.org/2024/09/09/announcing-duckdb-110.html#automatic-cte-materialization">针对 CTE 的优化</a>，
+这使得不仅 SQL 简单、易读，而且查询性能也更优秀。</li>
+<li>对 <a href="https://duckdb.org/docs/sql/data_types/list">list 数据类型</a> 的支持，以及丰富的 <a href="https://duckdb.org/docs/sql/functions/list">list 处理函数</a>。
+在我碰到的一个对 <code>count(distinct X)</code> 类型的度量进行小计、合计时，如果是传统的方式，势必针对每个聚合层次做一次重新计算，而采用 list 类型后，我们完全可以仅使用
+一次 SCAN 结合 窗口函数，完成这个需求，这对于大数据量下的查询来说，可以显著提升性能。</li>
+</ul>
+<p>上面仅列举了这段时间来我发现的一些能力，估计，随着对 duckdb 的深入研究，以及定制能力的挖掘，藏在 duckdb 内部还会有更多的宝藏会冒出来。</p>
+</li>
+<li>
+<p>扩展能力。</p>
+<p>目前还只是简单的浏览了一下 <a href="https://duckdb.org/docs/sql/functions/list">Extensions</a> 的文档，实验了一下 mysql 扩展提供的外部数据源
+连接能力，体会到 duckdb 强大的扩展能力。</p>
+<ul>
+<li>数据类型扩展，参考 <a href="https://duckdb.org/docs/extensions/inet">Inet Extension</a></li>
+<li>外部数据源扩展。参考 <a href="https://duckdb.org/docs/extensions/mysql">MySQL Extension</a>，包括了函数、表函数、Pushdown 的扩展。</li>
+<li>自定义函数扩展。参考
+<ul>
+<li>scalar function</li>
+<li>aggregate function</li>
+<li>table function</li>
+<li>window function</li>
+</ul>
+</li>
+</ul>
+<p>当然，强大的扩展能力也是建立在良好的 模块化设计 的基础之上的。这也使得更有必要学习一下这款优秀的数据库的源代码了。</p>
+</li>
+<li>
+<p>活跃的社区</p>
+<p>DuckDB 目前来看，在社区是棘手可热的：</p>
+<ul>
+<li>官网版本更新频繁。转正为 1.0.0 版本后，目前，每个月都有一个小版本的更新。</li>
+<li>文档较为完善。</li>
+<li>Blog 更新较为频繁，介绍了很多新的优化、特性。</li>
+<li>Youtube 上有很多的视频教程。</li>
+<li>国内也有很多的关注者，在知乎上有很多的文章介绍 duckdb 的使用和源代码分析的文章。</li>
+</ul>
+</li>
+</ul>
+<p>作为一名数据分析产品的开发者，我在了解 DuckDB 后，越发感觉到需要深入的学习 duckdb, 主要有以下的几个原因：</p>
+<ol>
+<li>
+<p>引入 duckdb 作为公司核心产品的数据分析的引擎，简化产品产品架构、提升产品的能力，尤其是在性能方面的提升。</p>
+<p>目前，我们的产品有两个分析引擎：</p>
+<ul>
+<li>SQL 分析引擎：将前端（仪表盘等可视化组件、AI）分析查询转换为 SQL 执行。目前这种方式对度量的复杂度有较大的局限，诸如时间的各种快速计算、
+表间计算 等难以有效支持。 (对源数据库的 SQL 方言适配工作量过于复杂。当产品要支持 40+ 各异的数据源时，SQL 方言几乎是一件不可能的任务。)</li>
+<li>MDX 分析引擎。 MDX 分析引擎对复杂度量的表达能力支持，理论上是无上限的，但这种方式的计算模型偏重于 Top-Down 的递归函数计算，在数据的访问
+主要是 Pull 式的，在复杂的计算场景下，会面临性能问题。如果将 Top-Down + Pull 模型转换为 Bottom-Up + Push 模型，避免对数据源的重复
+Scan 和 重复计算，是提升这类计算引擎的关键措施。</li>
+</ul>
+<p>对于 SQL 分析引擎，如何将一个复杂的 前端查询， 表示为 SQL 查询计划，在引入 duckdb 之前与 引入 duckdb 之后，在架构上会有很大的不同，甚至于
+有进一步的空间（即我们直接生成 物理执行计划，并在物理执行计划中添加与前端分析匹配的自定义算子的方式），这一块，目前还处在一个相对朦胧的阶段，
+有待内部进一步实验后，再进行分享。</p>
+<p>当然，无论是浅度的依赖，还是深度的依赖，都需要对 duckdb 的源代码有一个深入的了解，才能做到更多的驾驭能力，否则，很多东西是不敢想，不敢做，或者
+是遇到内部问题，难以跨越的。</p>
+</li>
+<li>
+<p>学习一款完整的 OLAP 分析引擎，了解更多的技术细节。</p>
+<p>SQL 执行自身是一个复杂的过程，从基础的火山模型，到向量版的火山模型、到 Pipeline 执行模型，从 Tree 解释执行到 JIT 编译执行，从传统的计算算子
+到 向量化的 算子，每一个领域都有很多的算法、优化技术。学习这些知识，是一个很有乐趣的过程。 或许，duckdb 并不是终点，而可能是一个新的起点。</p>
+</li>
+</ol>
+<p>后续，我会在这个系列中，记录我对 duckdb 的学习过程，包括：</p>
+<ul>
+<li>数据结构</li>
+<li>整体处理流程</li>
+<li>特定的优化技术</li>
+<li>对 OLAP.NEXT 技术的一些思考记录</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="parse"><a class="header" href="#parse">Parse</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="resolve"><a class="header" href="#resolve">Resolve</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="logical-plan"><a class="header" href="#logical-plan">Logical Plan</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="optimizer"><a class="header" href="#optimizer">Optimizer</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="physical-plan"><a class="header" href="#physical-plan">Physical Plan</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="vector"><a class="header" href="#vector">Vector</a></h1>
+<p>向量化(Vectorization) 是 OLAP 的核心技术。在《MonetDB/X100: Hyper-Pipelining Query Execution》论文中，介绍了使用向量化技术带来的
+性能提升，其主要原因是：</p>
+<ol>
+<li>传统的以 tuple-at-a-time 为单位的 Pull 模型，CPU 大部份消耗在 tuple 的运输(pull)上，实际的计算占比 &lt; 10%（图中为8.8%）。参见下图：
+<img src="images/volcano-tpch-1-ipc.png" alt="img.png"></li>
+<li>即使在这 8.8% 的计算中，其 IPC(Instructions Per Cycle) 也不高，只有 0.8。即平均每个时钟周期只执行了 0.8 条指令。而现在的服务器 CPU
+是多发射架构，intel skylake 每个时钟周期理论上可以执行4条指令。 这与 tuple-at-a-time 的计算模型有关。
+<img src="images/cpu-1.png" alt="img.png"> 来源：https://zhuanlan.zhihu.com/p/645343994 (具体的发射大小文档待查)</li>
+<li>现代的 CPU 支持 SIMD 指令集，可以在一个时钟周期内执行多个相同操作的指令，这样可以提高计算效率。128/256/512 位的 SIMD 寄存器，可以在单条
+指令中操作 4/8/16 个 32-bit 的计算 或者 2/4/8 个 64-bit 的计算。</li>
+<li>tuple-at-a-time 的计算模型，对 CPU 的缓存友好性不好。无论是 I-cache 还是 D-cache，这些都会影响 IPC 的提升。</li>
+</ol>
+<p>使用向量化优化后，</p>
+<ol>
+<li>从 tuple-at-a-time 的 Pull 模型，改变为 morsel-at-a-time 的 Push 模型，每个 morsel 的大小可以很好的匹配 CPU 的缓存行大小。从而
+提升缓存的命中率。</li>
+<li>morsel-at-a-time 的模式，大大的减少了处理循环，提高了有效运算的占比。</li>
+<li>结合 SIMD 指令，从原来的 0.8 的 IPC 显著提升到等效的 16-64， 计算处理也得以大幅度提升。</li>
+</ol>
+<p>本文以 duckdb 的示例为例，介绍 Vector 的数据结构设计，常用的向量化操作，以及对这一块性能优化的一些思考。</p>
+<h2 id="duckdb-vector-数据结构"><a class="header" href="#duckdb-vector-数据结构">DuckDB Vector 数据结构</a></h2>
+<p>参考文档：<a href="https://duckdb.org/docs/internals/vector">Vector官网介绍资料</a>。</p>
+<pre><code class="language-cpp">class Vector {
+  VectorType vector_type;  // FLAT_VECTOR, FSST_VECTOR, CONSTANT_VECTOR, DICTIONARY_VECTOR, SEQUENCE_VECTOR
+  LogicalType type;   // boolean, integer, date, varchar, etc.
+  data_ptr_t data;    // uint8_t*, 指向数据的指钨
+  ValidityMask validity;   // 标识某个元素是否是 null
+  shared_ptr&lt;VectorBuffer&gt; buffer;   // data 的容器
+  shared_ptr&lt;VectorBuffer&gt; auxliary; // 向量的动态数据部份的数据容器
+}
+</code></pre>
+<p>以基础的 FlatVector(integer) 为例，其内存布局如下：</p>
+<pre><code>   vector_type: i8  -- FLAT_VECTOR
+   type: [i8, 24]
+       - id: i8  -- INTEGER
+       - physical_type: i8
+       _ type_info : nullptr  [i8,16]
+   data: i32*  -- 指向 buffer.data 中区域
+   validity: [i8, 32] 
+       - validity_mask: u64*  -- bitmap，其 owner 由 validity_data 持有
+       - validity_data: shared_ptr&lt;ValidityBuffer&gt;
+       - target_count: u64 = 2048
+   buffer: shared_ptr&lt;VectorBuffer&gt; -- owner data
+           - buffer_type
+           - aux_data: nullptr
+           - data: nullptr -- 管理 vector.data 的所有权
+   auxliary: nullptr       -- FlatVector(integer) 不需要额外的存储空间
+</code></pre>
+<ul>
+<li>
+<p>data: T_ITEM* 这里的 T_ITEM 是向量中元素的值类型，对 INTEGER 等定长类型，其值类型是 i32。</p>
+<ul>
+<li>
+<p>对 VARCHAR，使用的是 string_t 结构，定义如下：</p>
+<pre><code class="language-cpp">union {     // 16 bytes
+    struct {  // length &gt; 12 时存储前4个字符，后面的字符存储在 auxliary 中
+        uint32_t length;
+        char prefix[4];
+        char *ptr;
+    } pointer;
+    struct { // length &lt;= 12 时，直接存储在 inlined 中
+        uint32_t length;
+        char inlined[12];
+    } inlined;
+} value;
+</code></pre>
+<blockquote>
+<p>思考： 如果 string_t 调整为 24 或者 32 字节大小，则 INLINE 可以存储 12/20 字节，在进行字符串的比较时，是否会有更好的性能？</p>
+</blockquote>
+<p>对 VARCHAR 类型来说，string_t 是定长的，可以作为数组形式存储在 buffer 中（vector.data 是对 buffer 中的引用），而变长部份
+则存储在 auxliary 中。 这个存储设计非常类似于编程语言中的 stack 和 heap: stack 中存储定长部份，heap 中存储变长部份。</p>
+</li>
+<li>
+<p>List 类型。DuckDB 支持 List ，不仅在 SQL 级别支持 list 数据类型及一系列的 list 操作函数，在引擎内部，也会依赖 List 类型来处理计算。</p>
+<pre><code class="language-cpp">struct list_entry_t {  // list_entrt_t 是定长的，存储在 buffer 中
+  idx_t offset;  // 指向在 auxliary 中的变长部份开始位置
+  idx_t length;  // list 的长度
+};
+</code></pre>
+<blockquote>
+<p>思考：这种设计就无法支持 list 的动态添加了。在将 list 作为聚合函数时，随着新的数据加入，list会不断的增长，这个就需要使用其他的数据结构来支持了。</p>
+</blockquote>
+<ul>
+<li><input disabled="" type="checkbox"> 目前还没有看懂这一块的向量的构建过程。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>buffer:
+数据的生命周期。</p>
+<blockquote>
+<p>（我之前的C++经验还停留在 C++ 11之前的手动new/delete是经验，现在通过智能指针后，delete操作就基本上不需要了）这种模式是引用智能指针后
+C++ 的常见的内存管理模式，rust 的内存管理思想与这个也是高度一致的。虽然 Rust 的设计是从 C++ 的最佳实践中衍生出来的，不过，不妨碍我用 Rust 来
+反向理解 C++。</p>
+</blockquote>
+<p>buffer 与 data 之间的关系满足：（在 Vector.Resize 方法中有这个假设：）</p>
+<pre><code class="language-cpp">// data: unique_ptr&lt;[T_ITEM]&gt;; // T_ITEM 数组
+// data = buffer-&gt;data.get()   
+auto new_data = make_unsafe_uniq_array_uninitialized&lt;data_t&gt;(target_size); // new [T_ITEM; n]
+memcpy(new_data.get(), resize_info_entry.data, old_size); // 
+resize_info_entry.buffer-&gt;SetData(std::move(new_data));   // buffer-&gt;data = new_data
+resize_info_entry.vec.data = resize_info_entry.buffer-&gt;GetData();  // data = buffer-&gt;data.get()
+</code></pre>
+<ul>
+<li><input disabled="" type="checkbox"> TODO 似乎有一些子类型的 VectorBuffer 不满足这个契约，例如 DictionaryBuffer 通过 sel_vector 来访问 data， VectorChildBuffer
+通过重载的 data: Vecotr 来管理数据。这些子类型似乎并不满足 Vector::Resize 中的这个契约。</li>
+</ul>
+</li>
+<li>
+<p>auxliary:</p>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="execution"><a class="header" href="#execution">Execution</a></h1>
+<p>学习 duckdb 的源代码，我是首先从 Execution 这一部份开始的：</p>
+<ul>
+<li>虽然从结构上来看，Execution 是整个系统的最后一步，但秉着“以终为始”的学习原则， 从 Execution 开始，可以更好的了解整个系统的核心。从
+Parser 到 Logical Plan 到 Optimizer 到 Physical Plan，都是在为 Execution 这一步做准备。</li>
+<li>DuckDB 的性能优化的关键，也是在 Execution 这一步，其核心是 Pipeline 的机制和 Vector 的数据结构。</li>
+</ul>
+<p>理解了 Pipeline 和 Vector，再结合几个主要的 Operator 原理，就可以对 DuckDB 的执行机制有一个初步的认识了。</p>
+<h2 id="参考文档"><a class="header" href="#参考文档">参考文档</a></h2>
+<ol>
+<li>DuckDB internals
+<ul>
+<li><a href="https://15721.courses.cs.cmu.edu/spring2023/slides/22-duckdb.pdf">Slides</a>,</li>
+<li><a href="https://www.youtube.com/watch?v=bZOvAKGkzpQ">Video</a></li>
+</ul>
+</li>
+<li>Push-Based Execution In DuckDB
+<ul>
+<li><a href="https://dsdsd.da.cwi.nl/slides/dsdsd-duckdb-push-based-execution.pdf">Slides</a>,</li>
+<li><a href="https://www.youtube.com/watch?v=1kDrPgRUuEI">Video</a></li>
+</ul>
+</li>
+<li>知乎链接 <a href="https://zhuanlan.zhihu.com/p/402355976">DuckDB Push-Based Execution Model</a></li>
+</ol>
+<h2 id="代码调试技巧"><a class="header" href="#代码调试技巧">代码调试技巧</a></h2>
+<ol>
+<li>在 duckdb shell 中 使用 <code>explain statement</code> 或者<code>explain analyze statement</code> 查看执行计划。</li>
+<li>PipelineExecutor::Execute(idx_t max_chunks) 是 Pipeline 的执行入口，可以从这里添加断点，开启一个 Pipeline 的调试。
+-. watches: <code>this-&gt;pipeline.ToString()</code> 查看当前 Pipeline 的信息。 或者 <code>this-&gt;pipeline.Print()</code> 在 console 中
+查看当前 Pipeline 的 信息。 一次SQL 执行会产生多个 Pipeline，仅在满足条件的 Pipeline 上设置断点。
+-. watches: <code>this-&gt;pipeline.source-&gt;ToString(ExplainFormat::TEXT)</code> 查看当前 Pipeline 的 Source 信息。
+-. 在调试的 Variables 面板中，可以查看 pipeline 的 source, operators, sink 的信息，在对应的 operator 上设置断点。</li>
+<li>source 节点的入口是: <code>PhysicalXxxOperator::GetData(ExecutionContext &amp;context, DataChunk &amp;chunk, OperatorSourceInput &amp;input)</code>，
+可以在这里设置断点，查看 source 的执行流程。</li>
+<li>operator 节点的执行入口是：<code>PhysicalXxxOperator::Execute(ExecutionContext &amp;context, DataChunk &amp;input, DataChunk &amp;chunk, GlobalOperatorState &amp;gstate, OperatorState &amp;state</code></li>
+<li>sink 节点的执行有3个入口：
+<ul>
+<li><code>PhysicalXxxOperator::Sink(ExecutionContext &amp;context, DataChunk &amp;chunk, OperatorSinkInput &amp;input)</code></li>
+<li><code>PhysicalXxxOperator::Combine(ExecutionContext &amp;context, OperatorSinkCombineInput &amp;input)</code></li>
+<li><code>PhysicalXxxOperator::Finalize((Pipeline &amp;pipeline, Event &amp;event, ClientContext &amp;context, OperatorSinkFinalizeInput &amp;input)</code></li>
+</ul>
+</li>
+</ol>
+<p>在阅读代码过程中，可以通过上述的调试技巧，找到需要学习的代码的入口点，设置断点后，跟着调试器一步一步的阅读代码，并在 Variables 中查看各个变量的
+值，理解数据流和代码执行流程。</p>
+<p>接下来，我们将从一些简单的SQL 执行示例出发，来阅读 Execution 模块的源代码。</p>
+<ol>
+<li><a href="#一个简单的关联分组聚合查询的执行计划分析">example query: 两个表join后分组聚合</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="一个简单的关联分组聚合查询的执行计划分析"><a class="header" href="#一个简单的关联分组聚合查询的执行计划分析">一个简单的关联、分组聚合查询的执行计划分析</a></h1>
+<h2 id="sql"><a class="header" href="#sql">sql</a></h2>
+<pre><code class="language-sql">select name, count(freight), sum(freight) 
+from sale_orders so 
+left join customers c on c.customer_id = so.customer_id 
+where name = 'IB89Nf23kAom' 
+group by name;
+</code></pre>
+<h2 id="physical-plan-1"><a class="header" href="#physical-plan-1">Physical Plan</a></h2>
+<pre class="mermaid">flowchart BT
+    
+    TS1[Table Scan: customers
+    projections: customer_id,name
+    filters: name = ? ]
+
+    TS2[Table Scan: sale_orders
+    projections: customer_id, freight
+    filters: customer_id &gt;= 1
+    ]
+    
+    F1[Filter
+    customer_id &lt;= 999999
+    ]
+
+    HJ[Hash Join]
+    
+    Projection1[Projection
+    name, freight
+    ]
+
+    HashGroupBy1[Hash Group By
+    Groups: #0
+    Aggregates: count_start, sum #1
+    ]
+
+    TS1 --&gt; F1
+    TS2 --&gt; HJ
+    F1 --&gt; HJ
+    HJ --&gt; Projection1
+    Projection1 --&gt; HashGroupBy1
+</pre>
+
+<h2 id="pipeline"><a class="header" href="#pipeline">Pipeline</a></h2>
+<pre class="mermaid">flowchart BT
+    
+    subgraph pipelin1
+          TableScan1[Table Scan: customers
+            projections: customer_id,name
+            filters: name = ? 
+        ]
+
+           
+        Filter1[Filter
+            customer_id &lt;= 999999
+        ]
+
+        HashJoin1[Hash Join]
+
+    end 
+    subgraph pipelin2
+        TableScan2[Table Scan: sale_orders
+            projections: customer_id, freight
+            filters: customer_id &gt;= 1
+        ]
+
+        Projection1[Projection
+            name, freight
+        ]
+
+        HashGroupBy1[Hash Group By
+            Groups: #0
+            Aggregates: count_start, sum #1
+        ]
+
+    end
+    
+    TableScan1 --&gt; Filter1
+    TableScan2 --&gt; HashJoin1
+    Filter1 --&gt; HashJoin1
+    HashJoin1 --&gt; Projection1
+    Projection1 --&gt; HashGroupBy1
+
+    pipelin1 --&gt; pipelin2
+</pre>
+
+<ol>
+<li>执行计划拆分为多个 pipeline, 每个 pipeline 是一个从 Source 到 Sink 的 Push 模型.
+<ul>
+<li><input disabled="" type="checkbox"> 如何根据物理执行计划生成 pipeline ?</li>
+</ul>
+</li>
+<li>多个 pipeline 之间构成了一个依赖图，依赖的 pipeline 执行完毕后，被依赖的 pipeline 才能执行。</li>
+<li>每个 pipeline 会被拆分为多个 Task(分区并行)，每个 Task 相当于一个最小的调度单元。
+<ul>
+<li>当 Pipeline 的所有 task 执行完毕，这个 pipeline 才执行完毕，可以执行被依赖的的 pipeline。</li>
+</ul>
+</li>
+<li>在 Pipeline 中有3种角色：
+<ul>
+<li>
+<p>Source: 管道的起点，从外部设备读取数据。（IO 阻塞式：这是否会降低系统的处理能力？）</p>
+<ul>
+<li>
+<p>GetData(): 读取数据</p>
+<p>Source 需要考虑并发，与单个任务相关的数据存储在 localState 中，与整个管道相关的数据存储在 globalState 中。</p>
+<ul>
+<li>globalState 存储在 pipeline 中，同一个 pipeline 的所有 task 共享，设计到并发安全控制时，需要加锁</li>
+<li>localState 存储在 PipelineExecutor 中。由 PipelineExecutor 负责创建和销毁。
+不同的 Source 节点有自己的 localState/globalState 定义。</li>
+</ul>
+</li>
+</ul>
+<p>-[ ] 执行计划是如何处理分区的？</p>
+</li>
+<li>
+<p>Operator: pure function</p>
+<ul>
+<li>Execute(): 处理单个批次的输入数据，无需考虑并发安全。</li>
+</ul>
+</li>
+<li>
+<p>Sink: 管道的终点，需要协调多个任务的结果，进行合并</p>
+<ul>
+<li>Sink(): 处理单个批次的输入数据</li>
+<li>Combine(): 单个 Task 的全部 Source 处理完毕，进行单个任务内的合并。（其他任务可能会 Sink/Combine）</li>
+<li>Finalize(): 所有 Task 处理完毕，进行最终的合并。</li>
+</ul>
+<p>考虑到存在并发问题，需要区分 localState 和 globalState，不同的 Sink 节点有自己的 localState/globalState 定义。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h1 id="主要算子的执行逻辑"><a class="header" href="#主要算子的执行逻辑">主要算子的执行逻辑</a></h1>
+<h2 id="physicaltablescan-source-in-pipeline1--pipeline2"><a class="header" href="#physicaltablescan-source-in-pipeline1--pipeline2">PhysicalTableScan (Source in pipeline1 &amp; pipeline2)</a></h2>
+<ol>
+<li><input disabled="" type="checkbox"> 分区如何处理？ Source 侧如何处理并发？</li>
+<li>每次 Pipeline Execute最多 50 个 Chunk?</li>
+<li>bind_data 指向 DataTable
+<ul>
+<li><input disabled="" type="checkbox"> 为 TableScanBindData 增加 ToString 方法，方便调试</li>
+<li><input disabled="" type="checkbox"> unordered_map 无法显示， 考虑为 ScanFilterInfo/TableScanState 添加 ToString 方法</li>
+</ul>
+</li>
+<li>实际入口：TableScanFunc() 负责读取数据
+// 边界：TableFunction，可能要对比 from table 与 from csv_read 的执行流程的区别</li>
+</ol>
+<h2 id="physicalfilter-operator-in-pipeline1"><a class="header" href="#physicalfilter-operator-in-pipeline1">PhysicalFilter (Operator in pipeline1)</a></h2>
+<ol>
+<li>filter 表达式的计算流程？（解释执行的成本如何？）</li>
+<li>这一块的代码是否会进行 SIMD 优化？</li>
+</ol>
+<pre><code>
+BinaryExecutor::SelectGenericLoop&lt;…&gt;(const int *, const int *, const SelectionVector *, 
+    const SelectionVector *, const SelectionVector *, unsigned long long, ValidityMask &amp;, 
+    ValidityMask &amp;, SelectionVector *, SelectionVector *) binary_executor.hpp:444
+    --- 这个方法才是最终的向量执行代码，在前面有5-6层的解释和 dispatch 过程，其向量化是通过 compiler auto-vectorization 实现的。
+BinaryExecutor::SelectGenericLoopSelSwitch&lt;…&gt;(const int *, const int *, const SelectionVector *, 
+    const SelectionVector *, const SelectionVector *, unsigned long long, ValidityMask &amp;, 
+    ValidityMask &amp;, SelectionVector *, SelectionVector *) binary_executor.hpp:459
+BinaryExecutor::SelectGenericLoopSwitch&lt;…&gt;(const int *, const int *, const SelectionVector *, 
+    const SelectionVector *, const SelectionVector *, unsigned long long, ValidityMask &amp;, 
+    ValidityMask &amp;, SelectionVector *, SelectionVector *) binary_executor.hpp:475
+BinaryExecutor::SelectGeneric&lt;…&gt;(Vector &amp;, Vector &amp;, const SelectionVector *, 
+    unsigned long long, SelectionVector *, SelectionVector *) binary_executor.hpp:491
+BinaryExecutor::Select&lt;…&gt;(Vector &amp;, Vector &amp;, const SelectionVector *, 
+    unsigned long long, SelectionVector *, SelectionVector *) binary_executor.hpp:515
+TemplatedSelectOperation&lt;…&gt;(Vector &amp;, Vector &amp;, optional_ptr&lt;…&gt;, unsigned long long, 
+    optional_ptr&lt;…&gt;, optional_ptr&lt;…&gt;, optional_ptr&lt;…&gt;) execute_comparison.cpp:104
+VectorOperations::LessThanEquals(Vector &amp;, Vector &amp;, optional_ptr&lt;…&gt;, unsigned long long, 
+    optional_ptr&lt;…&gt;, optional_ptr&lt;…&gt;, optional_ptr&lt;…&gt;) execute_comparison.cpp:345
+    
+ExpressionExecutor::Select(const BoundComparisonExpression &amp;, ExpressionState *, 
+    const SelectionVector *, unsigned long long, SelectionVector *, 
+    SelectionVector *) execute_comparison.cpp:369
+ExpressionExecutor::Select(const Expression &amp;, ExpressionState *, const SelectionVector *, 
+    unsigned long long, SelectionVector *, SelectionVector *) expression_executor.cpp:236
+ExpressionExecutor::SelectExpression(DataChunk &amp;, SelectionVector &amp;) expression_executor.cpp:90
+PhysicalFilter::ExecuteInternal(ExecutionContext &amp;, DataChunk &amp;, DataChunk &amp;, GlobalOperatorState &amp;, OperatorState &amp;) const physical_filter.cpp:45
+......
+</code></pre>
+<p>当然，要对比一下在 release 模式下，是否会进行编译优化？从这个执行栈来看，这个解释过程还是很啰嗦的。如果进行更好的特化或者 TypedIR 的方式，相信在这一块的
+执行效率会更高。</p>
+<pre><code class="language-cpp">template &lt;class LEFT_TYPE, class RIGHT_TYPE, class OP, bool NO_NULL, bool HAS_TRUE_SEL, bool HAS_FALSE_SEL&gt;
+	static inline idx_t
+	SelectGenericLoop(const LEFT_TYPE *__restrict ldata, const RIGHT_TYPE *__restrict rdata,
+	                  const SelectionVector *__restrict lsel, const SelectionVector *__restrict rsel,
+	                  const SelectionVector *__restrict result_sel, idx_t count, ValidityMask &amp;lvalidity,
+	                  ValidityMask &amp;rvalidity, SelectionVector *true_sel, SelectionVector *false_sel) {
+		idx_t true_count = 0, false_count = 0;
+		for (idx_t i = 0; i &lt; count; i++) {
+			auto result_idx = result_sel-&gt;get_index(i);
+			auto lindex = lsel-&gt;get_index(i);
+			auto rindex = rsel-&gt;get_index(i);
+			if ((NO_NULL || (lvalidity.RowIsValid(lindex) &amp;&amp; rvalidity.RowIsValid(rindex))) &amp;&amp;
+			    OP::Operation(ldata[lindex], rdata[rindex])) {
+				if (HAS_TRUE_SEL) {
+					true_sel-&gt;set_index(true_count++, result_idx);
+				}
+			} else {
+				if (HAS_FALSE_SEL) {
+					false_sel-&gt;set_index(false_count++, result_idx);
+				}
+			}
+		}
+		if (HAS_TRUE_SEL) {
+			return true_count;
+		} else {
+			return count - false_count;
+		}
+	}
+</code></pre>
+<p>TODO: 这个方法是最终的向量化执行代码，依赖于编译器的 auto-vectorization，这段代码是否高效呢？ 可以截取一段特化的汇编代码，来看看其是否高效？</p>
+<ol>
+<li>l_sel, r_sel 的操作可否向量化？</li>
+<li>l_validity, r_validity 的操作可否向量化？</li>
+</ol>
+<p>从代码执行流程来看，这个解释执行的过程似乎还是有较高的成本：</p>
+<ol>
+<li>
+<p>通过模版技术，根据不同的数据类型、操作符等分派编译，避免在循环处理中进行分支判断操作。</p>
+<pre><code> case class Node(operator, left, right):
+     val leftVector = left.execute()
+     val rightVector = right.execute()
+     operator(leftVector, rightVector) -- 这里 operator 是一个向量化的特化版本函数
+
+// a &gt; b &amp;&amp; a &lt; 10 
+Node( BooleanAnd, 
+     Node( IntegerGT, a, b), 
+     Node( IntegerLT, a, 10)
+)
+</code></pre>
+</li>
+<li>
+<p>TypedIR 直接编译成为 SIMD 代码，在一个函数内，完成多个子表达式的计算，共享寄存器，减少 load 操作，执行速度会更快。</p>
+<p>这个方式感觉是最理想的，不过开发的成本可能会比较高，而且这个JIT自身的开销如何也需要考虑。</p>
+</li>
+<li>
+<p>此外，在这个SQL中，Optimizer 似乎引入了一个不必要的 filter: customer_id &lt;= 999999 当行数很大时，这个耗时是没有必要的。</p>
+</li>
+</ol>
+<h2 id="physicalhashjoin-sink-in-pipeline1"><a class="header" href="#physicalhashjoin-sink-in-pipeline1">PhysicalHashJoin (Sink in pipeline1)</a></h2>
+<h2 id="physicalhashjoin-operator-in-pipeline2"><a class="header" href="#physicalhashjoin-operator-in-pipeline2">PhysicalHashJoin (operator in pipeline2)</a></h2>
+<h2 id="physicalprojection-operator-in-pipeline2"><a class="header" href="#physicalprojection-operator-in-pipeline2">PhysicalProjection (Operator in pipeline2)</a></h2>
+<h2 id="physicalhashaggregate-sink-in-pipeline2"><a class="header" href="#physicalhashaggregate-sink-in-pipeline2">PhysicalHashAggregate (Sink in pipeline2)</a></h2>
+<h1 id="pipeline-调度"><a class="header" href="#pipeline-调度">Pipeline 调度</a></h1>
+<ol>
+<li>
+<p>Pipeline Task 的创建</p>
+</li>
+<li>
+<p>主要数据结构</p>
+<ul>
+<li><input disabled="" type="checkbox"> 画一个 class diagram, 理清楚这几个类的 CRC。</li>
+<li>Event 这个类是干什么的？</li>
+</ul>
+<ol>
+<li>
+<p>Executor: (共享粒度)</p>
+<ul>
+<li>physical_plan</li>
+<li>owned_plan</li>
+<li>root_pipeline</li>
+<li>pipelines</li>
+</ul>
+</li>
+<li>
+<p>Pipeline: 共享粒度，存储 global state，多线程访问需要考虑加锁</p>
+<ul>
+<li>source operator</li>
+<li>operators</li>
+<li>sink operator</li>
+<li>source_state: global state for Source</li>
+<li>sink.sink_state: global state for Sink</li>
+</ul>
+</li>
+<li>
+<p>PipelineExecutor (线程粒度)</p>
+<ul>
+<li>pipeline</li>
+<li>thread_context</li>
+<li>ExecutionContext</li>
+<li>local_source_state</li>
+<li>local_sink_state</li>
+</ul>
+</li>
+<li>
+<p>PipelineTask is a ExecutorTask(线程粒度) 在执行过程中有哪些是变化的？</p>
+<ul>
+<li>ExecutorTask:
+<ul>
+<li>task ?</li>
+<li>executor: Executor</li>
+<li>event</li>
+<li>thread_context</li>
+<li>op ?</li>
+</ul>
+</li>
+<li>pipeline: Pipeline</li>
+<li>pipeline_executor: PipelineExecutor (每个线程一个 PipelineExecutor 示例，存储 localState )</li>
+</ul>
+</li>
+<li>
+<p>ExecutionContext(client: ClientContext&amp;, thread, pipeline)</p>
+</li>
+</ol>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="pipeline-1"><a class="header" href="#pipeline-1">Pipeline</a></h1>
+<ul>
+<li>
+<p>DuckDB pipeline 与 Clickhouse pipeline 的差异？</p>
+<p><a href="https://ucasfl.github.io/slides/DataFun-ClickHouse-Vectorization-and-Pipeline.pdf">Clickhouse 向量化执行与Pipeline设计</a></p>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="operators"><a class="header" href="#operators">Operators</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="seq_scan"><a class="header" href="#seq_scan">seq_scan</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="filter"><a class="header" href="#filter">filter</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="projection"><a class="header" href="#projection">projection</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="hash_join"><a class="header" href="#hash_join">hash_join</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="hash_group_by"><a class="header" href="#hash_group_by">hash_group_by</a></h1>
+<p>我们使用示例 SQL 语句来学习 hash_group_by 算子的原理：</p>
+<pre><code class="language-sql">select name, count(freight), sum(freight) 
+from sale_orders so 
+left join customers c on c.customer_id = so.customer_id 
+where gender = 'M' and name like 'abc%'  and freight &gt; 10 and freight &lt; 50 
+group by name
+</code></pre>
+<p>在执行计划中，可以看到如下的 hash_group_by 算子， 该算子是 pipeline 的 Sink 节点，其谦虚处理节点为： join |&gt; projection |&gt; hash_group_by</p>
+<pre><code>┌───────────────────────────┐
+│       HASH_GROUP_BY       │
+│    ────────────────────   │
+│         Groups: #0        │
+│                           │
+│        Aggregates:        │
+│        count_star()       │
+│          sum(#1)          │
+│                           │
+└─────────────┬─────────────┘ 
+</code></pre>
+<p>对应的源代码为： <code>src/execution/operator/aggregate/physical_hash_aggregate.cpp</code></p>
+<pre><code class="language-cpp">class PhysicalHashAggregate : public PhysicalOperator {
+
+	//! The grouping sets, SQL 中分组+聚合的设置信息
+	GroupedAggregateData grouped_aggregate_data;
+	
+            vector&lt;unique_ptr&lt;Expression&gt;&gt; groups;  // 分组字段， 在这里例子中是 name
+            vector&lt;vector&lt;idx_t&gt;&gt; grouping_functions;  // 这个例子中没有使用分组函数
+            vector&lt;LogicalType&gt; group_types;        // 分组字段的类型， 在这里例子中是 VARCHAR
+
+
+            vector&lt;unique_ptr&lt;Expression&gt;&gt; aggregates;  // 聚合表达式， 这里是 count(freight), sum(freight)
+            vector&lt;LogicalType&gt; payload_types;         // freight 字段的类型
+            vector&lt;LogicalType&gt; aggregate_return_types; // 聚合函数的返回类型, 这里是 BIGINT, BIGINT
+            vector&lt;BoundAggregateExpression *&gt; bindings; // 对应聚合函数的 binding 信息
+            idx_t filter_count;
+        
+	vector&lt;GroupingSet&gt; grouping_sets;
+	//! The radix partitioned hash tables (one per grouping set)
+	vector&lt;HashAggregateGroupingData&gt; groupings;
+	unique_ptr&lt;DistinctAggregateCollectionInfo&gt; distinct_collection_info;
+	//! A recreation of the input chunk, with nulls for everything that isnt a group
+	vector&lt;LogicalType&gt; input_group_types;
+
+	// Filters given to Sink and friends
+	unsafe_vector&lt;idx_t&gt; non_distinct_filter;
+	unsafe_vector&lt;idx_t&gt; distinct_filter;
+
+	unordered_map&lt;Expression *, size_t&gt; filter_indexes;
+}
+
+class HashAggregateLocalSinkState: public LocalSinkState {
+	DataChunk aggregate_input_chunk;
+	
+	vector&lt;HashAggregateGroupingLocalState&gt; grouping_states;  // 保存对每个grouping的状态信息
+	// operator.local_state.grouping_states[group_idx].table_state.ht 存储一个 hashtable
+	
+	AggregateFilterDataSet filter_set;
+}
+
+class HashAggregateGlobalSinkState: public GlobalSinkState {
+    vector&lt;HashAggregateGroupingGlobalState&gt; grouping_states;
+	vector&lt;LogicalType&gt; payload_types;
+	//! Whether or not the aggregate is finished
+	bool finished = false;
+}
+
+class AggregateFunction: public BaseScalarFunction {
+    //! The hashed aggregate state sizing function
+	aggregate_size_t state_size;  // 
+	//! The hashed aggregate state initialization function
+	aggregate_initialize_t initialize;
+	//! The hashed aggregate update state function
+	aggregate_update_t update;
+	//! The hashed aggregate combine states function
+	aggregate_combine_t combine;
+	//! The hashed aggregate finalization function
+	aggregate_finalize_t finalize;
+	//! The simple aggregate update function (may be null)
+	aggregate_simple_update_t simple_update;
+	//! The windowed aggregate custom function (may be null)
+	aggregate_window_t window;
+	//! The windowed aggregate custom initialization function (may be null)
+	aggregate_wininit_t window_init = nullptr;
+
+	//! The bind function (may be null)
+	bind_aggregate_function_t bind;
+	//! The destructor method (may be null)
+	aggregate_destructor_t destructor;
+
+	//! The statistics propagation function (may be null)
+	aggregate_statistics_t statistics;
+
+	aggregate_serialize_t serialize;
+	aggregate_deserialize_t deserialize;
+	//! Whether or not the aggregate is order dependent
+	AggregateOrderDependent order_dependent;
+	//! Additional function info, passed to the bind
+	shared_ptr&lt;AggregateFunctionInfo&gt; function_info;
+}
+
+</code></pre>
+<p>分别在 Sink 方法, Combine 方法， Finalize 方法中添加断点，调试执行该算子的代码，跟踪其执行流程，进一步理解该算子的数据结构、算法。</p>
+<p>TODO:</p>
+<ul>
+<li>理解 duckdb 是如何通过 template 来实现不同类型的聚合函数的处理的。</li>
+<li>sum(x) 是如何映射到特定版本的函数的？</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="storage"><a class="header" href="#storage">Storage</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="cli"><a class="header" href="#cli">CLI</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="read_csv-表函数分析"><a class="header" href="#read_csv-表函数分析">read_csv 表函数分析</a></h1>
+<ul>
+<li>
+<p>ReadCSVBind        – 返回表的 schema 信息，主要是列名 和 类型信息。</p>
+<pre><code class="language-cpp">  typedef unique_ptr&lt;FunctionData&gt; (*table_function_bind_t)(
+      ClientContext &amp;context, 
+      TableFunctionBindInput &amp;input,
+      vector&lt;LogicalType&gt; &amp;return_types, 
+      vector&lt;string&gt; &amp;names
+  );
+</code></pre>
+<p>在 Plan 阶段，会调用, 返回值 FunctionData 会传递到后续调用中，例如 TableFunctionInput.bind_data;</p>
+</li>
+<li>
+<p>ReadCSVFunction    – main function</p>
+<pre><code class="language-cpp"> typedef void (*table_function_t)(
+      ClientContext &amp;context, 
+      TableFunctionInput &amp;data, 
+      DataChunk &amp;output
+ );
+</code></pre>
+<p>在 Pipeline 执行阶段，有 Source Operator 调用。</p>
+<ol>
+<li>为什么是3个线程在执行？</li>
+<li>这三个线程是如何协作的？例如并行处理文件的行数？</li>
+</ol>
+</li>
+<li>
+<p>ReadCSVInitGlobal   – 可选</p>
+</li>
+<li>
+<p>ReadCSVInitLocal    – 可选</p>
+<p>CVS Scanner: 按照每 8M 一个 scanner , 每个 scanner 分配一个扫描范围:</p>
+<ul>
+<li>如果一个 scanner 扫描完了当前block，需要继续扫描下一个 scanner 的数据，直到遇到一个换行符。</li>
+<li>对非第一个 scanner，会先忽略直到第一个换行符的数据</li>
+</ul>
+<p>优化： CSV Scanner 是否可以考虑使用 SIMD 加速？</p>
+<p>StringValueScanner: BaseScanner:</p>
+<ul>
+<li>BaseScanner
+<ul>
+<li>iterator: CSVIterator
+<ul>
+<li>pos: CSVPosition( buffer_idx,  buffer_pos)  – 当前位置</li>
+<li>boundary: CSVBoundary( buffer_idx, buffer_pos, boundary_idx, end_pos ) – 边界</li>
+</ul>
+</li>
+<li>CSVFileHandle
+<ul>
+<li>CSVOptions</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code>duckdb::CSVBuffer::CSVBuffer(duckdb::CSVFileHandle &amp;, duckdb::ClientContext &amp;, unsigned long long, unsigned long long, unsigned long long, unsigned long long) csv_buffer.cpp:28
+duckdb::CSVBuffer::CSVBuffer(duckdb::CSVFileHandle &amp;, duckdb::ClientContext &amp;, unsigned long long, unsigned long long, unsigned long long, unsigned long long) csv_buffer.cpp:25
+duckdb::make_shared_ptr&lt;…&gt;(duckdb::CSVFileHandle &amp;, duckdb::ClientContext &amp;, unsigned long long &amp;, unsigned long long &amp;&amp;, unsigned long long &amp;, unsigned long long &amp;&amp;) helper.hpp:73
+duckdb::CSVBuffer::Next(duckdb::CSVFileHandle &amp;, unsigned long long, unsigned long long, bool &amp;) csv_buffer.cpp:44
+duckdb::CSVBufferManager::ReadNextAndCacheIt() csv_buffer_manager.cpp:42
+duckdb::CSVBufferManager::GetBuffer(unsigned long long) csv_buffer_manager.cpp:71
+duckdb::CSVIterator::Next(duckdb::CSVBufferManager &amp;) scanner_boundary.cpp:54
+duckdb::CSVGlobalState::Next(duckdb::optional_ptr&lt;…&gt;) global_csv_state.cpp:143
+duckdb::ReadCSVInitLocal(duckdb::ExecutionContext &amp;, duckdb::TableFunctionInitInput &amp;, duckdb::GlobalTableFunctionState *) read_csv.cpp:212
+   -- 会调用 TableFunction.init_local 进行初始化，调用 global_state.Next() 获取 当前任务的一个 CSV-Scanner
+duckdb::TableScanLocalSourceState::TableScanLocalSourceState(duckdb::ExecutionContext &amp;, duckdb::TableScanGlobalSourceState &amp;, const duckdb::PhysicalTableScan &amp;) physical_table_scan.cpp:75
+duckdb::TableScanLocalSourceState::TableScanLocalSourceState(duckdb::ExecutionContext &amp;, duckdb::TableScanGlobalSourceState &amp;, const duckdb::PhysicalTableScan &amp;) physical_table_scan.cpp:71
+duckdb::make_uniq&lt;…&gt;(duckdb::ExecutionContext &amp;, duckdb::TableScanGlobalSourceState &amp;, const duckdb::PhysicalTableScan &amp;) helper.hpp:65
+
+duckdb::PhysicalTableScan::GetLocalSourceState(duckdb::ExecutionContext &amp;, duckdb::GlobalSourceState &amp;) const physical_table_scan.cpp:84
+   -- 每个 PipelineExecutor 中的 Source/Sink 都会有 local state
+duckdb::PipelineExecutor::PipelineExecutor(duckdb::ClientContext &amp;, duckdb::Pipeline &amp;) pipeline_executor.cpp:27
+
+duckdb::PipelineExecutor::PipelineExecutor(duckdb::ClientContext &amp;, duckdb::Pipeline &amp;) pipeline_executor.cpp:14
+duckdb::make_uniq&lt;…&gt;(duckdb::ClientContext &amp;, duckdb::Pipeline &amp;) helper.hpp:65
+duckdb::PipelineTask::ExecuteTask(duckdb::TaskExecutionMode) pipeline.cpp:34
+duckdb::ExecutorTask::Execute(duckdb::TaskExecutionMode) executor_task.cpp:44
+duckdb::TaskScheduler::ExecuteForever(std::__1::atomic&lt;…&gt; *) task_scheduler.cpp:189
+duckdb::ThreadExecuteTasks(duckdb::TaskScheduler *, std::__1::atomic&lt;…&gt; *) task_scheduler.cpp:279
+</code></pre>
+<p>CSVGlobalState:</p>
+<ul>
+<li>fileScans: <code>vector&lt;shared_ptr&lt;CSVFileScan&gt;&gt;</code> ; 每一个 csv 文件一个 CSVFileScan
+<ul>
+<li>file_path</li>
+<li>file_size: 文件大小</li>
+<li>buffer_manager: 管理文件的多个 buffer
+<ul>
+<li>cacheed_buffers: <code>vector&lt;CSVBuffer&gt;</code>  – 每个 CSVBuffer 对应一个 PipelineExecutor
+<ul>
+<li>buffer_idx</li>
+<li>actual_buffer_size</li>
+<li>handle  – 指向 buffer 数据
+每次 CSVGlobalState.Next() 获取下一个 StringValueScanner 时，会分配一个 Buffer(8M)，将文件数据读取到 buffer 中。在后面 scan 处理
+时，从内存中进行读取。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>这一块的代码写得很复杂。</li>
+</ul>
+</li>
+<li>
+<p>table_function.pushdown_complex_filter 可选</p>
+<p>在 Optimizer 阶段，会调用。</p>
+<ul>
+<li><input disabled="" type="checkbox"> 在前面应该有一个处理 bind_data 的阶段，获取表的 types, names 等信息。</li>
+</ul>
+</li>
+</ul>
+<p>[ ] 需要整理出一个 table_function 的调用时序图，帮助理解每一个可选函数存在的价值。</p>
+<p>阅读了上述信息后，可以开始评估编写我们自己的 table function 了，接下来，我们需要的一个场景是：</p>
+<ol>
+<li>在 Java 中使用 JDBC 读取业务数据，将 ResultSet 写入到一个 DataChunk 中。（提供API 写 data chunk）</li>
+<li>创建一个 table function，将 DataChunk 中的数据返回给 DuckDB。</li>
+</ol>
+<pre><code class="language-java">    
+    DataChunk chunk = new DataChunk();  
+    // prvoide 
+    connection.registerDataChunk("asdf", chunk);
+    
+    connection.executeQuery("select * from read_asdf");
+</code></pre>
+<p>或者：
+jdbc ResultSet -&gt; arrow.vector.VectorSchemaRoot -&gt; ArrowStreamReader -&gt; arrow.c.ArrowArrayStream -&gt; duckdb</p>
+<pre><code class="language-java">import org.apache.arrow.memory.BufferAllocator;
+import org.apache.arrow.memory.RootAllocator;
+import org.apache.arrow.vector.VectorSchemaRoot;
+import org.apache.arrow.vector.ipc.ArrowStreamWriter;
+import org.apache.arrow.vector.ipc.message.ArrowRecordBatch;
+import org.apache.arrow.vector.types.pojo.Schema;
+import org.apache.arrow.c.ArrowArrayStream;
+import org.apache.arrow.c.ArrowArrayStreamListener;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+public class ArrowConversionExample {
+
+    public static ArrowArrayStream convertToArrowArrayStream(VectorSchemaRoot root) throws IOException {
+        BufferAllocator allocator = new RootAllocator(Long.MAX_VALUE);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ArrowStreamWriter writer = new ArrowStreamWriter(root, null, out);
+
+        // Write the VectorSchemaRoot to the output stream
+        writer.start();
+        writer.writeBatch();
+        writer.end();
+
+        // Create an ArrowArrayStream from the output stream
+        ArrowArrayStream arrayStream = new ArrowArrayStream();
+        arrayStream.setListener(new ArrowArrayStreamListener() {
+            @Override
+            public void onNext(ArrowRecordBatch batch) {
+                // Handle the ArrowRecordBatch
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                // Handle the error
+            }
+
+            @Override
+            public void onCompleted() {
+                // Handle completion
+            }
+        });
+
+        // Initialize the ArrowArrayStream with the written data
+        arrayStream.init(out.toByteArray(), allocator);
+
+        return arrayStream;
+    }
+
+    public static void main(String[] args) throws IOException {
+        // Example usage
+        BufferAllocator allocator = new RootAllocator(Long.MAX_VALUE);
+        Schema schema = new Schema(/* define your schema here */);
+        VectorSchemaRoot root = VectorSchemaRoot.create(schema, allocator);
+
+        // Populate the VectorSchemaRoot with data
+        // ...
+
+        ArrowArrayStream arrayStream = convertToArrowArrayStream(root);
+
+        // Use the ArrowArrayStream
+        // ...
+    }
+}
+</code></pre>
+<p>这个方式是有复制的，需要考虑如何减少复制。</p>
+<ol>
+<li>https://arrow.apache.org/docs/java/jdbc.html</li>
+<li>https://duckdb.org/docs/api/java#arrow-import</li>
+</ol>
+<ul>
+<li>ArrowReader
+<ul>
+<li>Field(name, nullable, type, …)</li>
+<li>Schema(fields, metadata)</li>
+<li>batches: List[ArrowRecordBatch]
+<ul>
+<li>ArrowRecordBatch( length, nodes, buffers) // each field encode in a buffer</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>这一块需要研究一下，整体成本相比自己实现可能会简单一些。</p>
+<ul>
+<li>Pipeline::Schedule 负责创建 PipelineTask 并提交调度。
+对 TableScan, 会调用 source_state-&gt;MaxThreads() 获取最大线程数，然后创建对应的 PipelineTask，一般会调用 对应 operator.globalState.MaxThreads()
+对 CSV 文件，取文件大小 / 8M</li>
+<li>TODO 理解 PipelineEvent</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="extensions"><a class="header" href="#extensions">Extensions</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="typed-ir"><a class="header" href="#typed-ir">Typed IR</a></h1>
+<p>使用 Typed IR 来作为 Physical Plan 的输入：</p>
+<ol>
+<li>可以将 Executor 作为一个独立的模块。</li>
+<li>Executor 可以独立嵌入到的应用中，由其他的应用生成 TypedIR，然后交给 Executor 执行。</li>
+<li>TypedIR 可以手工编写，独立优化、调试，更好的进行新 operator 的开发、测试、优化工作。</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="subquery-optimization"><a class="header" href="#subquery-optimization">subquery optimization</a></h1>
+<p>subquery 的优化包括：</p>
+<ol>
+<li>将 行级的 subquery 转换为 batch的 JOIN 操作</li>
+</ol>
+<p>表达能力：</p>
+<ul>
+<li>与 MDX 的 Top-Down + Pull 模型匹配，可以支持复杂的度量计算。
+<ul>
+<li>类似于 DAX 的 Calculate 函数，修改查询上下文。</li>
+</ul>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="misc"><a class="header" href="#misc">Misc</a></h1>
+<ol>
+<li>DataType</li>
+<li>Value</li>
+<li>Vector[DataType]
+<ol>
+<li>FlatVector</li>
+<li>DictionaryVector</li>
+<li>ConstantVector</li>
+<li>SequenceVector</li>
+<li>SelectorVector ……</li>
+</ol>
+</li>
+<li>DataChunk</li>
+<li>Operator
+<ol>
+<li>Filter</li>
+<li>Projection</li>
+<li>Join</li>
+<li>Hash Group - Aggregate</li>
+<li>Window</li>
+</ol>
+</li>
+<li>Pipeline</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="mermaid-3a6b472a.min.js"></script>
+        <script src="mermaid-init-025d9952.js"></script>
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>

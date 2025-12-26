@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>dapeng JSON 流式处理简介 | 程序人生</title>
+<meta name="description" content="dapeng支持使用JSON作为RPC的内容编码协议，且提供了独特的流式处理API，可以以极高的效率处理JSON通讯，本文介绍这个API的设计思路。">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/dapeng-json/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="dapeng JSON 流式处理简介">
+  <meta name="twitter:description" content="dapeng支持使用JSON作为RPC的内容编码协议，且提供了独特的流式处理API，可以以极高的效率处理JSON通讯，本文介绍这个API的设计思路。">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="dapeng JSON 流式处理简介">
+  <meta property="og:description" content="dapeng支持使用JSON作为RPC的内容编码协议，且提供了独特的流式处理API，可以以极高的效率处理JSON通讯，本文介绍这个API的设计思路。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/dapeng-json/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="dapeng JSON 流式处理简介">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/dapeng-json/"
+      },
+      "headline": "dapeng JSON 流式处理简介",
+      "image": ,
+      "datePublished": "2020-09-04T12:00:00+00:00",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "dapeng JSON 流式处理简介"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "dapeng JSON 流式处理简介",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "dapeng支持使用JSON作为RPC的内容编码协议，且提供了独特的流式处理API，可以以极高的效率处理JSON通讯，本文介绍这个API的设计思路。"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Dapeng Json",
+            "item": "https://wangzaixiang.github.io/blog/dapeng-json/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/dapeng-json/#bei-jing">背景</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/dapeng-json/#dapeng-jsonde-she-ji-mu-biao">dapeng-json的设计目标</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/dapeng-json/#dapeng-json-de-shi-xian-si-lu">dapeng-json 的实现思路</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/dapeng-json/#chang-gui-fang-shi-string-jsonobject-pojo-binary">常规方式：string -&gt; JSONObject -&gt; POJO -&gt; Binary</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/dapeng-json/#ji-yu-liu-de-zhuan-huan-json-bytes-binary">基于流的转换：JSON bytes -&gt; Binary</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/dapeng-json/#others">others</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/dapeng-json/#numberlei-xing-de-shu-ju-zhuan-huan">Number类型的数据转换</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>dapeng JSON 流式处理简介</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/spurious-weakup/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted September  4, 2020 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>17&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/litelement/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="bei-jing">背景</h1>
+<p>dapeng的原生协议是thrift, 包括二进制、压缩二进制两种模式. 原生协议的优势是有丰富的数据类型支持能力（优于JSON）, 传输格式紧凑（远比JSON更小,
+尤其是压缩二进制格式）, 序列化开销小（几乎没有解析成本和数据转换成本）, 这些优点是dapeng选择thrift的基本原因.</p>
+<p>虽然有很多的优势, 原生的thrift协议最大的缺点就是对"人"不友好, 而JSON则是human readable的最优选择, 目前已是互联网应用的事实标准.
+它相比XML更为简洁, 当然也更为紧凑, 便于开发者阅读, 非常方便在WEB上应用. 这使得它取代xml成为了数据交换事实上的行业标准. 尽管语言之争是个永恒的话题,
+但在数据交换格式上, JSON是毫无争议的王者.</p>
+<p>如何为dapeng服务提供对JSON的支持, 可以使用restful的形式来调用dapeng服务, 从而方便WEB前端、PHP或者命令行工具来调用服务呢？
+dapeng提供了API Gateway, 将JSON请求转换成为thrift请求, 对外提供了一个restful + JSON的API接入服务.
+API Gateway包括了鉴权、流控、路由等多个功能, 但其核心的功能是完成JSON到thrift的双向数据转换工作, 本文介绍了dapeng-json的设计特色,
+包括dapeng是如何高效率的完成数据转化、如何处理可变压缩二进制格式等挑战的.</p>
+<blockquote>
+<p>dapeng-json 在技术上的一个最大的特点是：采用流式处理的方式，无论是对请求和返回信息，都无需构建完整的 JSON 对象，从而大大减少内存的分配和GC的
+开销，即使对于巨大的请求/返回，也可以在很少的内存消耗下完成转换，因对，对于网关一类的应用来说，可以带来巨大的性能提升，使用普通的 4core 4G 的
+虚拟机就可以达到 20K+/s 的 QPS，这是非流式处理的方式很难达到的。</p>
+</blockquote>
+<h1 id="dapeng-jsonde-she-ji-mu-biao">dapeng-json的设计目标</h1>
+<p>dapeng-json的最终目的就是实现JSON字符串与基于thrift协议格式的二进制流之间的高效互换.具体有如下三个指标:</p>
+<ul>
+<li>高性能
+考虑到 dapeng-json 作为 http 网关甚至后续 service-mesh 的核心模块, 要求其能实现高效的序列化以及反序列化, 以支持海量请求的处理. 如果序列化的开销高, 则势必会降低网关的接入能力.
+<blockquote>
+<p>toBeDone, 性能参数(JSON跟普通java客户端的性能对比)</p>
+</blockquote>
+</li>
+<li>低内存使用
+虽然大部分情况下的JSON请求、返回都是数据量较小的场景, 但作为平台框架, 也需要应对更大的JSON请求和返回, 比如1M、甚至10M. 在这些场景下, 如果需要占用大量的内存, 那么势必导致巨大的内存需求, 同时引发频繁的GC操作, 也会联动影响到整个网关的性能.
+dapeng-json参考了XML SAX API的设计思想, 创造性的引入了JSON Stream API, 采用流式的处理模式, 实现JSON 对 thrift 的双向转换, 无论数据包有多大, 都可以在一定固定的内存规模内完成.</li>
+<li>容错性好
+在dapeng中, IDL层面定义了基本的服务调用前置条件, 譬如必须使用正确的数据类型, 有的字段是必填的. 在使用json-thrift转换时,
+必须能够正确的进行数据转换, 不要把错误的请求传递给服务方. 并且需要在有错误的情况下, 清晰的反馈错误, 以便开发者进行定位.</li>
+</ul>
+<p>在介绍dapeng-JSON的设计思路之前, 我们先看看dapeng对JSON的支持架构:</p>
+<p><img src="https://wangzaixiang.github.io/blog/dapeng-json/dapeng-json.png" alt="image" /></p>
+<blockquote>
+<p>右上角的两个模块(dapeng-json, ServiceMetaData), 再暴露一个http端口, 可以构成一个典型的 HttpServiceAgent.</p>
+</blockquote>
+<h1 id="dapeng-json-de-shi-xian-si-lu">dapeng-json 的实现思路</h1>
+<p>让我们重温一下dapeng-json的使命:</p>
+<blockquote>
+<p>dapeng-json的最终目的就是实现 JSON 字符串与 thrif 格式的二进制流之间的高效互换</p>
+</blockquote>
+<h2 id="chang-gui-fang-shi-string-jsonobject-pojo-binary">常规方式：string -&gt; JSONObject -&gt; POJO -&gt; Binary</h2>
+<ol>
+<li>将JSON 字符串转换为 JSON 对象模型（JSONObject）</li>
+<li>然后通过三方JSON-POJO映射框架（如Google的Gson, 阿里的FastJSON等), 将JSONObject转换成为POJO,</li>
+<li>通过dapeng生成的POJO序列化代码完成从POJO到thrfit的转换过程.</li>
+</ol>
+<p>部分框架可以结合1和2, 直接从JSON字符串转换成为 POJO.</p>
+<p>不过, 这个设计不满足我们的设计要求：</p>
+<ul>
+<li>这个过程经过了三次转换, 会产生大量的临时对象, 有很大的内存要求</li>
+<li>使用反射方式对于旨在榨干服务器性能以获取高吞吐量的系统来说, 难以达到性能最佳</li>
+<li>这个方案有很强的“类型”需求, 在 API 网关中必须依赖 POJO 包, 要求JSON模块依赖服务的api包（否则没法知晓服务接口的输入输出参数）, 这个依赖会降低API网关的动态能力, 使得部署维护复杂.</li>
+</ul>
+<h2 id="ji-yu-liu-de-zhuan-huan-json-bytes-binary">基于流的转换：JSON bytes -&gt; Binary</h2>
+<p>这是dapeng-json所采用的方式, 显而易见, 这个过程只经历了一次协议转换, 即直接将从网络上接收到的一个JSON字节流直接转换成为thrift数据包.</p>
+<p><img src="https://wangzaixiang.github.io/blog/dapeng-json/JsonSerializer-class.png" alt="image" /></p>
+<h3 id="jsoncallback">JSONCallback</h3>
+<p>从上节我们可以得知, JSON的组成元素类型不多, 且每种元素都有自己的开始/结束字符, 我们暂且称这些字符为关键字符.</p>
+<p>为了高效的处理JSON字符串, 我们采用了Streaming的处理方式:逐个字符读入JSON字符串,碰到关键字符就触发一定的处理动作. 为此, 我们首先创建一个接口JSONCallback, 并定义了一组回调方法用以处理每种JSON元素:</p>
+<pre data-lang="Java" style="background-color:#2b303b;color:#c0c5ce;" class="language-Java "><code class="language-Java" data-lang="Java"><span style="color:#b48ead;">package </span><span>com.github.dapeng.json;
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>com.github.dapeng.org.apache.thrift.</span><span style="color:#ebcb8b;">TException</span><span>;
+</span><span>
+</span><span style="color:#65737e;">/**
+</span><span style="color:#65737e;"> * </span><span style="color:#b48ead;">@author</span><span style="color:#65737e;"> zxwang
+</span><span style="color:#65737e;"> */
+</span><span style="color:#65737e;">public interface JSONCallback {
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called at start of JSON object, typical handle the &#39;{&#39;
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onStartObject() throws TException;
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called at end of JSON object, typical handle the &#39;}&#39;
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onEndObject() throws TException;
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called at start of JSON array, typical handle the &#39;[&#39;
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onStartArray() throws TException;
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called at end of JSON array, typical handle the &#39;]&#39;
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onEndArray() throws TException;
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called at start of JSON field, such as: &quot;orderId&quot;:130
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@param </span><span style="color:#bf616a;">name</span><span style="color:#65737e;"> name of the filed, as for the example above, that is &quot;orderId&quot;
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onStartField(String name) throws TException;
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called at end of JSON field
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onEndField() throws TException;
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called when a boolean value is met,
+</span><span style="color:#65737e;">     * as to given field: &lt;</span><span style="color:#bf616a;">pre</span><span style="color:#65737e;">&gt;&quot;expired&quot;:false&lt;/</span><span style="color:#bf616a;">pre</span><span style="color:#65737e;">&gt;
+</span><span style="color:#65737e;">     * First onStartField(&quot;expired&quot;) is called, followed by a call onBoolean(false) and a call onEndField()
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@param </span><span style="color:#bf616a;">value
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onBoolean(boolean value) throws TException;
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called when a double value is met.
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@param </span><span style="color:#bf616a;">value
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onNumber(double value) throws TException;
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called when a long/int value is met.
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@param </span><span style="color:#bf616a;">value
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onNumber(long value) throws TException;
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called when a null value is met.
+</span><span style="color:#65737e;">     * Such as: &quot;subItemId&quot;:null
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onNull() throws TException;
+</span><span style="color:#65737e;">
+</span><span style="color:#65737e;">    /**
+</span><span style="color:#65737e;">     * Called when a String value is met.
+</span><span style="color:#65737e;">     * Such as: &quot;name&quot;: &quot;Walt&quot;
+</span><span style="color:#65737e;">     *
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@param </span><span style="color:#bf616a;">value
+</span><span style="color:#65737e;">     * </span><span style="color:#b48ead;">@throws </span><span style="color:#65737e;">TException
+</span><span style="color:#65737e;">     */
+</span><span style="color:#65737e;">    void onString(String value) throws TException;
+</span><span style="color:#65737e;">}
+</span></code></pre>
+<blockquote>
+<p>这个接口的设计借鉴了XML SAX的设计思想, 既可用于序列化（生成JSON）, 也可以反序列化（解析JSON字符串）.</p>
+</blockquote>
+<p>此外, dapeng核心包里定义了一个通用的编解码接口:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>package com.github.dapeng.core;
+</span><span>
+</span><span>import com.github.dapeng.org.apache.thrift.TException;
+</span><span>import com.github.dapeng.org.apache.thrift.protocol.TProtocol;
+</span><span>
+</span><span>/**
+</span><span> * 通用编解码器接口
+</span><span> * @author ever
+</span><span> * @date 2017/7/17
+</span><span> */
+</span><span>public interface BeanSerializer&lt;T&gt; {
+</span><span>
+</span><span>    /**
+</span><span>     * 反序列化方法, 从thrift协议格式中转换回PoJo
+</span><span>     * @param iproto
+</span><span>     * @return
+</span><span>     * @throws TException
+</span><span>     */
+</span><span>    T read(TProtocol iproto) throws TException;
+</span><span>
+</span><span>    /**
+</span><span>     * 序列化方法, 把PoJo转换为thrift协议格式
+</span><span>     * @param bean
+</span><span>     * @param oproto
+</span><span>     * @throws TException
+</span><span>     */
+</span><span>    void write(T bean, TProtocol oproto) throws TException;
+</span><span>
+</span><span>    /**
+</span><span>     * PoJo校验方法
+</span><span>     * @param bean
+</span><span>     * @throws TException
+</span><span>     */
+</span><span>    void validate(T bean) throws TException;
+</span><span>
+</span><span>    /**
+</span><span>     * 输出对人友好的信息
+</span><span>     * @param bean
+</span><span>     * @return
+</span><span>     */
+</span><span>    String toString(T bean);
+</span><span>}
+</span><span>
+</span></code></pre>
+<p>dapeng-JSON通过JSONSerializer实现了这个编解码器.</p>
+<p>在深入具体实现之前, 我们先了解一下dapeng的服务元信息, 因为服务元信息是dapeng很多模块的关键.</p>
+<h3 id="dapeng-yuan-xin-xi">dapeng 元信息</h3>
+<p>前文提到, dapeng服务有丰富的元信息, 非常类似于Java Class的反射信息, 通过反射, 我们动态的访问一个对象的各个字段、方法, 而无需依赖于编译时期的类型信息. 同样, 有了服务元信息, 我们也可以在运行期访问到IDL中定义的所有信息.</p>
+<blockquote>
+<p>可以通过元数据信息自动生成java/scala等客户端代码.</p>
+</blockquote>
+<blockquote>
+<p>可以通过元数据信息在客户端序列化/反序列接口参数或者返回信息的时候, 校验每一个字段是否有效.</p>
+</blockquote>
+<p>这里是一个服务元信息的示例：</p>
+<pre data-lang="xml" style="background-color:#2b303b;color:#c0c5ce;" class="language-xml "><code class="language-xml" data-lang="xml"><span>&lt;</span><span style="color:#bf616a;">request </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">getAddress_args</span><span>&quot;&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">fields</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">field </span><span style="color:#d08770;">tag</span><span>=&quot;</span><span style="color:#a3be8c;">1</span><span>&quot; </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">request</span><span>&quot; </span><span style="color:#d08770;">optional</span><span>=&quot;</span><span style="color:#a3be8c;">false</span><span>&quot; </span><span style="color:#d08770;">privacy</span><span>=&quot;</span><span style="color:#a3be8c;">false</span><span>&quot;&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">kind</span><span>&gt;STRUCT&lt;/</span><span style="color:#bf616a;">kind</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">ref</span><span>&gt;com.today.api.dictionary.request.GetAddressRequest&lt;/</span><span style="color:#bf616a;">ref</span><span>&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">doc</span><span>&gt; 查询请求&lt;/</span><span style="color:#bf616a;">doc</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">field</span><span>&gt;
+</span><span>    &lt;/</span><span style="color:#bf616a;">fields</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">request</span><span>&gt;
+</span><span>&lt;</span><span style="color:#bf616a;">struct </span><span style="color:#d08770;">namespace</span><span>=&quot;</span><span style="color:#a3be8c;">com.today.api.dictionary.request</span><span>&quot; </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">GetAddressRequest</span><span>&quot;&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">doc</span><span>&gt;新增/编辑 字典 的请求实体&lt;/</span><span style="color:#bf616a;">doc</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">fields</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">field </span><span style="color:#d08770;">tag</span><span>=&quot;</span><span style="color:#a3be8c;">1</span><span>&quot; </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">provinceCode</span><span>&quot; </span><span style="color:#d08770;">optional</span><span>=&quot;</span><span style="color:#a3be8c;">true</span><span>&quot; </span><span style="color:#d08770;">privacy</span><span>=&quot;</span><span style="color:#a3be8c;">false</span><span>&quot;&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">kind</span><span>&gt;STRING&lt;/</span><span style="color:#bf616a;">kind</span><span>&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">doc</span><span>&gt;省级地址编码&lt;/</span><span style="color:#bf616a;">doc</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">field</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">field </span><span style="color:#d08770;">tag</span><span>=&quot;</span><span style="color:#a3be8c;">2</span><span>&quot; </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">cityCode</span><span>&quot; </span><span style="color:#d08770;">optional</span><span>=&quot;</span><span style="color:#a3be8c;">true</span><span>&quot; </span><span style="color:#d08770;">privacy</span><span>=&quot;</span><span style="color:#a3be8c;">false</span><span>&quot;&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">kind</span><span>&gt;STRING&lt;/</span><span style="color:#bf616a;">kind</span><span>&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">doc</span><span>&gt;市级地址编码&lt;/</span><span style="color:#bf616a;">doc</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">field</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">field </span><span style="color:#d08770;">tag</span><span>=&quot;</span><span style="color:#a3be8c;">3</span><span>&quot; </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">districtCode</span><span>&quot; </span><span style="color:#d08770;">optional</span><span>=&quot;</span><span style="color:#a3be8c;">true</span><span>&quot; </span><span style="color:#d08770;">privacy</span><span>=&quot;</span><span style="color:#a3be8c;">false</span><span>&quot;&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">kind</span><span>&gt;STRING&lt;/</span><span style="color:#bf616a;">kind</span><span>&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">doc</span><span>&gt;区级地址编码&lt;/</span><span style="color:#bf616a;">doc</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">field</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">field </span><span style="color:#d08770;">tag</span><span>=&quot;</span><span style="color:#a3be8c;">4</span><span>&quot; </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">townCode</span><span>&quot; </span><span style="color:#d08770;">optional</span><span>=&quot;</span><span style="color:#a3be8c;">true</span><span>&quot; </span><span style="color:#d08770;">privacy</span><span>=&quot;</span><span style="color:#a3be8c;">false</span><span>&quot;&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">kind</span><span>&gt;STRING&lt;/</span><span style="color:#bf616a;">kind</span><span>&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">doc</span><span>&gt;乡镇级地址编码&lt;/</span><span style="color:#bf616a;">doc</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">field</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">field </span><span style="color:#d08770;">tag</span><span>=&quot;</span><span style="color:#a3be8c;">5</span><span>&quot; </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">streetCode</span><span>&quot; </span><span style="color:#d08770;">optional</span><span>=&quot;</span><span style="color:#a3be8c;">true</span><span>&quot; </span><span style="color:#d08770;">privacy</span><span>=&quot;</span><span style="color:#a3be8c;">false</span><span>&quot;&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">kind</span><span>&gt;STRING&lt;/</span><span style="color:#bf616a;">kind</span><span>&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">dataType</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">doc</span><span>&gt;街道级地址编码&lt;/</span><span style="color:#bf616a;">doc</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">field</span><span>&gt;
+</span><span>    &lt;/</span><span style="color:#bf616a;">fields</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">struct</span><span>&gt;
+</span></code></pre>
+<h3 id="jsonserializer-write-xu-lie-hua-jsonstring-binarry-zi-ding-xiang-xia-jie-xi-json">JSONSerializer.write： 序列化(JSONString-&gt;Binarry)：自顶向下解析JSON</h3>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span>@</span><span style="color:#bf616a;">Override
+</span><span style="color:#b48ead;">public</span><span> void </span><span style="color:#bf616a;">write</span><span>(</span><span style="color:#ebcb8b;">String</span><span> input, </span><span style="color:#ebcb8b;">TProtocol</span><span> oproto) throws </span><span style="color:#ebcb8b;">TException </span><span>{
+</span><span>    </span><span style="color:#ebcb8b;">JsonReader</span><span> jsonReader = </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">JsonReader</span><span>(service, method, version, struct, requestByteBuf, oproto);
+</span><span>    </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">JsonParser</span><span>(input, jsonReader).</span><span style="color:#bf616a;">parseJsValue</span><span>();
+</span><span>}
+</span></code></pre>
+<p>我们通过JsonParser实现对JSON字符串的解析, 在流式解析JSON的过程中, 我们会产生JsonCallback事件, JsonReader就是负责将相应的事件转化为Thrift的操作.</p>
+<p>考虑之前提到的JSON例子:</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">createOrderRequest</span><span>&quot;: {
+</span><span>        &quot;</span><span style="color:#a3be8c;">memberId</span><span>&quot;: </span><span style="color:#d08770;">1024</span><span>,
+</span><span>        &quot;</span><span style="color:#a3be8c;">payCode</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">tidf3325aaeny</span><span>&quot;,
+</span><span>        &quot;</span><span style="color:#a3be8c;">storeIds: [28, 35, 64],</span><span style="background-color:#bf616a;color:#2b303b;">
+</span><span>        &quot;</span><span style="color:#a3be8c;">items</span><span>&quot;: [
+</span><span>           {
+</span><span>               &quot;</span><span style="color:#a3be8c;">skuId</span><span>&quot;: </span><span style="color:#d08770;">24</span><span>,
+</span><span>               &quot;</span><span style="color:#a3be8c;">amount</span><span>&quot;: </span><span style="color:#d08770;">4.5
+</span><span>           }, {
+</span><span>               &quot;</span><span style="color:#a3be8c;">skuId</span><span>&quot;: </span><span style="color:#d08770;">106</span><span>,
+</span><span>               &quot;</span><span style="color:#a3be8c;">amount</span><span>&quot;: </span><span style="color:#d08770;">20.0
+</span><span>           }
+</span><span>        ]
+</span><span>    }
+</span><span>}
+</span></code></pre>
+<p>对应的 JSONCallback 序列如下:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>- onStartObject
+</span><span>    - onStartFiled createOrderRequest
+</span><span>        - onStartObject
+</span><span>            - onStartField memberId
+</span><span>                - onNumber 1024
+</span><span>            - onEndField
+</span><span>            - onStartField payCode
+</span><span>                - onString tidf3325aaeny
+</span><span>            - onEndField 
+</span><span>            - onStartField storeIds
+</span><span>                - onStartArray
+</span><span>                    - onNumber 28
+</span><span>                    - onNumber 35
+</span><span>                    - onNumber 64
+</span><span>                - onEndArray
+</span><span>            - onEndField
+</span><span>            - onStartField items
+</span><span>                - onStartArray
+</span><span>                    - onStartObject
+</span><span>                        - onStartField skuId
+</span><span>                            - onNumber 24
+</span><span>                        - onEndField
+</span><span>                        - onStartField amount
+</span><span>                            - onNumber 4.5
+</span><span>                        - onEndField
+</span><span>                    - onEndObject
+</span><span>                    - onStartObject
+</span><span>                        - onStartField skuId
+</span><span>                            - onNumber 106
+</span><span>                        - onEndField
+</span><span>                        - onStartField amount
+</span><span>                            - onNumber 20.0
+</span><span>                        - onEndField
+</span><span>                    - onEndObject
+</span><span>                - onEndArray
+</span><span>            - onEndField          
+</span><span>        - onEndObject
+</span><span>    - onEndField
+</span><span>- onEndObject
+</span></code></pre>
+<h3 id="jsonserializer-read-fan-xu-lie-hua-binary-jsonstring">JSONSerializer.read：反序列化(Binary-&gt;JSONString)</h3>
+<p>这个过程是write的一个逆向过程.</p>
+<p>针对JSON的各种数据类型
+通过dapeng强大的服务元数据,我们可以知道某个服务的某个方法的某个入参的元数据信息,例如有多少field,每个field的类型,是否必填等:</p>
+<p>在处理JSON的过程中, 我们可以通过元数据来实现如下功能:</p>
+<blockquote>
+<ol>
+<li>对于接口请求参数中没有的字段, 可直接忽略</li>
+<li>对每个字段做必要的类型校验, 同时</li>
+<li>对于接口请求参数中要求必填的参数字段,在处理完整个JSON字符串之后,做一个对必填字段的校验. 如果存在必填字段缺失的情况,那么直接返回提示给调用方,防止无效请求发到服务端.</li>
+</ol>
+</blockquote>
+<p>基于string-stream的流式处理机制,尽可能少的分配内存以及创建字符串,支持fast-failed. 流式处理不需要在内存中构建好整个JSON对象再做处理, 它对内存的消耗取决于JSON结构的深度而不是长度. 例如某个JSON结构体包含一个数组元素, 那么流式处理机制所需要的最大内存等于单个数组元素的大小, 而数组的长度对于内存消耗来说没有影响. 这个特性很重要, 就算要处理几MB或者几十MB甚至几百MB的JSON数据, dapeng-JSON可能也只是需要几KB的内存消耗而已.</p>
+<p><img src="https://wangzaixiang.github.io/blog/dapeng-json/dapeng-service-mesh.png" alt="image" /></p>
+<h1 id="others">others</h1>
+<h2 id="numberlei-xing-de-shu-ju-zhuan-huan">Number类型的数据转换</h2>
+<p>由于JavaScript规范中， 数字只有一种类型:Number，且是浮点类型。那么对于一个大的长整型(Long, 超出[-2^53, 2^53]范围，也即[-9007199254740992,9007199254740992])，使用Number类型会存在不可预料的结果。例如:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>&gt; var l1 = 9007199254740995
+</span><span>&gt; var l2 = 9007199254740996
+</span><span>&gt; l1 == l2
+</span><span>true
+</span></code></pre>
+<p>针对Json数值类型在转换过程中存在精度丢失的问题， 约定如下：</p>
+<h3 id="1-jian-yi">1. 建议</h3>
+<ol>
+<li>首先我们不建议在业务接口中使用Double类型的字段， 尽量用BigDecimal。</li>
+<li>如果某个字段是个长整型(Long)，且预期不在[-2^53, 2^53]范围内，也即[-9007199254740992,9007199254740992],  那么建议前端封装json数据的时候， 该字段用字符串（dapeng-json转换引擎会通过服务元数据准确的把该字符串转回Long）</li>
+</ol>
+<h3 id="2-fu-wu-duan-fan-hui-gei-qian-duan-de-shu-ju-thrift-json">2. 服务端返回给前端的数据(thrift-&gt;json)</h3>
+<p>对于Long类型，会判断一下大小，如果超出[-2^53, 2^53]， 那么我们会把Long类型转换成字符串。 否则就直接输出Number类型</p>
+<p>对于Double类型， 这个就直接输出Number类型了。</p>
+<h3 id="3-qian-duan-dao-hou-duan-de-shu-ju-chuan-di-json-thrift">3. 前端到后端的数据传递(json-&gt;thrift)</h3>
+<p>对于Long类型， 不管json是Number还是字符串， 我们都转成标准的Long</p>
+<p>对于Double类型，不管json是Number还是字符串， 我们都转成标准的Double</p>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/spurious-weakup/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/litelement/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

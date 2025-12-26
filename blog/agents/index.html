@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>2025 agent 技术汇编 | 程序人生</title>
+<meta name="description" content="本文是对 agent 相关技术的一个汇编">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/agents/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="2025 agent 技术汇编">
+  <meta name="twitter:description" content="本文是对 agent 相关技术的一个汇编">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="2025 agent 技术汇编">
+  <meta property="og:description" content="本文是对 agent 相关技术的一个汇编">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/agents/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="2025 agent 技术汇编">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/agents/"
+      },
+      "headline": "2025 agent 技术汇编",
+      "image": ,
+      "datePublished": "2025-12-21",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "2025 agent 技术汇编"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "2025 agent 技术汇编",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文是对 agent 相关技术的一个汇编"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Agents",
+            "item": "https://wangzaixiang.github.io/blog/agents/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/agents/#context-engineering">Context Engineering</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/agents/#agent-skills">Agent Skills</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>2025 agent 技术汇编</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+
+              
+<p><small>Posted December 21, 2025&nbsp;&hyphen;&nbsp;<strong>5&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/vibe-coding-2/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>作为一个 IT 从业者，我们自身是最能感受到 AI 技术对日常工作的影响的群里：claude code/gemini/codex 已经成为我们日常编程的主力助手，是 agent 技术的
+深度使用者。</p>
+<h1 id="context-engineering">Context Engineering</h1>
+<p>究竟是 prompt engineering 还是 context engineering？我一度也纠结过这个概念，不过从本质的角度来看，二者的本质区别并不大，只是随着应用的复杂度提升，在工程
+领域需要不断的优化：本质上还是提供给 LLM 一个更合理的上下文（或者描述为 input 更为朴素）。</p>
+<p>本质：</p>
+<ul>
+<li>LLM context 长度限制，导致我们不能将所有知识都放入 context 中
+<ul>
+<li>每个 LLM 都有自己的 context 长度限制（趋势是，这个门槛在逐渐提升，很多都是 256K ）</li>
+<li>越长的输入，LLM 的成本也显著提升，响应速度也会变慢。（）</li>
+<li>知识越多，带给 LLM 的干扰、歧义也越多, LLM 就越会迷失注意力。</li>
+</ul>
+</li>
+<li>context 包括：
+<ul>
+<li>rules: 大部份的 Prompt 都是围绕规则展开的：Should do, Should not do</li>
+<li>examples: 典型的 few-shot learning 的例子</li>
+<li>knowledge, references: 具体的知识、参考资料</li>
+<li>tools: tool's reference, examples, and rules</li>
+<li>user input: 用户的具体输入</li>
+<li>history
+<ul>
+<li>tool's invocation history</li>
+<li>conversation history</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>分类：</p>
+<ol>
+<li>
+<p>knowledge representation</p>
+<ul>
+<li>Agent Skills ( metadata, Skill.md,  scripts, references, assets) 本质上是一种知识的分层表示。</li>
+</ul>
+</li>
+<li>
+<p>RAG</p>
+</li>
+<li>
+<p>memory management</p>
+</li>
+</ol>
+<h2 id="agent-skills">Agent Skills</h2>
+<p><a href="https://agentskills.io/">Agent Skills</a> 本质上是一种针对技能知识的分层表示方式, Skills 就像给 agent 安装的"技能包"，每个 skill 包含：</p>
+<ul>
+<li>Metadata: 技能的名称、描述、触发条件</li>
+<li>Instructions (skill.md): 详细的执行指令和规则 (包括规则、指令，以及对 scripts/references/assets 内容的索引)</li>
+<li>Scripts: 可执行的脚本文件</li>
+<li>References: 相关文档和示例</li>
+<li>Assets: 配置文件、模板等资源</li>
+</ul>
+<p>解决的问题</p>
+<ol>
+<li>知识复用: 将常见任务（如 code review、测试生成）封装成 skill，避免重复编写 prompt</li>
+<li>Context 优化: 按需加载相关 skill 的 context，而非每次都加载所有指令</li>
+<li>领域专业化: 针对特定场景（如特定框架、代码规范）定制 agent 行为</li>
+</ol>
+<p>工作方式</p>
+<pre data-lang="text" style="background-color:#2b303b;color:#c0c5ce;" class="language-text "><code class="language-text" data-lang="text"><span>/review-code  →  触发 &quot;review-code&quot; skill
+</span><span>              →  加载 skill.md 到 context
+</span><span>              →  执行 skill 定义的流程
+</span><span>              →  使用 skill 中的 tools/scripts
+</span></code></pre>
+<p>典型应用</p>
+<ul>
+<li>/commit: 智能生成 git commit message</li>
+<li>/review-pr: PR 代码审查</li>
+<li>/test: 自动生成测试用例</li>
+<li>自定义业务 skills（如特定框架的最佳实践检查）</li>
+</ul>
+<blockquote>
+<p>使用 Knowledge Graph 来组织 Skills ？
+方案 1: Hybrid 混合模式（推荐）</p>
+</blockquote>
+<p>文件系统存储 + Graph 元数据</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>skills/
+</span><span>├── code-review/
+</span><span>│   ├── skill.md
+</span><span>│   └── metadata.yaml  ← 定义 graph 关系
+</span><span>├── security-scan/
+</span><span>└── graph.json         ← 全局关系图
+</span><span>
+</span><span>metadata.yaml:
+</span><span>name: code-review
+</span><span>dependencies:
+</span><span>- security-scan
+</span><span>- performance-check
+</span><span>triggers:
+</span><span>- auto: [&quot;*.pr&quot;, &quot;pull_request&quot;]
+</span><span>- command: [&quot;/review&quot;, &quot;/pr&quot;]
+</span><span>tags: [code-quality, automation]
+</span><span>related_skills:
+</span><span>- refactoring (similarity: 0.8)
+</span><span>- test-generation (often_used_together)
+</span></code></pre>
+<p>实现：</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">SkillGraph</span><span style="color:#eff1f5;">:
+</span><span style="color:#b48ead;">def </span><span style="color:#96b5b4;">__init__</span><span>(</span><span style="color:#bf616a;">self</span><span>):
+</span><span style="color:#bf616a;">self</span><span>.graph = nx.</span><span style="color:#bf616a;">DiGraph</span><span>()  </span><span style="color:#65737e;"># NetworkX
+</span><span>
+</span><span>      </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">load_from_filesystem</span><span>(</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">skills_dir</span><span>):
+</span><span>          </span><span style="color:#b48ead;">for </span><span>skill_dir </span><span style="color:#b48ead;">in </span><span>skills_dir.</span><span style="color:#bf616a;">iterdir</span><span>():
+</span><span>              metadata = yaml.</span><span style="color:#bf616a;">load</span><span>(skill_dir / &quot;</span><span style="color:#a3be8c;">metadata.yaml</span><span>&quot;)
+</span><span>              </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">add_skill_node</span><span>(skill_dir, metadata)
+</span><span>              </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">add_edges</span><span>(metadata.dependencies)
+</span><span>
+</span><span>      </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">resolve_dependencies</span><span>(</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">skill_name</span><span>) -&gt; List[Skill]:
+</span><span>          </span><span style="color:#65737e;">&quot;&quot;&quot;返回依赖的 skills（拓扑排序）&quot;&quot;&quot;
+</span><span>          </span><span style="color:#b48ead;">return </span><span>nx.</span><span style="color:#bf616a;">topological_sort</span><span>(
+</span><span>              </span><span style="color:#bf616a;">self</span><span>.graph.</span><span style="color:#bf616a;">subgraph</span><span>(nx.</span><span style="color:#bf616a;">ancestors</span><span>(</span><span style="color:#bf616a;">self</span><span>.graph, skill_name))
+</span><span>          )
+</span><span>
+</span><span>      </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">recommend_skills</span><span>(</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">task_context</span><span>) -&gt; List[Skill]:
+</span><span>          </span><span style="color:#65737e;">&quot;&quot;&quot;基于 graph 推荐相关 skills&quot;&quot;&quot;
+</span><span>          </span><span style="color:#65737e;"># 使用 graph embedding 或 PageRank
+</span></code></pre>
+<p>方案 2: Pure Graph 存储</p>
+<p>使用 Graph Database（如 Neo4j）：</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>// 创建 skill
+</span><span>CREATE (review:Skill {
+</span><span>name: &quot;code-review&quot;,
+</span><span>path: &quot;/skills/code-review&quot;
+</span><span>})
+</span><span>
+</span><span>// 创建关系
+</span><span>CREATE (review)-[:DEPENDS_ON]-&gt;(security:Skill {name: &quot;security-scan&quot;})
+</span><span>CREATE (review)-[:USES_REFERENCE]-&gt;(guide:Reference {path: &quot;style-guide.md&quot;})
+</span><span>CREATE (review)-[:APPLICABLE_TO]-&gt;(lang:Language {name: &quot;Python&quot;})
+</span><span>
+</span><span>// 查询：找到所有 Python 相关的 review skills
+</span><span>MATCH (s:Skill)-[:APPLICABLE_TO]-&gt;(l:Language {name: &quot;Python&quot;})
+</span><span>(s)-[:DEPENDS_ON*0..2]-&gt;(dep)  // 包括间接依赖
+</span><span>RETURN s, collect(dep)
+</span></code></pre>
+<p>何时使用 Graph？</p>
+<table><thead><tr><th>场景</th><th>文件系统</th><th>Graph</th></tr></thead><tbody>
+<tr><td>简单独立 skills (&lt;10个)</td><td>✅ 足够</td><td>❌ 过度设计</td></tr>
+<tr><td>Skills 有依赖关系</td><td>⚠️ 需手动管理</td><td>✅ 自动解析</td></tr>
+<tr><td>需要智能推荐</td><td>❌ 难实现</td><td>✅ 适合</td></tr>
+<tr><td>多维度检索 (语言+领域+工具)</td><td>❌ 只能按目录</td><td>✅ 灵活查询</td></tr>
+<tr><td>Skill 组合编排</td><td>⚠️ 硬编码</td><td>✅ 动态组合</td></tr>
+<tr><td>版本演化追踪</td><td>❌</td><td>✅</td></tr>
+</tbody></table>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/vibe-coding-2/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

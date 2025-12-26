@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>AI时代的软件研发思考 | 程序人生</title>
+<meta name="description" content="Thoughts about vibe coding">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/vibe-coding/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="AI时代的软件研发思考">
+  <meta name="twitter:description" content="Thoughts about vibe coding">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="AI时代的软件研发思考">
+  <meta property="og:description" content="Thoughts about vibe coding">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/vibe-coding/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="AI时代的软件研发思考">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/vibe-coding/"
+      },
+      "headline": "AI时代的软件研发思考",
+      "image": ,
+      "datePublished": "2025-08-30",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "AI时代的软件研发思考"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AI时代的软件研发思考",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "Thoughts about vibe coding"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Vibe Coding",
+            "item": "https://wangzaixiang.github.io/blog/vibe-coding/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#bei-jing">背景</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#yi-ji-yu-vibe-coding-de-ruan-jian-kai-fa-bian-hua">一、基于 Vibe Coding 的软件开发变化</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#1-kai-fa-liu-cheng-de-gen-ben-xing-zhuan-bian">1. 开发流程的根本性转变</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#2-spec-first">2. Spec-First</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#3-jiao-se-he-ji-neng-yao-qiu-de-shen-ke-bian-hua">3. 角色和技能要求的深刻变化</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#4-yi-ge-ren-jiu-shi-yi-ge-tuan-dui-kai-fa-zi-yuan-de-chong-yu-yu-jiao-se-bian-jie-de-xiao-jie">4. 一个人就是一个团队：开发资源的充裕与角色边界的消解</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#5-kai-fa-su-du-he-zhong-gou-tai-du-de-ge-xin">5. 开发速度和重构态度的革新</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#6-vibe-coding-kai-fa-de-hu-cheng-he-ji-zhi">6. Vibe Coding  开发的护城河机制</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#er-shi-jian-ji-qiao-yu-fang-fa-lun">二、实践技巧与方法论</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#san-quan-mian-yong-bao-ai-shi-xian-ye-wu-zhong-gou-cong-xin-xi-hua-mai-xiang-zhi-neng-hua">三、 全面拥抱 AI，实现业务重构，从信息化迈向智能化</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#ye-wu-liu-cheng-quan-mian-aihua">业务流程全面AI化</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#chuan-tong-ruan-jian-zhi-de-zai-aishi-dai-zhong-xin-she-ji">传统软件值得在AI时代重新设计</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#si-xue-xi-he-cheng-chang-lu-jing-de-zhong-gou">四、学习和成长路径的重构</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#xue-xi-zhong-xin-zhuan-yi">学习重心转移</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#xin-de-xue-xi-fang-fa-gen-zhao-ai-xue-xi-rang-ai-dang-ni-de-lao-shi-he-xue-xi-zhu-shou">新的学习方法：跟着 AI 学习，让 AI 当你的老师和学习助手</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#vibecoding-shi-dai-jia-gou-shi-de-gao-du-jiang-jiu-shi-ruan-jian-de-gao-du">VibeCoding 时代，架构师的高度将就是软件的高度</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#misc">Misc</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#vibe-coding-de-bian-cheng-yu-yan-bian-cheng-fan-shi-xuan-ze">Vibe Coding 的编程语言、编程范式选择</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#gua-he-vibe-coding-de-ren-wu-lei-xing">适合 Vibe Coding 的任务类型</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding/#tbc">TBC</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>AI时代的软件研发思考</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted August 30, 2025&nbsp;&hyphen;&nbsp;<strong>40&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/compare-vega-d3-echart/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="bei-jing">背景</h1>
+<p>最近的这些年，AI显然是处在一个加速发展和应用的阶段，记得 chatgpt 在2022年底推出之时，我身边的一些朋友（资深级）就发出了“程序员将被AI替代“的
+哀嚎。2024年底 deepseek R1 横空出世，中国网民也一夜从大模型的荒漠（之前使用 chatgpt 有诸多不便）跃升为大模型使用自由，其推理能力、编码能力又
+有了很大的提升。</p>
+<p>我从2023年开始体验了github copilot这款编程助理工具，当时就有一种惊艳之感：确实，很多时候，我只需要编写一下 comment，copilot
+就可以帮我完成
+接下来的编码工作，尤其是在尝试一些新的编程语言，或者使用一些新的library, framework时，大幅的缩短了遗忘的查找资料，编写代码，调试的开发过程，
+编码效率应该说是又很大提升的。</p>
+<p>2024年，又开始使用 cursor ide，相比copilot, cursor在智能化上更进一步，很多时候连注释都省掉了，smart tab 在诸多时候，都想你所想，再结合
+对话式交互，在编程体验上再次大幅提升。与 Copilot 相比的话，Github Copilot 只能算冷兵器时代，而 cursor 则进入到热兵器时代，开始有自动化、机械化的
+感觉了。</p>
+<p>最近，Claude Code 再次火爆出圈，我也赶上去蹭了个热度，在过去的1周时间，利用零星的时间，利用 CC
+做了一些尝试。<a href="https://github.com/wangzaixiang/compare-lang-performance">compare-lang-performance</a>
+就是其中的一个实验项目，通过和CC进行对话式交互，最终产出了这个性能对比的测试工具。作为体验CC的一次实验，我的基本工作流程包括：</p>
+<ul>
+<li>需求定义流程：向 CC 说明项目的基本目标，请 CC 进行详细的需求规格描述，如果你对这个 spec 不满意，可以通过多次对话交互进行修正。</li>
+<li>编码流程： 让 CC 编写代码，运行测试进行验证。</li>
+<li>反复迭代：
+<ul>
+<li>增加新的功能：例如，增加新的测试语言、新的测试代码</li>
+<li>重构设计：例如将配置信息从代码中抽离出来，从 json 到 toml 到 yaml，以及多次调整配置的格式（配置项的设计）</li>
+<li>调整命令行工具的能力，包括支持新的 CLI 选项、调整输出报告的形式。</li>
+</ul>
+</li>
+<li>更新 Readme.md 文件，将测试结果同步到该文件中。</li>
+</ul>
+<p>在这次体验过程中，我有意识的不去直接进行编码工作，而是尽可能的通过与 CC 交互来达成我的目的，因此，这个项目中几乎全部的代码都是
+CC 编写、修正完成的。
+这一点不同于之前使用 Copilot 和 Cursor 的模式：在过去的体验中，代码的主题流程、骨架都是我收工编写，AI 仅在过程中穿插协助。</p>
+<p>虽然是一次小的尝试，还有很多的 CC 能力并没有充分利用起来，但这个体验过程带给了我一些全新的思考，我会在这片 Blog
+中记录我的所思所虑，以期待能够
+找到未来（不需要那么遥远，或许就是接下来的某个区间）的正确的 AI 使用模式。</p>
+<h1 id="yi-ji-yu-vibe-coding-de-ruan-jian-kai-fa-bian-hua">一、基于 Vibe Coding 的软件开发变化</h1>
+<p>基于 Claude Code 这样的 vibe tools，相比传统软件开发会带来以下根本性变化：</p>
+<h2 id="1-kai-fa-liu-cheng-de-gen-ben-xing-zhuan-bian">1. 开发流程的根本性转变</h2>
+<h3 id="cong-min-jie-mo-shi-zhuan-bian-wei-vibemo-shi">从<code>敏捷模式</code> 转变为 <code>Vibe模式</code></h3>
+<ul>
+<li>
+<p><strong>传统模式</strong>：编写需求文档 → 设计方案 → 写代码 → 调试 → 修改代码的循环
+代价：</p>
+<ul>
+<li>团队要求高：要求全能的团队、高昂的沟通成本、管理成本</li>
+<li>沟通效率低：受限于团队人员的认知水平差异，以及传统的编写文档、方案、代码的低效率，时间效率 + 统一语言 + 认知对齐
+带来了大的鸿沟。</li>
+<li>偏爱妥协的风格：无论是调整需求、设计方案、现有代码，都受限于团队沟通和迭代效率，以及其他不确定的风险，团队更偏向于达成保守的、妥协的方案，
+以规避风险，而非大胆创新、突破。</li>
+<li>迭代速度慢：除了传统流程自身的周期长导致迭代效率慢之外，历史包袱带来的影响也非常巨大。以致与项目越往后走，单位人天的产出越来越低，而系统的复杂性则越来越高，
+形成一种恶性的反馈增强机制。</li>
+</ul>
+</li>
+<li>
+<p><strong>Vibe模式</strong>：描述需求（对话式迭代） → AI生成（生成方案、代码、文档） → 对话式迭代优化
+有如从<code>瀑布式开发模式</code>演变为<code>敏捷开发模式</code>，再发展到<code>Vibe模式</code>时，会带来很大的变化：</p>
+<ul>
+<li>团队发生变化：一个人就可以成为一个超级团队（产品经理、架构师、开发工程师、测试工程师），能力全面</li>
+<li>沟通效率提升，管理成员下降。一个人的团队在这方面具有量级上的突破。</li>
+<li>追求极致成为可能的风格，没有做不到，就怕想不到。当然，这里也对架构师提出了更高的要求，你的远见、创意决定了最终的可能性。</li>
+<li>大胆重构、创新。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-spec-first">2. Spec-First</h2>
+<h3 id="cong-guo-cheng-shi-she-ji-zhuan-xiang-han-shu-shi-gui-ge">从过程式设计转向函数式规格</h3>
+<ul>
+<li>
+<p>传统开发中，很多细节在编码过程中才考虑清楚，在设计阶段过细，可能浪费大量时间，且后续实际上会偏离实际代码而成为鸡肋。</p>
+</li>
+<li>
+<p>传统流程中，很多的方案更偏重于 How 风格的过程式设计, 而 VibeCode 流程中，更偏重于 What 风格的函数式风格。
+作为一名 Functional Programming 的爱好者，我的过往经验告诉我：Functional Code 具有更高的抽象层次，相比 Procedure
+Code，具有更为简单的数据流，从可读性
+到代码质量都会有明显提升。而应用到软件过程、软件方案时，也非常有效：能够提供一个明确的、清晰的、可验证的目标，远胜过陷入实现细节的过程描述（这个甚之于团队管理、与教练艺术、
+个人规划都符合相同的逻辑 ）。
+在 VibeCode 模式下，这个风格就成为显学了，因为这也是你驱动 AI 工作的基本方式，为 AI 提供明确、清晰的指令，是有效产出的必备技能。</p>
+</li>
+</ul>
+<h3 id="bu-tong-ren-wu-xia-de-gui-ge-ding-yi">不同任务下的规格定义</h3>
+<p>在vibe编程中，规格定义变得更加重要，根据不同的任务，需要相应的规格定义：</p>
+<ul>
+<li>功能规格
+<ul>
+<li>Use Case - 用户使用场景和交互流程</li>
+<li>User Story - 以用户为中心的功能需求描述</li>
+<li>Business Logic - Rules, Workflow etc.</li>
+</ul>
+</li>
+<li>接口规格
+<ul>
+<li>CLI: 命令行接口设计（参数、选项、输出格式）</li>
+<li>API: restful style, RPC style
+<ul>
+<li>Contract Spec: pre-condition, post-condition, invariant</li>
+</ul>
+</li>
+<li>SPI: 面向 OCP 扩展的接口设计。</li>
+<li>Configuration - 配置文件格式定义。很多复杂的系统，配置文件应该面向用户进行设计，是软件的架构的一个投影。</li>
+</ul>
+</li>
+<li>Data 规格
+<ul>
+<li>Entity-Relation Model / Database Schema</li>
+<li>Class Model</li>
+<li>Domain Model: Entity(lifecycle, query, command), Value, Event, Service etc.</li>
+<li>C4 Model: Context， Container, Component, Class</li>
+<li>CRC(Class Responsibility Card): 职责优先</li>
+</ul>
+</li>
+<li>QA
+<ul>
+<li>Test Case - 单元测试、集成测试用例, TDD, BDD etc</li>
+<li>Performance - 性能指标和基准测试</li>
+<li>Security - 安全策略和权限控制</li>
+<li>Error Handling - 异常处理和错误恢复策略</li>
+<li>Version Compatible: 版本兼容策略</li>
+</ul>
+</li>
+<li>Dev Ops
+<ul>
+<li>Logging/Monitoring - 日志记录和监控指标</li>
+<li>Deployment - 部署流程和环境配置</li>
+<li>Visibility/Observability - 可观测性要求</li>
+<li>Backup/Recovery - 备份和恢复策略</li>
+</ul>
+</li>
+<li>Others
+<ul>
+<li>依赖相关：希望选择的框架、库，以及不希望使用的框架、库</li>
+<li>构建工具</li>
+<li>目录结构</li>
+<li>代码：编程语言选择，编程风格选择（我更偏向于functional），代码风格（缩进、命名等）</li>
+</ul>
+</li>
+</ul>
+<h3 id="yi-jiao-hu-zeng-liang-de-fang-shi-jin-xing-spec-ding-yi">以交互、增量的方式进行 Spec 定义</h3>
+<p>整理一份良好定义的 Spec 来作为下一阶段的任务开发（包括编码、测试）自身成为了 Vibe Coding 中最为重要的工作，对于复杂系统而言，这个是最大的挑战，
+事实上，大部份的软件（尤其是历史悠久的系统）存在或多或少的问题：包括 bug，安全漏洞，难以维护、难以扩展 等问题，很多人会简单的归类为软件代码太乱太复杂，
+大部份的日常工作也是在代码层面的修修补补。但实际上，绝大部分的问题其实应该归根为设计上的问题，包括：</p>
+<ul>
+<li>需求设计的问题：概念定义是否清晰、系统内是否有一致的概念。</li>
+<li>架构设计的问题：层次结构、职责、契约是否清晰定义。</li>
+</ul>
+<p>区分一个问题到底是代码层面的问题还是设计层面的问题，我的判断方式是：如果是代码问题，那么这应该是一个局部的（不会在其他地方反复重复同样或者相似的问题）、
+可以快速修复并避免反复发生的问题，也就是说，是修复成本不高，并且修复后不会带来新的复杂性的问题，这些可以归结为简单的编码质量问题，而如果出现如下特征：</p>
+<ul>
+<li>存在很多相似问题（是面性问题，而非点性问题）</li>
+<li>问题无法彻底修复</li>
+<li>问题修复后，系统的复杂性进一步恶化
+那么这其实是一个设计层面的问题：如果不从概念定义、架构设计层面彻底的解决，而是单纯的补丁方式解决问题，最终会导致整个系统的复杂性提升、技术包袱越来越沉重。</li>
+</ul>
+<h2 id="3-jiao-se-he-ji-neng-yao-qiu-de-shen-ke-bian-hua">3. 角色和技能要求的深刻变化</h2>
+<h3 id="cheng-xu-yuan-jiao-se-zhuan-bian">程序员角色转变</h3>
+<ul>
+<li>从"代码编写者"变成"定义者 + 评审者 + 创意者”的转变</li>
+<li>目标定义者：
+<ul>
+<li>梳理你的目标，你能否讲清楚（讲清楚目标是成本的第一步），实际工作中，很多同学既讲不清楚目标，也不清楚自己不清楚目标，混沌前行是常态。</li>
+<li>不仅软件开发，不清楚目标几乎是人类的常态。（《高绩效教练》一书其实就是在教练这个过程）</li>
+<li>将目标从混沌态整理成为明确清晰可行的结果，其实是解决问题的最关键步骤。对于复杂的问题，你应该将这个过程单独一个阶段，利用
+AI 来帮你整理，而不是立刻投入下一阶段的工组。</li>
+<li>你需要多花一些时间来真实理解用户的业务、需求</li>
+<li>你需要多花一些时间来学习这个领域的专业知识。</li>
+<li>你需要多花一些时间来了解目前解决这一类问题的基本方法、竟品等。</li>
+</ul>
+</li>
+<li>评审者：对 AI 的回答进行思考，这是否满足了你的目标
+<ul>
+<li>你应该是一个挑剔者，不要接受低标准的结果。可以进一步发送改进的指令，尝试一个你心目中更好的答案。</li>
+<li>如果 AI 不能给到你有效的答案，你需要重新思考自己的目标定义，给出更具体的指令，或者在关键位置上越过 AI 自己动手。</li>
+</ul>
+</li>
+<li>创意者：你定义的目标的价值越高，后续的产出就会越高。</li>
+</ul>
+<h3 id="ji-neng-men-jian-zhong-xin-ding-yi">技能门槛重新定义</h3>
+<ul>
+<li><strong>降低技术门槛</strong>：语法、API查找等技术细节不再是瓶颈</li>
+<li><strong>提高业务门槛</strong>：对系统设计、业务逻辑的理解要求更高</li>
+<li><strong>"会提问"比"会写代码"更重要</strong></li>
+</ul>
+<h2 id="4-yi-ge-ren-jiu-shi-yi-ge-tuan-dui-kai-fa-zi-yuan-de-chong-yu-yu-jiao-se-bian-jie-de-xiao-jie">4. 一个人就是一个团队：开发资源的充裕与角色边界的消解</h2>
+<p>参考：<a href="https://zhuanlan.zhihu.com/p/1942599600293802943">MIT 大牛传授 Vibe Coding 正确姿势：AI 不是新手的入门玩具，而是专家的超级工具</a>
+原文：https://www.stochasticlifestyle.com/a-guide-to-gen-ai-llm-vibecoding-for-expert-programmers/</p>
+<blockquote>
+<ul>
+<li>核心心智模型：把 LLM 当作一个 <code>大二实习生</code>: 懂基础，会模仿，能执行，知识面广而不深。</li>
+<li>高手的 Vibe Coding 工作流：当好「包工头」，别当「码农」</li>
+<li>秘诀一：批量布置「简单明确」任务，然后走开</li>
+<li>秘诀二：像扔垃圾一样扔掉坏代码</li>
+<li>秘诀三：追求「总成功数」，而非「成功率」</li>
+<li>秘诀四：先在你最熟悉的代码上用
+&gt; 结论：正确完成 Vibe Coding 是专家的任务。</li>
+</ul>
+</blockquote>
+<p>在 Vibe Coding 之前，要完成一定复杂性的软件产品的研发，我们需要一个一定规模的研发团队，包括：</p>
+<ul>
+<li>产品经理，定义需求</li>
+<li>架构师：负责技术选项、架构设计，也包括一些核心代码的开发工作。</li>
+<li>开发工程师：区分资深层次、普通层次的工程师，一般是数量最多的</li>
+<li>测试工程师：区分白盒测试、黑盒测试。</li>
+<li>部署、运维工程师。</li>
+</ul>
+<p>这里，开发工程师、测试工程师一般是人数最多的，也是开发周期中最为频繁的沟通、管理对象：从理解需求、理解设计、编写代码、编写测试用例，大部份的工作
+都依赖与手工，大部份的沟通工作都涉及到彼此之间（包括从需求到设计、从设计到编码、从编码到测试，以及拆分后的相互依赖），日常会存在大量的沟通、协调工作，
+以弥补团队认知的差异。也有很多的时间浪费是处在等待之中：下游等待上游，任务协作者之间的相互等待。</p>
+<p>Vibe Coding 将对这一模式产生很大的冲击，使得架构师将承担更大的职责，完成软件产品的功能定义、架构定义、特性规划，并指挥多个
+LLM 并行完成包括：
+文档编写、 代码（包括测试代码）的编写工作，并最终交付更高质量的软件产品。</p>
+<p>参照 Stochastic 的工作方式，借助于 AI 编程工具，一个架构师可以同时调动 3 - 10 个（作者宣称有大约32个 claude agent
+在持续运行，我对此还是有些诧异）
+AI agent，让他们进行协同完成你布置的任务。</p>
+<p>在 Vibe Coding 模式下，架构师（专家）的个人能力边界将大幅度扩展：</p>
+<ul>
+<li>一个人可以承担产品经理、架构师、开发工程师、测试工程师等多个角色</li>
+<li>小团队可以完成原本需要大团队的工作</li>
+<li>跨语言、跨技术栈的成本大幅降低(试想原本需要拆分为多个岗位，而现在 LLM 可以承担几乎每一个岗位)</li>
+</ul>
+<p>同时，新的管理方式， 团队的协作成本降低：</p>
+<ul>
+<li>对团队间沟通的依赖显著降低</li>
+<li>团队管理成本和沟通成本都大幅减少</li>
+<li>在良好的架构支撑基础之上，LLM 可以表现出平衡的、Good 的编程能力、设计能力（可以把 LLM 类比为在每个领域都能打 80分
+的那个选手）。而架构师
+则要成为那个能打 90-120 分的领导者。（当然，如果你的水平是 80分，那么 LLM 也会在此基础上打上折扣）</li>
+</ul>
+<h2 id="5-kai-fa-su-du-he-zhong-gou-tai-du-de-ge-xin">5. 开发速度和重构态度的革新</h2>
+<p>Vibe Coding 会带来开发效率的大幅提升：</p>
+<ul>
+<li>
+<p>从想法到可运行原型的时间大幅缩短: 大部份情况下，从你给出清晰的描述到 LLM 生成原型代码，这个时间将从传统的 人天量级 降低到
+5-10 分钟量级。
+而且从原型的角度来说，它几乎是完美的。</p>
+</li>
+<li>
+<p>设计的周期也大幅降低：传统的方式下，要形成一份设计完整的设计方案，往往需要较长时间的深思熟虑、整理和论证工作（这里有很大比例是一些非核心的工作，
+但作为一个完整的体系，又不可或缺）。而今，你可以把精力聚焦到设计方案中的核心部份，而充分利用 LLM 的广播的知识面来处理大量的细节问题。</p>
+</li>
+<li></li>
+</ul>
+<p>重构成本降低，在有良好的测试用例辅助的情况下，对现有设计中存在的不合理问题，我们可以大胆的重构，乃至于彻底的重新设计，果断的放弃历史包袱。(
+在
+传统的模式中，这一块的成本要高得多，以至于我们很多时候会做太多的妥协，而架构设计的合理性则会辅助提升下一阶段 LLM
+编写代码、修复问题的效率和质量)</p>
+<p>相应的，在 Vibe Coding 时代，如果你现有的项目满足：</p>
+<ul>
+<li>清晰的领域划分（水平拆解）、分层架构（垂直拆解）</li>
+<li>系统各个模块具有高内聚、低耦合特性。</li>
+<li>各个类、函数有明确的职责、接口定义、接口契约，并配套有完备的单元测试代码</li>
+<li>一致的代码风格、规范。</li>
+</ul>
+<p>也就是说，整个系统更具有一致性、简单性，不仅仅对普通用户而言具有更好的可理解性、可维护性，也会对 LLM 来说，有更好的可理解性，这就会在后续的
+Vibe Coding
+中有利于 LLM 更好的完成你交付的开发任务。因此，架构师的角色就需要更聚焦在整个系统的简单性、清晰性上来，这个对架构师提出了更高的挑战和要求：</p>
+<ul>
+<li>眼界：你需要有理解简单性、一致性的能力。</li>
+<li>审美意识：你需要有判断优美与丑陋、简单与复杂、低效与高效的能力和意识</li>
+<li>抽象能力：当识别出味道后，提出改进方案的能力。</li>
+</ul>
+<p>这些能力是架构师所独有的特质，其需要每一个架构师持续的学习、实践和探索。所以 Vibe Coding 即释放了架构师的时间和精力，以促成架构师有更多的时间思考和改进
+架构能力，另一方面，又以足够的执行力支撑架构师更多的创新。</p>
+<h2 id="6-vibe-coding-kai-fa-de-hu-cheng-he-ji-zhi">6. Vibe Coding  开发的护城河机制</h2>
+<p>在Vibe Coding 开发的"快速迭代"过程中，如何保证方案和代码的质量，避免重构带来的未知的问题，例如破环版本兼容等，需要建立多层次的护城河机制：</p>
+<ul>
+<li>测试用例作为护城河: Vibe Coding 可以帮助我们生成足够的、高质量的测试用例。这是重构的有利保障。</li>
+<li>代码覆盖率测试</li>
+<li>lint 工具测试。对 rust 这类的语言，rustc 和 clipper 反馈的警告，都要予以关注。</li>
+<li>API 兼容性保证。当重构代码，而有需要保持API兼容性时，可以提供工具，检查重构前后的兼容性问题。</li>
+<li>在 claude.md 中明确补充有关的原则：例如，代码风格、最佳实践、不容许的行为等等。</li>
+<li>单一变更：每次对话只改变一个明确的方面，避免大幅度变更，便于代码评审、验证、快速回滚等</li>
+<li>人工把关：对AI 提交的代码进行人工把关，对核心层的代码变更，更可能需要逐行检查。</li>
+</ul>
+<p>这个也非常符合引文中提到的 shift-left 机制。</p>
+<h1 id="er-shi-jian-ji-qiao-yu-fang-fa-lun">二、实践技巧与方法论</h1>
+<ol>
+<li>
+<p>“一分钟目标”法</p>
+<blockquote>
+<p>在《一分钟经理人》一书中，“一分钟目标”是一个核心概念。其工作方式是：</p>
+<ul>
+<li>管理者清晰陈述目标 →</li>
+<li>双方共同思考并复述目标以确保理解无误 →</li>
+<li>最终达成一致。</li>
+</ul>
+<p>它强调目标必须是清晰、简洁、可衡量的，并且能在一分钟内被完整地阅读和理解。这与 Vibe Coding 的核心思想高度一致：给 AI 的指令（目标）
+必须经过“陈述-思考-复述”的打磨过程，确保其足够清晰、具体，才能获得高质量的产出。模糊或冗长的目标会导致
+AI 生成偏离预期的结果。在 Vibe Coding 中，我们应该像设定“一分钟目标”一样，与 AI 互动的方式来精心打磨我们的每一步指令，确保 AI 与
+我们又相同的理解后才开始行动，避免无效的沟通。</p>
+</blockquote>
+</li>
+<li>
+<p>提出清晰的目标 vs 提出具体的操作指令
+相比向 AI 发出具体的指令："请使用某某技术，生成代码" 这样的指令，有的时候，阐明目标，但不限定具体的技术方案，而是交由 LLM 来思考，很多时候，
+它可能会给到我们更多的惊喜：LLM 可能会提供更多的、更好的选择。</p>
+<p>所以，善于提出开放性的问题，而非封闭性的问题，有可能更能发挥 LLM 的价值，为自己提供更多的技术选择。</p>
+</li>
+</ol>
+<p>TODO 这一节内容将持续更新。</p>
+<h1 id="san-quan-mian-yong-bao-ai-shi-xian-ye-wu-zhong-gou-cong-xin-xi-hua-mai-xiang-zhi-neng-hua">三、 全面拥抱 AI，实现业务重构，从信息化迈向智能化</h1>
+<h2 id="ye-wu-liu-cheng-quan-mian-aihua">业务流程全面AI化</h2>
+<ul>
+<li><strong>售前阶段</strong>：AI辅助需求分析和方案设计</li>
+<li><strong>运维客服</strong>：智能化故障诊断和用户服务</li>
+<li><strong>定制开发</strong>：快速响应个性化需求</li>
+<li><strong>业务应用</strong>：数据解释、AI报告生成</li>
+</ul>
+<h2 id="chuan-tong-ruan-jian-zhi-de-zai-aishi-dai-zhong-xin-she-ji">传统软件值得在AI时代重新设计</h2>
+<ul>
+<li>以AI-first的思路重新设计传统软件</li>
+<li>在业务中深度嵌入AI能力，而非简单的功能叠加</li>
+<li>追求极致的用户体验设计</li>
+</ul>
+<p>TODO：本章内容带补充</p>
+<h1 id="si-xue-xi-he-cheng-chang-lu-jing-de-zhong-gou">四、学习和成长路径的重构</h1>
+<h2 id="xue-xi-zhong-xin-zhuan-yi">学习重心转移</h2>
+<ul>
+<li>从"学语法→学框架→做项目"变成"学需求分析→学系统设计→学AI协作"</li>
+<li>更注重跨领域知识的整合能力</li>
+<li>代码所有权观念淡化，更关注系统的目标设计、架构设计，更关注系统的简单行、优美性和价值。</li>
+</ul>
+<h2 id="xin-de-xue-xi-fang-fa-gen-zhao-ai-xue-xi-rang-ai-dang-ni-de-lao-shi-he-xue-xi-zhu-shou">新的学习方法：跟着 AI 学习，让 AI 当你的老师和学习助手</h2>
+<p>作为一名架构师，你可能已经在某些领域拥有了深度的理解、认知，在这些方面，你是 master，而 AI 是你的 assistant，但在你熟悉的领域之外，你的知识、
+能力则可能远逊于 LLM 了。今天的 LLM 可能已经在我们所知的所有领域都是一个好学生了，而你，则只是在很狭窄的几个领域内擅长，当然，在这些领域内，
+你应该比 AI 做得更好才是。</p>
+<p>这个时候，我完全可以通过向 AI 进行发问，让其帮我整理出我最关心的一些问题的答案，有的时候，尤其是在一些具有可迁移性的领域，是非常有价值的。</p>
+<p>案例1: 比如说，我是一名资深的 JavaScript 工程师，我现在需要学习 Python，那么，我可以让 AI 帮我整理出：</p>
+<ul>
+<li>基本的语法、数据类型、数据结构、控制流对比。</li>
+<li>高级特性：如反射、元编程等对比。
+通过对比的方式，来学习一门新的语言，简直是太方便了。这个案例可以查看<a href="https://github.com/wangzaixiang/learning-language/blob/main/python-for-javascript/src/introduction.md">Python for Javascript Developers</a>
+文档，这是我通过 AI 来编写的一篇对比两种语言的文档输出。</li>
+</ul>
+<p>案例2: 在 medium 上有一篇很好的技术文章：<a href="https://medium.com/@orami98/12-revolutionary-web-apis-that-will-replace-your-javascript-libraries-in-2026-bf95b64ce1e3">12 Revolutionary Web APIs That Will Replace Your JavaScript Libraries in 2026</a>
+介绍了12个新的 Web API，对于WEB 应用来说，了解最新的浏览器能力，并合理的应用，对提高我们应用的能力，以及简化应用开发的复杂性会带来巨大的改变。
+但是这篇文章有一个缺陷：没有提供一个测试、验证的示例，对我们来理解这些API 有一定的困难。这个时候，我可以请求 AI:</p>
+<ul>
+<li>根据文章内容，对每一个 API，生成一个 example，以帮助我进行理解（帮助我们建立对 API 能力的基本认知，并通过案例边改边学）。</li>
+<li>对每一个API，为我提供官方的文档链接（学习新技术的最佳实践就是阅读其官方资料，或得一个相对完整的认知）</li>
+</ul>
+<p>我将这个例子放到了 <a href="https://github.com/wangzaixiang/twelve-revolutionary-web-api">twelve-revolutionary-web-api</a> 项目。</p>
+<p>如果没有 AI 的辅助，我要理解这12个 API 需要花费的时间可能会多很多倍，而现在，我的学习时间就显著降低，而且效果还更好了。</p>
+<h2 id="vibecoding-shi-dai-jia-gou-shi-de-gao-du-jiang-jiu-shi-ruan-jian-de-gao-du">VibeCoding 时代，架构师的高度将就是软件的高度</h2>
+<p>AI 时代，程序员可能是最早收到冲击的一个行业，目前，中国的业界普遍存在这样的一些观点：</p>
+<ul>
+<li>AI 时代，程序员的工作将大部份被 AI 替代</li>
+<li>AI 时代，程序员不再重要，我只需要一个产品经理 或者 一个会编写提示词的工程师 就可以了。</li>
+</ul>
+<p>包括我的一些老友（比较资深），也对开发这个职业比较灰心，觉得没有前途了。</p>
+<p>我个人其实有一些不同的看法：</p>
+<ul>
+<li>确实，低水平程序员会受到较大的冲击，因为其不仅可以被 AI 所替代，而且 AI 的水平已经是中上游工程师的开发水平了。</li>
+<li>但至少现阶段（未来我也不算太乐观），AI 的特征仍然是：知识广博，深度有限（其解决问题的方式仍然是模式匹配，在他见过的题型以内）、创新能力弱。
+其能发挥多大的价值，完全依赖于驾驭者的认知水平。</li>
+<li>如果你不能向 AI 正确的提出问题（提出正确的问题本身就是靠近解决方案的关键一步），AI 能给到答案价值就会有限。而能提出有价值的问题，自身就取决于
+驾驭者的视野。</li>
+<li>在一些复杂的场景下，AI 一开始给到的解决方案其实也只是：可以正确工作的一个原型，其作为最终软件产品的一部份依然是不足够的（如果仅仅是 short time
+的交付物可能是足够的），你需要对其进行 review，并对不合理的地方给出清晰的解决指示。这个时候，你的判断力、审美观就是关键。</li>
+</ul>
+<p>我个人的观点：如果你的能力是80分，那么 AI 的天花板就是 80分，而如果你的能力是90分，那么 AI 的能力也会显著提升。实际上，架构师和架构师的差距
+往往不是百分比的差距，而是成倍、成级数的差别。传统的编程时代，一个优秀的工程师抵得上10个到100个平庸的工程师，AI 时代，这个差距只会更大：因为现在
+我们真的只需要思考，而不需要花太多的时间敲代码了。</p>
+<p>对中国的软件业而言，我觉得也是一个很好的新的机会。中国的软件业，尤其是应用软件，在过往的高速发展中，享受了中国高速发展的红利期，重商业模式，轻技术内涵，在低水平的
+技术层面疯狂内卷，使用廉价的劳动力（仅仅是相对欧美），和 996 的福报体系，重战术努力（说的好听是高速迭代），轻战略投入（没有自己的核心技术），更
+演进了奇葩的35岁就失业的职场潜规则，码农确实是货真价实的牛马、农民。在高速发展红利不再，企业需由重量改向重质，需要建立自己的核心技术价值之时，再
+加上 AI 的突破性发展，我觉得一定会发生先死而后生的转变点。（无奈吐槽中）</p>
+<h1 id="misc">Misc</h1>
+<h2 id="vibe-coding-de-bian-cheng-yu-yan-bian-cheng-fan-shi-xuan-ze">Vibe Coding 的编程语言、编程范式选择</h2>
+<p>互联网上关于 AI 时代的最佳编程语言，已经有很多的争论了：</p>
+<ul>
+<li>
+<p><a href="https://solmaz.io/typed-languages-are-better-suited-for-vibecoding">Typed language are better for vibecoding</a></p>
+</li>
+<li>
+<p><a href="https://mp.weixin.qq.com/s/DVxaQQqrFb6Vl3himVnAfg">Shift-Left 式编程语言（Rust）是 AI 自动编码的最佳语言</a></p>
+<ul>
+<li>
+<p><a href="https://dev.to/szabgab/what-is-shift-left-programming-5601">What is shift-left ⬅️ programming?</a>  在这篇文章中，作者介绍了
+shift-left
+的概念：在开发的尽早阶段（编码阶段、编译阶段、单元测试阶段 ...）越早保证质量的编程语言，就是
+shift-left，这与我们传统的“测试左移”的理念是一致的，
+只是走得更远一些。</p>
+<ul>
+<li>强类型编程相比动态类型语言可以在编译时发现尽可能的问题，后者则更依赖于运行时。（当然足够的 unit testing 可以作为
+shift-left 的手段）</li>
+<li>类似于 Rust 这样的强语义语言，可以避免类型安全、内存安全、并发安全、错误处理等问题，近乎达到编译通过即正确运行。</li>
+<li>TDD/unit testing 相比继承测试、UAT测试有更低的成本，支持更频繁的重构和迭代。</li>
+</ul>
+</li>
+</ul>
+<p>然而，rust 在某些领域的语义复杂性也许会给 AI 带来很大的挑战，尤其是涉及到复杂的生命周期、类型系统时，哪些让自身用户都晕头转向的类型体操，很大可能
+会让 LLM 不知所从。</p>
+</li>
+<li>
+<p>Explicit is better than implicit
+使用了较多隐式风格的编程语言，AI 理解时会带入较多的推断，阅读代码，容易产生错误，生成代码时则可能产生歧义。</p>
+<p>AI 的理解能力虽然强大，但其推理是基于概率和模式匹配的。隐式的行为（如 Python 的 <strong>magic</strong> 方法、JavaScript
+的类型强制转换、或依赖上下文的默认参数）
+会增加 AI 理解意图的难度，容易导致生成的代码不符合预期。</p>
+</li>
+<li>
+<p>concise vs verbose</p>
+</li>
+<li>
+<p>functional vs imperative</p>
+<p>函数式的风格天然契合 AI：（甚至于这也非常匹配社会的分工模式：客户提出需求，供应商负责实现，领导给出目标，员工负责实现）</p>
+<ul>
+<li>Vibe Coding 自身更倾向于分工：人负责定义目标，AI 负责实现目标。 当我们给出具体的实现过程描述时，这是一个对人来说低效的过程，而且可能限制了
+AI 的选择。此外，复杂的过程描述增加了 AI 理解你的“意图”的负担，导致在细节上出错。</li>
+<li>限制副作用，清晰的数据流，可以让 AI 生成的代码更简短、易于理解，易于验证，</li>
+<li>更易于分解、组合，实现代码复用。</li>
+</ul>
+</li>
+</ul>
+<h2 id="gua-he-vibe-coding-de-ren-wu-lei-xing">适合 Vibe Coding 的任务类型</h2>
+<ol>
+<li>修复局部的代码 Bug （安全漏洞）</li>
+<li></li>
+</ol>
+<h1 id="tbc">TBC</h1>
+<p>本文目前处于酝酿阶段，会持续进行追加、修改，直至定稿。</p>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/compare-vega-d3-echart/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

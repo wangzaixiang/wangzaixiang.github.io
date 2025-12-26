@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>实例讲解 Java 内存模型 | 程序人生</title>
+<meta name="description" content="本文通过一个实际案例讲解 JMM 及 volatile 的语义">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/java-volatile/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="实例讲解 Java 内存模型">
+  <meta name="twitter:description" content="本文通过一个实际案例讲解 JMM 及 volatile 的语义">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="实例讲解 Java 内存模型">
+  <meta property="og:description" content="本文通过一个实际案例讲解 JMM 及 volatile 的语义">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/java-volatile/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="实例讲解 Java 内存模型">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/java-volatile/"
+      },
+      "headline": "实例讲解 Java 内存模型",
+      "image": ,
+      "datePublished": "2021-06-10",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "实例讲解 Java 内存模型"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "实例讲解 Java 内存模型",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文通过一个实际案例讲解 JMM 及 volatile 的语义"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Java Volatile",
+            "item": "https://wangzaixiang.github.io/blog/java-volatile/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#shi-li-jiang-jie-java-nei-cun-mo-xing">实例讲解 Java 内存模型</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#fan-li-dai-ma">反例代码</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#yuan-yin-shi-shen-me">原因是什么？</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#si-chong-zhong-pai-xu">四种重排序</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#fang-zhi-zhong-pai-xu">防止重排序</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#volatile">volatile</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#putorderedlong">putOrderedLong</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#putlongvolatile">putLongVolatile</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#store-store-load-load-not-reordered">Store-Store, Load-Load not reordered</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#load-store-not-reordered">Load-Store not reordered</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#store-load-maybe-reordered">Store-Load maybe reordered.</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#hou-ji">后记</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#load-load-zhe-ge-an-li-dai-gai-jin">Load-Load (这个案例待改进)</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#store-store">Store-Store</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/java-volatile/#load-store-ci-an-li-dai-gai-jin">Load-Store(此案例待改进)</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>实例讲解 Java 内存模型</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/applied-function-progamming/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted June 10, 2021 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>17&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/spurious-weakup/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="shi-li-jiang-jie-java-nei-cun-mo-xing">实例讲解 Java 内存模型</h1>
+<p>Java内存模型(JMM)是一个相对抽象、高级的话题，相关的规范在<a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-17.html#jls-17.4">Memory Model</a>有详细的定义。JMM主要解决内存读写的可见性问题。</p>
+<p>那么，什么是内存读写的可见性问题呢？会出现什么样的问题，如何解决这些问题呢？本文讲试图通过一些实例来讲述。</p>
+<h2 id="fan-li-dai-ma">反例代码</h2>
+<p>首先，我们来看一段代码：</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#b48ead;">import </span><span>java.util.concurrent.</span><span style="color:#ebcb8b;">BrokenBarrierException</span><span>;
+</span><span style="color:#b48ead;">import </span><span>java.util.concurrent.</span><span style="color:#ebcb8b;">CyclicBarrier</span><span>;
+</span><span>
+</span><span style="color:#b48ead;">public class </span><span style="color:#ebcb8b;">Test2 </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">	
+</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">int </span><span style="color:#eff1f5;">a </span><span>= </span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">int </span><span style="color:#eff1f5;">b </span><span>= </span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">	
+</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">int </span><span style="color:#eff1f5;">x </span><span>= -</span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">int </span><span style="color:#eff1f5;">y </span><span>= -</span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">	
+</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">public void </span><span style="color:#8fa1b3;">path1</span><span style="color:#eff1f5;">(){
+</span><span style="color:#eff1f5;">		a </span><span>= </span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">		x </span><span>=</span><span style="color:#eff1f5;"> b;
+</span><span style="color:#eff1f5;">	}
+</span><span style="color:#eff1f5;">	
+</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">public void </span><span style="color:#8fa1b3;">path2</span><span style="color:#eff1f5;">(){
+</span><span style="color:#eff1f5;">		b </span><span>= </span><span style="color:#d08770;">2</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">		y </span><span>=</span><span style="color:#eff1f5;"> a;
+</span><span style="color:#eff1f5;">	}
+</span><span style="color:#eff1f5;">	
+</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">public boolean </span><span style="color:#8fa1b3;">test</span><span style="color:#eff1f5;">() </span><span style="color:#b48ead;">throws </span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">		
+</span><span style="color:#eff1f5;">		a </span><span>=</span><span style="color:#eff1f5;"> b </span><span>= </span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">		x </span><span>=</span><span style="color:#eff1f5;"> y </span><span>= -</span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">		
+</span><span style="color:#eff1f5;">		</span><span style="color:#ebcb8b;">CyclicBarrier</span><span style="color:#eff1f5;"> barrier </span><span>= </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">CyclicBarrier</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">2</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">		
+</span><span style="color:#eff1f5;">		</span><span style="color:#ebcb8b;">Thread</span><span style="color:#eff1f5;"> t1 </span><span>= </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Thread</span><span style="color:#eff1f5;">(){
+</span><span style="color:#eff1f5;">			</span><span style="color:#b48ead;">public void </span><span style="color:#8fa1b3;">run</span><span style="color:#eff1f5;">() {
+</span><span style="color:#eff1f5;">				</span><span style="color:#b48ead;">try </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">					barrier.</span><span style="color:#bf616a;">await</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">					</span><span style="color:#bf616a;">path1</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">				} </span><span style="color:#b48ead;">catch </span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#eff1f5;">| </span><span style="color:#ebcb8b;">BrokenBarrierException </span><span style="color:#bf616a;">e</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">				}
+</span><span style="color:#eff1f5;">			};
+</span><span style="color:#eff1f5;">		};
+</span><span style="color:#eff1f5;">		</span><span style="color:#ebcb8b;">Thread</span><span style="color:#eff1f5;"> t2 </span><span>= </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Thread</span><span style="color:#eff1f5;">(){
+</span><span style="color:#eff1f5;">			</span><span style="color:#b48ead;">public void </span><span style="color:#8fa1b3;">run</span><span style="color:#eff1f5;">() {
+</span><span style="color:#eff1f5;">				</span><span style="color:#b48ead;">try </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">					barrier.</span><span style="color:#bf616a;">await</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">					</span><span style="color:#bf616a;">path2</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">				} </span><span style="color:#b48ead;">catch </span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#eff1f5;">| </span><span style="color:#ebcb8b;">BrokenBarrierException </span><span style="color:#bf616a;">e</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">				}
+</span><span style="color:#eff1f5;">			};
+</span><span style="color:#eff1f5;">		};
+</span><span style="color:#eff1f5;">		t1.</span><span style="color:#bf616a;">start</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">		t2.</span><span style="color:#bf616a;">start</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">		
+</span><span style="color:#eff1f5;">		t1.</span><span style="color:#bf616a;">join</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">		t2.</span><span style="color:#bf616a;">join</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">		
+</span><span style="color:#eff1f5;">		</span><span style="color:#b48ead;">if</span><span style="color:#eff1f5;">(x </span><span>== </span><span style="color:#d08770;">0 </span><span>&amp;&amp;</span><span style="color:#eff1f5;"> y </span><span>== </span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">)
+</span><span style="color:#eff1f5;">			</span><span style="color:#b48ead;">return </span><span style="color:#d08770;">false</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">		</span><span style="color:#b48ead;">else return </span><span style="color:#d08770;">true</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">	}
+</span><span style="color:#eff1f5;">	
+</span><span style="color:#eff1f5;">	
+</span><span style="color:#eff1f5;">	</span><span style="color:#b48ead;">public static void </span><span style="color:#8fa1b3;">main</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">String</span><span style="color:#b48ead;">[] </span><span style="color:#bf616a;">args</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">throws </span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">		</span><span style="color:#b48ead;">for</span><span style="color:#eff1f5;">(</span><span style="color:#b48ead;">int</span><span style="color:#eff1f5;"> i </span><span>= </span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">; i</span><span>&lt; </span><span style="color:#d08770;">1000</span><span>*</span><span style="color:#d08770;">1000</span><span style="color:#eff1f5;">; i</span><span>++</span><span style="color:#eff1f5;">){
+</span><span style="color:#eff1f5;">			</span><span style="color:#b48ead;">if</span><span style="color:#eff1f5;">(</span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Test2</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">test</span><span style="color:#eff1f5;">()</span><span>==</span><span style="color:#d08770;">false</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">				</span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.out.</span><span style="color:#bf616a;">println</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">found on </span><span>&quot; +</span><span style="color:#eff1f5;"> i);
+</span><span style="color:#eff1f5;">			}
+</span><span style="color:#eff1f5;">		}
+</span><span style="color:#eff1f5;">	}
+</span><span style="color:#eff1f5;">	
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">}
+</span></code></pre>
+<p>这个例子，初始化时，a = 0, b = 0, x = -1, y = -1, 启动两个线程，分别同时执行 path1 和 path2，
+那么在2个线程执行完成后，是否可能会出现 x == 0 &amp;&amp; y == 0 的情况呢？
+<img src="/images/15764941224465.jpg" alt="" /></p>
+<p>现在让我们来模拟一下可能的执行情况：</p>
+<ol>
+<li>Thread 1 的 a = 1 先于 Thread 2 的 b = 2 执行。如下图
+<img src="/images/15764945758860.jpg" alt="" /><br />
+在这种情况下， y = 1， x 可能为0或者2。 不会出现 y == 0 &amp;&amp; x == 0的情况。</li>
+<li>Thread 1 的 a = 1 晚于  Thread 2 的 b = 2 执行，如下图：
+<img src="/images/15764947927698.jpg" alt="" />
+在这种情况下， x = 2, y 可能为 0或者1。不会出现 x == 0 &amp;&amp; y == 0的情况。</li>
+<li>Thread 1 和 Thread 2 完全同时执行。
+<img src="/images/15764949409093.jpg" alt="" />
+在这种情况下， x = 2, y = 1，不可能出现 x == 0 &amp;&amp; y == 0 的情况。</li>
+</ol>
+<p>根据我们的分析，无论是 T1先于T2,T1晚于T2，还是 T1,T2完全同时执行，理论上都不会出现 x == 0 and y == 0 的情况出现。</p>
+<p>但是实际上，我们去运行上述的代码，却可能会出现违背预期的情况。
+<img src="/images/15764953595416.jpg" alt="-w322" /></p>
+<p>在我的MacBookPro上，执行上述代码，在1百万次循环中，出现了8次不符合“预期”的情况。虽然说，这种几率是非常低的，百万分之八。但这样的问题如果出现在线上系统中，每天都出现数次或者数十次异常情况，会是一件非常令人抓狂的事情。</p>
+<h2 id="yuan-yin-shi-shen-me">原因是什么？</h2>
+<p>我们上面分析了3种可能的执行路径，“理论”上，是不会出现x,y同时为0的情况的，但实际执行结果并不符合预期。肯定是我们的分析出了问题。CPU的实际执行，和我们上面的“假设”并不一致。</p>
+<p>实际上，我们上面分析的三种可能的执行路径，都有一个基本的假设：CPU 是先执行上一条指令，然后在执行下一条指令，且执行完这条指令后，执行结果，可以在其他的CPU（线程）上反映其执行结果，即：</p>
+<ol>
+<li>在同一个线程内，CPU是依照顺序执行指令的。</li>
+<li>当前CPU执行完一条存储指令后，在其他CPU上读取该地址时，可以马上读取到我们写入的结果。（当然，也隐含着：当前CPU可以马上看到写入的结果）。</li>
+</ol>
+<p>这两个假设，都是比较符合我们的理解逻辑的，这才是正确反映我们代码逻辑的方式。事实上，如果CPU严格的按照上述逻辑来执行代码，是不会出现上面的异常情况的，但不幸的是，这两个假设，在现代大部分的CPU上都不成立。本文就以我们最熟悉的 x86 系列CPU来进行说明。</p>
+<ol>
+<li>
+<p>在同一个线程内，CPU 是按照顺序执行指令的。
+实际上，X86 不再完全遵守顺序执行指令的原则。X86 采用多级流水线架构，CPU可以在同一个时钟周期内，解码多条指令，并同时发射到多个执行单元进行执行，这称之为“多发射”技术。采用多发射技术，CPU可以在同一个时钟周期内同时执行多条指令，这使得程序执行速度变得更快了。
+当然，要进行这种优化，也是有前提条件的，比如，如果两条指令存在依赖关系，那么，CPU是不能将其同时执行的。</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>    a = x
+</span><span>    b = a + 1
+</span></code></pre>
+<blockquote>
+<p>Intel曾经设计过一款名为 Itanium（安腾） 的CPU，这款CPU容许编译器显式的将多条指令合并成为1条宽指令，交给 CPU 执行，从而实现更好的性能。可惜的是，这款处理器，从来就没有占领市场，目前已经被Intel抛弃了。
+目前的 X86 架构，采用的是由 CPU 自己来管理指令的依赖关系，并采用多发射的方式，来实现性能提升，其实也间接实现了 Itanium 未达成的使命。而且，无需编译器进行革命性的改变。</p>
+</blockquote>
+</li>
+<li>
+<p>当前 CPU 执行完一条存储（写入内存）指令后，在其他CPU上可以马上读取到其结果。
+实际上，X86 并不提供这种承诺。假设CPU要提供这种承诺，则意味着：当前的存储指令，必须等待到实际将数据真实写入到内存中。考虑到 CPU 访问内存的速度相对于CPU的自身的执行速度而言，是相当缓慢的。</p>
+<ul>
+<li>Register：1 Cycle</li>
+<li>L1 Cache：3 Cycles</li>
+<li>L2 Cache：10+ Cycles</li>
+<li>L3 Cache：20~30+ Cycles</li>
+<li>Main Memory：~100 Cycles</li>
+</ul>
+<p>考虑到大部分的CPU计算，都可以在1个周期内完成，也就是说，如果等待一次内存的访问，可能会浪费掉100条执行的执行能力。
+所以，实际上，CPU会对内存的读写进行大量负责的优化：</p>
+<ol>
+<li>引入 L1,L2,L3 Cache。</li>
+<li>引入 Write Buffer。
+这是一个比较复杂的过程，本文不对此进展展开，这里阐述的是这样的一个事实：当CPU执行完一个 Store 指令时，为了保证最佳的CPU执行效率，它并不保证数据已经写入到主存中，它可能是写入到当前CPU的一个内部 write buffer中，然后再合并，写入到 L1 Cache、L2 Cache、L3 Cache、Main Memory中。这里 L1, L2是每个CPU私有的缓存，L3 Cache是多个CPU 所共享的。
+当写入数据在 Write Buffer 时，其它CPU读取数据时，依然会读取到之前的值。而当数据已经写入 L1/L2 Cache时，X86会通过缓存一致性协议，确保其它的CPU读取到更新后的值。所以，在数据从write buffer写入到Cache之前，其它CPU是无法读取当前线程的写入结果的。</li>
+</ol>
+</li>
+</ol>
+<p>那么，在什么情况下，会出现 x == 0 &amp;&amp; y == 0 呢？
+<img src="https://wangzaixiang.github.io/blog/java-volatile/media/15744362994853/15765008552361.jpg" alt="" /></p>
+<ol>
+<li>[a] = 1 和 r1 = [b] 指令没有依赖关系，可以同时执行.
+<ol>
+<li>[a] = 1 是一条Store指令，其数据会先写入CPU的 WriteBuf，然后写入 Cache，大约需要 3+ 时钟周期，为其它线程所能读取到。</li>
+<li>r1 = [b] 是一个Load指令，其数据可能已经在 L1 内，可以立即执行，其值为0</li>
+</ol>
+</li>
+<li>[b] = 2 和 r1 = [a] 指令没有依赖关系，可以同时执行
+<ol>
+<li>[b] = 2 是一条 Store 指令，其数据会先写入 CPU 的 WriteBuf，然后写入 Cache，大约需要 3+ 时间周期之后，其它线程才能读取到写入的值。</li>
+<li>r1 = [a] 是一条 Load 指令，其数据可能已经在 L1 内，可以立即执行，其值为0.
+当出现这种执行路径时，就会出现 x == y == 0的情况了。</li>
+</ol>
+</li>
+</ol>
+<p>综上，[a] = 1 和 r1 = [b] 这两条指令，其执行的结果相当于重新排序了： r1 = [b], [a] = 1。这里说的重排序，是指在其它CPU的视角来看，两条指令的执行顺序。在执行CPU 自身来看，是不存在重排序的问题的，CPU 的优化总是保证符合单线程的语义不变的。</p>
+<h2 id="si-chong-zhong-pai-xu">四种重排序</h2>
+<p>上面的示例实际上是一次 Store - Load 的重排序，一共有四种形式的重排序：</p>
+<ol>
+<li>Load - Load</li>
+<li>Store - Store</li>
+<li>Load - Store</li>
+<li>Store - Load</li>
+</ol>
+<p>不同的CPU有不同的指令重排序策略，而在X86中，只有 Store Load 是会出现重排序的，而其它的三种： Load Load, Load Store, Store Store 都不会出现重排序。</p>
+<ol>
+<li>Load Load， Store Store 不会重排序。
+<img src="https://wangzaixiang.github.io/blog/java-volatile/media/15744362994853/15765027225748.jpg" alt="" />
+<ul>
+<li>如果 r1 = 1, 则意味着 [y] = 1 已执行， 则 [x] = 1 必然已执行</li>
+<li>r2 = [x] 必须晚于 r1 = [y]，因此，r2 一定等于1</li>
+</ul>
+</li>
+<li>Load Store 不会重排序
+<img src="https://wangzaixiang.github.io/blog/java-volatile/media/15744362994853/15765030906230.jpg" alt="" />
+<ul>
+<li>如果 r1 == 1，则意味着 [x] = 1 已经执行，由于 Load Store 不能重排序， r2 = [y] = 0</li>
+<li>如果 r2 == 1, 则意味 [y] = 1已经执行，此时 r1 = [x] = 0。</li>
+</ul>
+</li>
+<li>Store Load 可能会出现重排序。这个已经在上面的案列中说明。</li>
+</ol>
+<p>对其他的CPU，如Arm，可能会有不同的指令重排序限制，具体情况如何，作者对Arm不熟悉，没找搜集到这方面的资料。</p>
+<h2 id="fang-zhi-zhong-pai-xu">防止重排序</h2>
+<p>为了防止内存重排序，我们可以在 指令和指令之间插入一些特定的指令，来防止重排序。这些指令称之为 memory barriers， 或者 memory fence。有四种类型的内存屏障。</p>
+<ol>
+<li>LoadLoad.
+Load1 LoadLoad Load2 在两条 Load指令之间插入 LoadLoad，可以确保两条Load指令不被重排序。对X86来说，不需要 LoadLoad 屏障。</li>
+<li>StoreStore
+Store1 StoreStore Store2 在两条 Store 指令之间插入 StoreStore，可以确保两条 Store 指令不被重排序。对 X86来说，不需要 StoreStore屏障。</li>
+<li>LoadStore
+Load1 LoadStore Store2 在Load和Store指令之间插入 LoadStore，可以确保Load1 Store2指令不被重拍讯。对X86来说，不需要 Load Store指令。</li>
+<li>StoreLoad
+Store1 StoreLoad Load2 在 Store1和Load2之间插入 StoreLoad，可以精致 StoreLoad 重排序。这是 X86 所需要的。X86 提供 sfence, lfence, mfence 三种内存屏障指令。</li>
+</ol>
+<h1 id="volatile">volatile</h1>
+<p>lock addl $0, [esp]</p>
+<h1 id="putorderedlong">putOrderedLong</h1>
+<h1 id="putlongvolatile">putLongVolatile</h1>
+<p>引述：《Intel 64 and IA-32 Architectures》<code>8.2.3 Examples Illustrating the Memory-Ordering Principles</code> 一文。</p>
+<p>讲述内容：</p>
+<ol>
+<li>volatile 对 JavaC 的影响。</li>
+<li>volatile 对 JVM 的影响</li>
+<li>unsafe.putOrderedLong 是什么意思</li>
+<li>What's happen-before and memory-oder? 能给我一个反例吗？</li>
+</ol>
+<ul>
+<li>write back</li>
+<li>write through</li>
+</ul>
+<h2 id="store-store-load-load-not-reordered">Store-Store, Load-Load not reordered</h2>
+<h2 id="load-store-not-reordered">Load-Store not reordered</h2>
+<h2 id="store-load-maybe-reordered">Store-Load maybe reordered.</h2>
+<p>这个案例和 DCL 是相同的概念的。</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#b48ead;">package </span><span>demo;
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>java.util.</span><span style="color:#ebcb8b;">Queue</span><span>;
+</span><span style="color:#b48ead;">import </span><span>java.util.concurrent.</span><span style="color:#ebcb8b;">BlockingDeque</span><span>;
+</span><span style="color:#b48ead;">import </span><span>java.util.concurrent.</span><span style="color:#ebcb8b;">BlockingQueue</span><span>;
+</span><span style="color:#b48ead;">import </span><span>java.util.concurrent.</span><span style="color:#ebcb8b;">LinkedBlockingQueue</span><span>;
+</span><span>
+</span><span style="color:#b48ead;">public class </span><span style="color:#ebcb8b;">Test1 </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#65737e;">// Thread1
+</span><span style="color:#eff1f5;">    </span><span style="color:#65737e;">// Thread2
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#65737e;">// thread submit a req and waiting a response
+</span><span style="color:#eff1f5;">    </span><span style="color:#65737e;">// thread2 process req and subit a response
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">BlockingQueue</span><span style="color:#eff1f5;">&lt;</span><span style="color:#ebcb8b;">Task</span><span style="color:#eff1f5;">&gt; queue </span><span>= </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">LinkedBlockingQueue</span><span style="color:#eff1f5;">&lt;&gt;(</span><span style="color:#d08770;">100</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Task </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">        </span><span style="color:#ebcb8b;">String </span><span style="color:#eff1f5;">request;
+</span><span style="color:#eff1f5;">        </span><span style="color:#ebcb8b;">String </span><span style="color:#eff1f5;">response;
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Consumer </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">Thread </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">public </span><span style="color:#8fa1b3;">Consumer</span><span style="color:#eff1f5;">(){
+</span><span style="color:#eff1f5;">            </span><span style="color:#bf616a;">setDaemon</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">true</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">        }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">        @</span><span style="color:#bf616a;">Override
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">public void </span><span style="color:#8fa1b3;">run</span><span style="color:#eff1f5;">() {
+</span><span style="color:#eff1f5;">            </span><span style="color:#b48ead;">while</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">true</span><span style="color:#eff1f5;">){
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">try </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">                    </span><span style="color:#ebcb8b;">Task</span><span style="color:#eff1f5;"> task </span><span>=</span><span style="color:#eff1f5;"> queue.</span><span style="color:#bf616a;">take</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">                    task.response </span><span>=</span><span style="color:#eff1f5;"> task.request.</span><span style="color:#bf616a;">toUpperCase</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">                    </span><span style="color:#b48ead;">synchronized </span><span style="color:#eff1f5;">(task) {
+</span><span style="color:#eff1f5;">                        task.</span><span style="color:#bf616a;">notify</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">                    }
+</span><span style="color:#eff1f5;">                }
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">catch</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#bf616a;">ex</span><span style="color:#eff1f5;">){
+</span><span style="color:#eff1f5;">                    ex.</span><span style="color:#bf616a;">printStackTrace</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">                }
+</span><span style="color:#eff1f5;">            }
+</span><span style="color:#eff1f5;">        }
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Producer </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">Thread </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">        @</span><span style="color:#bf616a;">Override
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">public void </span><span style="color:#8fa1b3;">run</span><span style="color:#eff1f5;">() {
+</span><span style="color:#eff1f5;">            </span><span style="color:#b48ead;">int</span><span style="color:#eff1f5;"> count </span><span>= </span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">            </span><span style="color:#b48ead;">while</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">true</span><span style="color:#eff1f5;">){
+</span><span style="color:#eff1f5;">                </span><span style="color:#ebcb8b;">Task</span><span style="color:#eff1f5;"> task </span><span>= </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Task</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">                task.request </span><span>= &quot;</span><span style="color:#a3be8c;">Hello</span><span>&quot;</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">                queue.</span><span style="color:#bf616a;">offer</span><span style="color:#eff1f5;">(task);
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">synchronized </span><span style="color:#eff1f5;">(task){
+</span><span style="color:#eff1f5;">                    </span><span style="color:#b48ead;">if</span><span style="color:#eff1f5;">(task.response </span><span>== </span><span style="color:#d08770;">null</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">                        </span><span style="color:#b48ead;">try </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">                            task.</span><span style="color:#bf616a;">wait</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">60_000</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">                        }
+</span><span style="color:#eff1f5;">                        </span><span style="color:#b48ead;">catch</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#bf616a;">ex</span><span style="color:#eff1f5;">){
+</span><span style="color:#eff1f5;">                        }
+</span><span style="color:#eff1f5;">                    }
+</span><span style="color:#eff1f5;">                }
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">if</span><span style="color:#eff1f5;">(task.response </span><span>== </span><span style="color:#d08770;">null</span><span style="color:#eff1f5;">){ </span><span style="color:#65737e;">// do volatile required?
+</span><span style="color:#eff1f5;">                    </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.out.</span><span style="color:#bf616a;">println</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">reponse is null at </span><span>&quot; +</span><span style="color:#eff1f5;"> count);
+</span><span style="color:#eff1f5;">                    </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.</span><span style="color:#bf616a;">exit</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">                    </span><span style="color:#b48ead;">break</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">                }
+</span><span style="color:#eff1f5;">                count </span><span>+= </span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">if</span><span style="color:#eff1f5;">(count </span><span>% </span><span style="color:#d08770;">1000_000 </span><span>== </span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">                    </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.out.</span><span style="color:#bf616a;">println</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">runs </span><span>&quot; +</span><span style="color:#eff1f5;"> count</span><span>/</span><span style="color:#d08770;">1000_000 </span><span>+ &quot;</span><span style="color:#a3be8c;">M turns</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">                }
+</span><span style="color:#eff1f5;">            }
+</span><span style="color:#eff1f5;">        }
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">runTest</span><span style="color:#eff1f5;">(){
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Producer</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">start</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Producer</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">start</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Producer</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">start</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Producer</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">start</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Consumer</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">start</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Consumer</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">start</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">public static void </span><span style="color:#8fa1b3;">main</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">String</span><span style="color:#b48ead;">[] </span><span style="color:#bf616a;">args</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Test1</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">runTest</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">}
+</span><span>
+</span></code></pre>
+<h1 id="hou-ji">后记</h1>
+<p>2025-04-07 学习《超标量处理器设计》，对CPU ISA(微架构)有一定理解后，可以更好的理解这个问题</p>
+<ul>
+<li>对超标量处理器、多发射、乱序执行情况下，理论上指令从前端解码后，会进入到后端发射队列。此后，其执行是乱序的。可能会出现后面的指令先执行，
+前面的指令后执行的情况。</li>
+<li>ROB(Reorder Buffer) 乱序执行的指令，可能会在ROB中等待很长时间，才会被提交到内存中。这个主要是对单个线程的有序性而言，主要是针对应用可见的寄存器、内存的可见性而言。</li>
+<li>在执行指令时的内存有序性，存在 Load-Load, Store-Store, Load-Store, Store-Load 四种情况。不同的 CPU 架构有不同的实现。
+<ul>
+<li>x86 架构下，Load-Load, Store-Store 不会重排序，Load-Store 不会重排序，Store-Load 可能会重排序。</li>
+<li>ARM 架构下，都会出现重排序，需要显示使用内存屏障。优点是容许更多的指令重排，从而提升 IPC，但并发场景中需要更多的内存屏障。</li>
+</ul>
+</li>
+</ul>
+<h2 id="load-load-zhe-ge-an-li-dai-gai-jin">Load-Load (这个案例待改进)</h2>
+<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#65737e;">// 共享变量
+</span><span style="color:#b48ead;">int</span><span> data = </span><span style="color:#d08770;">0</span><span>;
+</span><span style="color:#b48ead;">bool</span><span> ready = </span><span style="color:#d08770;">false</span><span>;
+</span><span>
+</span><span style="color:#65737e;">// Thread A: 写入数据
+</span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">writer</span><span>() {
+</span><span>    data = </span><span style="color:#d08770;">42</span><span>;      </span><span style="color:#65737e;">// 写操作
+</span><span>    ready = </span><span style="color:#d08770;">true</span><span>;   </span><span style="color:#65737e;">// 写标记
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">// Thread B: 读取数据
+</span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">reader</span><span>() {
+</span><span>    </span><span style="color:#b48ead;">while </span><span>(!ready) { </span><span style="color:#65737e;">/* 等待 */ </span><span>}
+</span><span>    </span><span style="color:#b48ead;">int</span><span> local_data_1 = data;  </span><span style="color:#65737e;">// Load 1
+</span><span>    </span><span style="color:#b48ead;">int</span><span> local_data_2 = data;  </span><span style="color:#65737e;">// Load 2
+</span><span>    </span><span style="color:#96b5b4;">assert</span><span>(local_data_1 == local_data_2);  </span><span style="color:#65737e;">// 断言应总成立
+</span><span>}
+</span></code></pre>
+<h2 id="store-store">Store-Store</h2>
+<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#65737e;">// 共享变量
+</span><span style="color:#b48ead;">int</span><span> a = </span><span style="color:#d08770;">0</span><span>;
+</span><span style="color:#b48ead;">int</span><span> b = </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span style="color:#65737e;">// Thread A: 写入两个变量
+</span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">writer</span><span>() {
+</span><span>    a = </span><span style="color:#d08770;">1</span><span>;  </span><span style="color:#65737e;">// Store 1
+</span><span>    b = </span><span style="color:#d08770;">2</span><span>;  </span><span style="color:#65737e;">// Store 2
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">// Thread B: 检查写入顺序
+</span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">reader</span><span>() {
+</span><span>    </span><span style="color:#b48ead;">while </span><span>(b != </span><span style="color:#d08770;">2</span><span>) { </span><span style="color:#65737e;">/* 等待 */ </span><span>}
+</span><span>    </span><span style="color:#96b5b4;">assert</span><span>(a == </span><span style="color:#d08770;">1</span><span>);  </span><span style="color:#65737e;">// 若 Store-Store 重排导致 b=2 先于 a=1，则断言失败
+</span><span>}
+</span></code></pre>
+<h2 id="load-store-ci-an-li-dai-gai-jin">Load-Store(此案例待改进)</h2>
+<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#65737e;">// 共享变量
+</span><span style="color:#b48ead;">int</span><span> data = </span><span style="color:#d08770;">0</span><span>;
+</span><span style="color:#b48ead;">bool</span><span> ready = </span><span style="color:#d08770;">false</span><span>;
+</span><span>
+</span><span style="color:#65737e;">// Thread A: 写入数据
+</span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">writer</span><span>() {
+</span><span>    data = </span><span style="color:#d08770;">42</span><span>;
+</span><span>    ready = </span><span style="color:#d08770;">true</span><span>;  </span><span style="color:#65737e;">// 写标记
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">// Thread B: 读取数据后立即写入新值
+</span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">reader</span><span>() {
+</span><span>    </span><span style="color:#b48ead;">while </span><span>(!ready) { </span><span style="color:#65737e;">/* 等待 */ </span><span>}
+</span><span>    </span><span style="color:#b48ead;">int</span><span> local_data = data;  </span><span style="color:#65737e;">// Load
+</span><span>    </span><span style="color:#bf616a;">DMB</span><span>(LD);        </span><span style="color:#65737e;">// 假设此处缺少屏障
+</span><span>    data = local_data + </span><span style="color:#d08770;">1</span><span>;  </span><span style="color:#65737e;">// Store
+</span><span>}
+</span></code></pre>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/applied-function-progamming/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/spurious-weakup/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

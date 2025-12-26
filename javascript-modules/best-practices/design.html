@@ -1,0 +1,1127 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>模块设计原则 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="模块设计原则"><a class="header" href="#模块设计原则">模块设计原则</a></h1>
+<p>良好的模块设计是构建可维护、可扩展应用的基础。本章将介绍模块化开发中的设计原则和最佳实践。</p>
+<h2 id="solid-原则在模块化中的应用"><a class="header" href="#solid-原则在模块化中的应用">SOLID 原则在模块化中的应用</a></h2>
+<h3 id="1-单一职责原则-single-responsibility-principle"><a class="header" href="#1-单一职责原则-single-responsibility-principle">1. 单一职责原则 (Single Responsibility Principle)</a></h3>
+<p>每个模块应该只有一个变化的理由，即只负责一个功能领域。</p>
+<h4 id="-违反单一职责的示例"><a class="header" href="#-违反单一职责的示例">❌ 违反单一职责的示例</a></h4>
+<pre><code class="language-javascript">// user-manager.js - 职责过多
+export class UserManager {
+  // 用户数据管理
+  async saveUser(user) {
+    await this.validateUser(user);
+    await this.sendEmail(user);
+    return await this.database.save(user);
+  }
+  
+  // 数据验证
+  validateUser(user) {
+    if (!user.email || !user.name) {
+      throw new Error('Invalid user data');
+    }
+  }
+  
+  // 邮件发送
+  async sendEmail(user) {
+    const emailClient = new EmailClient();
+    await emailClient.send(user.email, 'Welcome!');
+  }
+  
+  // 数据库操作
+  async findUser(id) {
+    return await this.database.find(id);
+  }
+}
+</code></pre>
+<h4 id="-遵循单一职责的改进"><a class="header" href="#-遵循单一职责的改进">✅ 遵循单一职责的改进</a></h4>
+<pre><code class="language-javascript">// user-validator.js - 只负责验证
+export class UserValidator {
+  static validate(user) {
+    if (!user.email || !user.name) {
+      throw new Error('Invalid user data');
+    }
+    
+    if (!this.isValidEmail(user.email)) {
+      throw new Error('Invalid email format');
+    }
+  }
+  
+  static isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+}
+
+// email-service.js - 只负责邮件发送
+export class EmailService {
+  constructor(config) {
+    this.client = new EmailClient(config);
+  }
+  
+  async sendWelcomeEmail(user) {
+    const template = await this.loadTemplate('welcome');
+    const content = this.renderTemplate(template, { name: user.name });
+    return await this.client.send(user.email, 'Welcome!', content);
+  }
+  
+  async loadTemplate(name) {
+    // 加载邮件模板
+  }
+  
+  renderTemplate(template, data) {
+    // 渲染模板
+  }
+}
+
+// user-repository.js - 只负责数据持久化
+export class UserRepository {
+  constructor(database) {
+    this.db = database;
+  }
+  
+  async save(user) {
+    return await this.db.collection('users').insert(user);
+  }
+  
+  async findById(id) {
+    return await this.db.collection('users').findOne({ _id: id });
+  }
+  
+  async findByEmail(email) {
+    return await this.db.collection('users').findOne({ email });
+  }
+}
+
+// user-service.js - 协调各个服务
+export class UserService {
+  constructor(userRepository, emailService) {
+    this.userRepository = userRepository;
+    this.emailService = emailService;
+  }
+  
+  async createUser(userData) {
+    // 验证用户数据
+    UserValidator.validate(userData);
+    
+    // 检查邮箱是否已存在
+    const existingUser = await this.userRepository.findByEmail(userData.email);
+    if (existingUser) {
+      throw new Error('Email already exists');
+    }
+    
+    // 保存用户
+    const user = await this.userRepository.save(userData);
+    
+    // 发送欢迎邮件
+    await this.emailService.sendWelcomeEmail(user);
+    
+    return user;
+  }
+}
+</code></pre>
+<h3 id="2-开闭原则-openclosed-principle"><a class="header" href="#2-开闭原则-openclosed-principle">2. 开闭原则 (Open/Closed Principle)</a></h3>
+<p>模块应该对扩展开放，对修改关闭。</p>
+<pre><code class="language-javascript">// 抽象基类
+// payment-processor.js
+export class PaymentProcessor {
+  async process(payment) {
+    throw new Error('Must implement process method');
+  }
+  
+  async validate(payment) {
+    if (!payment.amount || payment.amount &lt;= 0) {
+      throw new Error('Invalid payment amount');
+    }
+  }
+}
+
+// 具体实现 - 不修改基类，只扩展
+// stripe-processor.js
+import { PaymentProcessor } from './payment-processor.js';
+
+export class StripeProcessor extends PaymentProcessor {
+  constructor(apiKey) {
+    super();
+    this.stripe = new Stripe(apiKey);
+  }
+  
+  async process(payment) {
+    await this.validate(payment);
+    
+    return await this.stripe.charges.create({
+      amount: payment.amount,
+      currency: payment.currency,
+      source: payment.token
+    });
+  }
+}
+
+// paypal-processor.js
+import { PaymentProcessor } from './payment-processor.js';
+
+export class PayPalProcessor extends PaymentProcessor {
+  constructor(config) {
+    super();
+    this.paypal = new PayPal(config);
+  }
+  
+  async process(payment) {
+    await this.validate(payment);
+    
+    return await this.paypal.payment.create({
+      intent: 'sale',
+      transactions: [{
+        amount: {
+          total: payment.amount,
+          currency: payment.currency
+        }
+      }]
+    });
+  }
+}
+
+// payment-service.js - 使用策略模式
+export class PaymentService {
+  constructor() {
+    this.processors = new Map();
+  }
+  
+  registerProcessor(type, processor) {
+    this.processors.set(type, processor);
+  }
+  
+  async processPayment(type, payment) {
+    const processor = this.processors.get(type);
+    if (!processor) {
+      throw new Error(`Unsupported payment type: ${type}`);
+    }
+    
+    return await processor.process(payment);
+  }
+}
+
+// 使用示例
+const paymentService = new PaymentService();
+paymentService.registerProcessor('stripe', new StripeProcessor(apiKey));
+paymentService.registerProcessor('paypal', new PayPalProcessor(config));
+
+// 添加新的支付方式不需要修改现有代码
+paymentService.registerProcessor('alipay', new AlipayProcessor(config));
+</code></pre>
+<h3 id="3-里氏替换原则-liskov-substitution-principle"><a class="header" href="#3-里氏替换原则-liskov-substitution-principle">3. 里氏替换原则 (Liskov Substitution Principle)</a></h3>
+<p>子类必须能够替换其父类而不影响程序的正确性。</p>
+<pre><code class="language-javascript">// cache-interface.js
+export class CacheInterface {
+  async get(key) {
+    throw new Error('Must implement get method');
+  }
+  
+  async set(key, value, ttl = 3600) {
+    throw new Error('Must implement set method');
+  }
+  
+  async delete(key) {
+    throw new Error('Must implement delete method');
+  }
+}
+
+// memory-cache.js
+import { CacheInterface } from './cache-interface.js';
+
+export class MemoryCache extends CacheInterface {
+  constructor() {
+    super();
+    this.cache = new Map();
+    this.timers = new Map();
+  }
+  
+  async get(key) {
+    return this.cache.get(key) || null;
+  }
+  
+  async set(key, value, ttl = 3600) {
+    this.cache.set(key, value);
+    
+    // 清除旧的定时器
+    if (this.timers.has(key)) {
+      clearTimeout(this.timers.get(key));
+    }
+    
+    // 设置新的过期定时器
+    const timer = setTimeout(() =&gt; {
+      this.cache.delete(key);
+      this.timers.delete(key);
+    }, ttl * 1000);
+    
+    this.timers.set(key, timer);
+  }
+  
+  async delete(key) {
+    this.cache.delete(key);
+    if (this.timers.has(key)) {
+      clearTimeout(this.timers.get(key));
+      this.timers.delete(key);
+    }
+  }
+}
+
+// redis-cache.js
+import { CacheInterface } from './cache-interface.js';
+
+export class RedisCache extends CacheInterface {
+  constructor(client) {
+    super();
+    this.redis = client;
+  }
+  
+  async get(key) {
+    return await this.redis.get(key);
+  }
+  
+  async set(key, value, ttl = 3600) {
+    return await this.redis.setex(key, ttl, JSON.stringify(value));
+  }
+  
+  async delete(key) {
+    return await this.redis.del(key);
+  }
+}
+
+// user-service.js - 可以无缝替换缓存实现
+export class UserService {
+  constructor(userRepository, cache) {
+    this.userRepository = userRepository;
+    this.cache = cache; // 可以是 MemoryCache 或 RedisCache
+  }
+  
+  async getUser(id) {
+    const cacheKey = `user:${id}`;
+    
+    // 先从缓存获取
+    let user = await this.cache.get(cacheKey);
+    if (user) {
+      return JSON.parse(user);
+    }
+    
+    // 缓存未命中，从数据库获取
+    user = await this.userRepository.findById(id);
+    if (user) {
+      await this.cache.set(cacheKey, JSON.stringify(user), 1800);
+    }
+    
+    return user;
+  }
+}
+</code></pre>
+<h3 id="4-接口隔离原则-interface-segregation-principle"><a class="header" href="#4-接口隔离原则-interface-segregation-principle">4. 接口隔离原则 (Interface Segregation Principle)</a></h3>
+<p>不应该强迫客户端依赖于它们不使用的接口。</p>
+<h4 id="-违反接口隔离的示例"><a class="header" href="#-违反接口隔离的示例">❌ 违反接口隔离的示例</a></h4>
+<pre><code class="language-javascript">// 臃肿的接口
+export class DatabaseService {
+  // 用户相关
+  async createUser(user) { /* ... */ }
+  async updateUser(id, user) { /* ... */ }
+  async deleteUser(id) { /* ... */ }
+  
+  // 订单相关
+  async createOrder(order) { /* ... */ }
+  async updateOrder(id, order) { /* ... */ }
+  async deleteOrder(id) { /* ... */ }
+  
+  // 产品相关
+  async createProduct(product) { /* ... */ }
+  async updateProduct(id, product) { /* ... */ }
+  async deleteProduct(id) { /* ... */ }
+  
+  // 报表相关
+  async generateUserReport() { /* ... */ }
+  async generateOrderReport() { /* ... */ }
+  async generateProductReport() { /* ... */ }
+}
+</code></pre>
+<h4 id="-遵循接口隔离的改进"><a class="header" href="#-遵循接口隔离的改进">✅ 遵循接口隔离的改进</a></h4>
+<pre><code class="language-javascript">// 细分的接口
+// user-operations.js
+export class UserOperations {
+  constructor(database) {
+    this.db = database;
+  }
+  
+  async create(user) {
+    return await this.db.collection('users').insert(user);
+  }
+  
+  async update(id, user) {
+    return await this.db.collection('users').update({ _id: id }, user);
+  }
+  
+  async delete(id) {
+    return await this.db.collection('users').delete({ _id: id });
+  }
+  
+  async findById(id) {
+    return await this.db.collection('users').findOne({ _id: id });
+  }
+}
+
+// order-operations.js
+export class OrderOperations {
+  constructor(database) {
+    this.db = database;
+  }
+  
+  async create(order) {
+    return await this.db.collection('orders').insert(order);
+  }
+  
+  async findByUserId(userId) {
+    return await this.db.collection('orders').find({ userId });
+  }
+  
+  async updateStatus(id, status) {
+    return await this.db.collection('orders').update(
+      { _id: id }, 
+      { $set: { status, updatedAt: new Date() } }
+    );
+  }
+}
+
+// report-generator.js
+export class ReportGenerator {
+  constructor(database) {
+    this.db = database;
+  }
+  
+  async generateUserReport(startDate, endDate) {
+    return await this.db.collection('users').aggregate([
+      { $match: { createdAt: { $gte: startDate, $lte: endDate } } },
+      { $group: { _id: null, count: { $sum: 1 } } }
+    ]);
+  }
+  
+  async generateOrderReport(startDate, endDate) {
+    return await this.db.collection('orders').aggregate([
+      { $match: { createdAt: { $gte: startDate, $lte: endDate } } },
+      { $group: { _id: '$status', count: { $sum: 1 }, total: { $sum: '$amount' } } }
+    ]);
+  }
+}
+
+// 客户端只依赖需要的接口
+// user-service.js
+import { UserOperations } from './user-operations.js';
+
+export class UserService {
+  constructor(database) {
+    this.userOps = new UserOperations(database);
+  }
+  
+  async createUser(userData) {
+    // 只需要用户操作接口
+    return await this.userOps.create(userData);
+  }
+}
+</code></pre>
+<h3 id="5-依赖倒置原则-dependency-inversion-principle"><a class="header" href="#5-依赖倒置原则-dependency-inversion-principle">5. 依赖倒置原则 (Dependency Inversion Principle)</a></h3>
+<p>高层模块不应该依赖低层模块，两者都应该依赖于抽象。</p>
+<pre><code class="language-javascript">// 抽象层
+// logger-interface.js
+export class LoggerInterface {
+  info(message, meta = {}) {
+    throw new Error('Must implement info method');
+  }
+  
+  error(message, error = null, meta = {}) {
+    throw new Error('Must implement error method');
+  }
+  
+  warn(message, meta = {}) {
+    throw new Error('Must implement warn method');
+  }
+}
+
+// notification-interface.js
+export class NotificationInterface {
+  async send(recipient, message, options = {}) {
+    throw new Error('Must implement send method');
+  }
+}
+
+// 具体实现
+// console-logger.js
+import { LoggerInterface } from './logger-interface.js';
+
+export class ConsoleLogger extends LoggerInterface {
+  info(message, meta = {}) {
+    console.log(`[INFO] ${new Date().toISOString()} - ${message}`, meta);
+  }
+  
+  error(message, error = null, meta = {}) {
+    console.error(`[ERROR] ${new Date().toISOString()} - ${message}`, {
+      error: error?.stack || error,
+      ...meta
+    });
+  }
+  
+  warn(message, meta = {}) {
+    console.warn(`[WARN] ${new Date().toISOString()} - ${message}`, meta);
+  }
+}
+
+// file-logger.js
+import { LoggerInterface } from './logger-interface.js';
+import fs from 'fs/promises';
+
+export class FileLogger extends LoggerInterface {
+  constructor(logFile) {
+    super();
+    this.logFile = logFile;
+  }
+  
+  async info(message, meta = {}) {
+    await this.writeLog('INFO', message, meta);
+  }
+  
+  async error(message, error = null, meta = {}) {
+    await this.writeLog('ERROR', message, { error: error?.stack || error, ...meta });
+  }
+  
+  async warn(message, meta = {}) {
+    await this.writeLog('WARN', message, meta);
+  }
+  
+  async writeLog(level, message, meta) {
+    const timestamp = new Date().toISOString();
+    const logEntry = JSON.stringify({ timestamp, level, message, meta }) + '\n';
+    await fs.appendFile(this.logFile, logEntry);
+  }
+}
+
+// email-notification.js
+import { NotificationInterface } from './notification-interface.js';
+
+export class EmailNotification extends NotificationInterface {
+  constructor(emailService) {
+    super();
+    this.emailService = emailService;
+  }
+  
+  async send(recipient, message, options = {}) {
+    return await this.emailService.send({
+      to: recipient,
+      subject: options.subject || 'Notification',
+      body: message,
+      html: options.html || false
+    });
+  }
+}
+
+// 高层模块依赖抽象
+// order-service.js
+export class OrderService {
+  constructor(orderRepository, logger, notificationService) {
+    this.orderRepository = orderRepository;
+    this.logger = logger; // 依赖抽象，不是具体实现
+    this.notificationService = notificationService; // 依赖抽象
+  }
+  
+  async createOrder(orderData) {
+    try {
+      this.logger.info('Creating new order', { orderData });
+      
+      const order = await this.orderRepository.create(orderData);
+      
+      await this.notificationService.send(
+        orderData.customerEmail,
+        `Your order ${order.id} has been created successfully`,
+        { subject: 'Order Confirmation' }
+      );
+      
+      this.logger.info('Order created successfully', { orderId: order.id });
+      return order;
+      
+    } catch (error) {
+      this.logger.error('Failed to create order', error, { orderData });
+      throw error;
+    }
+  }
+}
+
+// 依赖注入配置
+// app.js
+import { OrderService } from './order-service.js';
+import { ConsoleLogger } from './console-logger.js';
+import { EmailNotification } from './email-notification.js';
+
+// 可以轻松切换不同的实现
+const logger = new ConsoleLogger(); // 或 new FileLogger('./app.log')
+const notificationService = new EmailNotification(emailService);
+
+const orderService = new OrderService(orderRepository, logger, notificationService);
+</code></pre>
+<h2 id="模块耦合和内聚"><a class="header" href="#模块耦合和内聚">模块耦合和内聚</a></h2>
+<h3 id="高内聚的模块设计"><a class="header" href="#高内聚的模块设计">高内聚的模块设计</a></h3>
+<p>模块内部的元素应该紧密相关，共同完成一个明确的功能。</p>
+<pre><code class="language-javascript">// 高内聚的用户认证模块
+// auth-module.js
+export class AuthModule {
+  constructor(userRepository, tokenService, passwordService) {
+    this.userRepository = userRepository;
+    this.tokenService = tokenService;
+    this.passwordService = passwordService;
+  }
+  
+  // 所有方法都与认证相关
+  async login(email, password) {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    const isValidPassword = await this.passwordService.verify(password, user.hashedPassword);
+    if (!isValidPassword) {
+      throw new Error('Invalid password');
+    }
+    
+    return this.tokenService.generate(user.id);
+  }
+  
+  async register(userData) {
+    const hashedPassword = await this.passwordService.hash(userData.password);
+    const user = await this.userRepository.create({
+      ...userData,
+      hashedPassword
+    });
+    
+    return this.tokenService.generate(user.id);
+  }
+  
+  async verifyToken(token) {
+    return this.tokenService.verify(token);
+  }
+  
+  async refreshToken(refreshToken) {
+    const userId = await this.tokenService.verifyRefresh(refreshToken);
+    return this.tokenService.generate(userId);
+  }
+  
+  async logout(token) {
+    return this.tokenService.revoke(token);
+  }
+}
+</code></pre>
+<h3 id="低耦合的模块间通信"><a class="header" href="#低耦合的模块间通信">低耦合的模块间通信</a></h3>
+<p>模块之间的依赖应该最小化，通过明确的接口进行通信。</p>
+<pre><code class="language-javascript">// 事件驱动的低耦合架构
+// event-bus.js
+export class EventBus {
+  constructor() {
+    this.listeners = new Map();
+  }
+  
+  on(event, callback) {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, []);
+    }
+    this.listeners.get(event).push(callback);
+  }
+  
+  off(event, callback) {
+    const callbacks = this.listeners.get(event);
+    if (callbacks) {
+      const index = callbacks.indexOf(callback);
+      if (index &gt; -1) {
+        callbacks.splice(index, 1);
+      }
+    }
+  }
+  
+  emit(event, data) {
+    const callbacks = this.listeners.get(event) || [];
+    callbacks.forEach(callback =&gt; {
+      try {
+        callback(data);
+      } catch (error) {
+        console.error(`Error in event listener for ${event}:`, error);
+      }
+    });
+  }
+}
+
+// order-service.js - 发布事件，不直接依赖其他服务
+export class OrderService {
+  constructor(orderRepository, eventBus) {
+    this.orderRepository = orderRepository;
+    this.eventBus = eventBus;
+  }
+  
+  async createOrder(orderData) {
+    const order = await this.orderRepository.create(orderData);
+    
+    // 发布事件而不是直接调用其他服务
+    this.eventBus.emit('order.created', {
+      orderId: order.id,
+      customerId: order.customerId,
+      amount: order.amount,
+      createdAt: order.createdAt
+    });
+    
+    return order;
+  }
+}
+
+// notification-service.js - 监听事件
+export class NotificationService {
+  constructor(emailService, eventBus) {
+    this.emailService = emailService;
+    this.eventBus = eventBus;
+    
+    // 订阅相关事件
+    this.eventBus.on('order.created', this.handleOrderCreated.bind(this));
+    this.eventBus.on('user.registered', this.handleUserRegistered.bind(this));
+  }
+  
+  async handleOrderCreated(orderData) {
+    await this.emailService.send(
+      orderData.customerEmail,
+      'Order Confirmation',
+      `Your order ${orderData.orderId} has been confirmed.`
+    );
+  }
+  
+  async handleUserRegistered(userData) {
+    await this.emailService.send(
+      userData.email,
+      'Welcome!',
+      `Welcome to our platform, ${userData.name}!`
+    );
+  }
+}
+
+// analytics-service.js - 独立的分析服务
+export class AnalyticsService {
+  constructor(analyticsRepository, eventBus) {
+    this.analyticsRepository = analyticsRepository;
+    this.eventBus = eventBus;
+    
+    // 订阅所有感兴趣的事件
+    this.eventBus.on('order.created', this.trackOrderCreated.bind(this));
+    this.eventBus.on('user.registered', this.trackUserRegistered.bind(this));
+    this.eventBus.on('user.login', this.trackUserLogin.bind(this));
+  }
+  
+  async trackOrderCreated(orderData) {
+    await this.analyticsRepository.recordEvent('order_created', {
+      orderId: orderData.orderId,
+      amount: orderData.amount,
+      timestamp: orderData.createdAt
+    });
+  }
+  
+  async trackUserRegistered(userData) {
+    await this.analyticsRepository.recordEvent('user_registered', {
+      userId: userData.id,
+      timestamp: userData.createdAt
+    });
+  }
+  
+  async trackUserLogin(loginData) {
+    await this.analyticsRepository.recordEvent('user_login', {
+      userId: loginData.userId,
+      timestamp: loginData.timestamp
+    });
+  }
+}
+</code></pre>
+<h2 id="模块命名和组织"><a class="header" href="#模块命名和组织">模块命名和组织</a></h2>
+<h3 id="清晰的命名约定"><a class="header" href="#清晰的命名约定">清晰的命名约定</a></h3>
+<pre><code class="language-javascript">// 好的命名约定
+// services/user-authentication.service.js
+export class UserAuthenticationService { }
+
+// repositories/user.repository.js
+export class UserRepository { }
+
+// models/user.model.js
+export class User { }
+
+// utils/date.utils.js
+export const DateUtils = { };
+
+// config/database.config.js
+export const databaseConfig = { };
+
+// types/user.types.js
+export interface User { }
+
+// constants/http-status.constants.js
+export const HTTP_STATUS = { };
+</code></pre>
+<h3 id="目录结构组织"><a class="header" href="#目录结构组织">目录结构组织</a></h3>
+<pre><code>src/
+├── components/           # 可复用组件
+│   ├── ui/              # UI组件
+│   │   ├── button/
+│   │   ├── input/
+│   │   └── modal/
+│   └── business/        # 业务组件
+│       ├── user-profile/
+│       └── order-summary/
+├── services/            # 业务服务层
+│   ├── user.service.js
+│   ├── order.service.js
+│   └── payment.service.js
+├── repositories/        # 数据访问层
+│   ├── user.repository.js
+│   └── order.repository.js
+├── models/             # 数据模型
+│   ├── user.model.js
+│   └── order.model.js
+├── utils/              # 工具函数
+│   ├── date.utils.js
+│   ├── validation.utils.js
+│   └── format.utils.js
+├── config/             # 配置文件
+│   ├── app.config.js
+│   ├── database.config.js
+│   └── api.config.js
+├── types/              # TypeScript 类型定义
+│   ├── user.types.ts
+│   └── api.types.ts
+├── constants/          # 常量定义
+│   ├── http-status.constants.js
+│   └── error-codes.constants.js
+└── tests/              # 测试文件
+    ├── unit/
+    ├── integration/
+    └── e2e/
+</code></pre>
+<h2 id="模块版本管理"><a class="header" href="#模块版本管理">模块版本管理</a></h2>
+<h3 id="语义化版本控制"><a class="header" href="#语义化版本控制">语义化版本控制</a></h3>
+<pre><code class="language-json">// package.json
+{
+  "name": "@mycompany/user-service",
+  "version": "1.2.3",
+  "description": "User management service",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/esm/types.js",
+      "require": "./dist/cjs/types.js",
+      "types": "./dist/types/types.d.ts"
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "engines": {
+    "node": "&gt;=16.0.0"
+  }
+}
+</code></pre>
+<h3 id="向后兼容的-api-设计"><a class="header" href="#向后兼容的-api-设计">向后兼容的 API 设计</a></h3>
+<pre><code class="language-javascript">// v1.0.0 - 初始版本
+export class UserService {
+  async getUser(id) {
+    return await this.userRepository.findById(id);
+  }
+}
+
+// v1.1.0 - 添加新功能，保持向后兼容
+export class UserService {
+  async getUser(id) {
+    return await this.userRepository.findById(id);
+  }
+  
+  // 新增方法
+  async getUserWithProfile(id) {
+    const user = await this.userRepository.findById(id);
+    const profile = await this.profileRepository.findByUserId(id);
+    return { ...user, profile };
+  }
+}
+
+// v2.0.0 - 破坏性变更，新的主版本
+export class UserService {
+  // 修改方法签名，返回结构变化
+  async getUser(id, options = {}) {
+    const user = await this.userRepository.findById(id);
+    
+    if (options.includeProfile) {
+      const profile = await this.profileRepository.findByUserId(id);
+      return { user, profile };
+    }
+    
+    return { user };
+  }
+  
+  // 废弃的方法标记
+  /**
+   * @deprecated Use getUser with options.includeProfile instead
+   */
+  async getUserWithProfile(id) {
+    console.warn('getUserWithProfile is deprecated. Use getUser with options.includeProfile instead.');
+    return this.getUser(id, { includeProfile: true });
+  }
+}
+</code></pre>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>良好的模块设计原则包括：</p>
+<h3 id="-核心原则"><a class="header" href="#-核心原则">🎯 <strong>核心原则</strong></a></h3>
+<ul>
+<li><strong>SOLID原则</strong>: 单一职责、开闭、里氏替换、接口隔离、依赖倒置</li>
+<li><strong>高内聚低耦合</strong>: 模块内部紧密相关，模块间依赖最小</li>
+<li><strong>明确的接口</strong>: 清晰的输入输出和职责边界</li>
+</ul>
+<h3 id="-命名和组织"><a class="header" href="#-命名和组织">📝 <strong>命名和组织</strong></a></h3>
+<ul>
+<li><strong>一致的命名约定</strong>: 清晰表达模块用途</li>
+<li><strong>合理的目录结构</strong>: 按功能和层次组织</li>
+<li><strong>语义化版本</strong>: 明确的版本变更策略</li>
+</ul>
+<h3 id="-持续改进"><a class="header" href="#-持续改进">🔄 <strong>持续改进</strong></a></h3>
+<ul>
+<li><strong>定期重构</strong>: 保持代码质量</li>
+<li><strong>代码审查</strong>: 确保设计原则的执行</li>
+<li><strong>文档维护</strong>: 保持文档与代码同步</li>
+</ul>
+<p>遵循这些设计原则可以构建出易于维护、测试和扩展的模块化应用。</p>
+<hr>
+<p><strong>下一章</strong>: <a href="./performance.html">性能优化</a> →</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../runtime/bun.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../best-practices/performance.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../runtime/bun.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../best-practices/performance.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

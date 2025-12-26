@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>数据库查询优化相关技术收集 ... | 程序人生</title>
+<meta name="description" content="收集有关 OLAP 查询优化相关的策略、算法，为后续评估向量计算体系的优化准备素材">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/sql-optimize/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="数据库查询优化相关技术收集 ...">
+  <meta name="twitter:description" content="收集有关 OLAP 查询优化相关的策略、算法，为后续评估向量计算体系的优化准备素材">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="数据库查询优化相关技术收集 ...">
+  <meta property="og:description" content="收集有关 OLAP 查询优化相关的策略、算法，为后续评估向量计算体系的优化准备素材">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/sql-optimize/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="数据库查询优化相关技术收集 ...">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/sql-optimize/"
+      },
+      "headline": "数据库查询优化相关技术收集 ...",
+      "image": ,
+      "datePublished": "2024-08-22T12:00:00+00:00",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "数据库查询优化相关技术收集 ..."
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "数据库查询优化相关技术收集 ...",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "收集有关 OLAP 查询优化相关的策略、算法，为后续评估向量计算体系的优化准备素材"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Sql Optimize",
+            "item": "https://wangzaixiang.github.io/blog/sql-optimize/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/sql-optimize/#you-hua-ce-lue-summary">优化策略 Summary</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/sql-optimize/#mysql">MySQL</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/sql-optimize/#clickhouse">ClickHouse</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/sql-optimize/#subquery-you-hua">Subquery 优化</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>数据库查询优化相关技术收集 ...</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/adt/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted August 22, 2024 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>6&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/mandelbrot-gpu/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h2 id="you-hua-ce-lue-summary">优化策略 Summary</h2>
+<p>每一个章节都可以写若干论文</p>
+<ol>
+<li>Expression Rewriter</li>
+<li>Filter Push-down</li>
+<li>Join
+<ul>
+<li>算法选择： Hash(parallel, grace), Sort(full, partial),</li>
+<li>表顺序</li>
+<li>filter push-down</li>
+</ul>
+</li>
+<li>Subquery as Join
+<ul>
+<li><a href="https://ericfu.me/subquery-optimization/">子查询的查询优化</a>： Executor -&gt; Evaluator -&gt; Executor 的执行模式是非常低效的</li>
+<li><a href="https://ericfu.me/calcite-top-down-planner">Calcite 中新增的 Top-down 优化器</a></li>
+</ul>
+</li>
+<li>Window 函数优化
+<ul>
+<li>窗口：重用窗口、增量式窗口</li>
+<li>聚合：增量式聚合</li>
+</ul>
+</li>
+<li>group-by + 聚合函数优化
+<ul>
+<li>分区: map-reduce</li>
+<li>avg() 转换为 SUM()/COUNT()</li>
+<li>消除 grouped dataframe</li>
+</ul>
+</li>
+<li>减枝
+<ul>
+<li>裁剪列</li>
+<li>裁剪表（关联）</li>
+</ul>
+</li>
+<li>索引优化
+<ul>
+<li>minmax</li>
+<li>bloom</li>
+<li>bitmap</li>
+<li>sorted index</li>
+</ul>
+</li>
+<li>vectorized using SIMD + GPU</li>
+<li>cache, material CTE</li>
+</ol>
+<h2 id="mysql">MySQL</h2>
+<ol>
+<li>
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/select-optimization.html">Optimizing SELECT Statements</a></p>
+<ol>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/where-optimization.html">WHERE Clause Optimization</a>
+<ul>
+<li>移除不必要的括号 (表达式优化)</li>
+<li>Constant folding <code>(a&lt;b AND b=c) AND a=5</code> -&gt; <code>b&gt;5 AND b=c AND a=5</code></li>
+<li>Constant condition removal.</li>
+<li>count(*) 优化</li>
+<li>在没有 group by 时， having 合并到 WHERE 中</li>
+<li>where 下沉到 join 表</li>
+<li>constant tables 提前读取</li>
+<li>join 顺序：如果 order by / group by 字段来源于单个表，则这表优化。</li>
+</ul>
+</li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/range-optimization.html">Range Optimization</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/window-function-optimization.html">Window Function Optimization</a>
+<ul>
+<li>如果子查询具有窗口函数，则禁用子查询的派生表合并。子查询总是具体化的。</li>
+<li>半连接不适用于窗口函数优化，因为半连接适用于 WHERE和中的子查询JOIN ... ON，其中不能包含窗口函数。</li>
+<li>优化器按顺序处理具有相同排序要求的多个窗口，因此可以跳过第一个窗口之后的排序。</li>
+<li>优化器不会尝试合并可以在单个步骤中评估的窗口（例如，当多个 OVER子句包含相同的窗口定义时）。
+解决方法是在子句中定义窗口并在 WINDOW子句中引用窗口名称OVER。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/subquery-optimization.html">子查询、派生表、视图与CTE的优化</a></p>
+<ol>
+<li>subquery: scalar subquery, 1-row subquery, or N-rows subquery</li>
+<li>derived table <code>select ... from (subquery) as tbl</code> or <code>select * from JSON_TABLE(arg_list) as tbl</code></li>
+<li>view reference</li>
+<li>Common Table Expression</li>
+</ol>
+<p>优化策略：</p>
+<ol>
+<li><code>IN, = NAY, EXISTS</code> subquery =&gt; Semijoin / materialization / Exists-Strategy</li>
+<li><code>NOT IN, &lt;&gt; ALL, NOT EXITS</code> subquery=&gt;  materialization / Exists-Strategy</li>
+<li>derived table, view, CTE =&gt; merge into query / material</li>
+</ol>
+<ul>
+<li>Semi-join 优化：将子查询转化为 Semi-Join, 如果子查询使用了 range 操作，是无法进行改优化的。</li>
+<li>物化：当子查询没有引用外部表的字段时，是可以物化的</li>
+<li>(a, b, c) IN (select ... ) 转化为 exists (select ... where ...)</li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/derived-table-optimization.html">Merging</a>: 在 Mergeing 后再进行化简，避免一次重复的子查询。</li>
+<li>Condition pushdown：将查询条件下压到 CTE。</li>
+<li>如果都不能走上述优化，则可能按需执行，在 select 部分，会对美航执行子查询，因而会出现性能问题。</li>
+</ul>
+</li>
+</ol>
+<h2 id="clickhouse">ClickHouse</h2>
+<ol>
+<li>
+<p><a href="https://clickhouse.com/docs/en/guides/joining-tables#optimizing-join-performance">Join 算法</a></p>
+<ul>
+<li>hash, parallel hash</li>
+<li>grace hash: right table 过大时，将 hashtable 拆分为多个，每次仅在内存中存放一个分区，其他放到磁盘保存。</li>
+<li>full sorting merge: 左表、右表都在关联字段上排序</li>
+<li>partial merge：右表在关联字段上排序。</li>
+<li>direct: 类似于 Hash，针对于特定的存储引擎类型。</li>
+</ul>
+
+<img src="https:&#x2F;&#x2F;wangzaixiang.github.io&#x2F;processed_images&#x2F;clickhouse-joins.47c9574879666d92.png" />
+<ol>
+<li><a href="https://clickhouse.com/blog/clickhouse-fully-supports-joins-part1">Join Types supported in ClickHouse</a></li>
+<li><a href="https://clickhouse.com/blog/clickhouse-fully-supports-joins-hash-joins-part2">Hash Join, Parallel HashJoin, Grace HashJoin</a></li>
+<li><a href="https://clickhouse.com/blog/clickhouse-fully-supports-joins-full-sort-partial-merge-part3">Full Sort Merge, Partial Merge Jooin</a>
+<blockquote>
+<p>从文档上看，如果右表已经是排序的，也需要做一次排序，感觉这个是多余的</p>
+</blockquote>
+</li>
+<li><a href="https://clickhouse.com/blog/clickhouse-fully-supports-joins-direct-join-part4">Direct Join</a></li>
+</ol>
+</li>
+</ol>
+<h2 id="subquery-you-hua">Subquery 优化</h2>
+<ol>
+<li>
+<p>left join</p>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#b48ead;">SELECT</span><span> o_orderkey, (
+</span><span> </span><span style="color:#b48ead;">SELECT</span><span> c_name
+</span><span> </span><span style="color:#b48ead;">FROM</span><span> CUSTOMER
+</span><span> </span><span style="color:#b48ead;">WHERE</span><span> c_custkey = o_custkey
+</span><span>) AS c_name </span><span style="color:#b48ead;">FROM</span><span> ORDERS;
+</span><span>
+</span><span style="color:#b48ead;">SELECT</span><span> o_orderkey, c_name
+</span><span style="color:#b48ead;">FROM</span><span> orders </span><span style="color:#b48ead;">left join</span><span> customers on c_custkey = o_custkey
+</span></code></pre>
+</li>
+<li>
+<p>semi join</p>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span> </span><span style="color:#b48ead;">SELECT</span><span> c_custkey
+</span><span> </span><span style="color:#b48ead;">FROM</span><span> CUSTOMER
+</span><span> </span><span style="color:#b48ead;">WHERE</span><span> c_nationkey = </span><span style="color:#d08770;">86 </span><span>AND EXISTS(
+</span><span>     </span><span style="color:#b48ead;">SELECT </span><span style="color:#bf616a;">* </span><span style="color:#b48ead;">FROM</span><span> ORDERS
+</span><span>     </span><span style="color:#b48ead;">WHERE</span><span> o_custkey = c_custkey
+</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">select</span><span> c_custkey </span><span style="color:#b48ead;">from</span><span> customer 
+</span><span>semi </span><span style="color:#b48ead;">join</span><span> orders on o_custkey = c_custkey 
+</span><span style="color:#b48ead;">where</span><span> _nationkey = </span><span style="color:#d08770;">86
+</span></code></pre>
+</li>
+<li>
+<p>group by</p>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span> </span><span style="color:#b48ead;">SELECT</span><span> c_custkey
+</span><span> </span><span style="color:#b48ead;">FROM</span><span> CUSTOMER
+</span><span> </span><span style="color:#b48ead;">WHERE </span><span style="color:#d08770;">1000000 </span><span>&lt; (
+</span><span>   </span><span style="color:#b48ead;">SELECT </span><span style="color:#96b5b4;">SUM</span><span>(o_totalprice)
+</span><span>   </span><span style="color:#b48ead;">FROM</span><span> ORDERS
+</span><span>   </span><span style="color:#b48ead;">WHERE</span><span> o_custkey = c_custkey
+</span><span> );
+</span><span>
+</span><span> </span><span style="color:#b48ead;">SELECT</span><span> c_custkey, </span><span style="color:#96b5b4;">SUM</span><span>(o_totalprice)
+</span><span> </span><span style="color:#b48ead;">From</span><span> customer </span><span style="color:#b48ead;">left join</span><span> orders on o_custkey = c_custkey
+</span><span> </span><span style="color:#b48ead;">group by</span><span> c_custkey
+</span><span> having </span><span style="color:#d08770;">1000000 </span><span>&lt; </span><span style="color:#96b5b4;">SUM</span><span>(o_totalprice)
+</span></code></pre>
+</li>
+<li>
+<p>集合比较</p>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span> </span><span style="color:#b48ead;">SELECT</span><span> c_name
+</span><span> </span><span style="color:#b48ead;">FROM</span><span> CUSTOMER
+</span><span> </span><span style="color:#b48ead;">WHERE</span><span> c_nationkey &lt;&gt; ALL (</span><span style="color:#b48ead;">SELECT</span><span> s_nationkey </span><span style="color:#b48ead;">FROM</span><span> SUPPLIER);
+</span><span>
+</span><span> </span><span style="color:#b48ead;">select</span><span> c_name </span><span style="color:#b48ead;">from</span><span> customer anti semi </span><span style="color:#b48ead;">join</span><span> supplier on c_nationkey = s_nationkey;
+</span><span>
+</span></code></pre>
+</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/adt/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/mandelbrot-gpu/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

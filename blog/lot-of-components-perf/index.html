@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>大量组件树下的性能对比 | 程序人生</title>
+<meta name="description" content="大量组件树下的性能对比">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/lot-of-components-perf/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="大量组件树下的性能对比">
+  <meta name="twitter:description" content="大量组件树下的性能对比">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="大量组件树下的性能对比">
+  <meta property="og:description" content="大量组件树下的性能对比">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/lot-of-components-perf/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="大量组件树下的性能对比">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/lot-of-components-perf/"
+      },
+      "headline": "大量组件树下的性能对比",
+      "image": ,
+      "datePublished": "2025-03-06",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "大量组件树下的性能对比"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "大量组件树下的性能对比",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "大量组件树下的性能对比"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Lot Of Components Perf",
+            "item": "https://wangzaixiang.github.io/blog/lot-of-components-perf/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>大量组件树下的性能对比</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/understand-svelte-rune/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted March  6, 2025&nbsp;&hyphen;&nbsp;<strong>8&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/measure-ipc-for-m1/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>这个测试是在创建大量组件树的情况下，对比几个前端框架的性能，为在高性能敏感的场景下选择合适的框架提供参考。</p>
+<h2 id="chang-jing-shuo-ming">场景说明：</h2>
+<ol>
+<li>App 包括 1 个 PerfComp20 组件</li>
+<li>1个 PerfComp20 组件包括 26 个 PerfComp11 组件</li>
+<li>1个 PerfComp11 组件包括 1 个 PerfComp10 组件 (总共 26 个 PerfComp10 组件)</li>
+<li>1个 PerfComp10 组件包括 200 个 PerfComp01 组件 （总共 5200 个 PerfComp01 组件）</li>
+<li>1个 PerfComp01 组件包括 5 个 PerfComp00 组件 （总共 26000 个 PerfComp00 组件）</li>
+<li>整个页面包括：
+<ul>
+<li>26 * 200 * 5 = 26000 个 PerfComp00 组件</li>
+<li>26 * 200 = 5200 个 PerfComp01 组件</li>
+<li>26 = 26 个 PerfComp10 组件</li>
+<li>26 = 26 个 PerfComp11 组件</li>
+<li>1 = 1 个 PerfComp20 组件</li>
+<li>1 = 1 个 App 组件</li>
+<li>总共 31254 个组件</li>
+</ul>
+</li>
+</ol>
+<h2 id="ce-shi-jie-guo">测试结果：</h2>
+<table><thead><tr><th>Part</th><th>Svelte</th><th>Vue3</th><th>Lit</th><th>Lit + Native PerfComp00</th><th>Lit + Native PerfComp00, PerfComp01</th><th>All Native WC</th></tr></thead><tbody>
+<tr><td>Scripting</td><td>134.28ms</td><td>332.95ms</td><td>427.68ms</td><td>265.5ms</td><td>112.29ms</td><td>85ms</td></tr>
+<tr><td>Styling</td><td>17.39ms</td><td>15.3ms</td><td>59.71ms</td><td>24.86ms</td><td>20ms</td><td>21ms</td></tr>
+<tr><td>Layout</td><td></td><td>51.69ms</td><td>124.53ms</td><td>33ms</td><td>31ms</td><td>32ms</td></tr>
+<tr><td>Paint</td><td>2.10ms</td><td>8.6ms</td><td>34ms</td><td>20ms</td><td>11ms</td><td>14ms</td></tr>
+</tbody></table>
+<h2 id="web-component-de-duo-chong-fang-shi-xing-neng-dui-bi">Web Component 的多种方式性能对比</h2>
+<ol>
+<li>Lit Element / Native HTMLComponent</li>
+<li>DOM structure
+<ul>
+<li>Shadow DOM + div.text shared style <code>&lt;div&gt;${text}&lt;/div&gt;</code></li>
+<li>Shadow DOM + div.text inlined style <code>&lt;div style="display: inline;"&gt;${text}&lt;/div&gt;</code></li>
+<li>Shadow DOM + text <code>${text}</code></li>
+<li>element DOM + div.text shared style <code>&lt;div class="inlined"&gt;${text}&lt;/div&gt;</code></li>
+<li>element DOM + text <code>${text}</code></li>
+</ul>
+</li>
+</ol>
+<table><thead><tr><th>Mode</th><th>DOM Structure</th><th>Scripting</th><th>Styling</th><th>Layout</th><th>Paint</th></tr></thead><tbody>
+<tr><td>Lit</td><td>Shadow DOM + div.text shared style</td><td>470</td><td>93.70</td><td>104</td><td>33</td></tr>
+<tr><td>Lit</td><td>Shadow DOM + div.text inlined style</td><td>447</td><td>46.39</td><td>105.11</td><td>33</td></tr>
+<tr><td>Lit</td><td>Shadow DOM + text</td><td>443</td><td>26</td><td>39.27</td><td>23</td></tr>
+<tr><td>Lit</td><td>element DOM + div.text shared style</td><td>428</td><td>67</td><td>119</td><td>31</td></tr>
+<tr><td>Lit</td><td>element DOM + text</td><td>430</td><td>27</td><td>46</td><td>22</td></tr>
+<tr><td>Native</td><td>Shadow DOM + div.text shared style</td><td>103</td><td>93.97</td><td>120.85</td><td>21</td></tr>
+<tr><td>Native</td><td>Shadow DOM + div.text inlined style</td><td>101</td><td>42</td><td>104</td><td>20</td></tr>
+<tr><td>Native</td><td>Shadow DOM + text</td><td>86</td><td>20.8</td><td>32.78</td><td>14.5</td></tr>
+<tr><td>Native</td><td>element DOM + div.text shared style</td><td>83</td><td>43</td><td>99.5</td><td>20</td></tr>
+<tr><td>Native</td><td>element DOM + text</td><td>75</td><td>19</td><td>31</td><td>14</td></tr>
+</tbody></table>
+<h2 id="fen-xi-jie-lun">分析结论</h2>
+<ol>
+<li>
+<p>基于 Lit 的 Web Component 用于 micro component 时，导致页面中大量的 shadow dom 和 大量的DOM时
+对性能的影响较大，尤其是对 styling 和 layout 的影响的耗时影响较大。</p>
+<ul>
+<li>
+<p>scripting: Lit 的初始化开销较大，估计主要是 Lit Template 的开销。按照 <a href="https://lit.dev/blog/2023-10-10-lit-3.0/#compiler">Lit 文档</a>中的说法，对于 heavy-template 的情况下，采用预编译的
+方式，首次性能提升 45%，更新时提升21%。 对需要大量重复的组件，可以考虑直接使用 Native Web Component。</p>
+</li>
+<li>
+<p>styling: Lit 目前选择的组件级共享的 style，由于在 shadow dom 中引入了 stylesheet，其对性能有一定的影响。相反，Svelte/Vue3 等采用在 document level 的 style 似乎性能更好。</p>
+<p>这个与感觉上并不一致，从感觉上来看，shadow dom 内的 style sheet 似乎会因为层次简单而有更高的 match 效率。但实际上，反而有损失，估计与批量处理有关。</p>
+</li>
+<li>
+<p>layout：shadow dom 的引入并不会导致 DOM 的复杂，layout 不会有大的影响。相反，组件带来的 DOM 结构的复杂性，会导致 layout 的性能开销。</p>
+<p>对于 Svelte，micro component 自身可能不会引入额外的 DOM 结构，例如直接映射成 document 上的div/text 元素。而 web component 中，每一个 component 自身会
+占用一个 DOM element，在出现大量的组件时，可能会导致 layout 的性能开销。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Web Component 性能</p>
+<ul>
+<li>在本次测试中，使用 Native 编写全部的 Web Component 性能最佳，其开销甚至低于 Svelte（框架开销）。</li>
+<li>shadow dom 自身并不会影响 DOM 结构的复杂度，不会带来额外的 layout 开销。</li>
+<li>shadow dom 中的 adoptedStyleSheets 会带来 styling 的开销。当出现大量组件时，Styling 的时间有所增加。</li>
+<li>说明引入框架多少会引入开销，尤其是UI组件首次初始化有处理模版、reactive框架等开销。
+在这些方面，Svelte 的优势在于其编译时的静态优化而成本最低。Lit 的 Template compiler 应该是对此看齐，但目前还不成熟。</li>
+</ul>
+</li>
+<li>
+<p>本次测试较为变态，在一般应用场景中如不涉及到如此巨大的组件树（建议一般控制在2000以下时），一般无需担心初始化的性能问题。</p>
+</li>
+</ol>
+<h2 id="can-kao">参考：</h2>
+<ol>
+<li>项目源代码：<a href="https://github.com/wangzaixiang/lot-of-elements-compare">Git Repo</a></li>
+<li>Recalculate Style
+<blockquote>
+<p>In your performance recordings, some of these long-running tasks may be Recalculate Style events.
+A Recalculate Style event tracks the time it takes for the browser to do the following:</p>
+<ul>
+<li>Iterate through the DOM elements on a page, to find all of the CSS style rules that match a given element.</li>
+<li>Compute each element's actual style, based on the matching CSS style rules.</li>
+</ul>
+<p>CSS styles need to be recalculated whenever the applicability of CSS rules may have changed, such as:</p>
+<ul>
+<li>When elements are added to or removed from the DOM.</li>
+<li>When an element's attributes are changed, such as the value of a class or id attribute.</li>
+<li>When user input occurs, such as a mouse move or a change of which element in a webpage has focus, which can affect :hover rules.</li>
+</ul>
+<p>see: https://developer.chrome.com/docs/devtools/performance/selector-stats?hl=zh-cn</p>
+</blockquote>
+</li>
+<li>对大量 DOM 进行更新导致 reflow 时，可以考虑使用 <a href="https://github.com/wilsonpage/fastdom?tab=readme-ov-file">FastDOM</a></li>
+<li>Shadow DOM 对 Style 的性能影响。<a href="https://mp.weixin.qq.com/s?__biz=MzA5NTg1NzI0Mw==&amp;mid=2650000010&amp;idx=1&amp;sn=dd2c9188b1e91467358d542e4ed99001&amp;chksm=895bac7764066c46c70e6fb79023871313717d67db92722402bd04eb296e0735f398e6f393b9#rd">中文</a>
+<a href="https://nolanlawson.com/2021/08/15/does-shadow-dom-improve-style-performance/">原文:Does shadow DOM improve style performance?</a>
+<ul>
+<li>如果 page 比较复杂（DOM节点越多、CSS规则越多），shadow dom 可以提高 Style 速度</li>
+<li>如果 page 并不复杂，引入 shadow dom 会增加固定的开销，反而增加 Style 开销（从单个大批量转换为多个小批量）
+在很多时候，Style的时间会比 layout 更耗时。</li>
+</ul>
+</li>
+<li><a href="https://nolanlawson.com/2022/06/22/style-scoping-versus-shadow-dom-which-is-fastest/#:~:text=TL%3BDR%3A%20My%20new%20benchmark%20largely%20confirmed%20my%20previous,scenarios%2C%20but%20in%20others%20it%E2%80%99s%20much%20less%20performant">Style scoping versus shadow DOM: which is fastest?</a>
+总体支持 Shadow DOM 有改善 Style 性能的观点，且性能比较稳定。
+<ul>
+<li>相关测试项目 <a href="https://github.com/nolanlawson/shadow-selector-benchmark">shadow-selector-benchmark</a></li>
+<li>在线测试：https://nolanlawson.github.io/shadow-selector-benchmark/</li>
+<li>Firefox Stylo 引擎是最快的，几乎可以忽略这一块的开销。在其他浏览器需要花1000ms的场景下，Firefox 只需要花费 100ms。</li>
+<li>在2025年，这一块的性能对比 FF(360ms) &gt; Chrome(460ms) &gt; Safari(931ms) Chrome 与 Safari 的差距虽小了。</li>
+</ul>
+</li>
+<li>Shadow DOM 对 layout 的性能影响。
+<ul>
+<li>减少布局范围，是否仅影响边界内的局部布局？</li>
+<li>结合 CSS containment 属性，是否可以减少 layout 的开销？</li>
+</ul>
+</li>
+<li><a href="https://blogs.igalia.com/mrego/files/2019/01/css-contain-example.html">CSS Containment Performance Example</a>
+使用 contain: strict 带来了8倍的性能提升。在某些程度上，CSS containment 与 shadow dom 有相似之处。</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/understand-svelte-rune/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/measure-ipc-for-m1/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

@@ -1,0 +1,4305 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>learning</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-6a75639e.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-ee0f8769.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                        <a href="/" class="icon-button"> Home </a>
+                    </div>
+
+                    <h1 class="menu-title">learning</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="阅读-李成栋-从现代cpu-特性和编译的角度分析c-代码优化"><a class="header" href="#阅读-李成栋-从现代cpu-特性和编译的角度分析c-代码优化">阅读 李成栋-从现代CPU 特性和编译的角度分析C++ 代码优化</a></h1>
+<ol>
+<li>
+<p>示例代码：</p>
+<pre><code class="language-cpp">void compute(int *input, int *output){
+
+  if(*input &gt; 10) *output = 1;
+  if(*input &gt; 5) *output *= 2;
+
+}
+
+# include &lt;stdio.h&gt;
+int main(int args, char **argv){
+
+  int i = 20;
+  int o = 0;
+
+  for(int j = 0; j &lt; 800000000; j++){
+    compute(&amp;i, &amp;o);
+  }
+
+  printf("out = %d\n", o);
+
+}
+</code></pre>
+</li>
+<li>
+<p>ASM</p>
+<pre><code class="language-asm">compute:
+        mov     eax, dword ptr [rdi]
+        cmp     eax, 11
+        jge     .LBB0_1
+        cmp     eax, 6
+        jge     .LBB0_3
+.LBB0_4:
+        ret
+.LBB0_1:
+        mov     dword ptr [rsi], 1
+        mov     eax, dword ptr [rdi]
+        cmp     eax, 6
+        jl      .LBB0_4
+.LBB0_3:
+        shl     dword ptr [rsi]
+        ret
+</code></pre>
+</li>
+</ol>
+<p>对比</p>
+<ol>
+<li>在同一个模块中，直接内连优化。循环被消除掉了，直接产生结果。</li>
+<li>在不同模块中，除非使用 LTO，否则无法进行内联优化。</li>
+</ol>
+<p>对比：</p>
+<ol>
+<li>rust 在 inline 方面更为激进</li>
+<li>rust 在 alias 方面更有利于优化。</li>
+<li>likely 导致分支预测，性能偏差约 25%。</li>
+</ol>
+<pre class="playground"><code class="language-rust">#![feature(core_intrinsics)]
+
+#[inline(never)]
+unsafe fn compute(input: &amp;i32, output: &amp;mut i32) {
+    if std::intrinsics::unlikely(*input &gt; 10) {
+         *output = 1;
+    }
+    if *input &gt; 5 {
+         *output *= 2;
+    }
+} 
+
+pub fn main(){
+    let i = 20i32;
+    let mut o = 0i32;
+
+    let mut j = 0u32;
+    while j &lt; 1_000_000_000u32 {
+        unsafe { compute(&amp;i, &amp;mut o); }
+        j += 1;
+    }
+
+    println!("out = {}\n", o);
+
+}</code></pre>
+<ol>
+<li>likely(0.76s) 版本相比 unlikely(1.26s) 版本，性能提升约 40%。</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="prefaces"><a href="#prefaces" class="header">Prefaces</a></h1>
+<p>最近，阅读了 <a href="https://github.com/eventhelix/ruth">rust-under-the-hood</a>一书，从生成的汇编代码来理解 Rust 语言，颇有一些收获：</p>
+<ol>
+<li>Rust 语言编译后的汇编代码，在很多方面的优化，是令人惊讶的。例如，对于 vector 的函数式操作，与 for 循环等相比，生成的代码是等效的，这
+既享受了语法上的优雅简洁（如Scala），又享受了性能的优势（而这是 scala 等望尘莫及的）</li>
+<li>SIMD 指令集的使用，让应用代码可以更好的利用 CPU 的并行计算能力。</li>
+</ol>
+<p>加之，最近在阅读 DuckDB 的源代码，也对向量计算非常的感兴趣，写这个系列，是想进一步的实践、研究 向量相关的编译优化技术，为后续的一些性能
+优化工作做些筹备。</p>
+<ol>
+<li>哪些场景 适合于 compiler vectorization？</li>
+<li>使用 portable simd 库来编写处理向量的代码？是否会有更好的性能提升？</li>
+</ol>
+<h2 id="tips"><a class="header" href="#tips">tips</a></h2>
+<ol>
+<li>查看 HIR 代码：<code>cargo rustc --release -- -Zunpretty=hir</code></li>
+<li>查看 MIR 代码：<code>cargo rustc --release -- -Zunpretty=mir</code></li>
+<li>查看 LLVM IR 代码：<code>cargo rustc --release -- --emit llvm-ir</code>，生成的文件在 <code>target/release/deps/</code> 目录下。</li>
+<li>查看 ASM 代码： <code>cargo rustc --release -- --emit asm -C llvm-args=-x86-asm-syntax=intel</code>，生成 intel 风格的汇编代码 (move dest src)</li>
+<li>编译选项：<code>-C target-cpu=native</code>，生成针对当前 CPU 的优化代码。</li>
+<li>编译选项：<code>-C target-feature=+avx2</code>，生成针对 AVX2 指令集的优化代码。</li>
+<li>编译选项：<code>-C target-feature=+avx512f,+popcnt</code>，生成针对 AVX512 + popcnt 指令集的优化代码。</li>
+<li>交叉编译 <code>--target x86_64-apple-darwin</code> 在 M1 下编译生成 x86_64 的代码。</li>
+<li>对有的 cargo 命令，如 cargo bench，可以使用 RUSTFLAGS 环境变量传递</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="compiler-vectorization"><a href="#compiler-vectorization" class="header">compiler vectorization</a></h1>
+<p>本篇分析一下 rust 语言的编译期自动向量化的特性。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[inline(never)]
+pub fn select(v1: &amp;[i32], v2: &amp;[i32], result: &amp;mut [bool]) {
+    assert!(v1.len() == v2.len() &amp;&amp; v1.len() == result.len());
+    for i in 0..v1.len() {
+        if v1[i] &gt; v2[i] {
+            result[i] = true
+        } else {
+            result[i] = false
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<ol>
+<li>%rdi : %rsi  v1.ptr() : v1.len()</li>
+<li>%rdx : %rcx  v2.ptr() : v2.len()</li>
+<li>%r8  : %r9   result.ptr() : result.len()</li>
+</ol>
+<pre><code class="language-asm">LCPI6_0:
+	.quad	72340172838076673   -- 0x01010101_01010101  // 8 个 1
+	.section	__TEXT,__text,regular,pure_instructions
+	.p2align	4, 0x90
+__ZN5l_asm5demo16select17h43db37ec056aed21E:
+	.cfi_startproc
+	cmp	rsi, rcx    -- v1.len() == v2.len()
+	jne	LBB6_10
+	cmp	rsi, r9     -- v1.len() == result.len()
+	jne	LBB6_10
+	test	rsi, rsi  -- v1.len() == 0
+	je	LBB6_9
+	cmp	rsi, 32     -- v1.len() &gt;= 32
+	jae	LBB6_5
+	xor	eax, eax
+	jmp	LBB6_8     -- 少于32时，直接循环处理 
+LBB6_5:
+	mov	rax, rsi
+	and	rax, -32    -- rax = rsi &amp; -32
+	xor	ecx, ecx
+	vpbroadcastq	ymm0, qword ptr [rip + LCPI6_0]  -- ymm0: 32x8
+	.p2align	4, 0x90
+LBB6_6:
+	vmovdqu	ymm1, ymmword ptr [rdi + 4*rcx]       -- ymm1..ymm4 加载 32 个 i32 from v1
+	vmovdqu	ymm2, ymmword ptr [rdi + 4*rcx + 32]
+	vmovdqu	ymm3, ymmword ptr [rdi + 4*rcx + 64]
+	vmovdqu	ymm4, ymmword ptr [rdi + 4*rcx + 96]
+	
+	vpcmpgtd	ymm1, ymm1, ymmword ptr [rdx + 4*rcx]
+	-- ymm1:8x32 = [ c0, c1, ..., c7 ]
+	 
+	vpcmpgtd	ymm2, ymm2, ymmword ptr [rdx + 4*rcx + 32] 
+	-- ymm2:8x32 = [ c8, c9, ..., c15]
+	 
+	vpcmpgtd	ymm3, ymm3, ymmword ptr [rdx + 4*rcx + 64]  
+	-- ymm3: 8x32 = [ c16, c17, ..., c23]
+	
+	vpackssdw	ymm1, ymm1, ymm2  
+	-- ymm1: 16x16 = [ c0, c1, ..., c15] 
+	
+	vpcmpgtd	ymm2, ymm4, ymmword ptr [rdx + 4*rcx + 96]
+	vpackssdw	ymm2, ymm3, ymm2  -- ym2 = 16..31, 【i16, 16]
+	-- ymm2: 16x16 = [c16, c17, ..., c31]
+	
+	vpermq	ymm2, ymm2, 216 -- 0b11_01_10_00
+	-- ymm2: 16x16 = [ c16, c17, c18, c19, c24, c25, c26, c27, c20, c21, c22, c23, c28, c29, c30, c31]
+	-- vpermq 分析有些问题
+	vpermq	ymm1, ymm1, 216
+	-- ymm1: 16x16 = [ c0, c1, c2, c3,    c8, c9, c10, c11,   c4, c5, c6, c7,   c12, c13, c14, c15]
+	
+	vpacksswb	ymm1, ymm1, ymm2
+	-- ymm1: 32x8 = [ c0, c1, c2, c3 ,  c8, c9, c10, c11,   c4, c5, c6, c7,   c12, c13, c14, c15,
+	            c16, c17, c18, c19, c24, c25, c26, c27, c20, c21, c22, c23, c28, c29, c30, c31] -- 32x8
+	vpermq	ymm1, ymm1, 216
+	-- ymm1: 32x8 = [ c0, c1, c2, c3,   c8, c9, c10, c11,  c16, c17, c18, c19,  c24, c25, c26, c27,
+	  .......]
+	  
+	vpand	ymm1, ymm1, ymm0
+	
+	vmovdqu	ymmword ptr [r8 + rcx], ymm1
+	add	rcx, 32      --  一次循环处理完32个整数
+	cmp	rax, rcx
+	jne	LBB6_6
+	cmp	rax, rsi
+	je	LBB6_9
+	.p2align	4, 0x90
+LBB6_8:
+	mov	ecx, dword ptr [rdi + 4*rax]
+	cmp	ecx, dword ptr [rdx + 4*rax]
+	setg	byte ptr [r8 + rax]
+	lea	rcx, [rax + 1]
+	mov	rax, rcx
+	cmp	rsi, rcx
+	jne	LBB6_8
+LBB6_9:
+	vzeroupper
+	ret
+LBB6_10:
+	push	rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset rbp, -16
+	mov	rbp, rsp
+	.cfi_def_cfa_register rbp
+	lea	rdi, [rip + l___unnamed_3]
+	lea	rdx, [rip + l___unnamed_4]
+	mov	esi, 66
+	call	__ZN4core9panicking5panic17h2a3e12572053020cE
+	.cfi_endproc
+</code></pre>
+<p>从这段代码来看，在 +avx2 特性下，编译期生成了使用 256 bit 寄存器的代码，一次循环可以处理 32 个 i32 数据。
+而如果在 +avx512f 特性下，编译期生成了使用 512bit 的代码， 一次循环可以处理 64 个 i32 数据。
+实际性能如何？需要找一台支持 AVX512 指令集的机器来做一下测试。</p>
+<h2 id="调整"><a class="header" href="#调整">调整</a></h2>
+<ol>
+<li>修改为 i32 与 i16 的比较:
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::simd::i8x1;
+
+#[inline(never)]
+pub fn select(v1: &amp;[i32], v2: &amp;[i16], result: &amp;mut [bool]) {
+    assert!(v1.len() == v2.len() &amp;&amp; v1.len() == result.len());
+    for i in 0..v1.len() {
+        if v1[i] &gt; (v2[i] as i32) {
+            result[i] = true
+        } else {
+            result[i] = false
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+在 +avx2 特性下，可以使用 vpmovsxwd 指令在读取 v2 的数据时，一次将 8 个 i16 读取并转换为 8 个 i32，然后再进行比较。
+<pre><code class="language-asm"></code></pre>
+</li>
+<li>修改 <code>v1[i]</code> 为一个 <code>v1.get(i)</code> 时，生成代码？<br>此时，load 数据这一块可能会无法使用 SIMD 指令集，可能需要多次获取数据后，再拼装为一个 SIMD 寄存器。</li>
+<li>在 OLAP 向量计算中，如果采用代码生成的方式，相比解释表达式，并分派给多个模版方法，肯定会有性能上的提升：
+<ul>
+<li>多个运算间，可以复用寄存器</li>
+<li>是否可以采用 LLVM 来做这个的代码生成？</li>
+<li>尝试阅读 LLVM IR 代码，评估后续通过生成 LLVM IR 的方式来执行的可能行。</li>
+</ul>
+</li>
+</ol>
+<h2 id="llvm-ir-阅读"><a class="header" href="#llvm-ir-阅读">LLVM-IR 阅读</a></h2>
+<pre><code>; l_asm::demo1::select
+; Function Attrs: noinline uwtable
+define internal fastcc void @_ZN5l_asm5demo16select17h43db37ec056aed21E(
+    ptr noalias nocapture noundef nonnull readonly align 4 %v1.0, i64 noundef %v1.1,
+    ptr noalias nocapture noundef nonnull readonly align 4 %v2.0, i64 noundef %v2.1,
+    ptr noalias nocapture noundef nonnull writeonly align 1 %result.0, i64 noundef %result.1) unnamed_addr #0 {
+start:
+  %_4 = icmp eq i64 %v1.1, %v2.1
+  %_7 = icmp eq i64 %v1.1, %result.1
+  %or.cond = and i1 %_4, %_7  -- i1: bit
+  br i1 %or.cond, label %bb5.preheader.split, label %bb4  -- br type iftrue ifalse
+
+bb5.preheader.split:                              ; preds = %start
+  %_218.not = icmp eq i64 %v1.1, 0
+  br i1 %_218.not, label %bb15, label %bb13.preheader
+
+bb13.preheader:                                   ; preds = %bb5.preheader.split
+  %min.iters.check = icmp ult i64 %v1.1, 32       -- unsigned less than
+  br i1 %min.iters.check, label %bb13.preheader17, label %vector.ph
+
+vector.ph:                                        ; preds = %bb13.preheader
+  %n.vec = and i64 %v1.1, -32
+  br label %vector.body
+
+vector.body:                                      ; preds = %vector.body, %vector.ph
+  %index = phi i64 [ 0, %vector.ph ], [ %index.next, %vector.body ]  -- TODO? what is phi
+  %0 = getelementptr inbounds [0 x i32], ptr %v1.0, i64 0, i64 %index  -- %0 = %v1.0
+  %1 = getelementptr inbounds i32, ptr %0, i64 8                       -- %1 = %0 + 32byte
+  %2 = getelementptr inbounds i32, ptr %0, i64 16
+  %3 = getelementptr inbounds i32, ptr %0, i64 24
+  %wide.load = load &lt;8 x i32&gt;, ptr %0, align 4                          -- 8x32 from v1
+  %wide.load10 = load &lt;8 x i32&gt;, ptr %1, align 4
+  %wide.load11 = load &lt;8 x i32&gt;, ptr %2, align 4
+  %wide.load12 = load &lt;8 x i32&gt;, ptr %3, align 4
+  
+  %4 = getelementptr inbounds [0 x i32], ptr %v2.0, i64 0, i64 %index
+  %5 = getelementptr inbounds i32, ptr %4, i64 8
+  %6 = getelementptr inbounds i32, ptr %4, i64 16
+  %7 = getelementptr inbounds i32, ptr %4, i64 24
+  %wide.load13 = load &lt;8 x i32&gt;, ptr %4, align 4                        -- 8x32 from v1
+  %wide.load14 = load &lt;8 x i32&gt;, ptr %5, align 4
+  %wide.load15 = load &lt;8 x i32&gt;, ptr %6, align 4
+  %wide.load16 = load &lt;8 x i32&gt;, ptr %7, align 4
+  
+  %8 = icmp sgt &lt;8 x i32&gt; %wide.load, %wide.load13                   -- signed greater than
+  %9 = icmp sgt &lt;8 x i32&gt; %wide.load10, %wide.load14
+  %10 = icmp sgt &lt;8 x i32&gt; %wide.load11, %wide.load15
+  %11 = icmp sgt &lt;8 x i32&gt; %wide.load12, %wide.load16
+  
+  %12 = zext &lt;8 x i1&gt; %8 to &lt;8 x i8&gt;                                 -- zero extend 8x1 to 8x8
+  %13 = zext &lt;8 x i1&gt; %9 to &lt;8 x i8&gt;
+  %14 = zext &lt;8 x i1&gt; %10 to &lt;8 x i8&gt;
+  %15 = zext &lt;8 x i1&gt; %11 to &lt;8 x i8&gt;
+  
+  %16 = getelementptr inbounds [0 x i8], ptr %result.0, i64 0, i64 %index
+  %17 = getelementptr inbounds i8, ptr %16, i64 8
+  %18 = getelementptr inbounds i8, ptr %16, i64 16
+  %19 = getelementptr inbounds i8, ptr %16, i64 24
+  
+  store &lt;8 x i8&gt; %12, ptr %16, align 1                               -- store 8x8 to result
+  store &lt;8 x i8&gt; %13, ptr %17, align 1
+  store &lt;8 x i8&gt; %14, ptr %18, align 1
+  store &lt;8 x i8&gt; %15, ptr %19, align 1
+  
+  %index.next = add nuw i64 %index, 32
+  %20 = icmp eq i64 %index.next, %n.vec
+  br i1 %20, label %middle.block, label %vector.body, !llvm.loop !17  -- TODO what's !llvm.loop !17
+
+middle.block:                                     ; preds = %vector.body
+  %cmp.n = icmp eq i64 %n.vec, %v1.1
+  br i1 %cmp.n, label %bb15, label %bb13.preheader17
+
+bb13.preheader17:                                 ; preds = %bb13.preheader, %middle.block
+  %iter.sroa.0.09.ph = phi i64 [ 0, %bb13.preheader ], [ %n.vec, %middle.block ]
+  br label %bb13
+
+bb4:                                              ; preds = %start
+; call core::panicking::panic
+  tail call void @_ZN4core9panicking5panic17h2a3e12572053020cE(ptr noalias noundef nonnull readonly align 1 @alloc_882a6b32f40210455571ae125dfbea95, i64 noundef 66, ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_649ca88820fbe63b563e38f24e967ee7) #12
+  unreachable
+
+bb15:                                             ; preds = %bb13, %middle.block, %bb5.preheader.split
+  ret void
+
+bb13:                                             ; preds = %bb13.preheader17, %bb13
+  %iter.sroa.0.09 = phi i64 [ %_0.i, %bb13 ], [ %iter.sroa.0.09.ph, %bb13.preheader17 ]
+  %_0.i = add nuw i64 %iter.sroa.0.09, 1
+  %21 = getelementptr inbounds [0 x i32], ptr %v1.0, i64 0, i64 %iter.sroa.0.09
+  %_13 = load i32, ptr %21, align 4, !noundef !4
+  %22 = getelementptr inbounds [0 x i32], ptr %v2.0, i64 0, i64 %iter.sroa.0.09
+  %_15 = load i32, ptr %22, align 4, !noundef !4
+  %_12 = icmp sgt i32 %_13, %_15
+  %spec.select = zext i1 %_12 to i8
+  %23 = getelementptr inbounds [0 x i8], ptr %result.0, i64 0, i64 %iter.sroa.0.09
+  store i8 %spec.select, ptr %23, align 1
+  %exitcond.not = icmp eq i64 %_0.i, %v1.1
+  br i1 %exitcond.not, label %bb15, label %bb13, !llvm.loop !20
+}
+</code></pre>
+<p>对照 <a href="https://llvm.org/docs/LangRef.html#phi-instruction">LLVM-IR 文档</a>， 还是比较好理解的， 相比 x86 汇编，LLVM-IR 在 SIMD
+上的可读性显然要高太多。如果理解了 LLVM-IR，并掌握了生成 LLVM-IR 后再通过 LLVM 生成机器码，然后再通过 JIT 的方式执行，那么，在 OLAP 中未尝
+不是一种更好的替代模版特化的方式。</p>
+<ol>
+<li>对于较为复杂的表达式，例如 a &gt; b &amp;&amp; c + d &gt; e, 特化的方式，基本上每个运算符都是一次函数调用，这里是4次调用，且每次函数调用涉及到类型组合，
+需要特化的函数版本会非常的多。</li>
+<li>使用 LLVM-IR，这个表达式可以直接优化为 1个函数调用，然后通过 LLVM 优化器，生成最优的机器码。内部可能会减少不必要的 Load/Store 过程，减少
+中间向量的生成和内存占用。</li>
+</ol>
+<p>JIT 参考资料：</p>
+<ol>
+<li><a href="https://createlang.rs/01_calculator/basic_llvm.html">Create Your Own Programming Language with Rust</a></li>
+<li><a href="https://llvm.org/docs/tutorial/BuildingAJIT1.html">Building a JIT</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="rust-sugars"><a class="header" href="#rust-sugars">Rust Sugars</a></h1>
+<p>语法糖具有两面性：</p>
+<ul>
+<li>Pros: 语法糖可以让代码更加简洁，更加易读，更加易写。</li>
+<li>Cons: 语法糖会隐藏实现细节，而如果你并没有理解这些细节，那么可能会导致一些问题：即错误的使用，或者衍生的其他问题。</li>
+</ul>
+<p>在这一点上，与抽象具有一定的相似性。</p>
+<p>本文收集 Rust 语言的一些语法糖，以帮助加深对其的理解。</p>
+<h2 id="for-循环与-intoiterator"><a class="header" href="#for-循环与-intoiterator">for 循环与 IntoIterator</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>for i in 0..10 {
+    println!("{}", i);
+}
+
+; 上面的代码等效于下面的代码
+let iter = (0..10).into_iter();
+while let Some(i) = iter.next() {
+    println!("{}", i);
+}
+<span class="boring">}</span></code></pre>
+<p>这里以 <code>collection: Vec&lt;T&gt;</code> 为例</p>
+<ol>
+<li>
+<p><code>for elem in collection</code> 这里的 elem 类型为 <code>collection.into_iter().Item</code>, T。</p>
+<ul>
+<li>collection 的所有权已经转移给了 <code>into_iter</code>。</li>
+<li>遍历过程中，elem 的 所有权又从 iterator 转移给了 elem。</li>
+<li>可以使用 <code>for mut elem in collection</code> 来修饰 elem，这样 elem 就是可变的。</li>
+</ul>
+</li>
+<li>
+<p><code>for elem in &amp;collection</code> 这里的 elem 类型为 <code>(&amp;collection).iter().Item</code>, 即 &amp;T</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;'a, T, A: Allocator&gt; IntoIterator for &amp;'a Vec&lt;T, A&gt; {
+    type Item = &amp;'a T;
+    type IntoIter = slice::Iter&lt;'a, T&gt;;
+
+    fn into_iter(self) -&gt; Self::IntoIter {
+        self.iter()
+    }
+}
+<span class="boring">}</span></code></pre>
+<ul>
+<li>collection 的所有权没有转移</li>
+<li>iter 过程返回的也是引用，所以 elem 的所有权也没有转移。</li>
+</ul>
+</li>
+<li>
+<p><code>for elem in &amp;mut collection</code> 这里 elem 类型为 <code>(&amp;mut collection).iter_mut().Item</code>, 即 &amp;mut T,</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl&lt;'a, T, A: Allocator&gt; IntoIterator for &amp;'a mut Vec&lt;T, A&gt; {
+    type Item = &amp;'a mut T;
+    type IntoIter = slice::IterMut&lt;'a, T&gt;;
+
+    fn into_iter(self) -&gt; Self::IntoIter {
+        self.iter_mut()
+    }
+}
+<span class="boring">}</span></code></pre>
+<ul>
+<li>collection 的所有权没有转移</li>
+<li>iter_mut 过程返回的是 &amp;mut T
+对于所有实现 IntoIterator 的类型 X，都需要参考上述的方式，来分别处理 X, &amp;X, &amp;mut X 的情况。或者根据实现情况，来选择支持其中某一种方式。</li>
+</ul>
+</li>
+</ol>
+<h2 id="pattern-matching"><a class="header" href="#pattern-matching">pattern matching</a></h2>
+<ol>
+<li>literal</li>
+<li>range: 0..10, 0..=10, ‘a’..=‘z’, 0..</li>
+<li><code>_</code></li>
+<li>variable: x, mut x</li>
+<li>ref variable: ref x, ref mut x</li>
+<li>enum: Some(x), None, Ok(x), Err(x)</li>
+<li>tuple: (x, y), (x, y, z)</li>
+<li>array: <code>[x, y, z]</code></li>
+<li>slice: <code>[x,y]</code>, <code>[x, _, z]</code>, <code>[x, ..., z]</code>, <code>[]</code></li>
+<li>struct: <code>Point { x, y }</code>, <code>Point { x: 0, y: 0 }</code></li>
+<li>引用：<code>&amp;x</code>, <code>&amp;(k,v)</code></li>
+</ol>
+<p>match 可能引起所有权的转移：</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Point {
+    x: i32,
+    y: i32,
+}
+
+impl Drop for Point {
+    fn drop(&amp;mut self) {
+        println!("Dropping Point({}, {})", self.x, self.y);
+    }
+}
+
+fn demo(guard: i32){
+    let p = Point{x:10, y:20};
+
+    { // block1
+        match p {
+            v if v.x == guard =&gt; {} // p will moved to v
+            ref v =&gt; {} // p will not moved
+        }
+    }
+
+    println!("ok");
+}
+
+<span class="boring">}</span></code></pre>
+<ol>
+<li>demo(10) 会打印：
+<pre><code>Dropping Point(10, 20)  ; // p moved to v, and v will be dropped after block1
+ok
+</code></pre>
+</li>
+<li>demo(100) 会打印：
+<pre><code>ok
+Dropping Point(10, 20)   // p will not moved, and will be dropped after demo
+</code></pre>
+</li>
+</ol>
+<p>这里就涉及到条件转移，涉及到条件转移时，离开 block 时，都不能再使用 p，因为 p 的所有权可能已经转移了。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>&amp;point match {
+    Point{x, y} =&gt; {} // x: &amp;i32, y: &amp;i32
+    Point{x: ref x1, y: ref y1} =&gt; {} // x1: &amp;i32, y1: &amp;i32
+    &amp;Point{x, y} =&gt; {} // x: i32, y: i32            &amp; 用于从 &amp;struct 中复制数据
+    // Point { x: &amp;x1 , y: y1 } =&gt; { }  // 编译错误
+    // &amp;p2 =&gt; {}   //  cannot move out of a shared reference
+}
+
+&amp;mut point match {
+    Point{x, y} =&gt; {} // x: &amp;mut i32, y: &amp;mut i32
+    Point{x: ref x1, y: ref y1} =&gt; {} // x1: &amp;i32, y1: &amp;i32
+    Point{x: ref mut x1, y: ref mut y1 } =&gt; { } // x1: &amp;mut i32, y1: &amp;mut i32
+    &amp;mut Point {x, y } =&gt; { }   // x: i32, y: i32
+}
+<span class="boring">}</span></code></pre>
+<p>Rust 的 pattern match 与 scala 的并不完全相同，scala中，是 unapply 的语法糖，但 rust 显然要复杂很多，都是内置在编译器中。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="rust-type-system"><a class="header" href="#rust-type-system">rust type system</a></h1>
+<h2 id="1-case-from-arrow-array"><a class="header" href="#1-case-from-arrow-array">1. case from arrow-array</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct PrimitiveArray&lt;T: ArrowPrimitiveType&gt; {
+    data_type: DataType,
+    /// Values data
+    values: ScalarBuffer&lt;T::Native&gt;,
+    nulls: Option&lt;NullBuffer&gt;,
+}
+
+pub trait ArrowPrimitiveType: primitive::PrimitiveTypeSealed + 'static {
+    type Native: ArrowNativeTypeOp;
+
+    const DATA_TYPE: DataType;
+
+    /// Returns the byte width of this primitive type.
+    #[deprecated(since = "52.0.0", note = "Use ArrowNativeType::get_byte_width")]
+    fn get_byte_width() -&gt; usize {
+        std::mem::size_of::&lt;Self::Native&gt;()
+    }
+
+    /// Returns a default value of this primitive type.
+    ///
+    /// This is useful for aggregate array ops like `sum()`, `mean()`.
+    fn default_value() -&gt; Self::Native {
+        Default::default()
+    }
+}
+
+pub trait ArrowNativeTypeOp: ArrowNativeType {
+    const ZERO: Self;
+    const ONE: Self;
+    const MIN_TOTAL_ORDER: Self;
+    const MAX_TOTAL_ORDER: Self;
+
+    fn add_checked(self, rhs: Self) -&gt; Result&lt;Self, ArrowError&gt;;
+    fn add_wrapping(self, rhs: Self) -&gt; Self;
+    // ...
+    fn compare(self, rhs: Self) -&gt; Ordering;
+    fn is_eq(self, rhs: Self) -&gt; bool;
+}
+
+pub trait ArrowNativeType: Debug + Send + Sync + Copy + PartialOrd + Default + Sealed + 'static {
+}
+
+
+
+<span class="boring">}</span></code></pre>
+<p>在使用时：</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn test() {
+    let array: PrimitiveArray&lt;Int32Type&gt; = PrimitiveArray::&lt;Int32Type&gt;::from(vec![Some(1), None, Some(3)]);
+    let birthday: PrimitiveArray&lt;Data32Type&gt; = Date32Array::from(vec![10957, 10958, 10959]);  
+}
+<span class="boring">}</span></code></pre>
+<p>我更期待的写法是：</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn test() {
+    let array = PrimitiveArray::&lt;i32&gt;::from(vec![1, None, 3]);
+    let birthday: PrimitiveArray&lt;Data32&gt; = Date32Array::from(vec![Date32::from(10957), Date32::from(10958), Date32::from(10959)]);
+}
+<span class="boring">}</span></code></pre>
+<p>是否可以使用 rust 的类型体系来实现这种写法？</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>
+struct PrimitiveArray&lt;T: ArrowPrimityType&gt; {
+}
+
+struct Date32 {
+    value: i32
+}
+
+impl ArrowPrimityType for i32 { /* ... */ }
+impl ArrowPrimityType for f32 { /* ... */ }
+impl ArrowPrimityType for Date32 { /* ... */ }
+
+<span class="boring">}</span></code></pre>
+<ol>
+<li>a type can having Self level values(const) and methods(fn)</li>
+<li>a type can having self level values(const) and methods(fn)</li>
+<li>a type can having type members. (associated type)</li>
+</ol>
+<h2 id="trait"><a class="header" href="#trait">trait</a></h2>
+<pre><code>   unsafe? trait IDENTIFIER  GenericParams? ( : TypeParamBounds? )? WhereClause? {
+     InnerAttribute*
+     AssociatedItem*
+   }
+   
+   TypeParamBound: Lifetime | TraitBound | UseBound
+   
+   Lifetime:   
+   1. T: 'static， T 的所有生命周期参数都是 'static
+   2. T: 'a, T 的所有生命周期参数都是 'a (或者更长)
+   3. T: '_， 是一个compiler推断的生成周期。
+   
+</code></pre>
+<p>example:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn capture&lt;'a, 'b, T&gt;(x: &amp;'a (), y: T) -&gt; impl Sized + use&lt;'a, T&gt; {
+  //                                      ~~~~~~~~~~~~~~~~~~~~~~~
+  //                                     Captures `'a` and `T` only.
+  (x, y)
+}
+
+impl&lt;'a, T&gt; Trait&lt;'a, T&gt; for &amp;'a T {}
+
+fn call_on_ref_zero&lt;F&gt;(f: F) where for&lt;'a&gt; F: Fn(&amp;'a i32) {
+    let zero = 0;
+    f(&amp;zero);
+}
+
+impl&lt;'a&gt; PartialEq&lt;i32&gt; for &amp;'a T {
+    // ...
+}
+
+<span class="boring">}</span></code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="测试-unsafe-cast"><a class="header" href="#测试-unsafe-cast">测试 unsafe cast</a></h1>
+<h1 id="1-unsafe-cast"><a class="header" href="#1-unsafe-cast">1. unsafe cast</a></h1>
+<pre class="playground"><code class="language-rust">fn main(){
+    
+    let i = 10u32;
+    
+    let p1 = &amp;i as *const u32 as usize;
+    
+
+    // let p2 = do1(p1);    // OK
+    // let p2: &amp;mut u32 = unsafe { &amp;mut *(p1 as *mut u32) }; // error: casting &amp;T to &amp;mut T is UB
+    let p2: &amp;mut u32 = unsafe { &amp;mut *((p1+0) as *mut u32) }; // OK
+    
+    *p2 = 20;   // change immutable i, so it is UB
+
+    println!("p1 = {}", p1);
+    println!("i = {}, p2 = {:?}", i, p2);
+
+}
+
+fn do1(p1: usize) -&gt; &amp;'static mut u32{
+    unsafe { &amp;mut *(p1 as *mut u32) }
+} </code></pre>
+<ol>
+<li>简单的 <code>unsafe { &amp;mut *(&amp;i as *const u32 as uszie as *mut u32) }</code> 会被编译器检查
+（实际上这里应该是 warning 而不是 error,因为本来就是 unsafe）</li>
+<li>进行变换后可以绕过编译器检查。
+<ul>
+<li>封装成一次函数调用</li>
+<li>加上偏移量</li>
+</ul>
+</li>
+<li>Rust 中的 raw pointer 自身没有生命周期。</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="return-position-impl-trait"><a class="header" href="#return-position-impl-trait"><a href="https://rust-lang.github.io/rfcs/3498-lifetime-capture-rules-2024.html#return-position-impl-trait-in-trait-rpitit">Return Position Impl Trait</a></a></h1>
+<pre><code class="language-rust"></code></pre>
+<h1 id="example-1"><a class="header" href="#example-1">example 1</a></h1>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn apply&lt;F&gt;(f: F)
+where
+    F: Fn(&amp;str),
+{
+    let s = String::from("hello");
+    f(&amp;s);
+}
+<span class="boring">}</span></code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="rc-layout"><a class="header" href="#rc-layout">Rc Layout</a></h1>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>
+    let mut string = String::with_capacity(32); // sizeof::&lt;String&gt; = 24
+    string.push_str("Hello World! ");
+
+    let str1 = Rc::new(string); // sizeof::&lt;RcInner&lt;String&gt;&gt; = 40
+    // memory: strong: 1, weak: 1
+    assert_eq!(Rc::strong_count(&amp;str1), 1);
+    assert_eq!(Rc::weak_count(&amp;str1), 0);
+
+    let p1 = *(unsafe { &amp;*(&amp;str1 as *const Rc&lt;_&gt; as *const *const ()) }); // for debug the memory
+    println!("str1 = {:p}", p1);
+
+    let str2 = Rc::clone(&amp;str1);
+    // memory: strong:2 weak: 1
+    assert_eq!(Rc::strong_count(&amp;str2), 2);
+    assert_eq!(Rc::weak_count(&amp;str2), 0);
+
+    let str3 = Rc::downgrade(&amp;str2);
+    // memory: strong:2 weak: 2
+    assert_eq!(Rc::strong_count(&amp;str1), 2);
+    assert_eq!(Rc::weak_count(&amp;str1), 1);
+    
+    drop(str1);
+    // memory: strong = 1, weak = 2
+    drop(str2);
+    // memory: strong = 0, weak = 1, the value is dropped in place
+    drop(str3);
+    // memory: strong = 0, weak = 0, the RcInner is dropped
+    
+    println!("completed");
+<span class="boring">}</span></code></pre>
+<p>查看 p1 指向的内存：</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Rc&lt;T&gt; {
+    ptr:  NonNull&lt;RcInner&lt;T&gt;&gt;
+}
+struct RcInner {
+    strong: usize,
+    weak: usize,
+    value: T;   // Here value: String
+}
+
+struct String {
+    vec: Vec&lt;u8&gt;
+}
+
+struct Vec&lt;u8&gt; {
+    buf: RawVec&lt;u8&gt;,
+    len: usize
+}
+
+struct RawVec&lt;u8&gt; {
+    inner: RawVecInner&lt;u8&gt;
+}
+
+struct RawVecInner {
+    ptr: Unique&lt;u8&gt;,
+    cap: usize
+}
+
+---
+struct RcInner&lt;String&gt; { -- total: 40 bytes
+    strong: usize,  // init:1, Rc +1, 
+    weak: usize,    // init:1  Weak +1
+    value: struct { -- total 24 bytes
+        buf: {
+            ptr: Unique&lt;u8&gt;
+            cap: usize,
+        }
+        len: usize
+    }
+}
+ 
+<span class="boring">}</span></code></pre>
+<p><img src="img_3.png" alt="img_3.png">
+<img src="img_2.png" alt="img_2.png"></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct RcInner&lt;String&gt; {
+    strong: usize,  // 1
+    weak:   usize,  // 1
+    value.buf.ptr: 0x60000091c100,
+    value.buf.cap: 0x20,
+    value.len:  0x0d
+}
+<span class="boring">}</span></code></pre>
+<p>增加一个 Rc.clone()
+<img src="img.png" alt="img.png"></p>
+<p>增加一个 Weak 引用：
+<img src="img_1.png" alt="img_1.png"></p>
+<p>结论：</p>
+<ol>
+<li>当 strong_count 为 0 时， RcInner.value 可以被 drop_in_place，即释放掉 String.ptr 所在
+的内存。在这个例子中，释放掉 32个字节的内存（String.cap）,但 RcInner 自身占用的 40 字节不被释放</li>
+<li>当 weak_count 也为 0 时，RcInner 的内存也得以释放。</li>
+<li>Rc::new 时 strong = 1, weak = 1( Rc::weak_count() == weak - 1)</li>
+<li>Rc::clone 时 strong += 1, Rc::drop 时 strong -= 1</li>
+<li>新建一个 Weak 时 weak += 1, Weak::drop 时 weak - = 1</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="simd-1"><a class="header" href="#simd-1">simd-1</a></h1>
+<p>这个例子摘自实验项目</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[inline(never)]
+fn aggregate_data(orders: &amp;Orders) -&gt; (f64, u32) {
+    let mut total_amount = 0.0;
+    let mut count = 0;
+    for i in 0..orders.order_id.len() {
+        total_amount += orders.amount[i];
+        count += 1;
+    }
+    (total_amount, count)
+}
+
+
+// 1G 数据，耗时 260ms
+#[inline(never)]
+fn aggregate_data_simd(orders: &amp;Orders) -&gt; (f64, u32) {
+    let mut total_amount = 0.0;
+    let mut count = 0;
+
+    let length = orders.order_id.len() &amp; (!0x0F); // 16 is better than 32, same as 8
+    for i in (0..length).step_by(16) {
+        let amount= f64x16::from_slice(&amp;orders.amount[i..]);
+        let zero = f64x16::splat(0.0);
+        total_amount += amount.reduce_sum();        // x86 上 reduce_sum 不支持向量化，还是多次累加
+        count += amount.simd_ne(zero).to_bitmask().count_ones(); // x86 有 popcnt 指令
+    }
+
+    for i in length..orders.order_id.len() {
+        total_amount += orders.amount[i];
+        count += 1;
+    }
+    (total_amount, count)
+}
+
+#[inline(never)]
+fn aggregate_data_simd2(orders: &amp;Orders) -&gt; (f64, u32) {
+    let mut total_amount = 0.0;
+    let mut count = 0;
+
+    let length = orders.order_id.len() &amp; (!0x0F); // 16 is better than 32, same as 8
+
+    let mut aggr1 = f64x16::splat(0.0);
+    // let mut aggr2 = f64x16::splat(0.0);
+    let zero = f64x16::splat(0.0);
+
+    for i in (0..length).step_by(16) {
+        let amount1= f64x16::from_slice(&amp;orders.amount[i..]);
+        // let amount2= f64x16::from_slice(&amp;orders.amount[i+16 ..]);
+        aggr1 = aggr1 + amount1;
+        // aggr2 = aggr2 + amount2;
+        count += amount1.simd_ne(zero).to_bitmask().count_ones(); // x86 有 popcnt 指令
+        // count += amount2.simd_ne(zero).to_bitmask().count_ones(); // x86 有 popcnt 指令
+    }
+
+    total_amount = aggr1.reduce_sum() ;
+    for i in length..orders.order_id.len() {
+        total_amount += orders.amount[i];
+        count += 1;
+    }
+    (total_amount, count)
+}
+<span class="boring">}</span></code></pre>
+<p>分别运行 1B(10亿) 的数据，耗时如下：</p>
+<ol>
+<li>aggregate_data  947ms （0.9ns/iter)</li>
+<li>aggregate_data_simd 260ms</li>
+<li>aggregate_data_simd2 160ms</li>
+</ol>
+<h2 id="x86_64-查看生成的汇编代码"><a class="header" href="#x86_64-查看生成的汇编代码">x86_64 查看生成的汇编代码：</a></h2>
+<ol>
+<li>aggregate_data 进行了循环展开，一次循环处理了 4个 f64 数据，但没有使用 SIMD 指令。
+<pre><code class="language-asm"> LBB24_10:
+     vmovsd	xmm2, qword ptr [rdx + 8*rsi]
+     vmovsd	xmm3, qword ptr [rdx + 8*rsi + 8]
+     vaddsd	xmm0, xmm0, xmm2    // xmm0 += amount[i]
+     vcmpneqsd	k0, xmm1, xmm2  
+     kmovw	edi, k0
+     add	edi, eax                // edi = count + (amount[i] != 0)
+     vaddsd	xmm0, xmm0, xmm3    // xmm0 += amount[i+1]
+     vcmpneqsd	k0, xmm1, xmm3
+     kmovw	eax, k0
+     vmovsd	xmm2, qword ptr [rdx + 8*rsi + 16]
+     vaddsd	xmm0, xmm0, xmm2    // xmm0 += amount[i+2]
+     vcmpneqsd	k0, xmm1, xmm2
+     kmovw	r9d, k0         // 
+     add	r9d, eax            // r9d = (amount[i+1] != 0) + (amount[i+2] != 0)
+     add	r9d, edi            // r9d = count + (amount[i] != 0) + (amount[i+1] != 0) + (amount[i+2] != 0)
+     vmovsd	xmm2, qword ptr [rdx + 8*rsi + 24]
+     add	rsi, 4
+     vaddsd	xmm0, xmm0, xmm2 // xmm0 += amount[i+3]
+     vcmpneqsd	k0, xmm1, xmm2
+     kmovw	eax, k0
+     add	eax, r9d          // count += (amount[i+3] != 0)
+     cmp	r8, rsi
+     jne	LBB24_10
+</code></pre>
+<ul>
+<li>进行了循环展开，一次循环处理了 4个 f64 数据</li>
+<li>没有使用 SIMD 指令</li>
+<li>上述指令具有一定的并行性。IPC &gt; 1</li>
+</ul>
+</li>
+<li>aggregate_data_simd 显示在一次循环中处理 16个 f64 数据
+开启 avx512f 指令集，以及 popcnt 特性，生成的代码如下：
+<pre><code class="language-asm">LBB25_8:
+   cmp	rcx, rsi
+   ja	LBB25_12
+   cmp	r10, 15
+   jbe	LBB25_13
+   dec	r8
+   vaddsd	xmm3, xmm1, qword ptr [r9 + 8*rcx]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 8]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 16]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 24]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 32]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 40]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 48]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 56]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 64]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 72]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 80]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 88]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 96]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 104]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 112]
+   vaddsd	xmm3, xmm3, qword ptr [r9 + 8*rcx + 120]  ; xmm3 = amount[i] + amount[i+1] + ... + amount[i+15]
+   vcmpneqpd	k0, zmm2, zmmword ptr [r9 + 8*rcx]
+   vcmpneqpd	k1, zmm2, zmmword ptr [r9 + 8*rcx + 64]
+   vaddsd	xmm0, xmm0, xmm3
+   kunpckbw	k0, k1, k0
+   kmovw	r11d, k0
+   popcnt	r11d, r11d                               ; r11d = popcnt(k0)
+   add	eax, r11d
+   add	r10, -16
+   add	rcx, 16
+   test	r8, r8
+   jne	LBB25_8
+</code></pre>
+<ul>
+<li>f64 加法没有利用到 SIMD 指令</li>
+<li>count 计算使用到 zmm 寄存器进行 SIMD 比较。</li>
+<li>使用了 popcnt 指令来计算 count</li>
+</ul>
+</li>
+<li>aggregate_data_simd2
+<pre><code class="language-asm">LBB26_8:
+   cmp	rcx, rsi
+   ja	LBB26_12
+   cmp	r10, 15
+   jbe	LBB26_13
+   dec	r8
+   vmovupd	zmm3, zmmword ptr [r9 + 8*rcx]
+   vmovupd	zmm4, zmmword ptr [r9 + 8*rcx + 64]
+   vaddpd	zmm0, zmm0, zmm4
+   vaddpd	zmm1, zmm1, zmm3
+   vcmpneqpd	k0, zmm3, zmm2
+   vcmpneqpd	k1, zmm4, zmm2
+   kunpckbw	k0, k1, k0
+   kmovw	r11d, k0
+   popcnt	r11d, r11d
+   add	eax, r11d
+   add	r10, -16
+   add	rcx, 16
+   test	r8, r8
+   jne	LBB26_8   
+</code></pre>
+<ul>
+<li>加法充分使用到 SIMD 指令</li>
+<li>count 充分利用 popcnt 指令</li>
+</ul>
+</li>
+</ol>
+<h2 id="arm64-查看生成的汇编代码"><a class="header" href="#arm64-查看生成的汇编代码">ARM64 查看生成的汇编代码：</a></h2>
+<ol>
+<li>
+<p>aggregate_data</p>
+</li>
+<li>
+<p>aggregate_data_simd</p>
+</li>
+<li>
+<p>aggregate_data_simd2</p>
+<pre><code class="language-asm">; x11: &amp;orders.amount[i..]
+; x8: i
+; x12: orders.order_id.len() - i
+; x9: 循环次数
+; aggr1: f64x16 = v18, v23, v22, v20, v21, v19, v17, v0
+; count_aggr: i64x16 = v3, v4, v2, v1, v6, v5, v16, v7
+LBB26_3:
+    cmp	x8, x1
+    b.hi	LBB26_14
+    cmp	x12, #15
+    b.ls	LBB26_15
+    ldp	q25, q24, [x11, #64]       ; q24, q25, q26, q27, q28, q29, q30, q31: amount1: f64x16
+    ldp	q27, q26, [x11, #32]
+    ldp	q28, q29, [x11]
+    fadd.2d	v23, v23, v29          ; v23, v18, v22, v20, v21, v19, v17, v0  aggr1: f64x16
+    fadd.2d	v18, v18, v28
+    fadd.2d	v22, v22, v27
+    fadd.2d	v20, v20, v26
+    fadd.2d	v21, v21, v25
+    fadd.2d	v19, v19, v24
+    ldp	q31, q30, [x11, #96]      ; 这条指令是否可以提前，以便更好的利用流水线？
+    fadd.2d	v17, v17, v31
+    fadd.2d	v0, v0, v30
+    fcmeq.2d	v30, v30, #0.0
+    mvn.16b	v30, v30。            ； v30, v31, v24, v25, v28, v29, v27, v26: amount1.simd_ne(zero)
+    fcmeq.2d	v31, v31, #0.0
+    mvn.16b	v31, v31
+    fcmeq.2d	v24, v24, #0.0
+    mvn.16b	v24, v24
+    fcmeq.2d	v25, v25, #0.0
+    mvn.16b	v25, v25
+    fcmeq.2d	v28, v28, #0.0
+    mvn.16b	v28, v28
+    fcmeq.2d	v29, v29, #0.0
+    mvn.16b	v29, v29
+    fcmeq.2d	v27, v27, #0.0
+    mvn.16b	v27, v27
+    fcmeq.2d	v26, v26, #0.0
+    mvn.16b	v26, v26
+    sub.2d	v3, v3, v26        ; v3, v4, v2, v1, v6, v5, v16, v7: count_aggr += amount1.simd_ne(zero)
+    sub.2d	v4, v4, v27
+    sub.2d	v2, v2, v29
+    sub.2d	v1, v1, v28
+    sub.2d	v6, v6, v25
+    sub.2d	v5, v5, v24
+    add	x11, x11, #128        ; x11: &amp;orders.amount, x12
+    sub	x12, x12, #16
+    sub.2d	v16, v16, v31
+    add	x8, x8, #16           ; x8, x9
+    sub.2d	v7, v7, v30
+    sub	x9, x9, #1
+    cbnz	x9, LBB26_3
+</code></pre>
+<p>对应的 LLVM-IR 代码如下：</p>
+<pre><code class="language-llvm-ir">; vector_example1::aggregate_data_simd2
+; Function Attrs: noinline uwtable
+define internal fastcc { double, i32 } @_ZN15vector_example120aggregate_data_simd217hf7a44556b264af6cE(ptr noalias nocapture noundef readonly align 8 dereferenceable(72) %orders) unnamed_addr #2 personality ptr @rust_eh_personality {
+start:
+  %_73 = alloca [48 x i8], align 8
+  %0 = getelementptr inbounds i8, ptr %orders, i64 16             ; &amp;orders.order_id.len
+  %order_id_len = load i64, ptr %0, align 8, !noundef !3          ; orders.order_id.len
+  %length16 = and i64 %order_id_len, -16                          ; %length16 = orders.order_id.len &amp; !0x0F
+  %_57.not34 = icmp ult i64 %order_id_len, 16                     ; orders.order_id.len &lt; 16
+  br i1 %_57.not34, label %bb12, label %bb11.lr.ph
+
+bb11.lr.ph:                                       ; preds = %start
+  %d.i.i23 = lshr i64 %order_id_len, 4
+  %1 = getelementptr inbounds i8, ptr %orders, i64 64       ; &amp;orders.total_amount.len
+  %total_amount_len = load i64, ptr %1, align 8, !noundef !3
+  %2 = getelementptr inbounds i8, ptr %orders, i64 56       ; &amp;order.total_amount.ptr
+  %total_amount_ptr = load ptr, ptr %2, align 8, !nonnull !3
+  br label %bb11
+
+bb12:                                             ; preds = %simd_block, %start   ; orders.order_id.len &lt; 16
+  %count_aggr.sroa.0.0.lcssa = phi &lt;16 x i64&gt; [ zeroinitializer, %start ], [ %50, %simd_block ]
+  %aggr1.sroa.0.0.lcssa = phi &lt;16 x double&gt; [ zeroinitializer, %start ], [ %47, %simd_block ]
+  %3 = tail call double @llvm.vector.reduce.fadd.v16f64(double 0.000000e+00, &lt;16 x double&gt; %aggr1.sroa.0.0.lcssa)   ; total_amount
+  %4 = tail call i64 @llvm.vector.reduce.add.v16i64(&lt;16 x i64&gt; %count_aggr.sroa.0.0.lcssa)
+  %5 = trunc i64 %4 to i32                        ; count
+  %_9640.not = icmp eq i64 %length16, %order_id_len
+  br i1 %_9640.not, label %bb29, label %bb27.lr.ph
+
+bb27.lr.ph:                                       ; preds = %bb12   ; remaining &gt; 0
+  %6 = getelementptr inbounds i8, ptr %orders, i64 64
+  %_100 = load i64, ptr %6, align 8, !noundef !3
+  %7 = getelementptr inbounds i8, ptr %orders, i64 56
+  %_102 = load ptr, ptr %7, align 8, !nonnull !3
+  %8 = or disjoint i64 %length16, 1
+  %umax = tail call i64 @llvm.umax.i64(i64 %order_id_len, i64 %8)
+  %9 = xor i64 %length16, -1
+  %10 = add i64 %umax, %9
+  %11 = tail call i64 @llvm.usub.sat.i64(i64 %_100, i64 %length16)
+  %umin = tail call i64 @llvm.umin.i64(i64 %10, i64 %11)
+  %12 = add i64 %umin, 1
+  %min.iters.check = icmp ult i64 %12, 17
+  br i1 %min.iters.check, label %bb27.preheader, label %vector.ph
+
+bb27.preheader:                                   ; preds = %middle.block, %bb27.lr.ph
+  %total_amount.sroa.0.043.ph = phi double [ %3, %bb27.lr.ph ], [ %35, %middle.block ]
+  %count.sroa.0.042.ph = phi i32 [ %5, %bb27.lr.ph ], [ %37, %middle.block ]
+  %iter.sroa.0.041.ph = phi i64 [ %length16, %bb27.lr.ph ], [ %ind.end, %middle.block ]
+  br label %bb27
+
+vector.ph:                                        ; preds = %bb27.lr.ph
+  %n.mod.vf = and i64 %12, 15
+  %13 = icmp eq i64 %n.mod.vf, 0
+  %14 = select i1 %13, i64 16, i64 %n.mod.vf
+  %n.vec = sub i64 %12, %14
+  %ind.end = add i64 %length16, %n.vec
+  %15 = insertelement &lt;4 x i32&gt; &lt;i32 poison, i32 0, i32 0, i32 0&gt;, i32 %5, i64 0
+  br label %unroll_16_body
+
+unroll_16_body:                                      ; preds = %unroll_16_body, %vector.ph
+  %index = phi i64 [ 0, %vector.ph ], [ %index.next, %unroll_16_body ]
+  %vec.phi = phi double [ %3, %vector.ph ], [ %35, %unroll_16_body ]
+  %vec.phi62 = phi &lt;4 x i32&gt; [ %15, %vector.ph ], [ %28, %unroll_16_body ]
+  %vec.phi63 = phi &lt;4 x i32&gt; [ zeroinitializer, %vector.ph ], [ %29, %unroll_16_body ]
+  %vec.phi64 = phi &lt;4 x i32&gt; [ zeroinitializer, %vector.ph ], [ %30, %unroll_16_body ]
+  %vec.phi65 = phi &lt;4 x i32&gt; [ zeroinitializer, %vector.ph ], [ %31, %unroll_16_body ]
+  %offset.idx = add i64 %length16, %index
+  %16 = getelementptr inbounds [0 x double], ptr %_102, i64 0, i64 %offset.idx
+  %17 = getelementptr inbounds i8, ptr %16, i64 32
+  %18 = getelementptr inbounds i8, ptr %16, i64 64
+  %19 = getelementptr inbounds i8, ptr %16, i64 96
+  %wide.load = load &lt;4 x double&gt;, ptr %16, align 8
+  %wide.load66 = load &lt;4 x double&gt;, ptr %17, align 8
+  %wide.load67 = load &lt;4 x double&gt;, ptr %18, align 8
+  %wide.load68 = load &lt;4 x double&gt;, ptr %19, align 8
+  %20 = fcmp une &lt;4 x double&gt; %wide.load, zeroinitializer
+  %21 = fcmp une &lt;4 x double&gt; %wide.load66, zeroinitializer
+  %22 = fcmp une &lt;4 x double&gt; %wide.load67, zeroinitializer
+  %23 = fcmp une &lt;4 x double&gt; %wide.load68, zeroinitializer
+  %24 = zext &lt;4 x i1&gt; %20 to &lt;4 x i32&gt;
+  %25 = zext &lt;4 x i1&gt; %21 to &lt;4 x i32&gt;
+  %26 = zext &lt;4 x i1&gt; %22 to &lt;4 x i32&gt;
+  %27 = zext &lt;4 x i1&gt; %23 to &lt;4 x i32&gt;
+  %28 = add &lt;4 x i32&gt; %vec.phi62, %24
+  %29 = add &lt;4 x i32&gt; %vec.phi63, %25
+  %30 = add &lt;4 x i32&gt; %vec.phi64, %26
+  %31 = add &lt;4 x i32&gt; %vec.phi65, %27
+  %32 = tail call double @llvm.vector.reduce.fadd.v4f64(double %vec.phi, &lt;4 x double&gt; %wide.load)
+  %33 = tail call double @llvm.vector.reduce.fadd.v4f64(double %32, &lt;4 x double&gt; %wide.load66)
+  %34 = tail call double @llvm.vector.reduce.fadd.v4f64(double %33, &lt;4 x double&gt; %wide.load67)
+  %35 = tail call double @llvm.vector.reduce.fadd.v4f64(double %34, &lt;4 x double&gt; %wide.load68)
+  %index.next = add nuw i64 %index, 16
+  %36 = icmp eq i64 %index.next, %n.vec
+  br i1 %36, label %middle.block, label %unroll_16_body, !llvm.loop !824
+
+middle.block:                                     ; preds = %unroll_16_body
+  %bin.rdx = add &lt;4 x i32&gt; %29, %28
+  %bin.rdx69 = add &lt;4 x i32&gt; %30, %bin.rdx
+  %bin.rdx70 = add &lt;4 x i32&gt; %31, %bin.rdx69
+  %37 = tail call i32 @llvm.vector.reduce.add.v4i32(&lt;4 x i32&gt; %bin.rdx70)
+  br label %bb27.preheader
+
+bb11:                                             ; preds = %bb11.lr.ph, %simd_block
+  %aggr1.sroa.0.038 = phi &lt;16 x double&gt; [ zeroinitializer, %bb11.lr.ph ], [ %47, %simd_block ]
+  %count_aggr.sroa.0.037 = phi &lt;16 x i64&gt; [ zeroinitializer, %bb11.lr.ph ], [ %50, %simd_block ]
+  %iter2.sroa.0.036 = phi i64 [ %d.i.i23, %bb11.lr.ph ], [ %38, %simd_block ]
+  %iter1.sroa.0.035 = phi i64 [ 0, %bb11.lr.ph ], [ %_59, %simd_block ]
+  %_59 = add nuw i64 %iter1.sroa.0.035, 16
+  %38 = add nsw i64 %iter2.sroa.0.036, -1
+  %_66 = icmp ugt i64 %iter1.sroa.0.035, %total_amount_len
+  br i1 %_66, label %bb14, label %bb15, !prof !45
+
+bb29:                                             ; preds = %unroll_1_body, %bb12
+  %count.sroa.0.0.lcssa = phi i32 [ %5, %bb12 ], [ %count.sroa.0.1, %unroll_1_body ]
+  %total_amount.sroa.0.0.lcssa = phi double [ %3, %bb12 ], [ %41, %unroll_1_body ]
+  %39 = insertvalue { double, i32 } poison, double %total_amount.sroa.0.0.lcssa, 0
+  %40 = insertvalue { double, i32 } %39, i32 %count.sroa.0.0.lcssa, 1
+  ret { double, i32 } %40
+
+bb27:                                             ; preds = %bb27.preheader, %unroll_1_body
+  %total_amount.sroa.0.043 = phi double [ %41, %unroll_1_body ], [ %total_amount.sroa.0.043.ph, %bb27.preheader ]
+  %count.sroa.0.042 = phi i32 [ %count.sroa.0.1, %unroll_1_body ], [ %count.sroa.0.042.ph, %bb27.preheader ]
+  %iter.sroa.0.041 = phi i64 [ %_0.i, %unroll_1_body ], [ %iter.sroa.0.041.ph, %bb27.preheader ]
+  %_105 = icmp ult i64 %iter.sroa.0.041, %_100
+  br i1 %_105, label %unroll_1_body, label %panic
+
+unroll_1_body:                                             ; preds = %bb27
+  %_0.i = add nuw i64 %iter.sroa.0.041, 1
+  %_28 = getelementptr inbounds [0 x double], ptr %_102, i64 0, i64 %iter.sroa.0.041
+  %_27 = load double, ptr %_28, align 8, !noundef !3
+  %41 = fadd double %total_amount.sroa.0.043, %_27
+  %_29 = fcmp une double %_27, 0.000000e+00
+  %42 = zext i1 %_29 to i32
+  %count.sroa.0.1 = add i32 %count.sroa.0.042, %42
+  %_96 = icmp ult i64 %_0.i, %order_id_len
+  br i1 %_96, label %bb27, label %bb29, !llvm.loop !825
+
+panic:                                            ; preds = %bb27
+; call core::panicking::panic_bounds_check
+  tail call void @_ZN4core9panicking18panic_bounds_check17h4e300ecacdcb485dE(i64 noundef %iter.sroa.0.041, i64 noundef %_100, ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_1d64afd2f4d6487c2fc52f49f157fb70) #25
+  unreachable
+
+bb15:                                             ; preds = %bb11
+  %_68 = sub nuw i64 %total_amount_len, %iter1.sroa.0.035
+  %_71 = icmp ugt i64 %_68, 15
+  br i1 %_71, label %simd_block, label %bb18, !prof !162
+
+bb14:                                             ; preds = %bb11
+; call core::slice::index::slice_start_index_len_fail
+  tail call void @_ZN4core5slice5index26slice_start_index_len_fail17hc58130d6bde59316E(i64 noundef %iter1.sroa.0.035, i64 noundef %total_amount_len, ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_a51f3018634c16dde71b5ca2d7634a49) #25
+  unreachable
+
+bb18:                                             ; preds = %bb15
+  call void @llvm.lifetime.start.p0(i64 48, ptr nonnull %_73)
+  store ptr @alloc_9050ad19dc66bd48e533c9ef9ae2a705, ptr %_73, align 8
+  %43 = getelementptr inbounds i8, ptr %_73, i64 8
+  store i64 1, ptr %43, align 8
+  %44 = getelementptr inbounds i8, ptr %_73, i64 32
+  store ptr null, ptr %44, align 8
+  %45 = getelementptr inbounds i8, ptr %_73, i64 16
+  store ptr inttoptr (i64 8 to ptr), ptr %45, align 8
+  %46 = getelementptr inbounds i8, ptr %_73, i64 24
+  store i64 0, ptr %46, align 8
+; call core::panicking::panic_fmt
+  call void @_ZN4core9panicking9panic_fmt17hf449f69c28a45a63E(ptr noalias nocapture noundef nonnull readonly align 8 dereferenceable(48) %_73, ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_aff0730a47fd28b03378033af17e580b) #25
+  unreachable
+
+simd_block:                                             ; preds = %bb15
+  %_69 = getelementptr inbounds double, ptr %total_amount_ptr, i64 %iter1.sroa.0.035
+  %_77.sroa.0.0.copyload = load &lt;16 x double&gt;, ptr %_69, align 8
+  %47 = fadd &lt;16 x double&gt; %aggr1.sroa.0.038, %_77.sroa.0.0.copyload
+  %48 = fcmp une &lt;16 x double&gt; %_77.sroa.0.0.copyload, zeroinitializer
+  %49 = zext &lt;16 x i1&gt; %48 to &lt;16 x i64&gt;
+  %50 = add &lt;16 x i64&gt; %count_aggr.sroa.0.037, %49
+  %_57.not = icmp eq i64 %38, 0
+  br i1 %_57.not, label %bb12, label %bb11
+}
+
+</code></pre>
+<p>对应的 CFG 如下：</p>
+</li>
+</ol>
+<pre class="mermaid">%% 
+   flowchart TD
+    start[MStart] --&gt;|len &lt; 16| bb12
+    start --&gt;|len &gt;= 16| bb11_lr_ph
+
+    bb11_lr_ph --&gt; bb11
+    bb12 --&gt; bb29
+    bb12 --&gt;|has_remain| bb27_lr_ph
+
+    bb27_lr_ph --&gt; bb27_preheader
+    bb27_lr_ph --&gt; vector_ph
+    vector_ph --&gt; unroll_16_body
+
+    bb27_preheader --&gt; bb27
+
+    unroll_16_body --&gt; middle_block
+    middle_block --&gt; bb27_preheader
+    unroll_16_body --&gt; unroll_16_body
+
+    bb11 --&gt;|&amp;orders.amount i.. 越界| bb14
+    bb11 --&gt; bb15
+
+    bb29 --&gt; END[End]
+    bb27 --&gt; unroll_1_body
+    bb27 --&gt; panic --&gt; unreachable[Unreachable]
+
+    unroll_1_body --&gt; bb27
+    unroll_1_body --&gt; bb29
+
+    bb15 --&gt; simd_block
+    bb15 --&gt; bb18 --&gt; unreachable
+
+    bb14 --&gt; unreachable
+
+    simd_block --&gt; bb12
+    simd_block --&gt; bb11
+</pre>
+
+<p><img src="simd-1-cfg.png" alt="img.png"></p>
+<ul>
+<li><input disabled="" type="checkbox"> 阅读 LLVM-IR 代码，需要有一个 CFG 工具，以及可以对 变量， block 进行重命名的工具。</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="从一段简单的c代码来学习llvm-ir"><a class="header" href="#从一段简单的c代码来学习llvm-ir">从一段简单的C代码来学习LLVM-IR</a></h1>
+<h2 id="代码"><a class="header" href="#代码">代码</a></h2>
+<pre><code class="language-c">int demo1(int x) {
+  int y = 0;
+
+  if(x == 1) {
+    y = 10;
+  }
+  else if(x == 100){
+    y = 20;
+  }
+  else if(x == 200){
+    y = 30;
+  }
+  else {
+    y = 40;
+  }
+  return y;
+}
+</code></pre>
+<h2 id="命令行工具"><a class="header" href="#命令行工具">命令行工具</a></h2>
+<ol>
+<li>编译为 LLVM IR: <code>clang -S -emit-llvm demo1.c -o demo1.ll</code> 可结合 <code>-O1</code>, <code>-O3</code> 等优化选项。</li>
+<li>使用 <code>clang -c -mllvm -print-after-all demo1.c</code> 查看各个阶段的输出，查看各个pass后的 IR</li>
+<li><code>clang -mllvm --help</code></li>
+<li><code>clang -mllvm --help-hidden</code> 查看隐藏的选项</li>
+<li><code>clang -mllvm -debug-pass=Arguments</code> print pass arguments to pass to opt.</li>
+</ol>
+<h2 id="查看--o3-的优化过程-clang--s--emit-llvm--o3--mllvm--print-after-all-demo1c"><a class="header" href="#查看--o3-的优化过程-clang--s--emit-llvm--o3--mllvm--print-after-all-demo1c">查看 -O3 的优化过程: `clang -S -emit-llvm -O3 -mllvm -print-after-all demo1.c</a></h2>
+<ol>
+<li>
+<p>编译：<code>clang -S -emit-llvm -O3 -mllvm -print-after-all demo1.c -o demo1-O3.ll 2&gt;/tmp/passes.txt</code></p>
+</li>
+<li>
+<p><code>grep "Dump After" /tmp/passes.txt | wc -l</code> ： 共 106 个 pass</p>
+</li>
+<li>
+<p><code>clang -mllvm -debug-pass=Arguments -c demo1.c</code> 查看 opt 的参数：</p>
+<pre><code class="language-text"> Pass Arguments:  -tti -targetlibinfo -assumption-cache-tracker -targetpassconfig -machinemoduleinfo -profile-summary-info -tbaa -scoped-noalias-aa \
+     -collector-metadata -machine-branch-prob -regalloc-evict -regalloc-priority -domtree -basic-aa -aa -objc-arc-contract -pre-isel-intrinsic-lowering \
+     -expand-large-div-rem -expand-large-fp-convert -atomic-expand -aarch64-sve-intrinsic-opts -simplifycfg -domtree -loops -loop-simplify \
+     -lazy-branch-prob -lazy-block-freq -opt-remark-emitter -scalar-evolution -loop-data-prefetch -aarch64-falkor-hwpf-fix -basic-aa \
+     -loop-simplify -canon-freeze -iv-users -loop-reduce -basic-aa -aa -mergeicmps -loops -lazy-branch-prob -lazy-block-freq -expand-memcmp \
+     -gc-lowering -shadow-stack-gc-lowering -lower-constant-intrinsics -lower-global-dtors -unreachableblockelim -domtree -loops -postdomtree \
+     -branch-prob -block-freq -consthoist -replace-with-veclib -partially-inline-libcalls -expandvp -post-inline-ee-instrument \
+     -scalarize-masked-mem-intrin -expand-reductions -loops -tlshoist -postdomtree -branch-prob -block-freq -lazy-branch-prob \
+     -lazy-block-freq -opt-remark-emitter -select-optimize -aarch64-globals-tagging -stack-safety -domtree -basic-aa -aa -aarch64-stack-tagging \
+     -complex-deinterleaving -aa -memoryssa -interleaved-load-combine -domtree -interleaved-access -aarch64-sme-abi -domtree -loops -type-promotion \
+     -codegenprepare -domtree -dwarf-eh-prepare -aarch64-promote-const -global-merge -callbrprepare -safe-stack -stack-protector -domtree -basic-aa \
+     -aa -loops -postdomtree -branch-prob -debug-ata -lazy-branch-prob -lazy-block-freq -aarch64-isel -finalize-isel -lazy-machine-block-freq \
+     -early-tailduplication -opt-phis -slotindexes -stack-coloring -localstackalloc -dead-mi-elimination -machinedomtree -aarch64-condopt \
+     -machine-loops -machine-trace-metrics -aarch64-ccmp -lazy-machine-block-freq -machine-combiner -aarch64-cond-br-tuning -machine-trace-metrics \ 
+     -early-ifcvt -aarch64-stp-suppress -aarch64-simdinstr-opt -aarch64-stack-tagging-pre-ra -machinedomtree -machine-loops -machine-block-freq  \
+     -early-machinelicm -machinedomtree -machine-block-freq -machine-cse -machinepostdomtree -machine-cycles -machine-sink -peephole-opt \
+     -dead-mi-elimination -aarch64-mi-peephole-opt -aarch64-dead-defs -detect-dead-lanes -init-undef -processimpdefs -unreachable-mbb-elimination \ 
+     -livevars -phi-node-elimination -twoaddressinstruction -machinedomtree -slotindexes -liveintervals -register-coalescer -rename-independent-subregs \ 
+     -machine-scheduler -aarch64-post-coalescer-pass -machine-block-freq -livedebugvars -livestacks -virtregmap -liveregmatrix -edge-bundles \
+     -spill-code-placement -lazy-machine-block-freq -machine-opt-remark-emitter -greedy -virtregrewriter -regallocscoringpass -stack-slot-coloring \ 
+     -machine-cp -machinelicm -aarch64-copyelim -aarch64-a57-fp-load-balancing -removeredundantdebugvalues -fixup-statepoint-caller-saved  \
+     -postra-machine-sink -machinedomtree -machine-loops -machine-block-freq -machinepostdomtree -lazy-machine-block-freq -machine-opt-remark-emitter \ 
+     -shrink-wrap -prologepilog -machine-latecleanup -branch-folder -lazy-machine-block-freq -tailduplication -machine-cp -postrapseudos \
+     -aarch64-expand-pseudo -aarch64-ldst-opt -kcfi -aarch64-speculation-hardening -machinedomtree -machine-loops -aarch64-falkor-hwpf-fix-late \ 
+     -postmisched -gc-analysis -machine-block-freq -machinepostdomtree -block-placement -fentry-insert -xray-instrumentation -patchable-function \
+     -aarch64-ldst-opt -machine-cp -aarch64-fix-cortex-a53-835769-pass -aarch64-collect-loh -funclet-layout -stackmap-liveness -livedebugvalues \
+     -machine-sanmd -machine-outliner -aarch64-sls-hardening -aarch64-ptrauth -aarch64-branch-targets -branch-relaxation -aarch64-jump-tables \
+     -cfi-fixup -lazy-machine-block-freq -machine-opt-remark-emitter -stack-frame-layout -unpack-mi-bundles -lazy-machine-block-freq \
+     -machine-opt-remark-emitter
+ Pass Arguments:  -domtree
+ Pass Arguments:  -assumption-cache-tracker -targetlibinfo -domtree -loops -scalar-evolution -stack-safety-local
+ Pass Arguments:  -domtree
+</code></pre>
+<p>把这个参数直接丢给 opt 命令行是不行的，会报错误。</p>
+</li>
+<li>
+<p>使用如下的脚本来分析 -print-after-all</p>
+<pre class="playground"><code class="language-rust">// src/bin/passes.rs
+use std::fs::File;
+use std::io::{self, BufRead, BufReader, Write};
+
+fn main() -&gt; io::Result&lt;()&gt; {
+    // args[1] is the input file like abc.ll
+    let input_file = std::env::args().nth(1).expect("no filename given");
+    if !input_file.ends_with(".ll") {
+        panic!("input file must end with .ll");
+    }
+
+    let path = std::path::Path::new(&amp;input_file);
+    let basename = path.file_stem().expect("no basename found").to_str().expect("basename is not a valid UTF-8 string");
+
+    let file = File::open(input_file.as_str())?;
+    let reader = BufReader::new(file);
+
+    let mut file_count = 0;
+    let mut output_file = File::create(format!("./output/{basename}_{file_count}.ll"))?;
+
+    for line in reader.lines() {
+        let line = line?;
+        if line.contains(" Dump After ") {
+            file_count += 1;
+            output_file = File::create(format!("./output/{basename}_{file_count}.ll"))?;
+        }
+        writeln!(output_file, "{}", line)?;
+    }
+
+    Ok(())
+}</code></pre>
+<p><code>cargo run --bin passes -- path/to/file.ll</code> 会在 output 目录下生成多个文件，每个文件对应一个 pass 的输出。</p>
+</li>
+<li>
+<p>可以逐步的对比每个 pass 的输出，观察 IR 的演变过程，理解各个 pass 的职责。</p>
+<p>在这个小的demo中，主要是如下两个 pass 起到了关键作用：</p>
+<ul>
+<li>simplifycfg: 简化控制流图，包括合并基本快，使用 switch 替代多个 if else 等。</li>
+<li>SROA: An optimization pass providing Scalar Replacement of Aggregates. This pass takes allocations which can be completely
+analyzed (that is, they don’t escape) and tries to turn them into scalar SSA values.
+刚开始的时候，IR 并不是严格意义上的 SSA，对每个变量的读写都是通过 alloca 和 load/store 来实现的，这个 pass 将这些变量转换为 SSA 形式。</li>
+</ul>
+</li>
+<li>
+<p>通过 opt 命令来重现某个 pass 的优化过程：（部份 pass 输出的 IL 需要简单的手工调整方能正确执行）</p>
+<pre><code class="language-shell">opt -S output/demo1_6.ll -passes=simplifycfg -o -
+</code></pre>
+<p>这里的 pass name 可以从 文件中的 <code>Dump After</code> 中找到。
+<code>opt -S output/demo1_6.ll -passes=simplifycfg,sroa,simplifycfg -o -</code> 使用这个命令，可以从 -O0 的 IR 优化到 -O3 的 IR。</p>
+</li>
+</ol>
+<h2 id="小结"><a class="header" href="#小结">小结</a></h2>
+<ol>
+<li>本文给出了一个学习 LLVM IR 的有效方法：即跟着 clang 的编译过程，逐步了解 IR 以及各个 pass 的作用。并给出了参考的命令行工具。</li>
+<li>本文中的 passes 生成工具，脚本是通过 github copilot 辅助生成的 rust 脚本，稍微调整一下后，就可以使用，来辅助分析 IR。</li>
+<li>对于复杂的 IR 代码，需要有一个从 IR 生成 CFG 的工具，这样可以更好的理解 IR 的控制流程。我会在后面的学习中，使用 rust 来编写这个工具。</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="初识-qbe"><a class="header" href="#初识-qbe">初识 QBE</a></h1>
+<p><a href="https://c9x.me/compile/docs.html">QBE</a> 是一个教学性质的编译器后端实现，可以理解为一个简单版的 LLVM。与LLVM相似，他也是基于 SSA IR 的，
+但仅有大约 12000 行 C 代码，就实现了 LLVM 70% 的功能。如果从学习编译器后端的角度来看，QBE 是一个非常好的选择。</p>
+<ul>
+<li>核心代码：在 src 目录下，6.7k 行（如果剔除 IR parser，则 ~5.3K 行代码）</li>
+<li>3个架构：amd86(~2.3k), ARM64(~1.9k), RISC-V64(~1.5k) 共 5.7K 行</li>
+<li>1 个 mini-c 的前端编译器，大约 2.7k loc。 这个工具可以将 mini-c 代码编译成 QBE IR，在学习的过程中，可以尝试使用这种方式来编写 IR。</li>
+</ul>
+<p>所以，如果真正阅读源代码的话，核心代码大约 6-8k, 而且是 pure c 代码，非常适合学习。</p>
+<h2 id="理解-ssa-ir"><a class="header" href="#理解-ssa-ir">理解 SSA IR</a></h2>
+<p>QBE 文档页面有参考资料，包括：</p>
+<ol>
+<li>
+<p><a href="https://c9x.me/compile/doc/il.html">QBE SSA IR</a> 要学习 QBE，现需要熟悉它的 SSA IR 定义。</p>
+<p>相比于 LLVM IR, QBE 的 IR 要简化很多，不过麻雀虽小，概念俱全，对于理解 SSA 尤其是 phi 函数来说，其实是足够了的。</p>
+</li>
+<li>
+<p><a href="https://pfalcon.github.io/ssabook/latest/book-full.pdf">The Static Single Assignment Book</a> SSA 教程。</p>
+</li>
+</ol>
+<p>我的理解：</p>
+<ul>
+<li>SSA 更适合于数据流的静态分析，因此，为优化提供了更多的可能性。</li>
+<li>大部份的 backend 都是对 SSA 的优化，SSA IR 为 backend 提供了一个统一的IR。虽然众多的 phase 构成了复杂而庞大的 backend，但其核心依然相对简洁。</li>
+<li>一个快速的学习方式是，现抛开各种优化，一个最简单的 backend 会是什么样子？这里最简单的 backend 甚至比 QBE 还要简单，只生成可以正确运行的机器代码
+即可，甚至连寄存器分配都可以忽略，这样的 backend 会包括什么？</li>
+<li>然后在这个最简化的模型上，逐步叠加各种优化，理解每一种优化的原理和实现。</li>
+</ul>
+<p>按照这个逻辑来学习 backend，可能会是一个不错的思路。不必在一开始就陷入到复杂的概念、数据结构、算法细节中（compiler backend 无疑是目前最为复杂的
+软件体系，要比操作系统、数据库、浏览器等要复杂、精密得多）。</p>
+<h2 id="从-mini-c-开始"><a class="header" href="#从-mini-c-开始">从 mini-c 开始</a></h2>
+<p>在还不是足够熟悉 QBE IR 的情况下，如果要手写 IR 的话，还是会遇到一定的困难，这个时候，mini-c 就可以发挥用场了。</p>
+<pre><code class="language-c"># include &lt;stdio.h&gt;
+
+fib(int n) {
+  if(n==0) return 1;
+  if(n==1) return 1;
+  return fib(n-1) + fib(n-2);
+}
+
+main(){
+    int result;
+    result = fib(10);
+    printf("result = %d\n", result);
+}
+</code></pre>
+<ol>
+<li>使用 mini-c 编译器，将 mini-c 代码编译成 QBE IR。 <code>cat demo.c | minic &gt; demo.ir</code></li>
+<li>使用 QBE 编译器，将 IR 编译成汇编代码。 <code>qbe -o demo.s demo.ir</code></li>
+<li>使用 clang 编译汇编代码。 <code>clang -o demo demo.s</code></li>
+<li>运行 demo。 <code>./demo</code></li>
+</ol>
+<p>阅读一下 demo.ir 的代码，如下：</p>
+<pre><code class="language-text">export function w $fib(w %t0) {
+@l0
+	%n =l alloc4 4
+	storew %t0, %n
+	%t2 =w loadw %n
+	%t1 =w ceqw %t2, 0
+	jnz %t1, @l1, @l2
+@l1
+	ret 1
+@l2
+	%t6 =w loadw %n
+	%t5 =w ceqw %t6, 1
+	jnz %t5, @l4, @l5
+@l4
+	ret 1
+@l5
+	%t12 =w loadw %n
+	%t11 =w sub %t12, 1
+	%t10 =w call $fib(w %t11, ...)
+	%t16 =w loadw %n
+	%t15 =w sub %t16, 2
+	%t14 =w call $fib(w %t15, ...)
+	%t9 =w add %t10, %t14
+	ret %t9
+}
+
+export function w $main() {
+@l7
+	%result =l alloc4 4
+	%t1 =w call $fib(w 10, ...)
+	storew %t1, %result
+	%t5 =w loadw %result
+	%t3 =w call $printf(l $glo1, w %t5, ...)    # minic 生成的 IR 有些问题，应该是 call $printf(l $fmt, ..., w %t5)
+	ret 0
+}
+
+data $glo1 = { b "result = %d\n", b 0 }
+</code></pre>
+<p>可以看到，这段 IR 代码并不是很高效，有很大的优化空间，比如，我们可以手动优化为：</p>
+<pre><code class="language-text">export function w $fib(w %t0) {
+@l0
+	%t1 =w ceqw %t0, 0
+	jnz %t1, @l1, @l2
+@l1
+	ret 1
+@l2
+	%t5 =w ceqw %t0, 1
+	jnz %t5, @l4, @l5
+@l4
+	ret 1
+@l5
+	%t11 =w sub %t0, 1
+	%t10 =w call $fib(w %t11, ...)
+	%t15 =w sub %t0, 2
+	%t14 =w call $fib(w %t15, ...)
+	%t9 =w add %t10, %t14
+	ret %t9
+}
+
+export function w $main() {                # Main function
+@start
+        %r =w call $fib(w 10)
+        call $printf(l $fmt, ..., w %r)    # Show the result
+        ret 0
+}
+data $fmt = { b "result = %d!\n", b 0 }
+</code></pre>
+<p>这个 IR 显然更为简洁，更为高效。</p>
+<p>不过，对两个版本的 IR 采用 qbe 编译后，却可以发现，两个版本的汇编代码是一样的，这是因为 QBE 会自动进行优化，将 IR 优化为更高效的代码。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="qbe-core-concepts"><a class="header" href="#qbe-core-concepts">QBE core concepts</a></h1>
+<h2 id="ssa"><a class="header" href="#ssa">SSA</a></h2>
+<p>Static Single Assignment (SSA) 是一种 IR 表示方法，其特点是每个变量只被赋值一次。SSA 有助于进行数据流分析，优化等。</p>
+<ol>
+<li>static: 每个变量在源代码静态（lexical)下只定义一次，而非 dynamic（运行时，因为 loop 的存在有的 assignment 会执行多次）</li>
+<li>single: 每个变量只被赋值一次。</li>
+</ol>
+<p>Why SSA? SSA 简化了数据流分析，只需要使用 def-use 关系就可以追踪数据流，而无需追踪一个完整的变换过程。</p>
+<p>非 static single assignment 的 IR 可以通过：</p>
+<ol>
+<li>重命名变量，使得每个变量只被赋值一次（这个与CPU中的寄存器重命名概念是相似的）</li>
+<li>对 merge point 引入 phi 函数，phi 函数的参数是不同的分支上的变量。</li>
+</ol>
+<h2 id="cfg"><a class="header" href="#cfg">CFG</a></h2>
+<p>Control Flow Graph (CFG) 是一种表示程序控制流的图结构。在 CFG 中，每个基本块（basic block）是一个节点，连接两个基本块的边表示控制流的转移。</p>
+<ol>
+<li>
+<p>Basic Block: 一个基本块只有1个入口和1个出口。</p>
+</li>
+<li>
+<p>Edge:</p>
+</li>
+<li>
+<p>3 种结构：</p>
+<ul>
+<li>顺序：BB1 -&gt; BB2</li>
+<li>分支：BB1 -&gt; BB2, BB3</li>
+<li>合并：BB1, BB2 -&gt; BB3</li>
+<li>循环是分支和合并的结合。</li>
+</ul>
+</li>
+<li>
+<p>Reverse Post Order.</p>
+<ul>
+<li>DFS pre-order</li>
+<li>DFS post-order</li>
+<li>DFS reverse post-order</li>
+</ul>
+</li>
+<li>
+<p>Dominator Tree</p>
+<ul>
+<li>Dominator</li>
+<li>Dominator Tree</li>
+<li>Dominance 边界</li>
+<li>Immediate Dominator</li>
+</ul>
+</li>
+</ol>
+<h2 id="phi-function"><a class="header" href="#phi-function">Phi function</a></h2>
+<h2 id="optimizations"><a class="header" href="#optimizations">optimizations</a></h2>
+<ol>
+<li>Dead Code Elimination</li>
+<li>Constant Propagation</li>
+<li>Register 重用</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="qbe-核心数据结构"><a class="header" href="#qbe-核心数据结构">QBE 核心数据结构</a></h1>
+<h2 id="fn"><a class="header" href="#fn">Fn</a></h2>
+<pre><code class="language-c">struct Fn {
+	Blk *start;         // start block, Blk::link 构成了 Blk 链表
+	Tmp *tmp;
+	Con *con;
+	Mem *mem;
+	int ntmp;
+	int ncon;
+	int nmem;
+	uint nblk;
+	int retty; /* index in typ[], -1 if no aggregate return */
+	Ref retr;
+	Blk **rpo;      // reverse post order
+	bits reg;
+	int slot;
+	int salign;
+	char vararg;
+	char dynalloc;
+	char leaf;
+	char name[NString];
+	Lnk lnk;
+};
+</code></pre>
+<h2 id="blk"><a class="header" href="#blk">Blk</a></h2>
+<pre><code class="language-c">struct Blk {
+	Phi *phi;
+	Ins *ins;
+	uint nins;
+	struct {
+		short type;
+		Ref arg;
+	} jmp;
+	Blk *s1;        // branch1 or jump
+	Blk *s2;        // branch2
+	Blk *link;      // next block in lexical order
+
+	uint id;        // RPO index
+	uint visit;
+
+	Blk *idom;     // ???
+	Blk *dom, *dlink;
+	Blk **fron;
+	uint nfron;
+
+	Blk **pred;     // predecessors, pred-&gt;s1 == this || pred-&gt;s2 == this
+	uint npred;
+	BSet in[1], out[1], gen[1];
+	int nlive[2];
+	int loop;
+	char name[NString];
+};
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="qbe-源代码阅读"><a class="header" href="#qbe-源代码阅读">QBE 源代码阅读</a></h1>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>dir</th><th>file</th><th>lines</th><th>details</th><th>占比 ｜</th></tr>
+</thead>
+<tbody>
+<tr><td>root</td><td>main.c</td><td>198</td><td>主流程</td><td>3.1%</td></tr>
+<tr><td>root</td><td>parse.c</td><td>1428</td><td></td><td>25.5%</td></tr>
+<tr><td>root</td><td>cfg.c</td><td>331</td><td>Control Flow Graph</td><td>30.7%</td></tr>
+<tr><td>root</td><td>rega.c</td><td>698</td><td>register allocation depends on rpo, phi, cost, spill.</td><td></td></tr>
+<tr><td>root</td><td>util.c</td><td>653</td><td></td><td></td></tr>
+<tr><td>root</td><td>spill.c</td><td>538</td><td>spill code insertion, requires spill costs, rpo, liveness</td><td></td></tr>
+<tr><td>root</td><td>fold.c</td><td>535</td><td>require rpo, use, pred</td><td></td></tr>
+<tr><td>root</td><td>load.c</td><td>493</td><td>require rpo, ssa, alias</td><td></td></tr>
+<tr><td>root</td><td>mem.c</td><td>488</td><td>promote, require use, maintains use counts</td><td></td></tr>
+<tr><td>root</td><td>ssa.c</td><td>434</td><td>require rpo and use</td><td></td></tr>
+<tr><td>root</td><td>emit.c</td><td>254</td><td></td><td></td></tr>
+<tr><td>root</td><td>alias.c</td><td>222</td><td></td><td></td></tr>
+<tr><td>root</td><td>copy.c</td><td>217</td><td></td><td></td></tr>
+<tr><td>root</td><td>live.c</td><td>144</td><td></td><td></td></tr>
+<tr><td>root</td><td>simpl.c</td><td>126</td><td></td><td></td></tr>
+<tr><td>root</td><td>abi.c</td><td>25</td><td></td><td></td></tr>
+<tr><td>total</td><td></td><td>6,366</td><td></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="mainc"><a class="header" href="#mainc">main.c</a></h2>
+<pre><code class="language-c">int main(){
+
+   // parse options hd:o:t: 
+   
+   for each input file {
+     parse(FILE *f, char *path, 
+        void dbgfile(char *),  // 处理 -d 选项
+        void data(Dat *),      // emit data section
+        void func(Fn *)        // 通过一系列的 pass 来处理 fn(IR), 最终 emit IR.
+     ); 
+   }
+   
+   T.emitfin( outf )          // target emit .s file
+}
+</code></pre>
+<p><code>-d</code> 提供的如下选项可以帮助我们更好的理解编译过程：（提高可视化，有助于理解内部结构）</p>
+<ul>
+<li>
+<p>P: print IR after parsing</p>
+</li>
+<li>
+<p>M: memory optimization: slot promotion, load elimination, slot coalescing,</p>
+</li>
+<li>
+<p>N: print IR after SSA construction</p>
+</li>
+<li>
+<p>C: copy elimination</p>
+</li>
+<li>
+<p>F: constant folding</p>
+</li>
+<li>
+<p>A: abi lowering</p>
+</li>
+<li>
+<p>L: liveness</p>
+</li>
+<li>
+<p>S: spilling</p>
+</li>
+<li>
+<p>R: register allocation</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"> 后续对这些过程按照顺序进行逐一分析。</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"> struct Fn 是对一个函数的 IR 表达，是核心的数据结构</p>
+</li>
+</ul>
+<p>阅读完成度：198/6366 = 3.1%</p>
+<h2 id="parsec"><a class="header" href="#parsec">parse.c</a></h2>
+<ol>
+<li>
+<p>一大堆的全局变量</p>
+</li>
+<li>
+<p>主要的数据结构：</p>
+<ul>
+<li>
+<p><a href="https://c9x.me/compile/doc/il.html#Linkage">Lnk</a> 修饰 function 和 data</p>
+</li>
+<li>
+<p>Fn</p>
+<ul>
+<li>Blk
+<ul>
+<li>Ins</li>
+<li>Phi</li>
+</ul>
+</li>
+<li>Tmp:  %name 局部变量定义</li>
+<li>Con</li>
+<li>Mem</li>
+</ul>
+</li>
+<li>
+<p><input disabled="" type="checkbox"> Fn 等数据结构注释较少，且不便于调试查看，考虑增加 toString 功能方便调试</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"> 如何遍历 Fn 数据结构，不便于在调试器中查看数据</p>
+</li>
+<li>
+<p>使用 qbe -d P 来查看 IR 的输出</p>
+</li>
+</ul>
+<p>parse 的源代码阅读本身没有太大的挑战，主要的挑战是在于对 qbe 的数据结构的理解，这一块是一个挑战，如果，把上述的TODO
+解决了，那么整个代码的可读性会打幅度提升。</p>
+<p>接下来就是对 IR 的 多个 pass 处理了。</p>
+</li>
+<li>
+<p>改造 main.c 增加 -d 9 选项支持，在该选项下，打印每一个 pass 后的 IR 输出。
+然后，对测试的输入进行分析，理解各个 pass 的作用。</p>
+<pre><code class="language-text">export function w $ifelse(w %t0) {
+@l0
+    %n =l alloc4 4
+    storew %t0, %n
+    %result =l alloc4 4
+    %t3 =w loadw %n
+    %t1 =w csltw 0, %t3
+    jnz %t1, @l1, @l2
+@l1
+    %t6 =w loadw %n
+    %t5 =w mul %t6, 2
+    storew %t5, %result
+    jmp @l3
+@l2
+    %t10 =w loadw %n
+    %t11 =w sub 0, 3
+    %t9 =w mul %t10, %t11
+    storew %t9, %result
+@l3
+    %t14 =w loadw %result
+    ret %t14
+}
+</code></pre>
+<ol>
+<li>主要的 pass 有：
+<ul>
+<li>promote: 将 slot(局部变量) 转换为 register, 消除 alloc, store, load 操作</li>
+<li>ssa: 通过 phi 函数，将 IR 转换为 SSA（在此之前的 register 可以多次赋值）</li>
+<li>copy：消除 copy 操作，减少 register 的使用</li>
+<li>abi: 引入目标平台的寄存器分配（参数、返回值），对寄存器分配目前还不是很清楚，是如何在IR上进行的</li>
+<li>isel: 选择指令。 目前还不清楚，是如何和 IR 协调工作的。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<p>阅读完成度：(198 + 1428)/6366 = 1626/6366 = 25.5%</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="qbe-源代码阅读-2-fillrpo"><a class="header" href="#qbe-源代码阅读-2-fillrpo">QBE 源代码阅读 2: fillrpo</a></h1>
+<p>阅读 QBE 源代码较为困难的地方是，源代码中有一些 abbr 词汇，并没有详细的注释，要从源代码反向理解概念就比较费劲了。相反，如果理解了概念本身，
+则源代码的阅读就先对容易很多。</p>
+<p>RPO: reverse post order</p>
+<p>Reverse Post Order (RPO) is a way of ordering the nodes (blocks) in a control flow graph (CFG) such that each node
+appears before any of its successors. This ordering is particularly useful in compiler optimizations and analyses for several reasons:</p>
+<ol>
+<li>
+<p>Data Flow Analysis: Many data flow analyses, such as liveness analysis, constant propagation, and reaching definitions,
+benefit from RPO because it ensures that when processing a node, all its predecessors have already been processed.
+This makes the propagation of data flow information more efficient and straightforward.</p>
+</li>
+<li>
+<p>Dominance Calculation: RPO is used in the calculation of dominator trees. A node A dominates a node B if every path
+from the entry node to B must go through A. Processing nodes in RPO ensures that when a node is processed,
+all its dominators have already been processed.</p>
+</li>
+<li>
+<p>Loop Detection and Optimization: RPO helps in identifying natural loops in the CFG. By processing nodes in RPO,
+loops can be detected and optimized more effectively, as the back edges (which indicate loops) are easier to identify.</p>
+</li>
+<li>
+<p>Code Generation: During code generation, RPO can be used to ensure that instructions are generated in an order that
+respects the dependencies between basic blocks, leading to more efficient code.</p>
+</li>
+</ol>
+<p>然后，我在 《深入理解 LLVM 代码生成》第3.4 节中找到了 RPO 的概念定义：</p>
+<ul>
+<li>Depth First Search (DFS) 生成的节点序列称为 DFS order
+<ul>
+<li>Pre Order</li>
+<li>Post Order</li>
+<li>Reverse Post Order (RPO)</li>
+</ul>
+</li>
+<li>Breadth First Search (BFS) 生成的节点序列称为 BFS order</li>
+</ul>
+<p>对于如下的 DAG:</p>
+<pre class="mermaid">graph TD
+    A --&gt; B
+    A --&gt; D
+    B --&gt; C
+    E --&gt; B
+    D --&gt; E
+    D --&gt; F
+    F --&gt; E
+</pre>
+
+<p>则：</p>
+<ul>
+<li>DFS pre-order: A B C D E F</li>
+<li>DFS post-order: C B E F D A</li>
+<li>DFS reverse post-order: A D F E B C</li>
+</ul>
+<p>这个概念就很好理解了，实际上，在我们的一个应用场景中（仪表盘上的组件依赖关系），我们就已经应用了这个遍历算法，只是没有给它起一个名字。</p>
+<p>在 QBE 中，pass fillrpo 并不修改 IR, 而是将 RPO 相关的内部字段计算出来:</p>
+<ul>
+<li>Fn.rpo: Blk ** rpo; // reverse post order</li>
+<li>为每个 Blk 分配一个 id, 这个 id 就是 RPO 的序号。</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="qbe-源代码阅读-3-fillpreds-filluse"><a class="header" href="#qbe-源代码阅读-3-fillpreds-filluse">QBE 源代码阅读 3: fillpreds, filluse</a></h1>
+<h2 id="fillpreds"><a class="header" href="#fillpreds">fillpreds</a></h2>
+<p>pass fillpreds 是一个 psuedo pass，其职责是完善 CFG 数据结构，填充好 Blk::preds 字段。</p>
+<p>TODO QBE 的源代码中, fillpreds 函数逻辑上是有内存泄漏的。</p>
+<p>brk1-&gt;pred == brk2 ==&gt; brk2.s1 == brk1 || brk2.s2 == brk1</p>
+<pre><code class="language-c">void
+fillpreds(Fn *f)
+{
+	Blk *b;
+
+	for (b=f-&gt;start; b; b=b-&gt;link) {    // reset predecessors, it is already setted in ???
+		b-&gt;npred = 0;
+		b-&gt;pred = 0;                // 这里会有内存泄漏
+	}
+	for (b=f-&gt;start; b; b=b-&gt;link) {
+		if (b-&gt;s1)
+			b-&gt;s1-&gt;npred++;
+		if (b-&gt;s2 &amp;&amp; b-&gt;s2 != b-&gt;s1)
+			b-&gt;s2-&gt;npred++;
+	}
+	for (b=f-&gt;start; b; b=b-&gt;link) {
+		if (b-&gt;s1)
+			addpred(b, b-&gt;s1);
+		if (b-&gt;s2 &amp;&amp; b-&gt;s2 != b-&gt;s1)
+			addpred(b, b-&gt;s2);
+	}
+}
+</code></pre>
+<h2 id="filluse"><a class="header" href="#filluse">filluse</a></h2>
+<p>重点维护字段：</p>
+<ul>
+<li>
+<p>Tmp::def</p>
+</li>
+<li>
+<p>Tmp::bid</p>
+</li>
+<li>
+<p>Tmp::ndef</p>
+</li>
+<li>
+<p>Tmp::nuse</p>
+</li>
+<li>
+<p>Tmp::cls</p>
+</li>
+<li>
+<p>Tmp::phi</p>
+</li>
+<li>
+<p>Tmp::width</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"> 对主要结构添加 to_str 方法，方便进行调试。包括： Tmp, Ins, Phi, Blk, Fn etc.</p>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="promote-晋级"><a class="header" href="#promote-晋级">promote 晋级</a></h1>
+<h2 id="what-is-promote"><a class="header" href="#what-is-promote">what is promote?</a></h2>
+<p>在编译器后端中，Promote Pass 的主要作用通常是将变量从内存位置提升（Promote）到寄存器中，以减少内存访问开销并启用更高效的代码优化。
+这一过程常见于优化阶段，例如 LLVM 中的 PromoteMemoryToRegisterPass</p>
+<p>通过 promote, 我们可以：</p>
+<ol>
+<li>消除冗余的内存操作。将局部变量从栈内存分配调整为寄存器分配。</li>
+<li>寄存器提升后，更易于 SSA 优化。</li>
+</ol>
+<pre><code class="language-text"># before promote
+function $ifelse() {
+@l0
+	%t0 =w par
+	%n =l alloc4 4
+	storew %t0, %n
+	%result =l alloc4 4
+	%t3 =w loadsw %n
+	%t1 =w csltw 0, %t3
+	jnz %t1, @l1, @l2
+@l1
+	%t6 =w loadsw %n
+	%t5 =w mul %t6, 2
+	storew %t5, %result
+	jmp @l3
+@l2
+	%t10 =w loadsw %n
+	%t11 =w sub 0, 3
+	%t9 =w mul %t10, %t11
+	storew %t9, %result
+@l3
+	%t14 =w loadsw %result
+	retw %t14
+}
+
+# after promote
+function $ifelse() {
+@l0
+	%t0 =w par
+	nop
+	%n =w copy %t0        # 将 mem &amp;x 转为 tmp x， store -&gt; copy
+	nop
+	%t3 =w copy %n        # load -&gt; copy
+	%t1 =w csltw 0, %t3
+	jnz %t1, @l1, @l2
+@l1
+	%t6 =w copy %n
+	%t5 =w mul %t6, 2
+	%result =w copy %t5
+	jmp @l3
+@l2
+	%t10 =w copy %n
+	%t11 =w sub 0, 3
+	%t9 =w mul %t10, %t11
+	%result =w copy %t9
+@l3
+	%t14 =w copy %result
+	retw %t14
+}
+</code></pre>
+<h2 id="原理"><a class="header" href="#原理">原理</a></h2>
+<ol>
+<li>
+<p>识别可提升的变量（哪些可以提升，哪些不可以提升）</p>
+<ul>
+<li>函数的局部变量 vs 全局变量/静态变量</li>
+<li>变量有明确的控制流路径</li>
+<li>无内存逃逸</li>
+<li>无别名</li>
+<li>volatile 修饰的变量</li>
+</ul>
+</li>
+<li>
+<p>插入 phi</p>
+</li>
+<li>
+<p>替换内存操作为 tmp 操作。</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="zig-misc"><a class="header" href="#zig-misc">zig misc</a></h1>
+<ol>
+<li>zig 中的传值、传址？
+<ul>
+<li>zig 中的基础类型如 integer/floats 等是采用 pass by value 的方式传递参数的。</li>
+<li>对 struts/unions/array 等数据类型，作为参数传递时，由于 zig 中参数都是 const 的，因此，zig 可以选择使用传值或者传址的方式。一般的，采用
+传址方式会具有更小的效率。</li>
+</ul>
+</li>
+<li>zig 的指针
+<ul>
+<li>*T: 单值指针，不支持指针运算</li>
+<li><code>[*]T</code>: 多值指针，支持 <code>ptr[i]</code> 运算，或者 <code>ptr[start..end]</code> 返回一个切片</li>
+<li><code>*[N]T</code>: 数组指针，sizeof = 8</li>
+<li><code>[]T</code>: slice, 是一个胖指针，对应 rust中的 <code>&amp;[T]</code>, sizeof = 16</li>
+<li><code>arr[1..4]</code> 的类型是 <code>*[3]T</code></li>
+</ul>
+</li>
+<li>Zig 支持 u3 等小整数类型，但目前来看，其并不会合并到一个字节中（&amp;取址会比较复杂）。</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="print-in-zig"><a class="header" href="#print-in-zig">print in zig</a></h1>
+<p>示例来源于：<a href="https://ziglang.org/documentation/0.13.0/#Case-Study-print-in-Zig">Case Study: print in zig</a></p>
+<pre><code class="language-zig">const print = @import("std").debug.print;
+
+const a_number: i32 = 1234;
+const a_string = "foobar";
+
+pub fn main() void {
+    print("here is a string: '{s}' here is a number: {}\n", .{ a_string, a_number });
+}
+
+const Writer = struct {
+    /// Calls print and then flushes the buffer.
+    pub fn print(self: *Writer, comptime format: []const u8, args: anytype) anyerror!void {
+        const State = enum {
+            start,
+            open_brace,
+            close_brace,
+        };
+
+        comptime var start_index: usize = 0;
+        comptime var state = State.start;
+        comptime var next_arg: usize = 0;
+
+        inline for (format, 0..) |c, i| {
+            switch (state) {
+                State.start =&gt; switch (c) {
+                    '{' =&gt; {
+                        if (start_index &lt; i) try self.write(format[start_index..i]);
+                        state = State.open_brace;
+                    },
+                    '}' =&gt; {
+                        if (start_index &lt; i) try self.write(format[start_index..i]);
+                        state = State.close_brace;
+                    },
+                    else =&gt; {},
+                },
+                State.open_brace =&gt; switch (c) {
+                    '{' =&gt; {
+                        state = State.start;
+                        start_index = i;
+                    },
+                    '}' =&gt; {
+                        try self.printValue(args[next_arg]);
+                        next_arg += 1;
+                        state = State.start;
+                        start_index = i + 1;
+                    },
+                    's' =&gt; {
+                        continue;
+                    },
+                    else =&gt; @compileError("Unknown format character: " ++ [1]u8{c}),
+                },
+                State.close_brace =&gt; switch (c) {
+                    '}' =&gt; {
+                        state = State.start;
+                        start_index = i;
+                    },
+                    else =&gt; @compileError("Single '}' encountered in format string"),
+                },
+            }
+        }
+        comptime {
+            if (args.len != next_arg) {
+                @compileError("Unused arguments");
+            }
+            if (state != State.start) {
+                @compileError("Incomplete format string: " ++ format);
+            }
+        }
+        if (start_index &lt; format.len) {
+            try self.write(format[start_index..format.len]);
+        }
+        try self.flush();
+    }
+
+    fn write(self: *Writer, value: []const u8) !void {
+        _ = self;
+        _ = value;
+    }
+    pub fn printValue(self: *Writer, value: anytype) !void {
+        _ = self;
+        _ = value;
+    }
+    fn flush(self: *Writer) !void {
+        _ = self;
+    }
+};
+</code></pre>
+<p>理解上述的代码，有几个问题：</p>
+<ol>
+<li>
+<p>如何理解函数调用 <code>print("here is a string: '{s}' here is a number: {}\n", .{ a_string, a_number });</code> 的执行过程？</p>
+<ol>
+<li>print 函数中包括了 comptime 的代码 和 inline 代码。</li>
+<li>comptime 代码会在编译期有确定的值，或者会在编译期执行。</li>
+<li>其他的代码 会保留到运行期。</li>
+<li>inline 操作会结合了 comptime 与 运行期的代码，最终会输出一个替换后的 ast。（这个过程类似于 Scala3 的 inline ）</li>
+</ol>
+</li>
+<li>
+<p>包含 comptime 的方法，有些类似于 C++ template，会在 callsite 进行展开。在不被展开时，这个方法只要没有明显的语法错误，
+就可以编译通过，并不检查任何类型性的错误。（更类似于 C++ Template，不同于 Rust Generic ）
+和 comptime 最为相似的是 Scala3 的 Macro。</p>
+</li>
+<li>
+<p>Zig 中的 Tuple 可以理解为字段名是匿名的 Struct，.{ } 既可以定义 struct，也可以定义 Tuple。
+Tuple 可以使用 <code>[index]</code> 方式访问内部元素。</p>
+</li>
+<li>
+<p>zig 中的范型</p>
+<ul>
+<li>anytype 范型</li>
+<li>comptime 范型</li>
+</ul>
+</li>
+</ol>
+<p>type 是什么？ @TypeOf 的值在运行期就是一个字符串，描述了类型名。</p>
+<h1 id="comptime"><a class="header" href="#comptime">comptime</a></h1>
+<h2 id="comptime-parameter"><a class="header" href="#comptime-parameter">comptime parameter</a></h2>
+<pre><code class="language-zig">fn max(comptime T: type, a: T, b: T) T {
+    return if (a &gt; b) a else b;
+}
+
+// 这个方法是有错误的，但因为没有被调用，所以编译时并不报错
+fn do_sth(comptime T: type): T {
+   return T.MAX_VALUE; // 
+}
+
+// 这个方法是有错误的，但因为没有被调用，所以编译时并不报错
+fn do_sth2() i16 {
+   return i16.MAX_VALUE;
+}
+
+test "try to pass a runtime type" {
+    foo(false);
+}
+fn foo(condition: bool) void {   
+// fn foo(comptime condition: bool) void {   // change condition to comptime will fix the error
+    const result = max(if (condition) f32 else u64, 1234, 5678);  // error: condition is not a comptime value
+    _ = result;
+}
+</code></pre>
+<ol>
+<li><code>type</code> 是一个元类型，其值是一个类型，这个类型只能出现在编译期。zig 并没有提供 <code>type</code> 这个类型的内部结构（一般的，运行期所有的类型
+都有自己的 layout 结构，但是 zig 语言中并没有定义 <code>type</code> 的 layout 结构），其内部结构是一个 opaque 的值，且仅能在 compile time
+中存在。</li>
+<li>comptime parameter 为 ziglang 提供了 generic 机制， 实际调用方法时，会为 comptime parameter 参数展开。</li>
+<li>zig 的 generic 处理，更类似于 C++ 的 template，而非 Rust 的 generic。 参考上例，do_sth 中的 T.MAX_VALUE 是一个
+无效的访问，但是因为没有被调用，所以编译器并不会报错。</li>
+<li>不仅对 generic 的方法，对普通的方法，如果没有被调用，编译器也不会报错。</li>
+</ol>
+<h2 id="comptime-variable"><a class="header" href="#comptime-variable">comptime variable</a></h2>
+<ol>
+<li>类似于 comptime parameter, comptime variable 也是一个编译期的值，不过，由于对 call site 透明，因此，并不会作为 generic 机制。</li>
+<li>comptime parameter 也是一种类型的 comptime variable.</li>
+<li>comptime variable 与 inline 结合时，可以实现混合：代码中一部分在编译期计算（展开、替换），一部分在运行期计算。（可以和 Scala3 inline
+机制做一个对比，zig comptime + inline 比 scala3 inline 更简单，功能更强大，但功能完备性应该不如 Scala3 quotes API，后者可以在编译期
+直接操作 type 信息和 AST，理论上可以处理任何 blackbox 的功能，但 ziglang 具有 whitebox 的能力，又超出了 Scala3 Macro的边界）</li>
+</ol>
+<blockquote>
+<p>inline switch
+inline while
+inline for
+inline if
+inline fn</p>
+</blockquote>
+<p>comptime variable</p>
+<h2 id="comptime-expression-在编译期进行求值大的表达式"><a class="header" href="#comptime-expression-在编译期进行求值大的表达式">comptime expression: 在编译期进行求值大的表达式</a></h2>
+<ol start="2">
+<li></li>
+</ol>
+<p>参考：https://zhuanlan.zhihu.com/p/622600857</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="zig-comptime"><a class="header" href="#zig-comptime">Zig comptime</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="comptime-expression-的执行机制"><a class="header" href="#comptime-expression-的执行机制">comptime expression 的执行机制</a></h1>
+<pre><code class="language-zig">// main.zig
+const std = @import("std");
+
+// 这个方法没有太大的业务逻辑，目的仅仅是防止优化，让 longLoop(n) 方法的耗时更明显
+fn longLoop(n: usize) usize {
+    var sum: usize = 0;
+
+    var i: usize = 0;
+    while(i &lt; n) : (i += 1) {
+        var sum2: usize = 0;
+        const skip = i % 10 + 1;
+        var j: usize = 0;
+        while(j &lt; n) : (j += skip) {
+            sum2 += j;
+        }
+        sum += sum2;
+    }
+    return sum;
+}
+
+pub fn main() !void {
+    const n = 6000;
+
+    // show times of longLoop(n)
+    const start = std.time.milliTimestamp();
+    const result = longLoop(n);
+    const end = std.time.milliTimestamp();
+    std.debug.print("runtime  eval: n = {}, result = {}, time = {}ms\n", .{ n,  result, end - start});
+
+    const start2 = std.time.milliTimestamp();
+    @setEvalBranchQuota(1_000_000_000);
+    const result2 = comptime longLoop(n);
+    const end2 = std.time.milliTimestamp();
+    std.debug.print("comptime eval: n = {}, result = {}, time = {}ms\n", .{ n,  result2, end2 - start2});
+
+}
+
+</code></pre>
+<ol>
+<li>
+<p>编译 main.zig, <code>zig build-exe -O ReleaseFast src/main.zig</code>, 耗时 21s. 调整 comptime longLoop(n) 的参数， 分别耗时如下：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>n</th><th>compile time</th><th>runtime eval</th><th>comptime eval</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>4.5s</td><td>0ms</td><td>0ms</td></tr>
+<tr><td>10</td><td>4.5s</td><td>0ms</td><td>0ms</td></tr>
+<tr><td>100</td><td>4.5s</td><td>0ms</td><td>0ms</td></tr>
+<tr><td>1000</td><td>5.0s</td><td>0ms</td><td>0ms</td></tr>
+<tr><td>2000</td><td>6.6s</td><td>1ms</td><td>0ms</td></tr>
+<tr><td>3000</td><td>8.6s</td><td>3ms</td><td>0ms</td></tr>
+<tr><td>4000</td><td>11.9s</td><td>3ms</td><td>0ms</td></tr>
+<tr><td>5000</td><td>15.9s</td><td>4ms</td><td>0ms</td></tr>
+<tr><td>6000</td><td>21.0s</td><td>9ms</td><td>0ms</td></tr>
+<tr><td>7000</td><td>27.0s</td><td>12ms</td><td>0ms</td></tr>
+<tr><td>8000</td><td>33.9s</td><td>14ms</td><td>0ms</td></tr>
+<tr><td>9000</td><td>41.9s</td><td>18ms</td><td>0ms</td></tr>
+<tr><td>10000</td><td>50.7s</td><td>19ms</td><td>0ms</td></tr>
+</tbody>
+</table>
+</div>
+<p>从上述数据可以看出，<code>comptime longLoop(n)</code> 随着 n 的增长， compile time 会显著增长，n == 1000 时，编译时长为5s，而 n = 10000 时
+编译时长为50s。而 runtime eval 的耗时仅仅是从 0ms 增长到 19ms, 这可以说明，compile 阶段，comptime eval 并非 native 方式执行 longLoop
+代码，而是采用了一种 AST interpreter 的方式执行代码，在这个场景中，效率有上千倍的差距。（这个案例仅为测试目的，实际 comptime 的耗时差距一般
+会显著低于这个差距，甚至在大部份情况下，对使用者无明显感知）。</p>
+</li>
+<li>
+<p>comptime evaluation 是在 Sema 阶段完成的。参考文档：<a href="https://mitchellh.com/zig/sema">Zig Sema</a></p>
+<p>我还没有看懂这篇文章。</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="栈上内存分配"><a class="header" href="#栈上内存分配">栈上内存分配</a></h1>
+<p>本文通过一些代码示例，来了解 zig 中函数调用栈上内存分配的情况。并对比与其他语言的差异。</p>
+<pre><code class="language-zig">const std = @import("std");
+
+pub fn main() !void {
+    var x1: i32 = 10; // i32
+    const str1 = "hello"; // str1 is a pointer to static memory(text section)
+    const str2: [5:0]u8 = .{ 'h', 'e', 'l', 'l', 'o' }; // str2 is a pointer to static memory(text section)
+    var str3: [8:0]u8 = .{ 'h', 'e', 'l', 'l', 'o', 'w', 'o', 'r' }; // alloc in stack
+
+    var x2: i32 = 20; // i32
+
+    std.debug.print("&amp;x1 = {*}, &amp;x2 = {*}\n", .{ &amp;x1, &amp;x2 });
+    std.debug.print("str1 = {*}, &amp;str1 = {*}\n", .{ str1, &amp;str1 });
+
+    std.debug.print("&amp;str2 = {*}\n", .{&amp;str2});
+    std.debug.print("&amp;str3 = {*}\n", .{&amp;str3});
+}
+
+</code></pre>
+<p>输出：</p>
+<pre><code>&amp;x1 = i32@16d8d31dc
+str1 = [5:0]u8@1025b19f0, &amp;str1 = *const [5:0]u8@1025cc5c8
+&amp;str2 = [5:0]u8@1025b19f0
+&amp;str3 = [8:0]u8@16d8d31e0
+&amp;x2 = i32@16d8d31ec
+</code></pre>
+<p>结论：</p>
+<ol>
+<li>str1 类型为 [5:0]u8 ，是一个数组， 但在堆栈中存储的是一个这个值的指针。数据在 static memory 中。</li>
+<li>str2 类型为 [5:0]u8 ，是一个数组， 但在堆栈中存储的是一个这个值的指针。数据在 static memory 中。</li>
+<li>str3 类型为 [8:0]u8 ，是一个数组， 这个值在 stack 中分配， str3 是这个数组的初始地址。</li>
+<li>x1 的 下一个地址是 str3 ，然后是 x2，可以看到 str1, str2 这些 const 变量都存储在 static memory 中，未占用栈空间。</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="一个-zig-编译器的-bug"><a class="header" href="#一个-zig-编译器的-bug">一个 Zig 编译器的 Bug</a></h1>
+<p>在动手学习 Zig 的过程中，在探索stack中变量的memory layout时，发现了了一个 Bug，已提交到 <a href="https://github.com/ziglang/zig/issues/22140">github</a>。
+在这里记录一下：</p>
+<pre><code class="language-zig">const std = @import("std");
+
+const SIZE = 1024 * 256;
+pub fn main() !void {
+    var arr: [SIZE]u32 = undefined;
+    for (arr, 0..) |_, i| {
+        arr[i] = @intCast(i);
+    }
+    std.debug.print("main &amp;arr = {*}\n", .{&amp;arr});
+    std.debug.print("main &amp;arr = {*} same as above \n", .{&amp;arr}); // same as above
+
+    std.debug.print("\npassArray for mutable array\n", .{});
+    passArray(arr);
+}
+
+fn passArray(arr: [SIZE]u32) void {
+    const p1: *const [SIZE]u32 = &amp;arr;
+    const p2 = &amp;arr;
+    const p3: [*]const u32 = &amp;arr;
+    std.debug.print("inside passArray &amp;arr = {*} p2 = {*} p3 = {*}  p1 != p2 != p3 \n", .{ p1, p2, p3 });
+
+    const LOOP = 3; // when LOOP = 14, the program will crash
+
+    std.debug.print("LOOP = {} \n", .{LOOP});
+    inline for (0..LOOP) |_| {
+        std.debug.print("inside passArray, &amp;arr = {*} not same as above.\n", .{&amp;arr}); // &amp;arr increase SIZE * 4 every time
+    }
+} 
+</code></pre>
+<p><img src="images/a_zig_bug.png" alt="img.png"></p>
+<p>因为每次 <code>&amp;arr</code> 操作都导致在栈上复制了一个数组，因此，如果数组长度较大，<code>&amp;arr</code> 操作次数较多时，例如，在上述的代码中，1M * 14 = 14M， 在我
+的 Mac 上，就会出现 SIGSEV 错误 ( 应该是 StackOverflow 了 )。</p>
+<p>在国内的 Zig 群问了一下，众说纷纭，有大神坚持认为这个不是 bug，而是 constcast 的必然结果，不过我并不能理解：</p>
+<ol>
+<li><code>&amp;arr</code> 只是一个取地址操作，并不会改变数据类型。如果原来是 const 的，结果就是 <code>*const [N]</code> 否则就是 <code>*[N]</code></li>
+<li>不同于 rust, zig 并没有 <code>&amp;x</code> 和 <code>&amp;mut x</code> 的区别。</li>
+<li><code>&amp;arr</code> 导致数组复制，不仅会导致栈内存的浪费，而且也增加了不必要的代码成本。更严重的会导致 StackOverflow，其实还是一个比较严重的问题。</li>
+</ol>
+<p>提交到 github 上，很快获得了 core team 的确认，已接受作为一个Bug，并添加到了 0.14 的 milestone 中。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="dynamic-construct-a-type-in-comptime"><a class="header" href="#dynamic-construct-a-type-in-comptime">dynamic construct a type in comptime</a></h1>
+<p>Zig 可以通过 comptime 来实现 generic，但官网给的例子还是比较简单的：</p>
+<pre><code class="language-zig">fn List(comptime T: type) type {
+    return struct {
+        items: []T,
+        len: usize,
+    };
+}
+
+// The generic List data structure can be instantiated by passing in a type:
+var buffer: [10]i32 = undefined;
+var list = List(i32){
+    .items = &amp;buffer,
+    .len = 0,
+};
+</code></pre>
+<p>这个例子中，构造的 <code>List(i32)</code> 还是感觉不够动态，譬如，是否可以：</p>
+<ul>
+<li>结构体的成员数量、类型是动态的？</li>
+<li>结构体内的 fn 是动态的？</li>
+</ul>
+<p>这一切的奥秘，隐藏在 <code>@typeInfo</code>, <code>@Type</code> 这几个内置函数中。如下是一个简单的示例： User2 是一个 comptime 动态计算出来的类型，其一部份
+字段是从 User 这个模版类型中复制来的，email 字段则是动态添加上去的。</p>
+<pre><code class="language-zig">
+const std = @import("std");
+
+// used as a type Template
+const User = struct {
+    name: [:0]const u8,
+    age: u32,
+};
+
+pub fn main() void {
+
+    const print = std.debug.print;
+    const t_info: std.builtin.Type = @typeInfo(User);
+
+    // dynamic construct a Type
+    const t_info2: std.builtin.Type = .{
+       .Struct = .{
+          .layout = t_info.Struct.layout,
+           .backing_integer =  t_info.Struct.backing_integer,
+           .fields = &amp; .{
+               .{
+                   .name = "NAME",
+                   .type = t_info.Struct.fields[0].type,
+                   .default_value = t_info.Struct.fields[0].default_value,
+                   .is_comptime = t_info.Struct.fields[0].is_comptime,
+                   .alignment = t_info.Struct.fields[0].alignment
+               },
+               .{
+                   .name = "AGE",
+                   .type = t_info.Struct.fields[1].type,
+                   .default_value = t_info.Struct.fields[1].default_value,
+                   .is_comptime = t_info.Struct.fields[1].is_comptime,
+                   .alignment = t_info.Struct.fields[1].alignment
+               },
+               .{
+                   .name = "email",
+                   .type = [:0]const u8,
+                   .default_value = null,
+                   .is_comptime = false,
+                   .alignment = 1
+               }
+           },
+           .decls = t_info.Struct.decls,
+           .is_tuple = false
+       }
+    };
+
+    // build type User2
+    const User2 = @Type(t_info2);
+
+    // now, User2 can be used in source code.
+    const u: User2 = .{
+        .NAME = "WANGZX",
+        .AGE = 20,
+        .email = "wangzx@qq.com",
+    };
+
+    print("Users = {any}\n", .{User2});
+    print("u.NAME = {s}, u.AGE = {d} u.email = {s}\n",
+        .{ u.NAME, u.AGE, u.email });
+}
+
+</code></pre>
+<h2 id="参考"><a class="header" href="#参考">参考</a></h2>
+<ul>
+<li>Zig Cli: 处理 CLI 是 comptime 的一个很实用的场景。 rust/scala 都玩这个。
+<ul>
+<li><a href="https://zigcli.liujiacai.net/modules/simargs/">Zig CLI</a></li>
+<li><a href="https://github.com/Hejsil/zig-clap">Zig Clap</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="结论"><a class="header" href="#结论">结论</a></h2>
+<ol>
+<li>std.builtin.Type 类似于 scala.quotes.TypeRepr，是 comptime 时用于描述 Type 的元数据结构。</li>
+<li>目前来看，并没有提供动态构建一个 Fn ，即操作 AST 的 API。因此，动态构建的类型，还是有一些局限的。</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="在-zig-中进行-structure-of-array-的一个小实验"><a class="header" href="#在-zig-中进行-structure-of-array-的一个小实验">在 Zig 中进行 Structure of Array 的一个小实验</a></h1>
+<h1 id="1-what-is-aos-and-soa"><a class="header" href="#1-what-is-aos-and-soa">1. What is AOS and SOA?</a></h1>
+<p>本案例参考： https://mitchellh.com/zig/parser 文中的 MultiArrayList 的介绍。</p>
+<p>对如下的 struct 示例：</p>
+<pre><code class="language-zig">pub const Tree = struct {
+    age: u32,       // trees can be very old, hence 32-bits
+    alive: bool,    // is this tree still alive?
+};
+</code></pre>
+<p>如果我们需要存储一个<code>[10]Tree</code>，采用 Array of Structure, 那么内存布局是这样的：</p>
+<pre><code>┌──────────────┬──────────────┬──────────────┬──────────────┐
+│     Tree     │     Tree     │     Tree     │     ...      │
+└──────────────┴──────────────┴──────────────┴──────────────┘
+</code></pre>
+<p>每个 Tree 占用8个字节，其内存布局是这样的：</p>
+<pre><code>age: u32, 4 bytes
+alive: bool, 1 byte
+padding: 3 bytes
+</code></pre>
+<p>那么，这个布局就会存在较为严重的内存浪费，如果 Struct 结构体没有重排（rust/zig 默认会对结构体进行重排），则可能会存在更多的 padding 内存占用，
+而如果采用 Structure of Array, 那么内存布局是这样的：</p>
+<pre><code>          ┌──────┬──────┬──────┬──────┐
+   age:   │ age  │ age  │ age  │ ...  │
+          └──────┴──────┴──────┴──────┘
+          ┌┬┬┬┬┐
+ alive:   ││││││
+          └┴┴┴┴┘
+</code></pre>
+<p>这样，我们可以看到，age 和 alive 分别存储在不同的数组中，这样，就可以减少 padding 的内存占用。</p>
+<p>此外，如果结构题字段很多，例如 AST Node, 在编译期的给定迭代会遍历大量的 Node，但一般会处理有限的字段时，Structure of Array 也会带来 Cache 的
+友好性，因为这个字段的内存是连续存放的，只有需要使用到的字段才会加载到 Cache 中,而如果是 Array of Structure, 则会加载整个结构体到缓存中，
+缓存的有效利用率就会降低。或许，这方面对性能的提升会比 padding 节约的内存更有价值。</p>
+<h1 id="2-how-to-effective-implement-soa-in-zig"><a class="header" href="#2-how-to-effective-implement-soa-in-zig">2. How to effective implement SOA in Zig?</a></h1>
+<p>本文并不实现一个完整的 SOA 数据结构，而是探索在 Zig 中如何简单、高效的实现一个 SOA 数据结构，以及是否能够到到足够的高性能。</p>
+<p>参考如下的代码示例</p>
+<pre><code class="language-zig">const Node = struct {
+    a: u32,
+    b: u8
+};
+
+// 下一步使用 comptime 生成一个 SOA 的数据结构
+// fn SOA(structure: type, N: comptime_int) type {
+// 
+// }
+
+// 这个示例使用手写版本的 SOA 
+fn NodeSOA(N: comptime_int) type {
+    const result = struct {
+        a: [N]u32,
+        b: [N]u8,
+
+        fn init() NodeSOA(N) {
+            return NodeSOA(N) {
+                .a = undefined,
+                .b = undefined,
+            };
+        }
+
+        fn get(self: *NodeSOA(N), index: u32) Node {
+            return Node{ .a = self.a[index], .b = self.b[index] };
+        }
+
+        fn set(self: *NodeSOA(N), index: u32, node: Node) void {
+            self.a[index] = node.a;
+            self.b[index] = node.b;
+        }
+    };
+
+    return result;
+}
+</code></pre>
+<h2 id="21-using-comptime-to-generate-soa"><a class="header" href="#21-using-comptime-to-generate-soa">2.1 using comptime to generate SOA</a></h2>
+<p>从目前对 Zig 的了解来看，应该是可以使用 comptime 来自动生成这个 SOA 结构的。这个可以留作下一步的学习 zig 的挑战。</p>
+<h2 id="22-是否高效"><a class="header" href="#22-是否高效">2.2 是否高效</a></h2>
+<p>上述的实现中，我很好奇的是，如果我们需要访问 <code>soa[index].x</code> 这样的操作，是否是高效的。由于 zig 不支持运算符重载，因此，语法为：
+<code>soa.get(index).x</code>,</p>
+<ol>
+<li>soa.get(index) 会有一个构造 Node 的操作，如果字段较多，会涉及到很多的字段赋值，返回值作为值的传递也会有很大的开销。</li>
+<li>我们实际上仅用到 x 字段，其他的字段其实是没有被使用到了。</li>
+</ol>
+<p>带着对这个问题的好奇，我做一个简单的测试：</p>
+<pre><code class="language-zig">pub fn main() !void {
+
+    var nodes = NodeSOA(10).init();
+
+    // get argv[1] and convert it to u32
+    // const arg = std.os.args.arg(1);
+    var args = std.process.args();
+    defer args.deinit();
+    _ = args.skip();
+    const arg1 = args.next();
+    const index: u32 = if(arg1) |x| try std.fmt.parseInt(u32, x, 10)
+        else 0;
+
+    nodes.set(0, Node{ .a = 1, .b = 2 });
+    nodes.set(1, Node{ .a = 3, .b = 4 });
+    nodes.set(2, Node{ .a = 5, .b = 6 });
+    nodes.set(3, Node{ .a = 7, .b = 8 });
+    nodes.set(4, Node{ .a = 9, .b = 10 });
+    nodes.set(5, Node{ .a = 11, .b = 12 });
+    nodes.set(6, Node{ .a = 13, .b = 14 });
+    nodes.set(7, Node{ .a = 15, .b = 16 });
+    nodes.set(8, Node{ .a = 17, .b = 18 });
+    nodes.set(9, Node{ .a = 19, .b = 20 });
+
+    var x: u32 = 123;
+    print("x = {}\n", .{x});
+
+    // 重点关注这几段代码生成的asm代码：
+    x += nodes.get(index).a;
+    x += nodes.get(index).b;
+    print("x = {}\n", .{x});
+
+    x += nodes.get(index+1).a;
+    x += nodes.get(index+1).b;
+    print("x = {}\n", .{x});
+}
+</code></pre>
+<p>在 ReleaseSmall/ReleaseFast 模式下：</p>
+<pre><code>	lea	rdi, [rsp + 48]
+	mov	dword ptr [rdi], 123
+	call	_debug.print__anon_1219
+
+	mov	r14d, r14d
+	mov	eax, dword ptr [rsp + 4*r14 + 56]   // nodes.get(index).a
+	movzx	ecx, byte ptr [rsp + r14 + 96]  // nodes.get(index).b
+	lea	ebp, [rax + rcx]
+	add	ebp, 123
+	lea	rdi, [rsp + 52]
+	mov	dword ptr [rdi], ebp
+	call	_debug.print__anon_1219
+
+	add	ebp, dword ptr [rsp + 4*r14 + 60]  // nodes.get(index+1).a
+	movzx	eax, byte ptr [rsp + r14 + 97] // nodes.get(index+1).b
+	add	eax, ebp
+	lea	rdi, [rsp + 24]
+	mov	dword ptr [rdi], eax
+	call	_debug.print__anon_1219
+</code></pre>
+<p>可以看到，nodes.get(index).a 这样的操作已经被优化成了与手写代码一样的效率，这些应该是 LLVM IR 优化带来的巨大价值。</p>
+<p>当然，在 Debug 模式下，是不会进行这个优化的。</p>
+<h1 id="3-总结"><a class="header" href="#3-总结">3. 总结</a></h1>
+<ol>
+<li>利用 Zig 的 comptime 特性，可以生成一个 SOA 的数据结构（TODO）
+<ul>
+<li>限制：目前来看，无法为 dynamic struct 生成动态的操作方法。</li>
+</ul>
+</li>
+<li>zig 对 这种 SOA 的数据结构的访问，由于编译优化，实际上是高效的，完全无需担心额外的性能开销。（Zero Cost Abstraction）</li>
+<li>Rust 采用 macro 应该也能实现类似的方式。相比之下，comptime 应该更简单一些。毕竟 rust macro 本质上又是另外一门语言了。</li>
+<li>comptime 生成的类型，在调试器中是有很清晰的结构。不过，IDE 对这类的支持还不够完善。相比 rust, zig 的调试看起来要清爽很多。</li>
+</ol>
+<p>由于优化器的能力提升，很多的 Zero Cost Abstraction 的实现，实际上已经从 compiler 的 front end 转移到一个 backend 的优化器上了。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="arrow-array"><a class="header" href="#arrow-array">Arrow Array</a></h1>
+<p>spec: https://arrow.apache.org/docs/format/Columnar.html</p>
+<ol>
+<li>Buffer
+<ol>
+<li>Buffer 是不共享的值，其持有可共享的 Bytes</li>
+<li>ScalarBuffer &lt; Buffer 提供类型化的操作，例如 <code>scalar_buffer[0..x]</code> 操作</li>
+<li>BooleanBuffer &lt; Buffer 以 bitmap 形式存储的 buffer</li>
+<li>NullBuffer &lt; BooleanBuffer 记录 null_count</li>
+<li>OffsetBuffer</li>
+<li>RunEndBuffer</li>
+<li>MutableBuffer 可变的buffer，用于构建 immutable Buffer</li>
+</ol>
+</li>
+<li>ArrayData 一个统一的 Array 结构
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct ArrayData {
+  data_type: DataType,
+  len: usize,
+  offset: usize,
+  buffers: Vec&lt;Buffer&gt;,  // value buffer, value offset buffer
+  child_data: Vec&lt;ArrayData&gt;, // ListArray, StructArray
+  nulls: Option&lt;NullBuffer&gt;
+}
+<span class="boring">}</span></code></pre>
+</li>
+<li><a href="https://arrow.apache.org/docs/format/Columnar.html#fixed-size-primitive-layout">PrimitiveArray<t></t></a>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span> struct PrimitiveArray&lt;T: ArrowPrimitiveType&gt; {
+     data_type:  DataType,
+     values:     ScalarBuffer&lt;T::Native&gt;,
+     nulls:      Option&lt;NullBuffer&gt;
+ }
+ struct ScalarBuffer&lt;T: ArrowNativeType&gt; {
+     buffer:     Buffer,
+     phantom:    PhantomData&lt;T&gt;
+ }
+ struct Buffer {
+     data: Arc&lt;Bytes&gt;,
+     ptr:  *const u8,    // 可能在 data.ptr[0 .. data.len] 之间的某个地址
+     length: usize       // ptr + length 不能超越 bytes 的边界
+ }
+ struct Bytes { // ptr[0..len]
+     ptr: NonNull&lt;u8&gt;,
+     len: usize,
+     deallocation: Deallocation  // when Standard, ptr should be droped using std::alloc::dealloc
+ }
+
+ enum Deallocation {
+     Standard(Layout),
+     Custom(Arc&lt;dyn Allocation&gt;, usize)
+ }
+<span class="boring">}</span></code></pre>
+</li>
+<li><a href="#arrow-array">BooleanArray</a>
+<ul>
+<li>BooleanBuffer: 位图</li>
+<li>NullBuffer</li>
+</ul>
+</li>
+<li><a href="https://arrow.apache.org/docs/format/Columnar.html#variable-size-binary-layout">GenericBytesArray<t></t></a>
+<ul>
+<li>GenericBytesArray<utf8type></utf8type></li>
+<li>GenericStringArray<offsetsize></offsetsize></li>
+<li>buffers
+<ul>
+<li>offset: OffsetBuffer&lt;32|64&gt;</li>
+<li>value_data: Buffer</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="https://arrow.apache.org/docs/format/Columnar.html#variable-size-binary-view-layout">GenericByteViewArray</a>
+<ul>
+<li>short strings(&lt;=12&gt;, long strings(&gt;=12)</li>
+<li>buffers:</li>
+<li>views: ScalarBuffer<u128></u128></li>
+<li>value_data: Buffer</li>
+</ul>
+</li>
+<li><a href="https://arrow.apache.org/docs/format/Columnar.html#variable-size-binary-view-layout">DictionaryArray</a>
+<ul>
+<li>buffers: keys</li>
+<li>child_data: values</li>
+</ul>
+</li>
+<li><a href="https://arrow.apache.org/docs/format/Columnar.html#variable-size-binary-view-layout">GenericListArray</a>
+<ul>
+<li>buffers: offsets</li>
+<li>child_data: values</li>
+</ul>
+<ol>
+<li><code>List&lt;Int8&gt;</code> example</li>
+<li><code>List&lt;List&lt;Int8&gt;&gt;</code> example</li>
+</ol>
+</li>
+<li><a href="https://arrow.apache.org/docs/format/Columnar.html#fixed-size-list-layout">FixedSizeListArray</a>
+<ul>
+<li>buffers</li>
+<li>child_data: values</li>
+</ul>
+</li>
+<li><a href="#arrow-array">MapArray</a></li>
+<li><a href="https://arrow.apache.org/docs/format/Columnar.html#struct-layout">StructArray</a>
+<ul>
+<li>child_data: fields’ array</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="一个-datafusion-执行慢的case-分析"><a class="header" href="#一个-datafusion-执行慢的case-分析">一个 datafusion 执行慢的case 分析</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<ul>
+<li>dataset: 这个 dataset 的生成文档稍后补充。</li>
+</ul>
+<h2 id="sql"><a class="header" href="#sql">SQL</a></h2>
+<pre><code class="language-sql">select wt.tag_name, sum(wt.amount) from (
+	select si.sale_item_id as sale_item_id, 
+		si.sale_order_id as sale_order_id,
+		si.product_id as product_id,
+		si.quantity as quantity,
+		si.price as price, 
+		si.amount as amount,
+		s.order_date as order_date,
+		s.shop_id as shop_id,
+		s.freight as freight,
+		c.customer_id as customer_id,
+		c.name as customer_name,
+		t.tag_name as tag_name
+	from sale_items si
+	 left join sale_orders s on si.sale_order_id = s.sale_order_id
+	 left join customers c on s.customer_id = c.customer_id
+	 left join customer_tags ct on ct.customer_id = c.customer_id
+     left join tags t on t.tag_id = ct.tag_id
+) as wt where wt.tag_name = 'tagx' group by wt.tag_name;
+</code></pre>
+<ul>
+<li>数据规模：
+<ul>
+<li>sale_items: 80M</li>
+<li>sale_orders: 20M</li>
+<li>customers: 1M</li>
+<li>customer_tags: 8M</li>
+<li>tags: 100</li>
+</ul>
+</li>
+<li>sql case4-4 where tag_name = ‘tag0’, 约命中</li>
+<li>sql case4-5 where tag_name = ‘tagx’ 不存在的tag</li>
+</ul>
+<p>耗时对比：
+<img src="images/df-case-1-costs.png" alt="img.png"></p>
+<ul>
+<li>case 4-4: datafusion 46.0.1  的耗时 7.729s) vs (polars:552ms) vs (duckdb: 476ms)</li>
+<li>case 4-5: (datafusion 46.0.1: 7.606s) vs (polars: 202ms) vs (duckdb: 2ms)</li>
+</ul>
+<ol>
+<li>duckdb 查询计划
+<img src="images/df-case-1-duckdb-plan.png" alt="img.png">
+<ul>
+<li>duckdb 的 pipeline 依赖执行顺序，build table pipeline 先执行，然后 lookup pipeline 再执行，在 多表 join 时
+有 right-assoc 的特性。</li>
+<li>duckdb 具有连接字段筛选左移的逻辑，因此：
+<ul>
+<li>tags 过滤后，没有匹配任何行 tag_id = null （恒为 false）</li>
+<li>table scan: customer_tags 使用 tag_id = null 过滤后，结果集为 empty。 耗时 20ms ()</li>
+<li>table scan: customers 使用 customer_id = null 过滤后，结果集为 empty。 耗时 0ms ()</li>
+<li>table scan: sale_orders 使用 customer_id = null 过滤后，结果集为 empty。 耗时 60ms ()</li>
+<li>table scan: sale_items 使用 sale_order_id = null 过滤后，结果集为 empty。 耗时 0ms ()</li>
+<li>在这个过程中，基本上不需要 scan-table 的开销，和 build hash table 的开销，这也使得查询可以在 476ms 内完成。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>datafusion 查询计划</li>
+</ol>
+<pre><code class="language-text">AggregateExec: mode=FinalPartitioned, gby=[tag_name@0 as tag_name], aggr=[SUM(wt.amount)], metrics=[output_rows=0, elapsed_compute=198.668µs]
+  CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=0, elapsed_compute=3.621µs]
+    RepartitionExec: partitioning=Hash([tag_name@0], 10), input_partitions=10, metrics=[send_time=10ns, fetch_time=102.663346124s, repart_time=103.708µs]
+      AggregateExec: mode=Partial, gby=[tag_name@1 as tag_name], aggr=[SUM(wt.amount)], metrics=[output_rows=0, elapsed_compute=6.758498ms]
+        ProjectionExec: expr=[amount@0 as amount, tag_name@1 as tag_name], metrics=[output_rows=0, elapsed_compute=10ns]
+          CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=0, elapsed_compute=76.937µs]
+            FilterExec: tag_name@1 = tagx, metrics=[output_rows=0, elapsed_compute=1.225804042s]
+              ProjectionExec: expr=[amount@0 as amount, tag_name@3 as tag_name], metrics=[output_rows=640183854, elapsed_compute=120.415µs]
+                CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=640183854, elapsed_compute=100.156µs]
+                  HashJoinExec: mode=Partitioned, join_type=Left, on=[(tag_id@1, tag_id@0)], metrics=[output_rows=19706, input_rows=19706, build_input_rows=640183854, output_batches=20, input_batches=20, build_input_batches=9351, build_mem_used=27158522336, join_time=49.222731379s, build_time=6.953609223s]
+                    CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=640183854, elapsed_compute=3.363182ms]
+                      RepartitionExec: partitioning=Hash([tag_id@1], 10), input_partitions=10, metrics=[send_time=39.684042ms, fetch_time=35.729534992s, repart_time=7.162502463s]
+                        ProjectionExec: expr=[amount@0 as amount, tag_id@3 as tag_id], metrics=[output_rows=640183854, elapsed_compute=841.639µs]
+                          CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=640183854, elapsed_compute=350.374µs]
+                            HashJoinExec: mode=Partitioned, join_type=Left, on=[(customer_id@1, customer_id@0)], metrics=[output_rows=8021789, input_rows=8021789, build_input_rows=80002715, output_batches=946, input_batches=946, build_input_batches=121, build_mem_used=3822266169, join_time=9.038244053s, build_time=1.313059137s]
+                              CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=80002715, elapsed_compute=2.014118ms]
+                                RepartitionExec: partitioning=Hash([customer_id@1], 10), input_partitions=10, metrics=[send_time=476.707µs, fetch_time=23.950913595s, repart_time=660.80167ms]
+                                  ProjectionExec: expr=[amount@0 as amount, customer_id@2 as customer_id], metrics=[output_rows=80002715, elapsed_compute=186.586µs]
+                                    CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=80002715, elapsed_compute=289.68µs]
+                                      HashJoinExec: mode=Partitioned, join_type=Left, on=[(customer_id@1, customer_id@0)], metrics=[output_rows=1000091, input_rows=1000091, build_input_rows=80002715, output_batches=131, input_batches=131, build_input_batches=7754, build_mem_used=3824093984, join_time=5.604351534s, build_time=3.333118481s]
+                                        CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=80002715, elapsed_compute=248.375811ms]
+                                          RepartitionExec: partitioning=Hash([customer_id@1], 10), input_partitions=10, metrics=[send_time=258.43695ms, fetch_time=12.061572791s, repart_time=942.708092ms]
+                                            ProjectionExec: expr=[amount@1 as amount, customer_id@3 as customer_id], metrics=[output_rows=80002715, elapsed_compute=1.224148ms]
+                                              CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=80002715, elapsed_compute=1.155271ms]
+                                                HashJoinExec: mode=Partitioned, join_type=Left, on=[(sale_order_id@0, sale_order_id@0)], metrics=[output_rows=20000000, input_rows=20000000, build_input_rows=80002715, output_batches=2337, input_batches=2337, build_input_batches=9301, build_mem_used=3824486470, join_time=5.167676047s, build_time=4.466842704s]
+                                                  CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=80002715, elapsed_compute=335.290923ms]
+                                                    RepartitionExec: partitioning=Hash([sale_order_id@0], 10), input_partitions=10, metrics=[send_time=496.763073ms, fetch_time=1.051912996s, repart_time=1.215274122s]
+                                                      ParquetExec: file_groups={10 groups: [[Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/sale_items.parquet:0..288039863], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/sale_items.parquet:288039863..576079726], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/sale_items.parquet:576079726..864119589], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/sale_items.parquet:864119589..1152159452], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/sale_items.parquet:1152159452..1440199315], ...]}, projection=[sale_order_id, amount], 
+                                                      -- metrics=[output_rows=80002715, elapsed_compute=10ns, page_index_rows_filtered=0, row_groups_pruned=0, pushdown_rows_filtered=0, predicate_evaluation_errors=0, num_predicate_creation_errors=0, bytes_scanned=960073227, file_open_errors=0, file_scan_errors=0, time_elapsed_opening=13.361125ms, pushdown_eval_time=20ns, time_elapsed_scanning_total=2.456770263s, time_elapsed_processing=306.505182ms, page_index_eval_time=20ns, time_elapsed_scanning_until_data=286.343959ms]
+                                                  CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=20000000, elapsed_compute=50.236463ms]
+                                                    RepartitionExec: partitioning=Hash([sale_order_id@0], 10), input_partitions=10, metrics=[send_time=10.460815301s, fetch_time=402.799868ms, repart_time=10.643552746s]
+                                                      ParquetExec: file_groups={10 groups: [[Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/sale_orders.parquet:0..48005167], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/sale_orders.parquet:48005167..96010334], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/sale_orders.parquet:96010334..144015501], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/sale_orders.parquet:144015501..192020668], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/sale_orders.parquet:192020668..240025835], ...]}, projection=[sale_order_id, customer_id], 
+                                                      -- metrics=[output_rows=20000000, elapsed_compute=10ns, page_index_rows_filtered=0, row_groups_pruned=0, pushdown_rows_filtered=0, predicate_evaluation_errors=0, num_predicate_creation_errors=0, bytes_scanned=160006002, file_open_errors=0, file_scan_errors=0, time_elapsed_opening=58.245374ms, pushdown_eval_time=20ns, time_elapsed_scanning_total=12.439534825s, time_elapsed_processing=49.275148ms, page_index_eval_time=20ns, time_elapsed_scanning_until_data=274.586248ms]
+                                        CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=1000000, elapsed_compute=19.863092ms]
+                                          RepartitionExec: partitioning=Hash([customer_id@0], 10), input_partitions=10, metrics=[send_time=2.203171325s, fetch_time=15.952289ms, repart_time=2.218283889s]
+                                            ParquetExec: file_groups={10 groups: [[Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/customers.parquet:0..2605385], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/customers.parquet:2605385..5210770], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/customers.parquet:5210770..7816155], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/customers.parquet:7816155..10421540], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/customers.parquet:10421540..13026925], ...]}, projection=[customer_id], 
+                                            -- metrics=[output_rows=1000000, elapsed_compute=10ns, page_index_rows_filtered=0, row_groups_pruned=0, pushdown_rows_filtered=0, predicate_evaluation_errors=0, num_predicate_creation_errors=0, bytes_scanned=4000154, file_open_errors=0, file_scan_errors=0, time_elapsed_opening=12.374708ms, pushdown_eval_time=20ns, time_elapsed_scanning_total=2.376960623s, time_elapsed_processing=6.096536ms, page_index_eval_time=20ns, time_elapsed_scanning_until_data=2.349624ms]
+                              CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=8002183, elapsed_compute=24.855317ms]
+                                RepartitionExec: partitioning=Hash([customer_id@0], 10), input_partitions=10, metrics=[send_time=28.433823687s, fetch_time=205.519351ms, repart_time=28.547010334s]
+                                  ParquetExec: file_groups={10 groups: [[Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/customer_tags.parquet:0..6402463], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/customer_tags.parquet:6402463..12804926], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/customer_tags.parquet:12804926..19207389], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/customer_tags.parquet:19207389..25609852], [Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/customer_tags.parquet:25609852..32012315], ...]}, projection=[customer_id, tag_id], 
+                                  -- metrics=[output_rows=8002183, elapsed_compute=10ns, page_index_rows_filtered=0, row_groups_pruned=0, pushdown_rows_filtered=0, predicate_evaluation_errors=0, num_predicate_creation_errors=0, bytes_scanned=64019878, file_open_errors=0, file_scan_errors=0, time_elapsed_opening=10.220292ms, pushdown_eval_time=20ns, time_elapsed_scanning_total=32.500549547s, time_elapsed_processing=29.125525ms, page_index_eval_time=20ns, time_elapsed_scanning_until_data=174.252708ms]
+                    CoalesceBatchesExec: target_batch_size=8192, metrics=[output_rows=100, elapsed_compute=74.628µs]
+                      RepartitionExec: partitioning=Hash([tag_id@0], 10), input_partitions=1, metrics=[send_time=1.749µs, fetch_time=1.141582ms, repart_time=51.583µs]
+                        ParquetExec: file_groups={1 group: [[Users/wangzaixiang/workspaces/wangzaixiang/mpp_test/datafusion/tags.parquet]]}, projection=[tag_id, tag_name], 
+                        -- metrics=[output_rows=100, elapsed_compute=1ns, page_index_rows_filtered=0, row_groups_pruned=0, pushdown_rows_filtered=0, predicate_evaluation_errors=0, num_predicate_creation_errors=0, bytes_scanned=1359, file_open_errors=0, file_scan_errors=0, time_elapsed_opening=365.667µs, pushdown_eval_time=2ns, time_elapsed_scanning_total=815.125µs, time_elapsed_processing=603.584µs, page_index_eval_time=2ns, time_elapsed_scanning_until_data=759.209µs]
+    
+</code></pre>
+<ul>
+<li>tag_name = <code>tagx</code> 这个条件没有下压到 tags 的 table scan 中，导致 tags 表的 scan 仍然会读取所有的行。</li>
+<li>join 顺序不佳。这个案例中，由于最右表上有不能为null的限定，实际上是 inner join 逻辑，且最有的筛选器可以一直影响左边表的数据范围。</li>
+<li>build table 构建好后，其筛选字段的的取值范围可以用于筛选左表的数据范围(scan filter)，进一步提高查询速度。</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="performance-compare-datafusion-vs-duckdb-case-1"><a class="header" href="#performance-compare-datafusion-vs-duckdb-case-1">Performance Compare: DataFusion vs DuckDB, Case 1</a></h1>
+<h1 id="background"><a class="header" href="#background">Background</a></h1>
+<pre><code class="language-sql">CREATE TABLE customer_tags(customer_id INTEGER, tag_id INTEGER);    -- 8M, average 1 customer 8 tags
+CREATE TABLE customers(customer_id INTEGER, "name" VARCHAR, gender VARCHAR); -- 1M
+CREATE TABLE purchase_items(purchase_item_id BIGINT, 
+                            purchase_order_id INTEGER, 
+                            product_id INTEGER, 
+                            quantity INTEGER, 
+                            price DOUBLE, 
+                            amount DOUBLE);  -- 40M
+CREATE TABLE purchase_orders(purchase_order_id INTEGER, 
+                             order_date DATE, 
+                             supplier_id INTEGER, 
+                             shop_id INTEGER, 
+                             freight DOUBLE);  -- 1M
+CREATE TABLE sale_items(sale_item_id BIGINT, 
+                        sale_order_id INTEGER, 
+                        product_id INTEGER, 
+                        quantity INTEGER, 
+                        price DOUBLE, 
+                        amount DOUBLE);     -- 80M
+CREATE TABLE sale_orders(sale_order_id INTEGER, 
+                         order_date DATE, 
+                         customer_id INTEGER, 
+                         shop_id INTEGER, 
+                         freight DOUBLE);   -- 20M
+CREATE TABLE suppliers(supplier_id INTEGER, "name" VARCHAR); -- 1000
+CREATE TABLE tags(tag_id INTEGER, tag_name VARCHAR); -- 100
+
+</code></pre>
+<h1 id="query-case-1"><a class="header" href="#query-case-1">Query Case 1</a></h1>
+<pre><code class="language-sql">select s.order_date, sum(si.amount) 
+from sale_items si left join sale_orders s on si.sale_order_id = s.sale_order_id  -- 80M * 20M
+group by s.order_date;
+</code></pre>
+<h1 id="result"><a class="header" href="#result">Result</a></h1>
+<ol>
+<li>DuckDB v1.2.2: 336ms(user: 2.667s, sys: 54ms) – duckdb timer on
+<a href="https://share.firefox.dev/3RLAzCv">samply profile</a> 看sleep 1秒后后面的部分就是执行 SQL 的 profile.
+DuckDB 的火焰图构成相对较为简单(下述数据来源于 explain analyze，与flame graph 有点对不上)：
+<ul>
+<li>build pipeline: 10ms</li>
+<li>proble pipeline
+<ul>
+<li>scan: 40ms</li>
+<li>probe: 2.26s</li>
+<li>projection: 10ms</li>
+<li>hash group by: 470ms</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>DataFusion v46.0.1 810ms(user: 5.47s, sys: 0.99s) – timer command
+<a href="https://share.firefox.dev/4iit5lv">samply profile</a>
+<ul>
+<li>HashJoin 算子的效率不够高。 其中 lookup 的开销占比 67%</li>
+</ul>
+</li>
+</ol>
+<p>接近1倍的性能差距。</p>
+<ol>
+<li>从火焰图结构来看，duckdb 的方式更为简洁（栈调用深度很浅），datafusion 由于采用了大量的异步，导致火焰图也变得复杂。</li>
+<li>dataframe 的执行计划更为复杂，引入了 Repartition, CoalesceBatches 等算子，有较多的跨线程操作，这些理论上可能导致
+性能下降。</li>
+</ol>
+<h1 id="理解-datafusion-中的算子"><a class="header" href="#理解-datafusion-中的算子">理解 datafusion 中的算子</a></h1>
+<pre class="mermaid">graph BT
+
+    subgraph a[pipeline 1]
+        ds1[datasource: sale_items * 10] --&gt; rp1[repartition sale_order_id, 10]
+    end
+
+    subgraph b[pipeline 2]
+        ds2[datasource: sale_orders * 10] --&gt; rp2[repartition sale_order_id, 10]
+    end
+
+    subgraph c[pipeline 3]
+        rp1 -.-&gt; coal1[coalesce batches]
+        coal1 --&gt;|probe| hj1[hashjoin]
+
+        rp2 -.-&gt; coal2[coalesce batches]
+        coal2 --&gt;|build| hj1[hashjoin partitioned by sale_order_id]
+
+        hj1 --&gt; coal3[coalesce batches]
+        coal3 --&gt; prj[projection amount,order_date]
+        prj   --&gt; aggr1["aggregate partial, order_date-&gt;sum(amount)"]
+        aggr1 --&gt; rp3[repartition order_date]
+    end
+
+    subgraph d[pipeline 4]
+        rp3   -.-&gt; coal4[coalesce batches]
+        coal4 --&gt; aggr2["aggregate final"]
+    end
+
+</pre>
+
+<ol>
+<li>pipeline 1,2: 调用栈
+<pre><code class="language-text">&lt;datafusion_datasource::file_stream::FileStream as futures_core::stream::Stream&gt;::poll_next -- DataSourceExec
+...
+datafusion_physical_plan::repartition::RepartitionExec::pull_from_input::{{closure}} -- RepartitionExec
+...
+tokio::runtime::task::harness::poll_future [tokio-1.44.2/src/runtime/task/harness.rs]
+...
+_pthread_start [libsystem_pthread.dylib]
+</code></pre>
+</li>
+<li>pipeline 3 - collect build side
+<pre><code class="language-text">&lt;datafusion_physical_plan::coalesce_batches::CoalesceBatchesStream as futures_core::stream::Stream&gt;::poll_next 
+...
+datafusion_physical_plan::joins::hash_join::HashJoinStream::collect_build_side 
+datafusion_physical_plan::joins::hash_join::HashJoinStream::poll_next_impl 
+&lt;datafusion_physical_plan::joins::hash_join::HashJoinStream as futures_core::stream::Stream&gt;::poll_next 
+...
+&lt;datafusion_physical_plan::coalesce_batches::CoalesceBatchesStream as futures_core::stream::Stream&gt;::poll_next 
+...
+&lt;datafusion_physical_plan::projection::ProjectionStream as futures_core::stream::Stream&gt;::poll_next 
+...
+&lt;datafusion_physical_plan::aggregates::row_hash::GroupedHashAggregateStream as futures_core::stream::Stream&gt;::poll_next 
+...
+datafusion_physical_plan::repartition::RepartitionExec::pull_from_input::{{closure}} 
+tokio::runtime::task::core::Core&lt;T,S&gt;::poll::{{closure}} 
+...
+_pthread_start [libsystem_pthread.dylib]   
+</code></pre>
+</li>
+<li>pipeline 3: fetch probe batch
+<pre><code class="language-text"> &lt;datafusion_physical_plan::coalesce_batches::CoalesceBatchesStream as futures_core::stream::Stream&gt;::poll_next 
+ ...
+ datafusion_physical_plan::joins::hash_join::HashJoinStream::fetch_probe_batch 
+ datafusion_physical_plan::joins::hash_join::HashJoinStream::poll_next_impl 
+ &lt;datafusion_physical_plan::joins::hash_join::HashJoinStream as futures_core::stream::Stream&gt;::poll_next 
+ ...
+ &lt;datafusion_physical_plan::coalesce_batches::CoalesceBatchesStream as futures_core::stream::Stream&gt;::poll_next 
+ ...
+ &lt;datafusion_physical_plan::projection::ProjectionStream as futures_core::stream::Stream&gt;::poll_next 
+ ...
+ &lt;datafusion_physical_plan::aggregates::row_hash::GroupedHashAggregateStream as futures_core::stream::Stream&gt;::poll_next 
+ ...
+ datafusion_physical_plan::repartition::RepartitionExec::pull_from_input::{{closure}} 
+ tokio::runtime::task::core::Core&lt;T,S&gt;::poll::{{closure}} [tokio-1.44.2/src/runtime/task/core.rs]
+ ...
+ _pthread_start [libsystem_pthread.dylib]
+</code></pre>
+</li>
+<li>pipeline 4: 由于 pipeline 4 的耗时很少，在火焰图上抓不到，理论上可以通过调试的方式获得 stack trace.
+<pre><code class="language-text"> &lt;datafusion_physical_plan::coalesce_batches::CoalesceBatchesStream as futures_core::stream::Stream&gt;::poll_next
+ ...
+ &lt;datafusion_physical_plan::aggregates::row_hash::GroupedHashAggregateStream as futures_core::stream::Stream&gt;::poll_next
+ ...
+ datafusion_physical_plan::stream::RecordBatchReceiverStreamBuilder::run_input::{{closure}}
+ ...
+ tokio::runtime::task::harness::Harness&lt;T,S&gt;::poll
+ _pthread_start 0x0000000188c902e4
+</code></pre>
+</li>
+</ol>
+<p>这 4 个 stacktrace 与途中的查询计划可以很好的匹配上：</p>
+<ol>
+<li>
+<p>datafusion 通过 async call chain 的方式实现了自上而下的 pull 式的执行计划。但仍然有隐含的 pipeline 概念。</p>
+<p>以图中的 pipeline 1 为例：这里有2个算子：repartition &lt;- datasource：</p>
+<ul>
+<li>上层算子（这里是 hashjoin pipeline 的 probe 侧 CoalesceBatches 算子）调用 RepartitionExec 的 poll_next 方法</li>
+<li>RepartitionExec 的 poll_next 方法会调用 datasource 的 poll_next 方法，这里总是以同步的方式调用。</li>
+<li>datasource 的 poll_next 会异步读取数据，这里是一个异步源点，如果数据未就绪，则返回 Poll::Pending，并向上返回，直到把当前线程归还给线程池。</li>
+<li>当操作系统异步读取数据就绪时，会唤醒之前的 Future 链，重新恢复执行。</li>
+</ul>
+<p>以图中的 pipeline 3 为例，这个future chain 就更深了，从最底层的异步点 CoalesceBatch 到 顶层的 Repartition 共有 6 层，这会产生一定的开销，
+当然，由于 datafusion 采用了 batch 的方式来处理数据，减少了调度的次数，从而减低了future 链式调用的开销。</p>
+<p>采用 pull 模式时，当一个算子有多个输入时，存在轮询的需求，这一块的处理也需要特殊优化，否则可能会消耗不必要的CPU。</p>
+</li>
+<li>
+<p>duckdb 则通过 push 模式实现算子间的数据流动，从火焰图的角度来看，push 模式的调用栈更浅，更清晰。
+duckdb 目前似乎没有采用 coalesce batches 的方式，而是 morsel 的自然流动，这样做可能会导致下游算子的数据批量减少，从而降低 SIMD 的效率，
+优点是避免不必要的临时数据存储</p>
+</li>
+</ol>
+<p>需要理解 datafusion 中的 repartition 算子 和 coalesce batches 算子</p>
+<ol>
+<li>Repartition 算子在多线程间的数据交换</li>
+<li>CoalesceBatches 算子对数据的合并</li>
+<li>这两个算子的 data copy 开销以及缓存效率。</li>
+<li>执行栈的分析</li>
+<li>hashjoin 算子的性能评估。</li>
+<li>是否可以手动编写一个 physical plan 来替代 datafusion 的执行计划?</li>
+</ol>
+<h1 id="评估"><a class="header" href="#评估">评估</a></h1>
+<ol>
+<li>push vs pull? 两者逻辑上是等效的，之前有看到某些文章说：batch 处理不适合与 pull，这种说法是不准确的。datafusion 就采用了 pull 的方式
+来处理处理，更贴近火山模型。</li>
+<li>虽然逻辑上是等效的，但我个人更倾向于 push 模型，主要是 async 的调用链看起来没有那么爽？这个是不是我的错觉？</li>
+<li>datafusion 在这个 case 上的性能要比 duckdb 慢上不少，目前来看，主要的原因是：
+<ul>
+<li>hash join 算子的实现效率</li>
+<li>duckdb 对 hash join 有更好的查询计划优化，尤其是 <a href="https://duckdb.org/2024/09/09/announcing-duckdb-110.html#dynamic-filter-pushdown-from-joins">Dynamic Filter Pushdown from Joins</a></li>
+<li>需要进一步评估 datafusion 算子的 copy 开销？这一块，在火焰图上还是比较明显的，duckdb 就少了很多。</li>
+</ul>
+</li>
+<li>datafusion 在命令行的友好程度上相比 duckdb 要差很多，体现在：
+<ul>
+<li>duckdb 支持更多的选项，例如 .timer 可以查看执行耗时，.rows/.columns 格式，.mode 设置多种 output 格式</li>
+<li>duckdb 的 explain analyze 结果更为简洁，可读性强</li>
+<li>duckdb 的 cli 对 SQL 的格式化、多行 SQL 输入、以及输入时的 tab complete 支持很好，datafusion 几乎没有支持。</li>
+</ul>
+</li>
+<li>datafusion 对窗口函数的支持不完善，range spec 不支持 expr.</li>
+<li>虽然 datafusion 的性能相比 duckdb 要差，但代码的结构要简单很多。当然，也可能是 rust 代码更易于阅读一些的缘故？所以，如果是选择 data frame 进行优化，我更倾向于
+base on datafusion。</li>
+</ol>
+<p>总体来说，作为一个SQL计算的基础库而言，datafusion 目前的成熟度还较低，使用起来估计会有更多的坑。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="sql-join"><a class="header" href="#sql-join">SQL JOIN</a></h1>
+<h1 id="参考-1"><a class="header" href="#参考-1">参考</a></h1>
+<h2 id="swiss-table--hashbrown"><a class="header" href="#swiss-table--hashbrown">Swiss Table / Hashbrown</a></h2>
+<ol>
+<li>Video <a href="https://www.youtube.com/watch?v=ncHmEUmJZf4">Designing a Fast, Efficient, Cache-friendly Hash Table, Step by Step</a></li>
+<li>Slides: <a href="https://hackmd.io/@heyfey/SJZ-3jbs5">Designing a Fast, Efficient, Cache-friendly Hash Table, Step by Step</a></li>
+</ol>
+<p>Swiss Table 是 Rust HashMap 的缺省实现，其内部使用 SIMD 友好的算法，这对于 ht.lookup(key) 来说，是做了充分的向量化优化的，因此，相比传统的
+数组 + 链表方式会有很大的性能提升，不过，Swiss Table 是在单次 lookup(key) 内进行向量加速的，另外一个视角则是 lookup(key_vec), 而且由于 数据库的 hash-join
+是一个特定问题，有以下因素可能都会影响到 join 的性能：</p>
+<ul>
+<li>build table 不涉及到 delete/update 的操作，无需考虑这一块的支持。</li>
+<li>build table 的 hash-column 如果是已排序的，则 lookup 也可以利用这一特性进行加速（例如提前终止搜索）</li>
+</ul>
+<h2 id="balancing-vectorized-query-execution-with-bandwidth-optimized-storage"><a class="header" href="#balancing-vectorized-query-execution-with-bandwidth-optimized-storage">Balancing vectorized query execution with bandwidth-optimized storage</a></h2>
+<p>文章解读：<a href="https://www.cockroachlabs.com/blog/vectorized-hash-joiner/"></a></p>
+<ol>
+<li>
+<p>5.3 Case Study: HashJoin
+本节提出了一个巧妙的向量化的 HashJoin 算法，其核心是使用了一个巧妙的 next 链表。
+TODO 使用几个图来说明这个算法的原理。</p>
+<ul>
+<li>
+<p>我有一个改进的想法：当 build table 很大时，引入两个新的存储，来进一步改善内部局部性</p>
+<p>文中的算法，next 链表是跳跃的，对同一个 hash 值的数据，其需要多次内存地址跳转才能满足。</p>
+<ul>
+<li>hash index: <code>[ hashcode: (offset-a, count) ]</code></li>
+<li>a: <code>[offset: (row-no, build-value)</code>] 从offset开始的连续 N 行都是具有相同的hashcode，直到 row-no = -1 结束
+将 next 链表从跳跃方式改为连续模式。
+这会增加 build 的开销，但在 probe 时，可以带来更佳的内存局部性，这样 build 侧进行分区的必要性就可能大为降低。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>5.4.1 Best Effort Partitioning</p>
+<p>分区对 hash join 的优化：</p>
+<ul>
+<li>build table 更小，从而带来更好的内存局部性</li>
+<li>如果 probe table 与 build table 有相同的分区设置，则在 probe 分区完成后，build table 占用的内容可以及时释放</li>
+<li>结合分区、分桶策略，可以实现更细粒度的 partition hash join.</li>
+<li>如果 probe table 与 build table 以及 hash-table 的分区策略不同，则会导致 shuffle 开销。
+<ul>
+<li>一般来说，probe 侧的数据量更大，probe 应避免 shuffle。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="a-vectorized-hash-join"><a class="header" href="#a-vectorized-hash-join"><a href="https://groups.csail.mit.edu/cag/6.893-f2000/vectorhashjoin.pdf">A Vectorized Hash-Join</a></a></h2>
+<ol>
+<li>2.3 Grace Hash-Join
+<ul>
+<li>将 hash-table 分成多个 partition，避免 hash-table 过大。每个 partition 可以在 memory 中，或置换到 disk 中。</li>
+<li>probe-table 也需要分成多个 partition，</li>
+<li>然后逐个 partition 进行 hash-join</li>
+</ul>
+</li>
+</ol>
+<h2 id="clickhouse-join-stratage"><a class="header" href="#clickhouse-join-stratage">ClickHouse Join Stratage</a></h2>
+<ol>
+<li><a href="https://clickhouse.com/blog/clickhouse-fully-supports-joins-part1">Join Types supported in ClickHouse</a></li>
+<li><a href="https://clickhouse.com/blog/clickhouse-fully-supports-joins-hash-joins-part2">Hash Join, Parallel HashJoin, Grace HashJoin</a></li>
+<li><a href="https://clickhouse.com/blog/clickhouse-fully-supports-joins-full-sort-partial-merge-part3">Full Sort Merge, Partial Merge Jooin</a></li>
+<li><a href="https://clickhouse.com/blog/clickhouse-fully-supports-joins-direct-join-part4">Direct Join</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="datafusion-hashjoin-源代码阅读"><a class="header" href="#datafusion-hashjoin-源代码阅读">DataFusion HashJoin 源代码阅读</a></h1>
+<h1 id="concepts"><a class="header" href="#concepts">Concepts</a></h1>
+<ol>
+<li>struct JoinLeftData: build side struct (习惯上，我之前会将 probe side 称为 left side, 但在 df 中，将 build side 称为 left side)。
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span> struct JoinLeftData {
+     hash_map: JoinHashMap,  /// 一个由 first 和 next 组成的 特殊 hashmap
+     batch: RecordBatch,     /// build side 的数据
+     values: Vec&lt;ArrayRef&gt;,  /// build side 的关联列
+     visited_indices_bitmap: SharedBitmapBuilder,    /// 已使用的行 bitmap，在 left/right/full join 等场景下需要
+     
+     probe_threads_counter: AtomicUsize,
+     _reservation: MemoryReservation,    // 用于跟踪内存使用情况
+ }
+<span class="boring">}</span></code></pre>
+</li>
+<li>struct HashJoinExec: HashJoin 算子
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span> struct HashJoinExec {
+     // base
+     left: Arc&lt;dyn ExecutionPlan&gt;,   // build side 
+     right: Arc&lt;dyn ExecutionPlan&gt;,  // probe side
+     on: Vec&lt;(PhysicalExprRef, PhysicalExprRef)&gt;,  // join key
+     filter: Option&lt;JoinFilter&gt;,    // join table r on r.id &gt; 10 非 join 条件
+     join_type: JoinType,          // INNER, LEFT, RIGHT, FULL, LEFT_SEMI, LEFT_ANTI, RIGHT_SEMI, RIGHT_ANTI, LEFT_MARK
+     project: Option&lt;Vec&lt;usize&gt;&gt;,    //
+     mode: PartitionMode,  // Partitioned: build/probe 都是分区的，必须在关联字段上有相同的分区, CollectLeft: build 不分区, Auto： 在物理计划中必须已明确
+     null_equals_null: bool,  // null 是否相等
+
+     // calcuated
+     join_schema: SchemaRef,  // join 后的 schema, 如果有 projection, 则 output schmea 可能会不同
+     column_indices: Vec&lt;ColumnIndex&gt;,   // （index: usize, side: JoinSide)
+     random_state: RandomState,  // 用于生成 hash 值
+     cache: PlanProperties,   // TODO
+   
+     // execution runtime
+     left_fut: OnceAsync&lt;JoinLeftData&gt;,  // build side 的数据
+     metrics: ExecutionPlanMetricsSet,  // 运行时的 metrics
+ }
+<span class="boring">}</span></code></pre>
+<ol>
+<li>build HashJoinExec: 是否有好的 builder API?</li>
+<li>1个算子，会在不同线程中执行不同的分区任务</li>
+</ol>
+</li>
+<li>struct HashJoinStream
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span> struct HashJoinStream {
+     schema: Arc&lt;Schema&gt;,    // output schema
+     on_right: Vec&lt;PhysicalExprRef&gt;,  // probe side 的 join key
+     filter: Option&lt;JoinFilter&gt;,  // join filter
+     join_type: JoinType,   // join type
+     
+     right:  SendableRecordBatchStream,  // probe side 的数据
+     random_state: RandomState,  // 用于生成 hash 值
+     join_metrics: BuildProbeJoinMetrics,  // 运行时的 metrics
+     column_indices: Vec&lt;ColumnIndex&gt;,  // (index: usize, side: JoinSide)
+     null_equals_null: bool,  // null 是否相等
+     
+     state: HashJoinStreamState, 
+     build_side: BuildSide,
+     batch_size: usize,  // 每次处理的 batch 大小
+     hashes_buffer: Vec&lt;u64&gt;,  // hash 值
+     right_side_ordered: bool,
+ }
+
+ enum HashJoinStreamState {
+     WaitBuildSide,
+     FetchProbeBatch,
+     ProcessProbeBatch(ProcessProbeBatchState),
+     ExhaustedProbeSide,
+     Completed,
+ }
+
+ enum BuildSide {
+     Initial(BuildSideInitialState),  // left_fut: OnceFut&lt;JoinLeftData&gt;
+     Ready(BuildSideReadyState),      // Arc&lt;JoinLeftData&gt;
+ }
+
+<span class="boring">}</span></code></pre>
+</li>
+</ol>
+<h1 id="flow"><a class="header" href="#flow">flow</a></h1>
+<h2 id="process_probe_batch-40188580--745"><a class="header" href="#process_probe_batch-40188580--745">process_probe_batch (40%+18%+8.5%+8.0% = 74.5%)</a></h2>
+<p>对 case45 这个 join 查询，process_probe_batch 的耗时总占比高达 74.5%，是这个查询性能优化的主要点。</p>
+<ol>
+<li>当前环境</li>
+<li>let (left_indices: UInt64Array, right_indices: UInt64Array, next_offset: Option<joinhashmapoffset> ) = lookup_join_hashmap(…);
+根据 hash 值，计算一个 (build_indices, probe_indices) 的列表，表示这两个 indices 之间的 关联列 相等。目前，这一步的耗时是最多的(74%, 30%+11%+7.7%+7.1%=55.8%)。
+<ol>
+<li>build_hashmap.get_matched_indices_with_limit_offset
+<ul>
+<li>hash_values: &amp;[u64]</li>
+</ul>
+</li>
+<li>equal_row_arr</li>
+</ol>
+</joinhashmapoffset></li>
+<li>处理 filter, 类似于 <code>from a join b on a.id = b.id and b.age &gt; 10</code> 这样的过滤，裁剪掉 (build_indices, probe_indices) 元组</li>
+<li>adjust_indices_by_join_type: 对 left/right join, 补充上缺失的 pair。(耗时约 14%, 4.1%+5.2%+0.6%+0.6%=10.5%)</li>
+<li>build_batch_from_indices: 根据 left_indices, right_indices, 生成新的 batch，返回给上层的 pipeline （耗时约 9.5%, 4.6%+2.1%+0.1%+0.2% = 7% ）。</li>
+</ol>
+<h2 id="samply-使用技巧"><a class="header" href="#samply-使用技巧">samply 使用技巧</a></h2>
+<ul>
+<li>合并函数: 将函数从调用栈上删除（减少调用栈层次）</li>
+<li>只合并节点</li>
+<li>聚焦于函数： 以当前函数为栈顶（多个caller信息的信息会合并，多个子树）</li>
+<li>只聚焦于子树：只聚焦于当前子树。</li>
+<li>聚焦于分类 Regular</li>
+<li>折叠函数。 不显示这个函数的 callee 信息</li>
+<li>折叠 project：不显示当前项目模块中的函数开销</li>
+<li>丢弃与此函数相关的样本：从当前火焰图中删除所有这个函数（不仅当前子树）</li>
+</ul>
+<h2 id=""><a class="header" href="#"></a></h2>
+<ol>
+<li>JoinHashMap
+<ul>
+<li>map: HashTable&lt;(u64, u64)&gt;</li>
+</ul>
+</li>
+</ol>
+<h2 id="其他开销"><a class="header" href="#其他开销">其他开销</a></h2>
+<p>忽略 process_probe_batch 后，其他几块的开销主要是：</p>
+<ol>
+<li>
+<p>datafusion_physical_plan::filter::filter_and_project 13%</p>
+</li>
+<li>
+<p>datafusion_physical_plan::coalesce::BatchCoalescer::push_batch 46%</p>
+</li>
+<li>
+<p>datafusion_physical_plan::joins::hash_join::update_hash 11%</p>
+</li>
+<li>
+<p>按照目前的设计，JoinHashMap 中 next 是非常稀疏的。 如果 build table 使用 join_key 作为主键时，一般没有 next。</p>
+<ul>
+<li>优化：在 hash_map 中存储 index 使用最高位作为 next 标记：为1时表示有 next，为 0 时表示无。在大部份情况下，仅需一次 lookup 而无需 next 处理。</li>
+<li>vec.push 操作优化，避免内存分配。</li>
+<li>优化2: 重新设计 next 结构，使得更为 cache local，避免反复的跳转。</li>
+</ul>
+</li>
+</ol>
+<p>疑点：</p>
+<ol>
+<li>get_matched_indices_with_limit_offset &gt; chain_traverse 并没有真实的并行化
+<ul>
+<li>vec.push 有额外的开销，包括容量检查等，内存分配等</li>
+<li>循环过程没有很好的向量化。</li>
+<li>尝试写一个单元测试，看看 IPC 如何？</li>
+<li>next 数组是否缓存友好？</li>
+</ul>
+</li>
+</ol>
+<h1 id="todos"><a class="header" href="#todos">todos</a></h1>
+<p>-[ ] how to modify and debug 3rd party crate?
+1. update source at ~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crate-name-version/src/some.rs
+2. rm -fr target/debug/.fingerprint/crate-name-hash/
+3. cargo build 会重新编译该模块。
+4. cargo clean 不会删除 ~/.cargo/registry 下的文件</p>
+<pre><code>or
+1. git clone 
+2. Cargo.toml, change as `datafusion = { path = "/Users/wangzaixiang/workspaces/github.com/datafusion/datafusion/core", version = "46.0.1"}`
+3. 修改了文件时，cargo build 会重新编译该模块，方便进行代码的调试。
+</code></pre>
+<ul>
+<li>
+<p>ProcessProbeBatchState</p>
+<ul>
+<li>offset?</li>
+<li>joined_probe_idx</li>
+</ul>
+</li>
+<li>
+<p>partition</p>
+<ul>
+<li>如何仅在某个 partition 进行调试？</li>
+<li>如何设定近使用1个 partition?</li>
+<li>阅读代码，理解如何从 LogicPlan 生成 PhysicalPlan
+config.optimizer.repartition_joins</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span> let config = SessionConfig::new().with_repartition_joins(false);
+ let ctx = SessionContext::new_with_config(config);
+<span class="boring">}</span></code></pre>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/p/666465496?utm_medium=social&amp;utm_psn=1897664392729982364&amp;utm_source=ZHShareTargetIDMore">Coroutine 重构数据库算子——以 hash join probe 为例</a>
+对使用 coroutine 来提高这一块的性能表示怀疑，主要是因为 coroutine 的调度开销会更大。</p>
+</li>
+<li>
+<p>datafusion 中的内存管理</p>
+</li>
+<li>
+<p>datafusion 中的 macro 使用</p>
+</li>
+<li>
+<p>datafusion 中的 metric 信息 和 explain analyze 格式化</p>
+</li>
+<li>
+<p>datafusion 中的 逻辑算子和物理算子</p>
+</li>
+<li>
+<p>哪些操作没有向量化</p>
+<ul>
+<li>create hashes</li>
+</ul>
+</li>
+<li>
+<p>循环类代码的 IPC?</p>
+</li>
+<li>
+<p>新的向量算法</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    struct FirstEntry {
+      // hash: u64,
+      first: u64,  // 0 表示没有 first
+      next:  u64,  // 0 表示没有 next
+      value: u64,
+    }
+    struct NextEntry {
+      // hash: u64,
+      index: u64, // &lt;= 0x7FFF_FFFF_FFFF_FFFF means no next, otherwise next
+      value: u64
+    }
+
+    struct HashMap {
+        firsts: Vec&lt;FirstEntry&gt;,
+        nexts: Vec&lt;NextEntry&gt;,
+    }
+      
+    fn lookup(hm:&amp;HashMap, probe: Vec&lt;u64&gt;) -&gt; (Vec&lt;u64&gt;, Vec&lt;u64&gt;) {
+        // 每次循环处理 4 个 probe
+        let probe1: u64x4 = u64x4::from(&amp;probe[0]);
+        let index1: u64x4 = probe1 % hm.firsts.len() as u64;    // 1 次随机访问
+        let build_index: u64x4 = hm.firsts[index1].first;
+        let build_next: u64x4 = hm.firsts[index1].next;
+        let build_value: u64x4 = hm.firsts[index1].value;
+          
+        let m1: u64x4 = first &gt; 0;
+        let eq: u64x4 = m1 &amp; (first == probe1);
+          
+        // 每次最多输出 4 个结果
+        // emit eq records
+          
+        let hash_next = build_next != 0;
+        while unlikely(has_next) {
+            let build_index: u64x4 = hm.nexts[build_next].index;
+            let build_value: u64x4 = hm.nexts[build_next].value;
+            let build_next: u64x4 = build_next + hash_next;
+              
+            let m1: u64x4 = build_index &gt; 0;
+            let eq: u64x4 = m1 &amp; (build_value == probe1);
+  
+            // emit eq records
+        }
+  
+    }
+
+<span class="boring">}</span></code></pre>
+</li>
+<li>
+<p>性能优化</p>
+<ol>
+<li>基于 profile 的性能优化：将执行过程中的时间信息收集起来，反馈到 LogicPan 中，下次执行时，根据 profile 信息优化查询计划
+<ul>
+<li>根据左表、右表的数据规模选择 build side</li>
+<li>消除不必要的 re-partition （数据量小于 1M 时，直接不做 partion 处理）</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h1 id="in_order-vs-out_of_order"><a class="header" href="#in_order-vs-out_of_order">in_order vs out_of_order</a></h1>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th></th><th>in_order</th><th>out_of_order</th><th>rate</th><th>description</th></tr>
+</thead>
+<tbody>
+<tr><td>collect_build_side</td><td>515</td><td>529</td><td>~</td><td></td></tr>
+<tr><td>fetch_probe_side</td><td>108</td><td>111</td><td>~</td><td></td></tr>
+<tr><td>process_probe_batch</td><td>2511</td><td>3991</td><td>+58%</td><td></td></tr>
+<tr><td>….equal_rows_arr</td><td>189</td><td>455</td><td>+141%</td><td>cache miss</td></tr>
+<tr><td>….get_matched_indices_with_limit_offset</td><td>1886</td><td>2897</td><td>+53%</td><td>cache miss</td></tr>
+<tr><td>….ht.find</td><td>171</td><td>989</td><td>+476%</td><td>cache miss</td></tr>
+<tr><td>….adjust_indices_by_join_type</td><td>248</td><td>198</td><td>-20%</td><td></td></tr>
+<tr><td>….build_batch_from_indices</td><td>173</td><td>430</td><td>+148%</td><td>cache miss</td></tr>
+<tr><td>total</td><td>3135</td><td>4632</td><td>+47%</td><td>cache miss</td></tr>
+</tbody>
+</table>
+</div>
+<h1 id="build_side--214s-vs-20m38s"><a class="header" href="#build_side--214s-vs-20m38s">BUILD_SIDE = 2（1.4s) vs 20M(3.8s)</a></h1>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>method</th><th>L1D_CACHE_MISS_LD</th><th>L1D_CACHE_MISS_LD_NONSPEC</th><th>L1D_CACHE_MISS_ST</th><th>L1D_CACHE_MISS_ST_NONSPEC</th><th>BRANCH_COND_MISPRED</th><th>Cycles</th></tr>
+</thead>
+<tbody>
+<tr><td>get_matched_indices_with_limit_offset-20M</td><td>281M</td><td>202M</td><td>404M</td><td>351M</td><td>1.35M</td><td>7157M</td></tr>
+<tr><td>get_matched_indices_with_limit_offset-2</td><td>19M</td><td>10M</td><td>94M</td><td>83M</td><td>40K</td><td>471M</td></tr>
+</tbody>
+</table>
+</div>
+<p>导致性能显著的下降的原因是 L1D_CACHE_MISS 还是 Branch missing?</p>
+<p>测试结论：</p>
+<ol>
+<li>目前的 hash join 在 build side 数据无序时，整体的效率会下降 50%。这些是由于 probe side 的数据是无序的，build side 采用
+列式存储反而会导致 cache miss，且理论上会因为 build side 的 column 数量增大而更为明显。（在这个例子中）</li>
+<li>cache miss 对 equal_rows_arr, ht.find, build_batch_from_indices 的影响是非常大的。</li>
+</ol>
+<h1 id="新的-hash-join-设计方案"><a class="header" href="#新的-hash-join-设计方案">新的 hash join 设计方案</a></h1>
+<ol>
+<li>build side 使用 row store</li>
+<li>重新设计 first 和 next 的存储方式
+<ul>
+<li>first: group = h1(hash) % n  每个 group 存储 16个 (h2 + next_index)
+<ul>
+<li>h2: 0x00 - 0x7F，使用 向量搜索 在一个组内进行匹配</li>
+<li>0xFF 表示为一个 EMPTY SLOT</li>
+<li>0xFE 表示为一个 OTHER SLOT: 当一个 group 中超过15个 slot 被占用时，第16个 slot 会
+使用 0xFE 来表示。（不进行二次搜索）</li>
+<li>entry: row + next_idx： 如果 next_idx == 0 表示没有 next</li>
+</ul>
+</li>
+<li>next[]
+每一行包括：hashcode + row, 其中 next_flag 为 0 时表示没有 next， 一般的 next_index 为当前 index + 1</li>
+</ul>
+</li>
+<li>非向量化 probe 过程
+<ul>
+<li>probe 行，计算 h1, h2</li>
+<li>根据 h1 计算 group，在 group 中搜索 h2
+<ul>
+<li>如果匹配 first 为 第一行的地址</li>
+<li>如果存在 0xFF 且未匹配，则 first = NULL</li>
+<li>入如果存在 0xFE 且未匹配，则 first = 该行</li>
+</ul>
+</li>
+<li>eq 测试 first 如果匹配，则输出该行（如果需要则 mark build bit）</li>
+<li>获取 next_index</li>
+<li>如果 next_index == 0 则结束，否则从 <code>next[next_index]</code> 获取下一行，循环上述过程</li>
+<li>如果 next_index == 0 则结束，如果需要 adjust 则输出 probe 行。</li>
+</ul>
+</li>
+<li>向量化 probe 过程
+<ul>
+<li>probe_hash: u64x4</li>
+<li>h1: u64x4</li>
+<li>h2: u8x4</li>
+<li>group 1:
+<ul>
+<li><code>groups[h1[0] % buckets]</code></li>
+<li>search <code>h2[0]</code></li>
+<li>search 0xFE</li>
+<li>first1</li>
+</ul>
+</li>
+<li>first2</li>
+<li>first3</li>
+<li>first4</li>
+<li>first: u64x4</li>
+<li>first_mask: Mask<u64x4></u64x4></li>
+<li>first_eq: 进行 eq 测试（不做分支处理）</li>
+<li>根据 first_eq 输出 行</li>
+<li>first = first.next</li>
+<li>update first mask</li>
+<li>if first_mask == 0 complete</li>
+</ul>
+</li>
+</ol>
+<p>关键点：</p>
+<ol>
+<li>将 build side 转为 row store, 并且具有相同 hash code 的数据连续存储</li>
+<li>h1/h2 的设计有高的概率会命中</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="datafusion-窗口函数执行分析"><a class="header" href="#datafusion-窗口函数执行分析">datafusion 窗口函数执行分析</a></h1>
+<h2 id="api-使用窗口函数"><a class="header" href="#api-使用窗口函数">API: 使用窗口函数</a></h2>
+<p>窗口函数是针对数据分析的一个 SQL 查询扩展，其执行顺序如下图中，
+<img src="datafusion/sql-execute-plan.png" alt="SQL 执行顺序"></p>
+<p>一般的，窗口函数的语法如下：
+<img src="datafusion/window_expr_grammar.png" alt="window_expr_grammar.png">
+来源：https://duckdb.org/docs/stable/sql/functions/window_functions</p>
+<p>datafusion 提供了对窗口函数的支持，不过，目前的版本支持程度仍然不如 duckdb，我目前发现的问题是： frame 中目前仅支持 literal expr,
+这限制了基于当前行的 dynamic range 的支持能力，例如，典型的 上年同期年累 这样的计算。</p>
+<p>在 duckdb 中，可以表示为</p>
+<pre><code class="language-sql">SUM( SUM(amount) ) over (order by order_date 
+  range between to_days( order_date - (date_trunc('year', order_date'year') - interval 1 year)) preceding 
+  and interval 1 year preceding )
+</code></pre>
+<p>本文分析的目的之一就是对 datafusion 的窗口函数执行机制进行研究，并评估为其添加上这类能力的可行性。</p>
+<h2 id="spi创建自定义的窗口函数"><a class="header" href="#spi创建自定义的窗口函数">SPI：创建自定义的窗口函数</a></h2>
+<p>datafusion 中支持4种 自定义函数：</p>
+<ul>
+<li>
+<p>udf: scalar 函数</p>
+</li>
+<li>
+<p>udtf: 表函数，如 csv_read 之类的函数</p>
+<ul>
+<li>
+<p>udwf: User Define Window Function：以 partition 为单位的窗口函数</p>
+<p>主要针对非聚合类的窗口函数，参见：</p>
+<ol>
+<li><a href="https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/simple_udwf.rs">simple udwf</a></li>
+<li><a href="https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/advanced_udwf.rs">advanced udwf</a></li>
+</ol>
+<p>see: datafusion/physical-expr/src/window/standard.rs StandardWindowExpr::evaluate(按照这个源代码整理，与代码注释对应不上)</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>[<code>uses_window_frame</code>]</th><th>[<code>supports_bounded_execution</code>]</th><th>[<code>include_rank</code>]</th><th>function_to_implement</th><th>functions</th></tr>
+</thead>
+<tbody>
+<tr><td>true</td><td>*</td><td>*</td><td>[<code>evaluate</code>]</td><td>nth_value</td></tr>
+<tr><td>false (default)</td><td>*</td><td>true</td><td>[<code>evaluate_all_with_rank</code>]</td><td>rank, dense_rank, cume_dist</td></tr>
+<tr><td>false</td><td>*</td><td>false (default)</td><td>[<code>evaluate_all</code>]</td><td></td></tr>
+</tbody>
+</table>
+</div>
+</li>
+</ul>
+<p>窗口函数：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>category</th><th>functions</th><th>supported</th><th>desc</th><th>uses_window_frame</th><th>supports_bounded_execution</th><th>include_rank</th></tr>
+</thead>
+<tbody>
+<tr><td>ranking</td><td>cume_dist</td><td>df, duckdb</td><td>累积百分比</td><td>X</td><td>X</td><td>true</td></tr>
+<tr><td>ranking</td><td>dense_rank</td><td>df, duckdb</td><td>1,2,2,3 风格的排名</td><td>X</td><td>true</td><td>true</td></tr>
+<tr><td>ranking</td><td>rank</td><td>df, duckdb</td><td>1,2,2,4 风格的排名</td><td>X</td><td>true</td><td>true</td></tr>
+<tr><td>ranking</td><td>ntile(n)</td><td>df, duckdb</td><td>按 n 等分</td><td>X</td><td>X</td><td>X</td></tr>
+<tr><td>ranking</td><td>percent_rank</td><td>df, duckdb</td><td>排名百分比</td><td>X</td><td>X</td><td>true</td></tr>
+<tr><td>ranking</td><td>row_number</td><td>df, duckdb</td><td>行号</td><td>X</td><td>true</td><td>X</td></tr>
+<tr><td>analytical</td><td>first_value(expr)</td><td>df, duckdb</td><td></td><td>X</td><td>X</td><td>X</td></tr>
+<tr><td>analytical</td><td>lag(expr, offset, default)</td><td>df, duckdb</td><td></td><td>X</td><td>true</td><td>X</td></tr>
+<tr><td>analytical</td><td>last_value(expr)</td><td>df, duckdb</td><td></td><td>X</td><td>X</td><td>X</td></tr>
+<tr><td>analytical</td><td>lead(expr, offset, default)</td><td>df, duckdb</td><td></td><td>X</td><td>true</td><td>X</td></tr>
+<tr><td>analytical</td><td>nth_value(expr, n)</td><td>df, duckdb</td><td></td><td>true</td><td>true</td><td>X</td></tr>
+</tbody>
+</table>
+</div>
+</li>
+<li>
+<p>udaf: User Define Aggregate Function
+针对形如 SUM, COUNT 之类的函数，自定义函数参考：<a href="https://github.com/apache/datafusion/blob/main/datafusion-examples/examples/advanced_udaf.rs">advanced udaf</a>
+核心接口是 Accumulator, GroupsAccumulator</p>
+</li>
+</ul>
+<pre class="mermaid">classDiagram
+        
+        class WindowUDFImpl {
+            &lt;&lt;trait&gt;&gt;
+            +partition_evaluator(PartitionEvaluatorArgs args) PartitionEvaluator
+        }
+        class PartitionEvaluator {
+                &lt;&lt;trait&gt;&gt;
+                +is_causal(): bool
+                +uses_window_frame(): bool
+                +supports_bounded_execution(): bool
+                +include_rank(): bool
+                +evaluate(&amp;~ArrayRef~ values, &amp;Range~usize~ range): Result&lt;ScalarValue&gt; 
+                +evaluate_all(values:&amp;~ArrayRef~, num_rows:uszie): Result&lt;ArrayRef&gt;
+                +evaluate_all_with_rank(usize num_rows, &amp;[Range~usize~] ranks_in_partition) -&gt; Result&lt;ArrayRef&gt;
+        }
+        WindowUDFImpl .. PartitionEvaluator
+        
+        class AggregateUDFImpl {
+            &lt;&lt;trait&gt;&gt;    
+            +accumulator(AccumulatorArgs args): Result~Box~dyn Accumulator~~
+            +create_groups_accumulator(AccumulatorArgs args): Result&lt;Box&lt;dyn GroupsAccumulator&gt;&gt;
+        }
+        
+        class Accumulator {
+                &lt;&lt;trait&gt;&gt;
+                +update_batch(&amp;[ArrayRef]): Result&lt;()&gt;
+                +retract_batch(&amp;[ArrayRef]): Result&lt;()&gt;
+                +state(): Result&lt;Vec&lt;ScalaValue&gt;&gt;
+                +merge_batch(&amp;[ArrayRef]): Result&lt;()&gt;
+                +evaluate(): Result&lt;ScalaValue&gt;
+        }
+        
+        class GroupsAccumulator {
+            &lt;&lt;trait&gt;&gt;
+            +update_batch(&amp;[ArrayRef], Option&lt;&amp;BooleanArray&gt;, usize): Result&lt;()&gt;
+            +state(EmitTo): Result&lt;ArrayRef&gt;
+            +merge_batch(&amp;[ArrayRef], &amp;[usize], Option&lt;&amp;BooleanArray&gt;, usize): Result&lt;()&gt;
+            +evaluate(EmitTo): Result&lt;ArrayRef&gt;    
+        }
+
+    AggregateUDFImpl .. Accumulator
+    AggregateUDFImpl .. GroupsAccumulator
+        
+</pre>
+
+<pre class="mermaid">classDiagram
+    class WindowExpr {
+        &lt;&lt;trait&gt;&gt;
+        +evaluate_args(batch: &amp;RecordBatch) Result~Vec&lt;ArrayRef&gt;~
+        +evaluate(batch: &amp;RecordBatch) Result~ArrayRef~
+        +evaluate_stateful(partition_batches: &amp;PartitionBatches, window_agg_state: &amp;mut PartitionWindowAggStates) Result~()~
+    }
+
+    note for AggregateWindowExpr "for user-defined-aggregate-function"
+    class AggregateWindowExpr {
+        &lt;&lt;trait&gt;&gt;
+    }
+
+    note for StandardWindowExpr "for user-defined-window-function"
+    class StandardWindowExpr {
+            &lt;&lt;struct&gt;&gt;
+    }
+
+    class SlidingAggregateWindowExpr {
+            &lt;&lt;struct&gt;&gt;
+    }
+
+    class PlainAggregateWindowExpr {
+            &lt;&lt;struct&gt;&gt;
+    }
+
+    WindowExpr &lt;|-- AggregateWindowExpr
+    AggregateWindowExpr &lt;|-- SlidingAggregateWindowExpr
+    AggregateWindowExpr &lt;|-- PlainAggregateWindowExpr
+    WindowExpr &lt;|-- StandardWindowExpr
+</pre>
+
+<h2 id="物理计划生成选择算子windowexpr-决策树"><a class="header" href="#物理计划生成选择算子windowexpr-决策树">物理计划生成：选择算子、WindowExpr 决策树</a></h2>
+<pre class="mermaid">flowchart TD
+    A[ 1: function type ?] == window function ==&gt; StandardWindowExpr
+    A == aggregate function ==&gt; C[frame start unbounded ?]
+    A2[2: frame end bounded ?]
+    A2 == unbounded following ==&gt; WA[WindowAggExec]
+    A2 == bounded ==&gt; BWA[BoundedWindowAggExec]    
+    C == unbounded preceding ==&gt; plain[PlainAggregateWindowExpr]
+    C == bounded ==&gt; sliding[SlidingAggregateWindowExpr]
+</pre>
+
+<p>具体，可以查看如下的代码实例，通过代码的调试等方式，可以帮助我们理解不同的算子下的执行流程：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>function</th><th>operator</th><th>window expr</th><th>demo</th></tr>
+</thead>
+<tbody>
+<tr><td>aggregate</td><td>window agg exec</td><td>plain aggregate</td><td><a href="https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs">test_sum_1</a></td></tr>
+<tr><td>aggregate</td><td>window agg exec</td><td>sliding aggregate</td><td><a href="https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs">test_sum2</a></td></tr>
+<tr><td>aggregate</td><td>bounded window agg exec</td><td>plain aggregate</td><td><a href="https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs">test_sum4</a></td></tr>
+<tr><td>aggregate</td><td>bounded window agg exec</td><td>sliding aggregate</td><td><a href="https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_datafusion/src/bin/test_windows.rs">test_sum3</a></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="算子-windowaggexec-分析"><a class="header" href="#算子-windowaggexec-分析">算子: WindowAggExec 分析</a></h2>
+<p>根据上述分析，WindowAggExec 的 frame 形如：between bounded and unbounded following</p>
+<ol>
+<li>从上游获取 RecordBatch，追加到 self.batches 中，直至全部读取完成，进入到第2步。</li>
+<li>将全部的 RecordBatch 合并为一个 RecordBatch</li>
+<li>在 batch 上求值 sort columns (partition key, maybe + order key)</li>
+<li>按照 partition key 对 batch 进行 partition，由于 batch 已经排序，因此，在batch 中每个分区的数据已经是连续存放的，一个分区的数据接着
+上一个分区的数据。每个分区可以表示为 Range<usize></usize></li>
+<li>foreach partition，调用函数 WindowAggExec::compute_window_aggregates 进行窗口函数求值
+<ol>
+<li>foreach window_expr 调用 window_expr.evaluate(batch) 求值（多个窗口函数可以共享同一个窗口）
+<ul>
+<li>window_expr.evaluate(batch) : single partition, single window_exp
+<ul>
+<li>foreach row in batch <code>AggregateWindowExpr::get_result_column</code>
+<ol>
+<li>计算 当前行的 window range</li>
+<li>window_expr.<code>get_aggregate_result_inside_range</code>: evaluate for single row with a range(window)
+<ul>
+<li>
+<p>PlainAggregateWindowExpr::get_aggregate_result_inside_range: window 0..end end 是递增的</p>
+<p>frame: 0 .. LAST</p>
+<ol>
+<li>对比 last_range，将 shift in rows 调用 accumulator.update_batch</li>
+<li>获取 accumulator.evaluate</li>
+</ol>
+</li>
+<li>
+<p>SlidingAggregateWindowExpr::get_aggregate_result_inside_range:</p>
+<p>frame: <em>bounded</em> .. LAST</p>
+<ol>
+<li>对比 last_range，将 shift out rows 调用 accumulator.retract_batch</li>
+<li>将 shift in rows 调用 accumulator.update_batch</li>
+<li>获取 accumulator.evaluate</li>
+</ol>
+</li>
+<li>
+<p>总之： SlidingAggregateWindowExpr::get_aggregate_result_inside_range 可以覆盖 PlainAggregateWindowExpr::get_aggregate_result_inside_range 的能力。</p>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="算子-boundedwindowaggexec"><a class="header" href="#算子-boundedwindowaggexec">算子： BoundedWindowAggExec</a></h2>
+<p>对 frame.end 不是 unbounded following 的窗口类型，datafusion 视为 bounded window，使用 BoundedWindowAggExec 算子来处理该窗口函数的计算。</p>
+<p>根据 frame.start 的不同，会选择不同类型的 WindowExpr:</p>
+<ul>
+<li>对标准的窗口函数（UDWF），使用 StandardWindowExpr + PartitionEvaluator:
+<pre><code class="language-sql">  select *, rank() over (partition by product_id order by order_date) as rank1 from t1
+</code></pre>
+</li>
+<li>对聚合类窗口函数（UDAF）, frame.start 是 unbounded preceding 的，使用 PlainAggregateWindowExpr + Accumulator
+<pre><code class="language-sql">select *, sum(amount) over (partition by product_id order by order_date rows between unbounded preceding and 1 following) as amounts1 from t1
+</code></pre>
+</li>
+<li>对聚合类窗口函数（UDAF）, frame.start 不是 unbounded preceding 的，使用 SlidingAggregateWindowExpr + Accumulator
+<pre><code class="language-sql">select *, sum(amount) over (order by order_date range between interval '1 days' preceding and interval '1 days' following) as slide_amounts from t1
+</code></pre>
+</li>
+</ul>
+<p>执行流程：</p>
+<ol>
+<li>BoundedWindowAggStream 从上游读取 RecordBatch (已按 window order by 进行排序)</li>
+<li>根据 RecordBatch 更新 partition_key -&gt; PartitionBatchState( record_batch )</li>
+<li>调用 BoundedWindowAggStream::compute_aggregates 计算窗口函数
+<ol>
+<li>foreach window_expr, call window_expr.evaluate_stateful (1 window_expr, multi partition)
+<ol>
+<li>foreach partition, call window_expr.get_result_column (1 window_expr, 1 partition)
+<ol>
+<li>foreach row which is not calculated previous
+<ol>
+<li>计算 row 对应的 frame range</li>
+<li>如果 RecordBatch 满足 frame range，则调用 window_expr.get_aggregate_result_inside_range 进行聚合求值
+<ol>
+<li>相比上一行的frame，对移出的行调用 accumulator::retract_batch</li>
+<li>对移入的行调用 accumulator::update_batch</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct BoundedWindowAggStream {
+  window_expr: Vec&lt;WindowExprRef&gt;,
+  
+  input_buffer: RecordBatch,
+  
+  partition_buffers:  PartitionBatches,   // IndexMap&lt;PartitionKey, PartitionBatchState&gt;
+  window_agg_states:  Vec&lt;PartitionWindowAggStates&gt;, // indexed by window_expr, IndexMap&lt;PartitionKey, WindowState&gt;
+}
+
+struct PartitionBatchState {
+  record_batch:  RecordBatch,
+  most_recent_row: Option&lt;RecordBatch&gt;
+  is_end: bool,
+  n_out_row: usize
+}
+
+struct WindowState {
+  state: WindowAggState,
+  window_fn: WindowFn,      // 累加器会持有状态，通过 update_batch, retract_batch, merge_batch 更新状态
+}
+
+struct WindowAggState {
+  window_frame_range: Range&lt;usize&gt;,
+  window_frame_ctx:  Option&lt;WindowFrameContext&gt;,
+  
+  last_calculated_index: usize,
+  offset_pruned_rows: usize,
+  
+  out_col: ArrayRef,
+  n_row_result_missing: usize,
+  is_end: bool
+}
+
+<span class="boring">}</span></code></pre>
+<pre class="mermaid">classDiagram
+  class BoundedWindowAggStream {
+          &lt;&lt;object&gt;&gt;
+          
+          window_exprs: Vec~WindowExprRef~
+          
+          input_buffer: RecordBatch
+          finished: bool
+          
+  }
+
+  class PartitionBatchState {
+          &lt;&lt;object&gt;&gt;
+          
+          record_batch: RecordBatch
+          most_recent_row: Option&lt;RecordBatch&gt;
+          is_end: bool
+          n_out_row: usize
+  }
+  
+  class WindowState {
+          &lt;&lt;object&gt;&gt;
+          state: WindowAggState
+          window_fn: WindowFn
+  }
+  class WindowAggState {
+          &lt;&lt;object&gt;&gt;
+          window_frmae_range: Range&lt;usize&gt;
+          window_frame_ctx: Option&lt;WindowFrameContext&gt;
+          
+          last_cacluated_index: usize
+          offset_pruned_rows: usize
+          out_col: ArrayRef
+          n_row_result_missing: usize
+          is_end: bool
+  }
+  class WindowFn {
+          &lt;&lt;object&gt;&gt;
+          partition_evaluator: PartitionEvaulator
+          accumulator: Accumulator
+  }      
+        
+        
+
+  BoundedWindowAggStream o-- PartitionBatchState : partition_buffers[PartitionKey]
+  BoundedWindowAggStream o-- WindowState : window_agg_state[window_expr_idx][PartitionKey]
+  
+  WindowState o--  WindowAggState
+  WindowState o--  WindowFn    
+
+</pre>
+
+<ol>
+<li><code>BoundedWindowAggStream::poll_next_inner</code>
+<ol>
+<li>poll RecordBatch from input</li>
+<li><code>BoundedWindowAggStream::compute_aggregates</code>
+<ol>
+<li>foreach window_expr, <code>window_expr::evaluate_stateful(partion_batches, partition_window_agg_states)</code>
+<ol>
+<li><code>AggregateWindowExpr::evalute_stateful</code> foreach partition
+1.</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p>处理过程：</p>
+<ol>
+<li>无需在读取了全部分区数据后，再进行窗口函数计算，可以在读入 batch 的过程中增量的处理。</li>
+<li>思考：WindowAggExec 是否可以转换为 逆序后使用 BoundedWindowAggExec?</li>
+</ol>
+<h2 id="思考支持更为灵活的-values-between-expr-and-expr--虽然不能匹配上述的优化但在数据量不大的情况下可以有更大的表现力"><a class="header" href="#思考支持更为灵活的-values-between-expr-and-expr--虽然不能匹配上述的优化但在数据量不大的情况下可以有更大的表现力">思考：支持更为灵活的 values between expr and expr ? 虽然不能匹配上述的优化，但在数据量不大的情况下，可以有更大的表现力</a></h2>
+<h2 id="思考如何高效的支持同期同期累积等功能"><a class="header" href="#思考如何高效的支持同期同期累积等功能">思考：如何高效的支持同期、同期累积等功能？</a></h2>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="datafusion-misc"><a href="#datafusion-misc" class="header">datafusion-misc</a></h1>
+<ol>
+<li><code>select * from generate_series(1,3)</code> <code>select generate_series(1,3)</code> 这里的一个函数可以即是 TableFunction 又是 ScalarFunction?</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="cubejs-特性分析"><a class="header" href="#cubejs-特性分析">cube.js 特性分析</a></h1>
+<p>本文尝试记录我在试用 cube.js 过程中，对其的理解和分析。</p>
+<h1 id="data-modeling"><a class="header" href="#data-modeling">Data Modeling</a></h1>
+<p>我最感兴趣的是 cube.js 的模型建模能力。</p>
+<p>数据集：<a href="https://en.wikiversity.org/wiki/Database_Examples/Northwind/MySQL">NorthWind</a>
+为了测试多事实支持能力，对该数据集做了简单扩展：</p>
+<pre><code class="language-sql">create table northwind.Orders
+(
+    OrderID    int auto_increment
+        primary key,
+    CustomerID int            null,
+    EmployeeID int            null,
+    OrderDate  datetime       null,
+    ShipperID  int            null,
+    freight    decimal(10, 2) null,   -- 新增运费字段
+);
+
+create table northwind.Inventories
+(
+    InventoryId int not null
+        primary key,
+    ProductId   int not null,
+    quantity    int not null comment '库存数量'
+);
+
+</code></pre>
+<ol>
+<li>
+<p>Query: ( products.productname -&gt; order_detail.count, orders.count, order_detail.quantity)</p>
+<pre><code class="language-sql">SELECT
+      `products`.`ProductName` `products__productname`, 
+      count(`order_details`.OrderDetailId) `order_details__count`, 
+      count(distinct `orders`.orderId) `orders__count`, 
+      sum(`order_details`.`Quantity`) `order_details__quantity`
+FROM
+      northwind.`OrderDetails` AS `order_details`
+LEFT JOIN northwind.`Orders` AS `orders` ON `order_details`.`OrderID` = `orders`.`OrderID`
+LEFT JOIN northwind.`Products` AS `products` ON `order_details`.`ProductID` = `products`.`ProductID`  
+GROUP BY 1 ORDER BY 2 DESC LIMIT 10000
+</code></pre>
+<ul>
+<li>查询限制在单个 star-model 中</li>
+<li>对 star-model 中的非明细粒度的 count 会改写为 count(distinct) 符合预期。</li>
+</ul>
+</li>
+<li>
+<p>Query: (product.productname -&gt; order_details.quantity, orders.freight)</p>
+<pre><code class="language-sql">SELECT 
+    q_0.`products__productname`, 
+    `order_details__quantity` `order_details__quantity`, 
+    `orders__freight` `orders__freight` 
+FROM (
+     SELECT `main__products`.`ProductName` `products__productname`, sum(`main__order_details`.`Quantity`) `order_details__quantity` 
+     FROM northwind.`OrderDetails` AS `main__order_details` 
+     LEFT JOIN northwind.`Orders` AS `main__orders` ON `main__order_details`.`OrderID` = `main__orders`.`OrderID` 
+     LEFT JOIN northwind.`Products` AS `main__products` ON `main__order_details`.`ProductID` = `main__products`.`ProductID`  GROUP BY 1
+) as q_0 
+INNER JOIN (
+     SELECT `keys`.`products__productname`, sum(`orders_key__orders`.freight) `orders__freight` 
+     FROM (
+         SELECT DISTINCT `orders_key__products`.`ProductName` `products__productname`, `orders_key__orders`.orderId `orders__order_id` 
+         FROM northwind.`OrderDetails` AS `orders_key__order_details` 
+         LEFT JOIN northwind.`Orders` AS `orders_key__orders` ON `orders_key__order_details`.`OrderID` = `orders_key__orders`.`OrderID` 
+         LEFT JOIN northwind.`Products` AS `orders_key__products` ON `orders_key__order_details`.`ProductID` = `orders_key__products`.`ProductID` 
+    ) AS `keys` 
+    LEFT JOIN northwind.`Orders` AS `orders_key__orders` ON `keys`.`orders__order_id` = `orders_key__orders`.orderId
+    GROUP BY 1
+) as q_1 ON (q_0.`products__productname` = q_1.`products__productname` OR (q_0.`products__productname` IS NULL AND q_1.`products__productname` IS NULL)) 
+ORDER BY 2 DESC LIMIT 10000
+</code></pre>
+<p>结论：</p>
+<ol>
+<li>cube.js 支持在同一个 star-model 中在不同层级上的度量（类似于多事实的概念），但生成的 SQL 不够优化，性能可能不佳。</li>
+</ol>
+</li>
+<li>
+<p>Query: ( product.productname -&gt; inventories.quantity, order_details.quantity)</p>
+<p>查询错误：<code>Can't find join path to join 'inventories', 'order_details', 'products'</code>
+结论：</p>
+<ol>
+<li>cube.js 查询中，限定只能使用单个查询图（限定一个 star-model ）,并不支持多事实的概念。</li>
+<li>根据 query2：cube.js 支持在一个 star-model 中访问不同粒度的度量，能正确处理查询，但未能生成优化的 SQL。</li>
+</ol>
+</li>
+<li>
+<p>YTD Query</p>
+<p>cube.js 支持的复杂计算相对较为有限，主要是 https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#period-to-date 文中介绍的：</p>
+<ul>
+<li>Rolling Window， 包括 YTD, QTD, MTD 都是通过 rolling window 来实现的</li>
+<li>Ranking
+这里以一个简单的 YTD 为例来查看其执行过程：</li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-sql">SELECT q_0.`orders__orderdate_day`,
+       `order_details__quantity`     `order_details__quantity`,
+       `order_details__quantity_ytd` `order_details__quantity_ytd`
+FROM (
+   SELECT CAST(DATE_FORMAT(CONVERT_TZ(`main__orders`.`OrderDate`, @@session.time_zone, '+00:00'),
+                              '%Y-%m-%dT00:00:00.000') AS DATETIME) `orders__orderdate_day`,
+             sum(`main__order_details`.`Quantity`)                  `order_details__quantity`
+   FROM northwind.`OrderDetails` AS `main__order_details`
+   LEFT JOIN northwind.`Orders` AS `main__orders`
+                         ON `main__order_details`.`OrderID` = `main__orders`.`OrderID`
+   WHERE (`main__orders`.`OrderDate` &gt;=
+             TIMESTAMP(convert_tz('1996-07-01T00:00:00.000', '+00:00', @@session.time_zone)) AND
+             `main__orders`.`OrderDate` &lt;=
+             TIMESTAMP(convert_tz('1996-12-31T23:59:59.999', '+00:00', @@session.time_zone)))
+   GROUP BY 1
+) as q_0
+INNER JOIN (
+   SELECT `orders.orderdate_series`.`date_from` `orders__orderdate_day`,
+         sum(`order_details__quantity_ytd`)    `order_details__quantity_ytd`
+   FROM (
+      SELECT TIMESTAMP(dates.f) date_from, TIMESTAMP(dates.t) date_to
+      FROM (
+            select '1996-07-01T00:00:00.000' f, '1996-07-01T23:59:59.999' t
+               UNION ALL
+               ... -- 这里省略掉几百行类似的 SQL 代码
+               UNION ALL
+               select '1996-12-31T00:00:00.000' f, '1996-12-31T23:59:59.999' t
+      ) AS dates
+   ) AS `orders.orderdate_series`
+   LEFT JOIN (
+      SELECT CAST(DATE_FORMAT(CONVERT_TZ(`order_details_quantity_ytd_cumulative__orders`.`OrderDate`,@@session.time_zone, '+00:00'), '%Y-%m-%dT00:00:00.000') 
+                  AS DATETIME) `orders__orderdate_day`,
+             sum(`order_details_quantity_ytd_cumulative__order_details`.Quantity) `order_details__quantity_ytd`
+     FROM northwind.`OrderDetails` AS `order_details_quantity_ytd_cumulative__order_details`
+     LEFT JOIN northwind.`Orders` AS `order_details_quantity_ytd_cumulative__orders`
+                                          ON `order_details_quantity_ytd_cumulative__order_details`.`OrderID` =
+                                             `order_details_quantity_ytd_cumulative__orders`.`OrderID`
+     WHERE (CONVERT_TZ(`order_details_quantity_ytd_cumulative__orders`.`OrderDate`,@@session.time_zone, '+00:00') &gt;=
+            CAST(DATE_FORMAT(TIMESTAMP('1996-07-01T00:00:00.000'), '%Y-01-01T00:00:00.000') AS DATETIME) AND
+            CONVERT_TZ(`order_details_quantity_ytd_cumulative__orders`.`OrderDate`,@@session.time_zone, '+00:00') &lt;= TIMESTAMP('1996-12-31T23:59:59.999'))
+     GROUP BY 1
+   ) AS `order_details_quantity_ytd_cumulative__base`
+     ON （`order_details_quantity_ytd_cumulative__base`.`orders__orderdate_day` &gt;= 
+          CAST(DATE_FORMAT(`orders.orderdate_series`.`date_from`, '%Y-01-01T00:00:00.000') AS DATETIME) AND
+          `order_details_quantity_ytd_cumulative__base`.`orders__orderdate_day` &lt;= `orders.orderdate_series`.`date_to`）
+   GROUP BY 1
+) as q_1 ON (q_0.`orders__orderdate_day` = q_1.`orders__orderdate_day` OR
+                                            (q_0.`orders__orderdate_day` IS NULL AND
+                                             q_1.`orders__orderdate_day` IS NULL))
+ORDER BY 1 ASC
+LIMIT 10000
+</code></pre>
+<p>分析结论：</p>
+<ol>
+<li>cube.js 对计算度量的额表达能力相比 MDX 来说非常有限，其更接近于 Smartbi 支持的快速计算，都是内置支持的，不太具备了良好的扩展能力。</li>
+<li>在 YTD 计算时，目前的实现方式是通过 conditional join 来实现的，其效果与我们的基于窗口函数的实现相似，但执行效率估计会低一些</li>
+<li>目前进行 YTD 计算时，对查询条件有一定的限制，必须指定 开始日期、结束日期。</li>
+<li>CubeJS 有一个 试验性的 Tesseract 引擎（估计与 powerbi 的 VertiPaq 类似）。</li>
+</ol>
+<p>总体来看：CubeJS 的建模能力相比 PowerBI, SmartBi 目前的建模能力，要弱很多。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="图解大模型生成式ai-原理与实践-阅读"><a class="header" href="#图解大模型生成式ai-原理与实践-阅读">图解大模型：生成式AI 原理与实践 阅读</a></h1>
+<h2 id="理解语言模型"><a class="header" href="#理解语言模型">理解语言模型</a></h2>
+<ol>
+<li>词袋模型(bag-of-words): 忽略了词的顺序，只包括词在文档中的出现次数</li>
+<li><a href="https://zhuanlan.zhihu.com/p/548088633">word2vec</a></li>
+<li>[RNN]</li>
+<li></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="why-i-dont-use-web-components"><a class="header" href="#why-i-dont-use-web-components"><a href="https://dev.to/richharris/why-i-don-t-use-web-components-2cia">Why I dont use web components</a></a></h1>
+<p>作者：Rich Harris (svelte 作者)
+Date: 2020-7-15</p>
+<p>Svelte 支持 Custom Element，并且工作的很好，在 <a href="https://custom-elements-everywhere.com">Custom Elements Everywhere</a> 上得到了满分，
+作者在本文中只是声明他自己为什么不把 WC 作为 svelte 的默认编译选项的一些观点：</p>
+<ol>
+<li>Progressive Enhancement 渐进式增强
+能够在没有 JavaScript 支持的时候，仍然可以使用。(SSR), svelte 可以很好的 SSR 支持，并且在支持JS的浏览器中，逐步增强。
+<blockquote>
+<p>现在的 Lit 框架对 SSR 的支持仍然有限，考虑到浏览器已经支持 Declarative Shadow DOM，是应该考虑把 SSR 作为 框架的一等公民了。
+评论：https://googlechromelabs.github.io/howto-components/howto-tabs/ 兼顾 no-javascript</p>
+</blockquote>
+</li>
+<li>CSS in JS
+作者认为在 JS 中使用字符串形式编写 css，与性能方面的建议相矛盾。未来可以考虑使用  adoptedStyleSheet 和 ::theme, ::part 对
+shadow dom 内部进行样式设置。</li>
+<li>Platform fatigue
+在2018年这个时间节点，浏览器对 CE 等标准的支持程度还非常的不成熟，而使用 polyfill 也不是一个理想的方案。
+<blockquote>
+<p>2020之后的浏览器都完全支持 v1 规范</p>
+</blockquote>
+</li>
+<li>Polyfills</li>
+<li>Composition
+作者希望组件能够控制何时渲染其 slot 而非初始化时就进行加载。
+<blockquote>
+<p>需要这种功能时，不应该使用 light dom 而应该延迟加载</p>
+</blockquote>
+</li>
+<li>Confusion between props and attributes
+<blockquote>
+<p>这一点，我没有很理解作者的观点。非 WC 框架，组件只有 props 一个空间，而 WC 有 property + attribute 两个空间，这个谈不上好、或者不好
+因为这就是历史的基点。 或许我们要做的，是保持两个空间的一致性，哪些属性应该只在 property 空间，哪些在两个空间，并最好保持一致性。</p>
+</blockquote>
+</li>
+<li>Leaky design
+<pre><code class="language-javascript"> const element = document.querySelector('my-thing');
+ element.attributeChangedCallback('w', 't', 'f');
+</code></pre>
+这或许是个瑕疵, attributeChangeCallback 应该只能是浏览器去调用。</li>
+<li>The DOM is bad
+作者在这个例子，似乎 Lit 框架中不存在这个问题</li>
+<li>Global namespace
+所有的Web Component 注册到单个命名空间中</li>
+<li>These are all solved Problem
+作为认为上面的这些问题，都是曾经存在，并且在框架中已经解决了的，重新发明的WebComponent再次面对这个问题，是一个浪费。</li>
+</ol>
+<h1 id="web-components-are-not-the-future"><a class="header" href="#web-components-are-not-the-future"><a href="https://dev.to/ryansolid/web-components-are-not-the-future-48bh">Web Components Are Not the Future</a></a></h1>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-025d9952.js"></script>
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>

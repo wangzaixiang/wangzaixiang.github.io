@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>无端唤醒 | 程序人生</title>
+<meta name="description" content="Object.wait 等方法有一个很特别的场景：spurious wakeup, 会导致一些非常低频的Bug.">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/spurious-weakup/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="无端唤醒">
+  <meta name="twitter:description" content="Object.wait 等方法有一个很特别的场景：spurious wakeup, 会导致一些非常低频的Bug.">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="无端唤醒">
+  <meta property="og:description" content="Object.wait 等方法有一个很特别的场景：spurious wakeup, 会导致一些非常低频的Bug.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/spurious-weakup/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="无端唤醒">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/spurious-weakup/"
+      },
+      "headline": "无端唤醒",
+      "image": ,
+      "datePublished": "2021-06-10",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "无端唤醒"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "无端唤醒",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "Object.wait 等方法有一个很特别的场景：spurious wakeup, 会导致一些非常低频的Bug."
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Spurious Weakup",
+            "item": "https://wangzaixiang.github.io/blog/spurious-weakup/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/spurious-weakup/#wu-duan-huan-xing-spurious-wakeup">无端唤醒（spurious wakeup）</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/spurious-weakup/#xiao-jie">小结</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>无端唤醒</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/java-volatile/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted June 10, 2021 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>6&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/dapeng-json/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="wu-duan-huan-xing-spurious-wakeup">无端唤醒（spurious wakeup）</h1>
+<p>前些时间，我们自研的一款 Redis 驱动，有反应存在如下的现象：偶尔会出现 redis 发送命令，在没有超时的情况下，却返回了“没有收到返回结果”的情况，虽然几率很低，但也是断断续续出现了几次，应该是一个非常隐藏的 BUG。</p>
+<p>为了定位这个问题，我们将相关的逻辑进行了简化，编写了如下等效的代码，检测是否会重现问题。</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span style="color:#b48ead;">package </span><span>demo;
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>java.util.concurrent.</span><span style="color:#ebcb8b;">BlockingQueue</span><span>;
+</span><span style="color:#b48ead;">import </span><span>java.util.concurrent.</span><span style="color:#ebcb8b;">LinkedBlockingQueue</span><span>;
+</span><span style="color:#b48ead;">import </span><span>java.util.concurrent.atomic.</span><span style="color:#ebcb8b;">AtomicInteger</span><span>;
+</span><span>
+</span><span style="color:#b48ead;">public class </span><span style="color:#ebcb8b;">Test1 </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#ebcb8b;">BlockingQueue</span><span style="color:#eff1f5;">&lt;</span><span style="color:#ebcb8b;">Task</span><span style="color:#eff1f5;">&gt; queue </span><span>= </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">LinkedBlockingQueue</span><span style="color:#eff1f5;">&lt;&gt;(</span><span style="color:#d08770;">100</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Task </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">        </span><span style="color:#ebcb8b;">String </span><span style="color:#eff1f5;">request;
+</span><span style="color:#eff1f5;">        </span><span style="color:#ebcb8b;">String </span><span style="color:#eff1f5;">response;
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Consumer </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">Thread </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">public </span><span style="color:#8fa1b3;">Consumer</span><span style="color:#eff1f5;">(){
+</span><span style="color:#eff1f5;">            </span><span style="color:#bf616a;">setDaemon</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">true</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">        }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">        @</span><span style="color:#bf616a;">Override
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">public void </span><span style="color:#8fa1b3;">run</span><span style="color:#eff1f5;">() {
+</span><span style="color:#eff1f5;">            </span><span style="color:#b48ead;">while</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">true</span><span style="color:#eff1f5;">){
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">try </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">                    </span><span style="color:#ebcb8b;">Task</span><span style="color:#eff1f5;"> task </span><span>=</span><span style="color:#eff1f5;"> queue.</span><span style="color:#bf616a;">take</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">                    </span><span style="color:#b48ead;">synchronized </span><span style="color:#eff1f5;">(task) {
+</span><span style="color:#eff1f5;">                        task.response </span><span>=</span><span style="color:#eff1f5;"> task.request.</span><span style="color:#bf616a;">toUpperCase</span><span style="color:#eff1f5;">();  
+</span><span style="color:#eff1f5;">                        task.</span><span style="color:#bf616a;">notify</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">                    }
+</span><span style="color:#eff1f5;">                }
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">catch</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#bf616a;">ex</span><span style="color:#eff1f5;">){
+</span><span style="color:#eff1f5;">                    ex.</span><span style="color:#bf616a;">printStackTrace</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">                }
+</span><span style="color:#eff1f5;">            }
+</span><span style="color:#eff1f5;">        }
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Producer </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">Thread </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">        @</span><span style="color:#bf616a;">Override
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">public void </span><span style="color:#8fa1b3;">run</span><span style="color:#eff1f5;">() {
+</span><span style="color:#eff1f5;">            </span><span style="color:#b48ead;">int</span><span style="color:#eff1f5;"> count </span><span>= </span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">            </span><span style="color:#b48ead;">while</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">true</span><span style="color:#eff1f5;">){
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">final </span><span style="color:#ebcb8b;">Task</span><span style="color:#eff1f5;"> task </span><span>= </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Task</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">                task.request </span><span>= &quot;</span><span style="color:#a3be8c;">Hello</span><span>&quot;</span><span style="color:#eff1f5;">;  </span><span style="color:#65737e;">// visible to others?
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">boolean</span><span style="color:#eff1f5;"> offOK </span><span>=</span><span style="color:#eff1f5;"> queue.</span><span style="color:#bf616a;">offer</span><span style="color:#eff1f5;">(task);  </span><span style="color:#65737e;">// check offer
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">if</span><span style="color:#eff1f5;">(offOK </span><span>== </span><span style="color:#d08770;">false</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">                    </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.out.</span><span style="color:#bf616a;">println</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">offer failed, retry</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">                    </span><span style="color:#b48ead;">continue</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">                }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">boolean</span><span style="color:#eff1f5;"> waitOk </span><span>= </span><span style="color:#d08770;">false</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">long</span><span style="color:#eff1f5;"> start, end;
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">synchronized </span><span style="color:#eff1f5;">(task){
+</span><span style="color:#eff1f5;">                    </span><span style="color:#b48ead;">if</span><span style="color:#eff1f5;">(task.response </span><span>== </span><span style="color:#d08770;">null</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">                        </span><span style="color:#b48ead;">try </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">                            task.</span><span style="color:#bf616a;">wait</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">60_000</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">                            waitOk </span><span>= </span><span style="color:#d08770;">true</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">                            </span><span style="color:#b48ead;">if</span><span style="color:#eff1f5;">(task.response </span><span>== </span><span style="color:#d08770;">null</span><span style="color:#eff1f5;">){ </span><span style="color:#65737e;">// do volatile required?
+</span><span style="color:#eff1f5;">                                </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.out.</span><span style="color:#bf616a;">println</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">reponse is null waitok = </span><span>&quot; +</span><span style="color:#eff1f5;"> waitOk </span><span>+ &quot;</span><span style="color:#a3be8c;"> waitTime:</span><span>&quot; +</span><span style="color:#eff1f5;"> count);
+</span><span style="color:#eff1f5;">                                </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.</span><span style="color:#bf616a;">exit</span><span style="color:#eff1f5;">(</span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">                                </span><span style="color:#b48ead;">break</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">                            }
+</span><span style="color:#eff1f5;">                        }
+</span><span style="color:#eff1f5;">                        </span><span style="color:#b48ead;">catch</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#bf616a;">ex</span><span style="color:#eff1f5;">){
+</span><span style="color:#eff1f5;">                            ex.</span><span style="color:#bf616a;">printStackTrace</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">                        }
+</span><span style="color:#eff1f5;">                    }
+</span><span style="color:#eff1f5;">                }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">                count </span><span>+= </span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">;
+</span><span style="color:#eff1f5;">                </span><span style="color:#b48ead;">if</span><span style="color:#eff1f5;">(count </span><span>% </span><span style="color:#d08770;">1000_000 </span><span>== </span><span style="color:#d08770;">0</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">                    </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.out.</span><span style="color:#bf616a;">println</span><span style="color:#eff1f5;">(</span><span>&quot;</span><span style="color:#a3be8c;">runs </span><span>&quot; +</span><span style="color:#eff1f5;"> count</span><span>/</span><span style="color:#d08770;">1000_000 </span><span>+ &quot;</span><span style="color:#a3be8c;">M turns</span><span>&quot;</span><span style="color:#eff1f5;">);
+</span><span style="color:#eff1f5;">                }
+</span><span style="color:#eff1f5;">            }
+</span><span style="color:#eff1f5;">        }
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">runTest</span><span style="color:#eff1f5;">(){
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Producer</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">start</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Consumer</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">start</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">public static void </span><span style="color:#8fa1b3;">main</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">String</span><span style="color:#b48ead;">[] </span><span style="color:#bf616a;">args</span><span style="color:#eff1f5;">) {
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">new </span><span style="color:#ebcb8b;">Test1</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">runTest</span><span style="color:#eff1f5;">();
+</span><span style="color:#eff1f5;">    }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">}
+</span><span>
+</span></code></pre>
+<p>这个代码是一个简单的生产者、消费者模型：</p>
+<ol>
+<li>生产者：往队列中提交一个消息（Task），等待消费者处理完后唤醒生产者。期望 Task 中的response已经有正确的值。</li>
+<li>消费者：等待队列的消息，处理完一条消息后，唤醒生产者。</li>
+</ol>
+<p>运行如上的测试代码，很快就可以重现问题，可能在5百万次至1-2亿次循环后，程序打印 <code>reponse is null </code>后退出。</p>
+<p>最开始的时候，我们的怀疑点是：Consumer 线程中执行的 <code>task.response = task.request.toUppercase()</code> 结果对 Producer 线程不可见。（但按照 synchronize 的语义，在 synchronize 块monitor exit离开时，数据修改对其他线程是可见的），我们尝试将 response 字段修饰为 volatile， 但结果仍然会出现同样的问题，因此，问题，并不处在 synchronize/volatile 引起的数据可见性方面。</p>
+<blockquote>
+<p>关于JMM的学习，强烈推荐：<a href="https://www.infoq.cn/minibook/java_memory_model?utm_source=related_read&amp;utm_medium=article">深入理解Java内存模型</a>，以及对照查看 <a href="https://docs.oracle.com/javase/specs/jls/se15/html/jls-17.html#jls-17.4">JMM官方文档</a></p>
+</blockquote>
+<p>因为这段代码能够更好的进行问题的重现（而原 Redis 驱动要重现这个问题，则需要数天的时间），因此，我们对这段代码略作改造，在出现异常的代码点上，添加了一些调试代码，结果发现了一个有意思的现象：</p>
+<ul>
+<li>当生产者进入到 <code>System.exit</code>时， 相应的消费者还没有进入到 <code>synchronzie</code> 块中。</li>
+</ul>
+<p>也就是说，当前的Consumer并没有开始消费 Task，自然也没有进行 notify 调用，但Producer的 wait 却在没有任何异常的情况下，已经返回了。</p>
+<p>这个时候，再仔细阅读一下 Object.wait 的文档：</p>
+<blockquote>
+<p>A thread can also wake up without being notified, interrupted, or
+timing out, a so-called <i>spurious wakeup</i>.  While this will rarely
+occur in practice, applications must guard against it by testing for
+the condition that should have caused the thread to be awakened, and
+continuing to wait if the condition is not satisfied.  In other words,
+waits should always occur in loops, like this one:</p>
+<pre>
+  synchronized (obj) {
+      while (&lt;condition does not hold&gt;)
+          obj.wait(timeout);
+      ... // Perform action appropriate to condition
+  }
+</pre>
+<p>(For more information on this topic, see Section 3.2.3 in Doug Lea's
+"Concurrent Programming in Java (Second Edition)" (Addison-Wesley,
+2000), or Item 50 in Joshua Bloch's "Effective Java Programming
+Language Guide" (Addison-Wesley, 2001).</p>
+</blockquote>
+<p>看来之前都忽略了这个 spurious wakeup (无端唤醒)。按照这个文档的指导，上述的代码应该重写为：</p>
+<pre data-lang="java" style="background-color:#2b303b;color:#c0c5ce;" class="language-java "><code class="language-java" data-lang="java"><span>
+</span><span>   </span><span style="color:#b48ead;">synchronized</span><span>(task) {
+</span><span>        </span><span style="color:#b48ead;">long</span><span> begin = </span><span style="color:#ebcb8b;">System</span><span>.</span><span style="color:#bf616a;">currentTimeMillis</span><span>();
+</span><span>        </span><span style="color:#b48ead;">while</span><span>(task.response == </span><span style="color:#d08770;">null</span><span>) {
+</span><span>            </span><span style="color:#b48ead;">try </span><span>{
+</span><span>                </span><span style="color:#b48ead;">long</span><span> now = </span><span style="color:#ebcb8b;">System</span><span>.</span><span style="color:#bf616a;">currentTimeMillis</span><span>();
+</span><span>                </span><span style="color:#b48ead;">long</span><span> waitTime = begin + </span><span style="color:#d08770;">60_000</span><span style="color:#b48ead;">L </span><span>- now;
+</span><span>                </span><span style="color:#b48ead;">if</span><span>(waitTime &gt; </span><span style="color:#d08770;">0</span><span>) 
+</span><span>                    task.</span><span style="color:#bf616a;">wait</span><span>(waitTime);
+</span><span>            }
+</span><span>            </span><span style="color:#b48ead;">catch</span><span>(</span><span style="color:#ebcb8b;">InterruptedException </span><span style="color:#bf616a;">ex</span><span>){
+</span><span>                ex.</span><span style="color:#bf616a;">printStackTrace</span><span>();
+</span><span>            }
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">if</span><span>(task.response == </span><span style="color:#d08770;">null</span><span>) { </span><span style="color:#65737e;">// do volatile required?
+</span><span>        </span><span style="color:#ebcb8b;">System</span><span>.out.</span><span style="color:#bf616a;">println</span><span>(&quot;</span><span style="color:#a3be8c;">reponse is null waitok = </span><span>&quot; + count);
+</span><span>        </span><span style="color:#ebcb8b;">System</span><span>.</span><span style="color:#bf616a;">exit</span><span>(</span><span style="color:#d08770;">1</span><span>);
+</span><span>        </span><span style="color:#b48ead;">break</span><span>;
+</span><span>    }
+</span></code></pre>
+<h2 id="xiao-jie">小结</h2>
+<ol>
+<li>Object.wait 会被无端唤醒，这个知识点较为冷门。如果没有关注到这个点的话，wait/notify 很可能会出现小几率的是失败（在上亿级调用的场景下，则近乎是大几率事件）。</li>
+<li>对小几率出现的并发问题，需要严重以待，这些事件几乎肯定是程序的Bug，出现一次，就意味着一定会有第二次和更多次。</li>
+<li>伴随这个问题的解决，我几乎重温了一遍 JMM，在逐一排查的过程中，似乎又深入理解了一些。这些案例带给我们的帮助，相比单纯的学习要效果好很多。</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/java-volatile/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/dapeng-json/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

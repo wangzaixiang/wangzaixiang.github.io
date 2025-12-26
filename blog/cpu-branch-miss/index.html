@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>M1 CPU 分支预测失误对性能的影响测试 | 程序人生</title>
+<meta name="description" content="在超标量处理器中，分支预测的准确率如何，以及分支预测准确率对性能的影响如何，这个实验是在 M1 CPU 上的一个测试，为我们更好的理解现代超标量处理器下分支预测的工作原理提供了一个很好的视角，帮助我们更好的编写高性能的代码。">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/cpu-branch-miss/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="M1 CPU 分支预测失误对性能的影响测试">
+  <meta name="twitter:description" content="在超标量处理器中，分支预测的准确率如何，以及分支预测准确率对性能的影响如何，这个实验是在 M1 CPU 上的一个测试，为我们更好的理解现代超标量处理器下分支预测的工作原理提供了一个很好的视角，帮助我们更好的编写高性能的代码。">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="M1 CPU 分支预测失误对性能的影响测试">
+  <meta property="og:description" content="在超标量处理器中，分支预测的准确率如何，以及分支预测准确率对性能的影响如何，这个实验是在 M1 CPU 上的一个测试，为我们更好的理解现代超标量处理器下分支预测的工作原理提供了一个很好的视角，帮助我们更好的编写高性能的代码。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/cpu-branch-miss/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="M1 CPU 分支预测失误对性能的影响测试">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/cpu-branch-miss/"
+      },
+      "headline": "M1 CPU 分支预测失误对性能的影响测试",
+      "image": ,
+      "datePublished": "2025-04-29",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "M1 CPU 分支预测失误对性能的影响测试"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "M1 CPU 分支预测失误对性能的影响测试",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "在超标量处理器中，分支预测的准确率如何，以及分支预测准确率对性能的影响如何，这个实验是在 M1 CPU 上的一个测试，为我们更好的理解现代超标量处理器下分支预测的工作原理提供了一个很好的视角，帮助我们更好的编写高性能的代码。"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Cpu Branch Miss",
+            "item": "https://wangzaixiang.github.io/blog/cpu-branch-miss/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/cpu-branch-miss/#m1-cpu-fen-zhi-yu-ce-shi-wu-dui-xing-neng-de-ying-xiang-ce-shi">M1 CPU 分支预测失误对性能的影响测试</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/cpu-branch-miss/#ce-shi-jie-guo">测试结果</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/cpu-branch-miss/#fen-xi">分析</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/cpu-branch-miss/#si-kao">思考</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>M1 CPU 分支预测失误对性能的影响测试</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/datafusion-hashjoin/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted April 29, 2025&nbsp;&hyphen;&nbsp;<strong>9&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/duck-push-vs-datafusion-pull/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="m1-cpu-fen-zhi-yu-ce-shi-wu-dui-xing-neng-de-ying-xiang-ce-shi">M1 CPU 分支预测失误对性能的影响测试</h1>
+<p>在超标量处理器中，分支预测的准确率如何，以及分支预测准确率对性能的影响如何，这个实验是在 M1 CPU 上的一个测试，为我们更好的理解现代超标量处理器下
+分支预测的工作原理提供了一个很好的视角，帮助我们更好的编写高性能的代码。</p>
+<p><a href="https://github.com/wangzaixiang/vectorize_engine/blob/main/playgrounds/try_cpu/src/bin/TestLoop.rs">测试代码</a>：</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">struct </span><span>TestCase {
+</span><span>    </span><span style="color:#bf616a;">name</span><span>: String,   </span><span style="color:#65737e;">// same as mmap file
+</span><span>    </span><span style="color:#bf616a;">numbers</span><span>: </span><span style="color:#b48ead;">usize</span><span>, </span><span style="color:#65737e;">// number of elements
+</span><span>    </span><span style="color:#bf616a;">mmap</span><span>: Mmap
+</span><span>}
+</span><span style="color:#b48ead;">impl </span><span>TestCase {
+</span><span>    
+</span><span>    </span><span style="color:#65737e;">/// 遍历数组，对每一个元素遍历其每一个为1的二进制位
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">execute</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>) -&gt; (</span><span style="color:#b48ead;">u64</span><span>, </span><span style="color:#b48ead;">u64</span><span>) {
+</span><span>        </span><span style="color:#b48ead;">let mut</span><span> sum = </span><span style="color:#d08770;">0</span><span style="color:#b48ead;">u64</span><span>;
+</span><span>        </span><span style="color:#b48ead;">let mut</span><span> loops = </span><span style="color:#d08770;">0</span><span style="color:#b48ead;">u64</span><span>;
+</span><span>        </span><span style="color:#b48ead;">let</span><span> numbers = </span><span style="color:#b48ead;">unsafe </span><span>{ std::slice::from_raw_parts(</span><span style="color:#bf616a;">self</span><span>.mmap.</span><span style="color:#96b5b4;">as_ptr</span><span>() as </span><span style="color:#b48ead;">*const u64</span><span>, </span><span style="color:#bf616a;">self</span><span>.numbers) };
+</span><span>
+</span><span>        numbers.</span><span style="color:#96b5b4;">iter</span><span>().</span><span style="color:#96b5b4;">for_each</span><span>(|&amp;</span><span style="color:#bf616a;">n</span><span>| {
+</span><span>            </span><span style="color:#b48ead;">let mut</span><span> n = n;
+</span><span>            </span><span style="color:#b48ead;">while</span><span> n &gt; </span><span style="color:#d08770;">0 </span><span>{ </span><span style="color:#65737e;">/// 这个分支判断的准确度是本测试的关键点，随着样本数据的随机性不同，其预测准确度也会不同
+</span><span>                </span><span style="color:#b48ead;">let</span><span> bit = n.</span><span style="color:#96b5b4;">trailing_zeros</span><span>();
+</span><span>                n &amp;= !(</span><span style="color:#d08770;">1 </span><span>&lt;&lt; bit);
+</span><span>                sum += bit as </span><span style="color:#b48ead;">u64</span><span>;
+</span><span>                loops += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            }
+</span><span>        });
+</span><span>
+</span><span>        (sum, loops)
+</span><span>    }
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">/// data1: 0..n 样本数据比较有序，预期分支预测成功率高
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">generate_data1</span><span>(</span><span style="color:#bf616a;">slice</span><span>: &amp;</span><span style="color:#b48ead;">mut</span><span> [</span><span style="color:#b48ead;">u64</span><span>]) {
+</span><span>    (</span><span style="color:#d08770;">0</span><span>..slice.</span><span style="color:#96b5b4;">len</span><span>()).</span><span style="color:#96b5b4;">for_each</span><span>( |</span><span style="color:#bf616a;">n</span><span>| slice[n] = n as </span><span style="color:#b48ead;">u64</span><span>);
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">/// data2: 每个样本的 popcnt 都是 15，预期分支预测成功率最高
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">generate_data2</span><span>(</span><span style="color:#bf616a;">slice</span><span>: &amp;</span><span style="color:#b48ead;">mut</span><span> [</span><span style="color:#b48ead;">u64</span><span>]) {
+</span><span>    </span><span style="color:#b48ead;">let</span><span> nums = [</span><span style="color:#d08770;">0xFFF7</span><span style="color:#b48ead;">u64</span><span>, </span><span style="color:#d08770;">0xFFF70</span><span>, </span><span style="color:#d08770;">0xFFF700</span><span>, </span><span style="color:#d08770;">0xFFF7000</span><span>, </span><span style="color:#d08770;">0xFFF70000</span><span>, </span><span style="color:#d08770;">0xFFF700000</span><span>, </span><span style="color:#d08770;">0xFFF7000000</span><span>, </span><span style="color:#d08770;">0xFFF70000000</span><span>];
+</span><span>    (</span><span style="color:#d08770;">0</span><span>..slice.</span><span style="color:#96b5b4;">len</span><span>()).</span><span style="color:#96b5b4;">for_each</span><span>( |</span><span style="color:#bf616a;">n</span><span>| slice[n] = nums[ n &amp; </span><span style="color:#d08770;">0x7 </span><span>]);
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">/// data3: 完全随机的数据样本，预期分支预测成功率低
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">generate_data3</span><span>(</span><span style="color:#bf616a;">slice</span><span>: &amp;</span><span style="color:#b48ead;">mut</span><span> [</span><span style="color:#b48ead;">u64</span><span>]) {
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> random = rand::thread_rng();
+</span><span>    (</span><span style="color:#d08770;">0</span><span>..slice.</span><span style="color:#96b5b4;">len</span><span>()).</span><span style="color:#96b5b4;">for_each</span><span>( |</span><span style="color:#bf616a;">n</span><span>| slice[n] = random.</span><span style="color:#96b5b4;">next_u64</span><span>());
+</span><span>}
+</span></code></pre>
+<h2 id="ce-shi-jie-guo">测试结果</h2>
+<p>本次测试是在 M1 Max（64G) 和 M4(32G) 上进行，由于采用 mmap 方式读取数据，由于测试文件的大小 &lt; 8G，在两个环境中，均可保证文件全部在 page cache 中，
+测试结果一般采用第2轮后的结果，以避免 IO 的影响。</p>
+<table><thead><tr><th>test case</th><th>IPC</th><th>branch-misses</th><th>ns/iter</th><th>description</th></tr></thead><tbody>
+<tr><td>test1-M1</td><td>3.996</td><td>4.88e-3</td><td>0.776</td><td>测试样本较为有序</td></tr>
+<tr><td>test2-M1</td><td>4.596</td><td>6e-7</td><td>0.678</td><td>测试样本非常有序</td></tr>
+<tr><td>test3-M1</td><td>1.908</td><td>2.9e-2</td><td>1.555</td><td>测试样本随机无序</td></tr>
+<tr><td>test1-M4</td><td>4.63</td><td>3.44e-3</td><td>0.563</td><td></td></tr>
+<tr><td>test2-M4</td><td>5.307</td><td>1.5e-7</td><td>0.498</td><td></td></tr>
+<tr><td>test3-M4</td><td>2.034</td><td>2.9e-2</td><td>1.136</td><td></td></tr>
+</tbody></table>
+<p>M1 vs M4 微架构对比（来源于 deepseek ）</p>
+<ol>
+<li>解码器宽度优化
+<ul>
+<li>指令解码能力提升
+<ul>
+<li>采用 10 宽解码单元（每个时钟周期可解码 10 条指令），相比 M3 的 9 宽进一步加宽，推测这是苹果自 M1（推测为 8 宽）以来的最大规模前端优化。</li>
+<li>M1：基于 ARMv8 架构，解码器宽度较窄（推测为 8 宽），指令吞吐量较低，限制了并行处理能力。</li>
+</ul>
+</li>
+<li>前端与后端协同改进
+<ul>
+<li>M4 的解码器与后端执行单元匹配更高效，通过 扩大分支预测窗口和 优化指令预取逻辑，减少流水线停顿，提升指令级并行度（ILP）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>后端执行架构升级
+<ul>
+<li>执行单元与调度队列扩展
+<ul>
+<li>M4：后端 Dispatch Buffer（指令派发缓冲区）和 浮点调度队列容量显著增加，支持更复杂的乱序执行（Out-of-Order Execution）。例如：
+<ul>
+<li>浮点单元（FPU）调度队列深度增加 20%，支持更多指令并行执行。</li>
+<li>新增 SME 单元（可扩展矩阵扩展，类似 ARMv9 的 SVE2），专为 AI 和 SIMD 密集型任务优化，加速矩阵运算。</li>
+</ul>
+</li>
+<li>M1：后端执行资源较少，缺乏专用 AI 加速单元，依赖传统 SIMD 指令（如 NEON）处理并行任务。</li>
+</ul>
+</li>
+<li>内存子系统优化
+<ul>
+<li>M4 采用 -7500 内存，延迟从 M1 的 96ns 降低至 88ns，配合更大的共享 L2 缓存（16MB），减少后端执行单元等待数据的时间。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="fen-xi">分析</h2>
+<p>以 test1 在 M1 上的某次样本为例：</p>
+<pre data-lang="text" style="background-color:#2b303b;color:#c0c5ce;" class="language-text "><code class="language-text" data-lang="text"><span>thread: 88508440, trace time: 4.999996
+</span><span>        cycles: 16016222700
+</span><span>  instructions: 63551443474
+</span><span>      branches: 7620789323
+</span><span> branch-misses: 37781905
+</span><span> 
+</span><span>case: test1, sum: 213330485248, loops: 14846928128, elapsed: 11.525sec, avg: 0.776 ns/iter
+</span></code></pre>
+<ol>
+<li>
+<p>1 iter</p>
+<ul>
+<li>0.776ns</li>
+<li>cycles: 2.486</li>
+<li>IPC: 3.97</li>
+<li>instructions: 9.86: 这个数与 下面的汇编指令是一致的（9，考虑到外层循环还有一些指令的分担，后面看看是否有更精准的测试方法）</li>
+</ul>
+</li>
+<li>
+<p>核心循环的 asm: 一共 9 条指令，根据指令的依赖性，至少需要 5 个 cycle 才能完成一次迭代</p>
+<pre data-lang="asm" style="background-color:#2b303b;color:#c0c5ce;" class="language-asm "><code class="language-asm" data-lang="asm"><span style="color:#d08770;">0x1000028a0</span><span style="color:#8fa1b3;">:
+</span><span style="color:#d08770;">1</span><span style="color:#8fa1b3;">:	rbit   x11</span><span>, </span><span style="color:#8fa1b3;">x10</span><span style="color:#65737e;">             ; 1 x11 = reverse x10 bits, u1-6            
+</span><span style="color:#d08770;">2</span><span style="color:#8fa1b3;">:	clz    x11</span><span>, </span><span style="color:#8fa1b3;">x11</span><span style="color:#65737e;">             ; 2 x11 = count leading zeros of x11, u1-6    
+</span><span style="color:#d08770;">3</span><span style="color:#8fa1b3;">:	</span><span style="color:#b48ead;">lsl    </span><span style="color:#8fa1b3;">x12</span><span>, </span><span style="color:#8fa1b3;">x9</span><span>, </span><span style="color:#8fa1b3;">x11</span><span style="color:#65737e;">         ; 3 x12 = 1 &lt;&lt; x11  u1-6    
+</span><span style="color:#d08770;">4</span><span style="color:#8fa1b3;">:	</span><span style="color:#b48ead;">add    </span><span style="color:#8fa1b3;">x25</span><span>, </span><span style="color:#8fa1b3;">x11</span><span>, </span><span style="color:#8fa1b3;">x25</span><span style="color:#65737e;">        ; 4.1   sum += x11  u1-6  
+</span><span style="color:#d08770;">5</span><span style="color:#8fa1b3;">:	</span><span style="color:#b48ead;">add    </span><span style="color:#8fa1b3;">x24</span><span>, </span><span style="color:#8fa1b3;">x24</span><span>, </span><span style="color:#8fa1b3;">#</span><span style="color:#d08770;">0x1</span><span style="color:#65737e;">       ; 4.2   loops += 1  u1-6  
+</span><span style="color:#d08770;">6</span><span style="color:#8fa1b3;">:	</span><span style="color:#b48ead;">mov    </span><span style="color:#8fa1b3;">x1</span><span>, </span><span style="color:#8fa1b3;">x24</span><span style="color:#65737e;">              ; 5.1   x1 = sum  ; 这条指令本来可以挪到循环外面，rustc 没有进行这个优化  
+</span><span style="color:#d08770;">7</span><span style="color:#8fa1b3;">:	</span><span style="color:#b48ead;">mov    </span><span style="color:#8fa1b3;">x0</span><span>, </span><span style="color:#8fa1b3;">x25</span><span style="color:#65737e;">              ; 5.2   x0 = loop ; 这条指令本来可以挪到循环外面，rustc  没有进行这个优化 
+</span><span style="color:#d08770;">8</span><span style="color:#8fa1b3;">:	bics   x10</span><span>, </span><span style="color:#8fa1b3;">x10</span><span>, </span><span style="color:#8fa1b3;">x12</span><span style="color:#65737e;">        ; 4.3   x10 = x10 &amp; ~x12    2 * u1-3
+</span><span style="color:#d08770;">9</span><span style="color:#8fa1b3;">:	b.ne   </span><span style="color:#d08770;">0x1000028a0</span><span style="color:#65737e;">          ; 5.3. &lt;+3112&gt; [inlined] core::num::&lt;impl u64&gt;::trailing_zeros at uint_macros.rs:162:20
+</span><span style="color:#65737e;">                                ; u1-2
+</span></code></pre>
+</li>
+<li>
+<p>大致相当于在每 5 cycle 中完成了 2 次迭代，即相当于 loop i 和 loop i+1 同时执行</p>
+<ul>
+<li>限制只能执行 2 个迭代的原因，估计是 bics / b.ne 指令仅能在 u1-2 中执行，其执行单元的限制导致了后续的指令无法继续并行。</li>
+<li>如果要进一步提升并发行，则需要 cpu 在设计上进一步提高执行单元的数量。</li>
+</ul>
+</li>
+<li>
+<p>在大部份情况下，CPU 的 分支预测准确率相当之高，比如 test1 中准确度高达：99.512%，test2 则是 99.9999%，而 test3 则是 97.1%。
+其中 test3 的样本数据是完全随机的，分支预测的准确率仍然高达 97.1%。这个值是远高于我的预期的。</p>
+</li>
+<li>
+<p>分支预测准确度对性能的影响是巨大的，test3 的准确度降低了2.9%，但整体性能则下降了 约 50%。</p>
+<blockquote>
+<p>假设分支预测成功时 ns/iter 为 x，失败时为 y，则：</p>
+<ul>
+<li>x = 0.678</li>
+<li>(0.971 * x + 0.029 * y) = 1.555</li>
+<li>y = 30.91</li>
+</ul>
+<p>y/x = 45.6 即：1次分支预测失败的成本约等于 45.6 次分支预测成功的成本。</p>
+</blockquote>
+<p>当分支预测失败时，进入到流水线后面的指令需要进行清理，并重置前端取指、译码等操作，在这个案例中，则相当于 ～50-100 个 cycle 的成本，
+这个值显然高于预期了。（网上的说法是 15-20 个 cycle）</p>
+</li>
+</ol>
+<h2 id="si-kao">思考</h2>
+<p>当数据本身的无序性较高时，CPU 的分支预测能力会大幅度下降，其对于性能的影响也会大幅度上升。如何应对这类问题呢，这里是一些我的思考：</p>
+<ol>
+<li>通过数据的预处理，提升数据的有序性，来提升分支预测的准确度。</li>
+<li>评估消除分支的可能性，例如，使用 算数操作 来替代分支操作。
+<ul>
+<li>简单条件判断转换为 CMOV(x86), CSEL(ARM) 指令</li>
+<li><code>if (flag) sum += x; </code> 改写为 <code>sum += flag * x;</code></li>
+<li>使用 SIMD 实现无分支的并行计算</li>
+</ul>
+</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/datafusion-hashjoin/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/duck-push-vs-datafusion-pull/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

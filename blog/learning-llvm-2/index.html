@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>LLVM学习系列二：从一段简单的C代码来学习LLVM-IR | 程序人生</title>
+<meta name="description" content="本文通过一个简单的 C 代码来学习 LLVM IR 的生成过程，以及如何通过命令行工具来查看各个 pass 的输出。">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/learning-llvm-2/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="LLVM学习系列二：从一段简单的C代码来学习LLVM-IR">
+  <meta name="twitter:description" content="本文通过一个简单的 C 代码来学习 LLVM IR 的生成过程，以及如何通过命令行工具来查看各个 pass 的输出。">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="LLVM学习系列二：从一段简单的C代码来学习LLVM-IR">
+  <meta property="og:description" content="本文通过一个简单的 C 代码来学习 LLVM IR 的生成过程，以及如何通过命令行工具来查看各个 pass 的输出。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/learning-llvm-2/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="LLVM学习系列二：从一段简单的C代码来学习LLVM-IR">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/learning-llvm-2/"
+      },
+      "headline": "LLVM学习系列二：从一段简单的C代码来学习LLVM-IR",
+      "image": ,
+      "datePublished": "2025-01-05",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "LLVM学习系列二：从一段简单的C代码来学习LLVM-IR"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "LLVM学习系列二：从一段简单的C代码来学习LLVM-IR",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文通过一个简单的 C 代码来学习 LLVM IR 的生成过程，以及如何通过命令行工具来查看各个 pass 的输出。"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Learning Llvm 2",
+            "item": "https://wangzaixiang.github.io/blog/learning-llvm-2/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/learning-llvm-2/#shi-li-dai-ma">示例代码</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/learning-llvm-2/#shi-li-xue-xi-o3-de-you-hua-guo-cheng">实例学习 -O3 的优化过程:</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/learning-llvm-2/#ming-ling-xing-gong-ju-can-kao">命令行工具参考</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/learning-llvm-2/#xiao-jie">小结</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>LLVM学习系列二：从一段简单的C代码来学习LLVM-IR</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/the-1brc-program/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted January  5, 2025&nbsp;&hyphen;&nbsp;<strong>12&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/c-optimize/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>本文承接 <a href="https://wangzaixiang.github.io/blog/learning-llvm/">LLVM 学习系列一：初读 LLVM-IR 示例代码</a> 中，本文将通过一个简单的 C 代码来学习 LLVM IR 的生成过程，
+以及如何通过命令行工具来查看各个 pass 的输出。</p>
+<h1 id="shi-li-dai-ma">示例代码</h1>
+<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">demo1</span><span>(</span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">x</span><span>) {
+</span><span>  </span><span style="color:#b48ead;">int</span><span> y = </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span>  </span><span style="color:#b48ead;">if</span><span>(x == </span><span style="color:#d08770;">1</span><span>) {
+</span><span>    y = </span><span style="color:#d08770;">10</span><span>;
+</span><span>  }
+</span><span>  </span><span style="color:#b48ead;">else if</span><span>(x == </span><span style="color:#d08770;">100</span><span>){
+</span><span>    y = </span><span style="color:#d08770;">20</span><span>;
+</span><span>  }
+</span><span>  </span><span style="color:#b48ead;">else if</span><span>(x == </span><span style="color:#d08770;">200</span><span>){
+</span><span>    y = </span><span style="color:#d08770;">30</span><span>;
+</span><span>  }
+</span><span>  </span><span style="color:#b48ead;">else </span><span>{
+</span><span>    y = </span><span style="color:#d08770;">40</span><span>;
+</span><span>  }
+</span><span>  </span><span style="color:#b48ead;">return</span><span> y;
+</span><span>}
+</span></code></pre>
+<h1 id="shi-li-xue-xi-o3-de-you-hua-guo-cheng">实例学习 -O3 的优化过程:</h1>
+<ol>
+<li>
+<p>编译：<code>clang -S -emit-llvm -O3 -mllvm -print-after-all demo1.c -o demo1-O3.ll 2&gt;/tmp/passes.txt</code></p>
+<p>查看 -O3 选项编译的全过程，可以看到每个 pass 执行后的 IR 代码。</p>
+</li>
+<li>
+<p><code>grep "Dump After" /tmp/passes.txt | wc -l</code> ： 共 106 个 pass</p>
+</li>
+<li>
+<p><code>clang -mllvm -debug-pass=Arguments -c demo1.c</code> 查看 opt 的参数：</p>
+<pre data-lang="text" style="background-color:#2b303b;color:#c0c5ce;" class="language-text "><code class="language-text" data-lang="text"><span> Pass Arguments:  -tti -targetlibinfo -assumption-cache-tracker -targetpassconfig -machinemoduleinfo -profile-summary-info -tbaa -scoped-noalias-aa \
+</span><span>     -collector-metadata -machine-branch-prob -regalloc-evict -regalloc-priority -domtree -basic-aa -aa -objc-arc-contract -pre-isel-intrinsic-lowering \
+</span><span>     -expand-large-div-rem -expand-large-fp-convert -atomic-expand -aarch64-sve-intrinsic-opts -simplifycfg -domtree -loops -loop-simplify \
+</span><span>     -lazy-branch-prob -lazy-block-freq -opt-remark-emitter -scalar-evolution -loop-data-prefetch -aarch64-falkor-hwpf-fix -basic-aa \
+</span><span>     -loop-simplify -canon-freeze -iv-users -loop-reduce -basic-aa -aa -mergeicmps -loops -lazy-branch-prob -lazy-block-freq -expand-memcmp \
+</span><span>     -gc-lowering -shadow-stack-gc-lowering -lower-constant-intrinsics -lower-global-dtors -unreachableblockelim -domtree -loops -postdomtree \
+</span><span>     -branch-prob -block-freq -consthoist -replace-with-veclib -partially-inline-libcalls -expandvp -post-inline-ee-instrument \
+</span><span>     -scalarize-masked-mem-intrin -expand-reductions -loops -tlshoist -postdomtree -branch-prob -block-freq -lazy-branch-prob \
+</span><span>     -lazy-block-freq -opt-remark-emitter -select-optimize -aarch64-globals-tagging -stack-safety -domtree -basic-aa -aa -aarch64-stack-tagging \
+</span><span>     -complex-deinterleaving -aa -memoryssa -interleaved-load-combine -domtree -interleaved-access -aarch64-sme-abi -domtree -loops -type-promotion \
+</span><span>     -codegenprepare -domtree -dwarf-eh-prepare -aarch64-promote-const -global-merge -callbrprepare -safe-stack -stack-protector -domtree -basic-aa \
+</span><span>     -aa -loops -postdomtree -branch-prob -debug-ata -lazy-branch-prob -lazy-block-freq -aarch64-isel -finalize-isel -lazy-machine-block-freq \
+</span><span>     -early-tailduplication -opt-phis -slotindexes -stack-coloring -localstackalloc -dead-mi-elimination -machinedomtree -aarch64-condopt \
+</span><span>     -machine-loops -machine-trace-metrics -aarch64-ccmp -lazy-machine-block-freq -machine-combiner -aarch64-cond-br-tuning -machine-trace-metrics \ 
+</span><span>     -early-ifcvt -aarch64-stp-suppress -aarch64-simdinstr-opt -aarch64-stack-tagging-pre-ra -machinedomtree -machine-loops -machine-block-freq  \
+</span><span>     -early-machinelicm -machinedomtree -machine-block-freq -machine-cse -machinepostdomtree -machine-cycles -machine-sink -peephole-opt \
+</span><span>     -dead-mi-elimination -aarch64-mi-peephole-opt -aarch64-dead-defs -detect-dead-lanes -init-undef -processimpdefs -unreachable-mbb-elimination \ 
+</span><span>     -livevars -phi-node-elimination -twoaddressinstruction -machinedomtree -slotindexes -liveintervals -register-coalescer -rename-independent-subregs \ 
+</span><span>     -machine-scheduler -aarch64-post-coalescer-pass -machine-block-freq -livedebugvars -livestacks -virtregmap -liveregmatrix -edge-bundles \
+</span><span>     -spill-code-placement -lazy-machine-block-freq -machine-opt-remark-emitter -greedy -virtregrewriter -regallocscoringpass -stack-slot-coloring \ 
+</span><span>     -machine-cp -machinelicm -aarch64-copyelim -aarch64-a57-fp-load-balancing -removeredundantdebugvalues -fixup-statepoint-caller-saved  \
+</span><span>     -postra-machine-sink -machinedomtree -machine-loops -machine-block-freq -machinepostdomtree -lazy-machine-block-freq -machine-opt-remark-emitter \ 
+</span><span>     -shrink-wrap -prologepilog -machine-latecleanup -branch-folder -lazy-machine-block-freq -tailduplication -machine-cp -postrapseudos \
+</span><span>     -aarch64-expand-pseudo -aarch64-ldst-opt -kcfi -aarch64-speculation-hardening -machinedomtree -machine-loops -aarch64-falkor-hwpf-fix-late \ 
+</span><span>     -postmisched -gc-analysis -machine-block-freq -machinepostdomtree -block-placement -fentry-insert -xray-instrumentation -patchable-function \
+</span><span>     -aarch64-ldst-opt -machine-cp -aarch64-fix-cortex-a53-835769-pass -aarch64-collect-loh -funclet-layout -stackmap-liveness -livedebugvalues \
+</span><span>     -machine-sanmd -machine-outliner -aarch64-sls-hardening -aarch64-ptrauth -aarch64-branch-targets -branch-relaxation -aarch64-jump-tables \
+</span><span>     -cfi-fixup -lazy-machine-block-freq -machine-opt-remark-emitter -stack-frame-layout -unpack-mi-bundles -lazy-machine-block-freq \
+</span><span>     -machine-opt-remark-emitter
+</span><span> Pass Arguments:  -domtree
+</span><span> Pass Arguments:  -assumption-cache-tracker -targetlibinfo -domtree -loops -scalar-evolution -stack-safety-local
+</span><span> Pass Arguments:  -domtree
+</span></code></pre>
+<p>把这个参数直接丢给 opt 命令行是不行的，会报错误。</p>
+</li>
+<li>
+<p>使用如下的脚本来分析 -print-after-all</p>
+<p>为了更好的观察每个 pass 的输出，可以使用如下的脚本来拆分每个 pass 后的IR，并输出到一个独立的文件中。方便使用 diff 等工具
+来对比每个 pass 的演进过程。</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#65737e;">// src/bin/passes.rs
+</span><span style="color:#b48ead;">use </span><span>std::fs::File;
+</span><span style="color:#b48ead;">use </span><span>std::io::{</span><span style="color:#bf616a;">self</span><span>, BufRead, BufReader, Write};
+</span><span>
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">main</span><span>() -&gt; io::Result&lt;()&gt; {
+</span><span>    </span><span style="color:#65737e;">// args[1] is the input file like abc.ll
+</span><span>    </span><span style="color:#b48ead;">let</span><span> input_file = std::env::args().</span><span style="color:#96b5b4;">nth</span><span>(</span><span style="color:#d08770;">1</span><span>).</span><span style="color:#96b5b4;">expect</span><span>(&quot;</span><span style="color:#a3be8c;">no filename given</span><span>&quot;);
+</span><span>    </span><span style="color:#b48ead;">if </span><span>!input_file.</span><span style="color:#96b5b4;">ends_with</span><span>(&quot;</span><span style="color:#a3be8c;">.ll</span><span>&quot;) {
+</span><span>        panic!(&quot;</span><span style="color:#a3be8c;">input file must end with .ll</span><span>&quot;);
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> path = std::path::Path::new(&amp;input_file);
+</span><span>    </span><span style="color:#b48ead;">let</span><span> basename = path.</span><span style="color:#96b5b4;">file_stem</span><span>().</span><span style="color:#96b5b4;">expect</span><span>(&quot;</span><span style="color:#a3be8c;">no basename found</span><span>&quot;).</span><span style="color:#96b5b4;">to_str</span><span>().</span><span style="color:#96b5b4;">expect</span><span>(&quot;</span><span style="color:#a3be8c;">basename is not a valid UTF-8 string</span><span>&quot;);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> file = File::open(input_file.</span><span style="color:#96b5b4;">as_str</span><span>())?;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> reader = BufReader::new(file);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> file_count = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> output_file = File::create(format!(&quot;</span><span style="color:#a3be8c;">./output/</span><span style="color:#d08770;">{basename}</span><span style="color:#a3be8c;">_</span><span style="color:#d08770;">{file_count}</span><span style="color:#a3be8c;">.ll</span><span>&quot;))?;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">for</span><span> line in reader.</span><span style="color:#96b5b4;">lines</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> line = line?;
+</span><span>        </span><span style="color:#b48ead;">if</span><span> line.</span><span style="color:#96b5b4;">contains</span><span>(&quot;</span><span style="color:#a3be8c;"> Dump After </span><span>&quot;) {
+</span><span>            file_count += </span><span style="color:#d08770;">1</span><span>;
+</span><span>            output_file = File::create(format!(&quot;</span><span style="color:#a3be8c;">./output/</span><span style="color:#d08770;">{basename}</span><span style="color:#a3be8c;">_</span><span style="color:#d08770;">{file_count}</span><span style="color:#a3be8c;">.ll</span><span>&quot;))?;
+</span><span>        }
+</span><span>        writeln!(output_file, &quot;</span><span style="color:#d08770;">{}</span><span>&quot;, line)?;
+</span><span>    }
+</span><span>
+</span><span>    Ok(())
+</span><span>}
+</span></code></pre>
+<p><code>cargo run --bin passes -- path/to/file.ll</code> 会在 output 目录下生成多个文件，每个文件对应一个 pass 的输出。</p>
+</li>
+<li>
+<p>使用 <a href="https://github.com/afnanenayet/diffsitter"><code>difft</code></a> 逐步的对比每个 pass 的输出，观察 IR 的演变过程，理解各个 pass 的职责。</p>
+<p>在这个小的demo中，主要是如下两个 pass 起到了关键作用：</p>
+<ul>
+<li>
+<p>simplifycfg: 简化控制流图，包括合并基本快，使用 switch 替代多个 if else 等。</p>
+</li>
+<li>
+<p>SROA: An optimization pass providing Scalar Replacement of Aggregates. This pass takes allocations which can be completely
+analyzed (that is, they don't escape) and tries to turn them into scalar SSA values.
+刚开始的时候，IR 并不是严格意义上的 SSA，对每个变量的读写都是通过 alloca 和 load/store 来实现的，这个 pass 将这些变量转换为 SSA 形式。</p>
+</li>
+<li>
+<p>pass 7: After SimplifyCFGPass
+<div class="mermaid">
+    ```mermaid
+      flowchart TD
+      %% function demo1
+      %1[&quot;  %2 = alloca i32, align 4
+        %3 = alloca i32, align 4
+        store i32 %0, ptr %2, align 4, !tbaa !5
+        call void @llvm.lifetime.start.p0(i64 4, ptr %3) #2
+        store i32 0, ptr %3, align 4, !tbaa !5
+        %4 = load i32, ptr %2, align 4, !tbaa !5
+        %5 = icmp eq i32 %4, 1
+        br i1 %5, label %6, label %7&quot;]
+          %1 --&gt;|%6| %6
+      %6[&quot;  store i32 10, ptr %3, align 4, !tbaa !5
+        br label %16&quot;]
+          %1 --&gt;|%7| %7
+      %7[&quot;  %8 = load i32, ptr %2, align 4, !tbaa !5
+        %9 = icmp eq i32 %8, 100
+        br i1 %9, label %10, label %11&quot;]
+          %7 --&gt;|%10| %10
+      %10[&quot;  store i32 20, ptr %3, align 4, !tbaa !5
+        br label %16&quot;]
+          %7 --&gt;|%11| %11
+      %11[&quot;  %12 = load i32, ptr %2, align 4, !tbaa !5
+        %13 = icmp eq i32 %12, 200
+        br i1 %13, label %14, label %15&quot;]
+          %11 --&gt;|%14| %14
+      %14[&quot;  store i32 30, ptr %3, align 4, !tbaa !5
+        br label %16&quot;]
+          %11 --&gt;|%15| %15
+      %15[&quot;  store i32 40, ptr %3, align 4, !tbaa !5
+        br label %16&quot;]
+          %10 --&gt;|%16| %16
+          %15 --&gt;|%16| %16
+          %14 --&gt;|%16| %16
+          %6 --&gt;|%16| %16
+      %16[&quot;  %17 = load i32, ptr %3, align 4, !tbaa !5
+        call void @llvm.lifetime.end.p0(i64 4, ptr %3) #2
+        ret i32 %17&quot;]
+      style %16 stroke:#0f0
+      ```
+</div></p>
+</li>
+<li>
+<p>2: pass 8:  After SROAPass
+<div class="mermaid">
+    ```mermaid
+      flowchart TD
+      %% function demo1
+      %1[&quot;  %2 = icmp eq i32 %0, 1
+        br i1 %2, label %3, label %4&quot;]
+          %1 --&gt;|%3| %3
+      %3[&quot;  br label %11&quot;]
+          %1 --&gt;|%4| %4
+      %4[&quot;  %5 = icmp eq i32 %0, 100
+        br i1 %5, label %6, label %7&quot;]
+          %4 --&gt;|%6| %6
+      %6[&quot;  br label %11&quot;]
+          %4 --&gt;|%7| %7
+      %7[&quot;  %8 = icmp eq i32 %0, 200
+        br i1 %8, label %9, label %10&quot;]
+          %7 --&gt;|%9| %9
+      %9[&quot;  br label %11&quot;]
+          %7 --&gt;|%10| %10
+      %10[&quot;  br label %11&quot;]
+          %6 --&gt;|%11| %11
+          %10 --&gt;|%11| %11
+          %9 --&gt;|%11| %11
+          %3 --&gt;|%11| %11
+      %11[&quot;  %12 = phi i32 [ 10, %3 ], [ 20, %6 ], [ 30, %9 ], [ 40, %10 ]
+        ret i32 %12&quot;]
+      style %11 stroke:#0f0
+      ```
+</div></p>
+</li>
+<li>
+<p>3: pass 17:  After SimplifyCFGPass
+<div class="mermaid">
+    ```mermaid
+      flowchart TD
+      %% function demo1
+      %1[&quot;  switch i32 %0, label %4 [
+          i32 1, label %5
+          i32 100, label %2
+          i32 200, label %3
+        ]&quot;]
+              %1 --&gt;|%2| %2
+      %2[&quot;  br label %5&quot;]
+              %1 --&gt;|%3| %3
+      %3[&quot;  br label %5&quot;]
+              %1 --&gt;|%4| %4
+      %4[&quot;  br label %5&quot;]
+              %1 --&gt;|%5| %5
+              %2 --&gt;|%5| %5
+              %4 --&gt;|%5| %5
+              %3 --&gt;|%5| %5
+      %5[&quot;  %6 = phi i32 [ 20, %2 ], [ 30, %3 ], [ 40, %4 ], [ 10, %1 ]
+        ret i32 %6&quot;]
+      style %5 stroke:#0f0
+      ```
+</div></p>
+</li>
+</ul>
+</li>
+<li>
+<p>通过 opt 命令来重现某个 pass 的优化过程：（部份 pass 输出的 IL 需要简单的手工调整方能正确执行）</p>
+<pre data-lang="shell" style="background-color:#2b303b;color:#c0c5ce;" class="language-shell "><code class="language-shell" data-lang="shell"><span>opt -S output/demo1_6.ll -passes=simplifycfg -o -
+</span></code></pre>
+<p>这里的 pass name 可以从 文件中的 <code>Dump After</code> 中找到。
+<code>opt -S output/demo1_6.ll -passes=simplifycfg,sroa,simplifycfg -o -</code> 使用这个命令，可以从 -O0 的 IR 优化到 -O3 的 IR。</p>
+</li>
+</ol>
+<h1 id="ming-ling-xing-gong-ju-can-kao">命令行工具参考</h1>
+<ol>
+<li>
+<p>编译为 LLVM IR: <code>clang -S -emit-llvm demo1.c -o demo1.ll</code> 可结合 <code>-O1</code>, <code>-O3</code> 等优化选项。</p>
+</li>
+<li>
+<p>使用 <code>clang -c -mllvm -print-after-all demo1.c</code> 查看各个阶段的输出，查看各个pass后的 IR</p>
+</li>
+<li>
+<p><code>clang -mllvm --help</code></p>
+</li>
+<li>
+<p><code>clang -mllvm --help-hidden</code> 查看隐藏的选项</p>
+</li>
+<li>
+<p><code>clang -mllvm -debug-pass=Arguments</code> print pass arguments to pass to opt.</p>
+</li>
+<li>
+<p><code>opt -S src.ll -passes=.. -o -</code> 使用 opt 来执行选择的 pass 并观察 IR 的演进。</p>
+<ul>
+<li>--debug-pass=Details: print pass details when it is executed</li>
+<li>--debug-pass-manager=quiet|verbose</li>
+<li>--debugify-each    Start each pass with debugify and end it with check-debugify</li>
+<li>--print-passes     print available passes</li>
+<li>--print-pipeline-passes 显示当前的 pass pipeline 可以使用 clang -mllvm --print-pipeline-passes 查看 clang 的 pass pipeline
+然后在 opt 中重放这个 pipeline。</li>
+</ul>
+</li>
+<li>
+<p><code>llc</code> from LLVM IR to assembly</p>
+<p>如果出现如下错误：</p>
+<pre data-lang="text" style="background-color:#2b303b;color:#c0c5ce;" class="language-text "><code class="language-text" data-lang="text"><span>LLVM ERROR: Unsupported stack probing method
+</span><span>PLEASE submit a bug report to https://github.com/Homebrew/homebrew-core/issues and include the crash backtrace.
+</span><span>Stack dump:
+</span><span>0.	Program arguments: /opt/homebrew/opt/llvm/bin/llc demo.ll
+</span><span>1.	Running pass &#39;Function Pass Manager&#39; on module &#39;demo.ll&#39;.
+</span><span>......
+</span></code></pre>
+<p>请确保clang 与 llc 的版本是一致的。apple 自带的 clang 与 homebrew 安装的 llvm 不一定是同一个版本。</p>
+</li>
+<li>
+<p><code>as</code> from assembly to object file</p>
+</li>
+</ol>
+<h1 id="xiao-jie">小结</h1>
+<ol>
+<li>本文给出了一个学习 LLVM IR 的有效方法：即跟着 clang 的编译过程，逐步了解 IR 以及各个 pass 的作用。并给出了参考的命令行工具。</li>
+<li>本文中的 passes 生成工具，脚本是通过 github copilot 辅助生成的 rust 脚本，稍微调整一下后，就可以使用，来辅助分析 IR。</li>
+<li>后续：
+<ul>
+<li>对于复杂的 IR 代码，需要有一个从 IR 生成 CFG 的工具，这样可以更好的理解 IR 的控制流程。我会在后面的学习中，使用 rust 来编写这个工具。
+<blockquote>
+<p>初稿已经完成，可以参考：<a href="https://github.com/wangzaixiang/my-llvm-tools/blob/main/src/bin/ll2cfg.rs">ll2cfg</a>
+本文中的 CFG 流程图均使用该工具生成。</p>
+</blockquote>
+</li>
+<li>可以使用本文中介绍的方法，逐步阅读更为复杂的 LLVM IR 代码，学习 LR 的基本知识。</li>
+<li>下一步重点关注的是向量化代码的编译过程，评估直接基于 LLVM 生成向量化的关系计算代码的可行性。</li>
+</ul>
+</li>
+<li>系列链接
+<ol>
+<li><a href="https://wangzaixiang.github.io/blog/learning-llvm/">LLVM 学习系列一：初读 LLVM-IR 示例代码</a></li>
+<li><a href="https://wangzaixiang.github.io/blog/learning-llvm-2/">LLVM 学习系列二：从一段简单的C代码来学习LLVM-IR</a></li>
+</ol>
+</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/the-1brc-program/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/c-optimize/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

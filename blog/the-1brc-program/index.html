@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>the 1brc program | 程序人生</title>
+<meta name="description" content="本文通过 1brc 这个编程挑战，来展示如何一步一步的进行代码优化，实现极具挑战的性能之旅">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/the-1brc-program/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="the 1brc program">
+  <meta name="twitter:description" content="本文通过 1brc 这个编程挑战，来展示如何一步一步的进行代码优化，实现极具挑战的性能之旅">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="the 1brc program">
+  <meta property="og:description" content="本文通过 1brc 这个编程挑战，来展示如何一步一步的进行代码优化，实现极具挑战的性能之旅">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/the-1brc-program/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="the 1brc program">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/the-1brc-program/"
+      },
+      "headline": "the 1brc program",
+      "image": ,
+      "datePublished": "2025-02-06",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "the 1brc program"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "the 1brc program",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文通过 1brc 这个编程挑战，来展示如何一步一步的进行代码优化，实现极具挑战的性能之旅"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "The 1brc Program",
+            "item": "https://wangzaixiang.github.io/blog/the-1brc-program/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#about-1brc">About 1brc</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver1-yuan-shi-ban-ben-108s">ver1: 原始版本 108s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver2-89s">ver2, 89s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver3-65s">ver3, 65s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver4-51s">ver4, 51s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver5-48-3s">ver5, 48.3s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver6-30-9s">ver6, 30.9s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver7-25-5s">ver7, 25.5s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver8-23-25s">ver8, 23.25s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver9-23-76s">ver9, 23.76s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver10-27-10s">ver10, 27.10s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver12-13-07s">ver12，13.07s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver13-9-12s">ver13, 9.12s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver14-13-06s">ver14, 13.06s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver15-10-52s">ver15, 10.52s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver16-8-55s">ver16, 8.55s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver17-16-2s">ver17: 16.2s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver18-6-76s">ver18: 6.76s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver21-6-17s">ver21: 6.17s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver22-5-38s">ver22: 5.38s</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/the-1brc-program/#ver22-pgo-5-25s">ver22 + pgo: 5.25s</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>the 1brc program</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/measure-ipc-for-m1/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted February  6, 2025&nbsp;&hyphen;&nbsp;<strong>38&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/learning-llvm-2/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="about-1brc">About 1brc</h1>
+<p><a href="https://github.com/gunnarmorling/1brc">1brc</a> 编程挑战原本是一个使用 Java 处理 10 亿行文本数据，并进行汇总统计的挑战，这个程序的逻辑并不复杂：</p>
+<ol>
+<li>读取并分析文本数据，其格式如下：<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span> Hamburg;12.0
+</span><span> Bulawayo;8.9
+</span><span> Palembang;38.8
+</span><span> St. John&#39;s;15.2
+</span><span> Cracow;12.6
+</span><span> Bridgetown;26.9
+</span><span> Istanbul;6.2
+</span><span> Roseau;34.4
+</span><span> Conakry;31.2
+</span><span> Istanbul;23.0
+</span></code></pre>
+每一行包括一个城市名和一个气温数值，以分号分隔。</li>
+<li>统计每一个城市的最高气温、最低气温、平均气温，并输出到标准输出。</li>
+</ol>
+<p>程度的挑战在于，需要处理 10亿 行的文本数据（约13.7GB），到底可以在多快的时间内完成这个任务呢？不同于其他的编程挑战，会限定有限的内存、CPU 等资源，
+1brc 官方给定的运行环境是 32 core AMD EPYC™ 7502P (Zen2), 128 GB RAM, 还是一个非常强大的机器。本文所使用的执行环境是 M1 Max(Macbook Pro 2021):
+8性能核心，2节能核心，64GB RAM，也是一款非常强大的机器。这个挑战是在现代CPU和充裕的内存资源下，到底可以在多快的时间内，完成10亿行文本数据的处理。</p>
+<p>原项目是使用Java进行挑战，不过在本文中，我会尝试基于 Rust 来完成这个挑战，毕竟，Rust 距离 CPU 更近，有更多的空间可供我们腾挪。当然，对我来说，也是一次
+学习 Rust 的机会。</p>
+<h1 id="ver1-yuan-shi-ban-ben-108s">ver1: 原始版本 108s</h1>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">use crate</span><span>::</span><span style="color:#d08770;">MEASUREMENT_FILE</span><span>;
+</span><span style="color:#b48ead;">use </span><span>std::collections::HashMap;
+</span><span style="color:#b48ead;">use </span><span>std::io::BufRead;
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">allow</span><span>(dead_code)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">ver1</span><span>() -&gt; Result&lt;HashMap&lt;String,(</span><span style="color:#b48ead;">f32</span><span>,</span><span style="color:#b48ead;">f32</span><span>,</span><span style="color:#b48ead;">f32</span><span>)&gt;, Box&lt;dyn std::error::Error&gt;&gt; {
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> file = std::fs::File::open(</span><span style="color:#d08770;">MEASUREMENT_FILE</span><span>)?;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> reader = std::io::BufReader::new(file);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">struct </span><span>Item {
+</span><span>        </span><span style="color:#bf616a;">min</span><span>: </span><span style="color:#b48ead;">f32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">max</span><span>: </span><span style="color:#b48ead;">f32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">count</span><span>: </span><span style="color:#b48ead;">i32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">sum</span><span>: </span><span style="color:#b48ead;">f32</span><span>,
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> hash: HashMap&lt;String, Item&gt; = std::collections::HashMap::new();
+</span><span>    </span><span style="color:#b48ead;">for</span><span> line in reader.</span><span style="color:#96b5b4;">lines</span><span>() {
+</span><span>        </span><span style="color:#65737e;">// name;value
+</span><span>        </span><span style="color:#b48ead;">let</span><span> line = line?;
+</span><span>        </span><span style="color:#b48ead;">let</span><span> parts = line.</span><span style="color:#96b5b4;">split</span><span>(&#39;</span><span style="color:#a3be8c;">;</span><span>&#39;).collect::&lt;Vec&lt;&amp;</span><span style="color:#b48ead;">str</span><span>&gt;&gt;();
+</span><span>        </span><span style="color:#b48ead;">let</span><span> name = parts.</span><span style="color:#96b5b4;">get</span><span>(</span><span style="color:#d08770;">0</span><span>).</span><span style="color:#96b5b4;">unwrap</span><span>();
+</span><span>        </span><span style="color:#b48ead;">let</span><span> value = parts.</span><span style="color:#96b5b4;">get</span><span>(</span><span style="color:#d08770;">1</span><span>).</span><span style="color:#96b5b4;">unwrap</span><span>().parse::&lt;</span><span style="color:#b48ead;">f32</span><span>&gt;()?;
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">match</span><span> hash.</span><span style="color:#96b5b4;">get_mut</span><span>(*name) {
+</span><span>            Some(item) =&gt; {
+</span><span>                item.count += </span><span style="color:#d08770;">1</span><span>;
+</span><span>                item.sum += value;
+</span><span>                item.min = item.min.</span><span style="color:#96b5b4;">min</span><span>(value);
+</span><span>                item.max = item.max.</span><span style="color:#96b5b4;">max</span><span>(value);
+</span><span>            }
+</span><span>            None =&gt; {
+</span><span>                </span><span style="color:#b48ead;">let</span><span> item = Item {
+</span><span>                    min: value,
+</span><span>                    max: value,
+</span><span>                    count: </span><span style="color:#d08770;">1</span><span>,
+</span><span>                    sum: value
+</span><span>                };
+</span><span>                hash.</span><span style="color:#96b5b4;">insert</span><span>(name.</span><span style="color:#96b5b4;">to_string</span><span>(), item);
+</span><span>            }
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> result = hash.</span><span style="color:#96b5b4;">iter</span><span>().</span><span style="color:#96b5b4;">map</span><span>(|(</span><span style="color:#bf616a;">name</span><span>, </span><span style="color:#bf616a;">item</span><span>)| {
+</span><span>        (name.</span><span style="color:#96b5b4;">clone</span><span>(), (item.min, item.max, item.sum / item.count as </span><span style="color:#b48ead;">f32</span><span>))
+</span><span>    }).</span><span style="color:#96b5b4;">collect</span><span>();
+</span><span>
+</span><span>    Ok( result )
+</span><span>}
+</span><span>
+</span></code></pre>
+<p>作为一个基础版本，这段代码可谓是中规中矩：</p>
+<ol>
+<li>使用 <code>BufReader</code> 逐行读取文件，然后使用 <code>split</code> 分割字符串。（如果不使用 BufReader，估计速度还会慢1个数量级）</li>
+<li>使用 HashMap 来处理聚合数据。</li>
+<li>单线程。（本案例全部基于单线程来进行分析）</li>
+</ol>
+<p>性能数据：</p>
+<ol>
+<li>耗时：107.9s</li>
+<li>IPC: 4.91 (看起来还很不错)</li>
+<li>Branch misses: 0.64%</li>
+<li><a href="https://github.com/mstange/samply">samply</a> profile <a href="https://share.firefox.dev/3WMkb80">link</a>:
+<img src="https://wangzaixiang.github.io/blog/the-1brc-program/img.png" alt="img.png" /><pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">samply</span><span> load profiles/profile-v1.json  
+</span><span style="color:#65737e;"># 然后使用 firefox 打开 http://localhost:3000 端口即可查看 samply 的 profile 分析图表
+</span></code></pre>
+<ul>
+<li>read_line: ~46s
+<ul>
+<li>fill_buf: ~2.76s 这里是真实与OS打交道，读取文件内容的开销（真实的读取文件的开销并不高，远低于其他部分）。</li>
+<li>memchr: ~20.5s 是查找换行符的开销。</li>
+<li>Vec::extend_from_slice: ~12.75s 是复制数据到 Vec 的开销。</li>
+<li>from_utf8: ~7s, 是处理 UTF-8 的开销。</li>
+</ul>
+</li>
+<li><code>line.split(';').collect::&lt;Vec&lt;&amp;str&gt;&gt;()</code> ~22s
+<ul>
+<li>Vec 分配内存的时间： ~6.5s</li>
+</ul>
+</li>
+<li><code>hash.get_mut(*name)</code> ~12s，Rust 的 HashMap 采用了 SIMD 加速，比常规的 HashMap 快了很多。</li>
+<li>Drop Vec&lt;&amp;str&gt; ~11s: 释放内存的开销居然这么高，如果再加上 Vec/String 的分配开销（~13s），花在内存分配释放上的时间(~16s)，不容小嘘。</li>
+<li>Drop String ~7.7s</li>
+<li><code>parts.get(1).unwrap().parse::&lt;f32&gt;()?</code> ~ 6.6s，目前还不是我们的瓶颈点。</li>
+</ul>
+</li>
+</ol>
+<p>第一个基线版本出来了，看起来，read_line 是目前最大的瓶颈，其中真实的 IO 开销并不高（本次测试的电脑有64G内存，因此，文件的内容大概率是全部在 Page Cache中的，
+并不会涉及到真实的IO，目前来看，2.76s 读取完全部文件内容，看起来还是比较快的），而花在 查找换行符，复制数据（String）、解析UTF-8、分配和释放内存的耗时占比很比。</p>
+<h1 id="ver2-89s">ver2, 89s</h1>
+<p>在 ver1 中，我们发现 read_line 中 <code>Vec::extend_from_slice</code> 上花费了12.75s 的时间，原因是我们每次读取并返回一个新行（String），处理完成后
+就释放掉这个该字符串（～7.7s），如果我们不重复分配、释放内存，而是复用一个 String 呢？简单的做如下修改：<a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver2.rs">详细代码</a>：
+<img src="https://wangzaixiang.github.io/blog/the-1brc-program/diff_ver2_ver1.png" alt="diff_ver2_ver1.png" /></p>
+<p>性能数据：</p>
+<ol>
+<li>耗时：89.3s (-17.6s, +16.3%)</li>
+<li>IPC: 4.57</li>
+<li>Branch misses: 8.4%</li>
+<li><a href="https://share.firefox.dev/4htrWrC">samply profile</a></li>
+</ol>
+<p>看起来不错，几行代码的修改，就提升了16.3%的性能，查看 samply profile, 计划要消除的耗时都如预期的减少了。</p>
+<ol>
+<li>内存分配和释放的成本，并没有那么的廉价（当然，这个案例可是10亿次循环，把这个成本给放大了）。对于parser 处理 AST 这样的场景，多遍遍历，
+大量的小对象的分配和释放，这个成本是非常高的。</li>
+<li>在 JVM 中，对象的分配和释放更是无处不在，由于没有 value object，所有的对象都在 heap 中分配，而更高效的语言，一定需要 value object,并
+优先在 stack（or in-place）中分配。相比 heap， stack allocate 可以认为是零成本的。当然，JVM的GC机制，可能会比C/Rust等语言在分配/释放内存
+上更加高效：一是由于内存整理，避免了碎片的存在，分配内存成本更低。二是几种的释放，尤其是分代GC下年轻代的复制回收机制，成本相比逐一的回收会有
+显著的提升。但无论如何，如果能避免分配和释放，才是最佳的选择。</li>
+</ol>
+<h1 id="ver3-65s">ver3, 65s</h1>
+<p>消除了 read_line 的内存分配和释放的成本，我们的瓶颈点又转移到了 <code>line.split(';').collect::&lt;Vec&lt;&amp;str&gt;&gt;()</code> 上，这个操作的成本是22s，其主要成本也是
+花费在 Iterator 的遍历和 Vec 的分配和释放上。由于每一行文本格式比较简单，因此我们重新优化一下我们的代码 <a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver3.rs">ver3完整连接</a>：
+<img src="https://wangzaixiang.github.io/blog/the-1brc-program/ver2_collect.png" alt="img_1.png" /></p>
+<p><img src="https://wangzaixiang.github.io/blog/the-1brc-program/ver3_code1.png" alt="img_1.png" />
+<img src="https://wangzaixiang.github.io/blog/the-1brc-program/ver3_code2.png" alt="img_1.png" /></p>
+<p>性能数据：</p>
+<ol>
+<li>耗时：65.5s (vs ver2: -23.8s, +26.6%) (vs ver1: -42.4s, +39.4%)</li>
+<li>IPC: 4.12</li>
+<li>Branch misses: 0.94%</li>
+<li><a href="https://share.firefox.dev/4hqukPN">samply profile</a></li>
+</ol>
+<p>ver2/ver3 两轮优化后，在 samply profile 中，已经看到没有明显的内存分配、释放的开销了，性能的整体提升达到了39.4%。为我们的优化成就鼓掌。</p>
+<p>收获：</p>
+<ol>
+<li>在这两轮的优化中，samply 的贡献是最大的，他为我们提供了直观的性能数据。</li>
+<li>大部份应用在早期都存在“低垂”的果实，往往只需要较少的代价，就可以取得巨大的性能提升。在实际应用中，这些低垂的果实，可能会获得成倍、
+数十倍的性能提升，而代价则非常微小。</li>
+</ol>
+<h1 id="ver4-51s">ver4, 51s</h1>
+<p>对 ver3 的 profile 数据进行分析发现，&amp;str::from_utf8 花费了 ~9s 的时间，由于我们的输入文件是一个格式良好的文件，在本次性能挑战中，可以忽略
+UTF8 检查的成本（当然，在实际应用中，需要权衡输入检查的必要性，不一定能够妥协，不过在一个复杂系统中，应该尽可能的在最外层进行足够的输入校验，避免在
+后续内部的处理中重复的进行正确性的检查：即浪费了计算资源，也增加了代码复杂性，参考我在这篇 <a href="https://wangzaixiang.github.io/blog/complexity/">blog 中所说的 DBC</a>）</p>
+<p>调整后的代码：<a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver4.rs">完整链接</a></p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">read_line</span><span>&lt;</span><span style="color:#b48ead;">&#39;a</span><span>&gt;(</span><span style="color:#bf616a;">reader</span><span>: &amp;</span><span style="color:#b48ead;">mut </span><span>std::io::BufReader&lt;std::fs::File&gt;, </span><span style="color:#bf616a;">line</span><span>: &amp;</span><span style="color:#b48ead;">&#39;a mut </span><span>Vec&lt;</span><span style="color:#b48ead;">u8</span><span>&gt;) -&gt; Result&lt;Option&lt;(&amp;</span><span style="color:#b48ead;">&#39;a</span><span> [</span><span style="color:#b48ead;">u8</span><span>], </span><span style="color:#b48ead;">i64</span><span>)&gt;, Box&lt;dyn std::error::Error&gt;&gt; {
+</span><span>    </span><span style="color:#b48ead;">let</span><span> pos = line.</span><span style="color:#96b5b4;">len</span><span>();
+</span><span>    </span><span style="color:#b48ead;">let</span><span> n1 = reader.</span><span style="color:#96b5b4;">read_until</span><span>(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">;</span><span>&#39;, line)?;
+</span><span>    </span><span style="color:#b48ead;">if</span><span> n1 &gt; </span><span style="color:#d08770;">0 </span><span>{
+</span><span>        </span><span style="color:#65737e;">// let part1 = &amp;line[pos..pos+n1-1];
+</span><span>        </span><span style="color:#b48ead;">let</span><span> n2 = reader.</span><span style="color:#96b5b4;">read_until</span><span>(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#96b5b4;">\n</span><span>&#39;, line)?;
+</span><span>        </span><span style="color:#b48ead;">if</span><span> n2 &gt; </span><span style="color:#d08770;">0 </span><span>{
+</span><span>            </span><span style="color:#b48ead;">let</span><span> part1 = &amp;line[pos..pos + n1 - </span><span style="color:#d08770;">1</span><span>];
+</span><span>            </span><span style="color:#b48ead;">let</span><span> part2 = &amp;line[pos + n1..pos + n1 + n2 - </span><span style="color:#d08770;">1</span><span>];
+</span><span>            </span><span style="color:#b48ead;">let mut</span><span> value = </span><span style="color:#d08770;">0</span><span style="color:#b48ead;">i64</span><span>;
+</span><span>            </span><span style="color:#b48ead;">let mut</span><span> sign = </span><span style="color:#d08770;">1</span><span>;
+</span><span>            </span><span style="color:#b48ead;">for</span><span> i in part2.</span><span style="color:#96b5b4;">iter</span><span>() {
+</span><span>                </span><span style="color:#b48ead;">if </span><span>*i == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">.</span><span>&#39; {
+</span><span>                    </span><span style="color:#b48ead;">continue
+</span><span>                } </span><span style="color:#b48ead;">else if </span><span>*i == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">-</span><span>&#39; {
+</span><span>                    sign = -</span><span style="color:#d08770;">1</span><span>;
+</span><span>                } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>                    value = value * </span><span style="color:#d08770;">10 </span><span>+ (i - </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">0</span><span>&#39;) as </span><span style="color:#b48ead;">i64</span><span>;
+</span><span>                }
+</span><span>            }
+</span><span>            Ok(Some((part1, value * sign)))
+</span><span>        } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>            Ok(None)
+</span><span>        }
+</span><span>    } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>        Ok(None)
+</span><span>    }
+</span><span>}
+</span></code></pre>
+<p><img src="https://wangzaixiang.github.io/blog/the-1brc-program/ver4_code1.png" alt="img_1.png" /></p>
+<p>性能数据：</p>
+<ol>
+<li>耗时：51.2s (vs ver3: -14.3s, +21.8%) (vs ver2: -38.7s, +43%) (vs ver1: -56.7s, +52.6%)</li>
+<li><a href="https://share.firefox.dev/40ObCun">samply profile</a></li>
+</ol>
+<p>经过 ver4 的优化后，samply profile 中的火焰图变得更加的简单，目前主要的开销包括：</p>
+<ul>
+<li><code>std::io::BufRead::read_until</code> ~ 32s 以 <code>, \n</code> 作为分隔符逐一读取 &amp;str</li>
+<li><code>std::collections::hash::map::HashMap::get_mut</code> ~ 15s</li>
+</ul>
+<p>低垂的果实似乎已经采摘完毕，这两个感觉都不好进行进一步的优化了。那么我们还能做些什么呢？</p>
+<h1 id="ver5-48-3s">ver5, 48.3s</h1>
+<p>这个版本尝试对 next_line 进行优化，使用状态机来进行 one scan per line 的处理，效果较为有限，这里就不贴代码和性能数据了，
+感兴趣的可以查看<a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver4.rs">ver5源代码</a></p>
+<h1 id="ver6-30-9s">ver6, 30.9s</h1>
+<p>经过前面5轮的优化，目前最大的瓶颈点是 <code>std::io::read_until(b';' or b'\n')</code>，这里涉及到：</p>
+<ul>
+<li>需要使用 Buffer 的方式从 OS 读取数据到 进程Buffer（固定大小，一般为8K）中。 ~ 3s</li>
+<li>在 Buffer 中查找下一个分隔符的位置。（每一行有2个分隔符：<code>;</code> 和 <code>\n</code>) ~ 19.2s</li>
+<li>从 Buffer 中复制到 Vec 中（读者可以思考为什么需要这次复制，不直接在 Buffer 中处理？）~ 6.7s</li>
+</ul>
+<p>我们是否可以避免两次数据复制呢，并减少查找分隔符的成本呢？zero copy 是解决这类问题的一个方向，在 Kafka 等 Java 项目中，使用 sendfile
+这样的系统调用来避免数据的复制，在本例中，我们使用 <a href="https://www.man7.org/linux/man-pages/man2/mmap.2.html">mmap</a> 来实现 zero copy。</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">use crate</span><span>::</span><span style="color:#d08770;">MEASUREMENT_FILE</span><span>;
+</span><span style="color:#b48ead;">use </span><span>memchr::memchr;
+</span><span style="color:#b48ead;">use </span><span>memmap2::Mmap;
+</span><span style="color:#b48ead;">use </span><span>std::collections::HashMap;
+</span><span>
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">parse_value</span><span>(</span><span style="color:#bf616a;">_buf</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">i32 </span><span>{    </span><span style="color:#65737e;">// ~0.5s
+</span><span>    </span><span style="color:#65737e;">// return 0;
+</span><span>    </span><span style="color:#b48ead;">use </span><span>std::intrinsics::unlikely;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> sign = </span><span style="color:#d08770;">1</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> value = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">for</span><span> b in _buf {
+</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">unlikely</span><span>(*b == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">-</span><span>&#39;) {
+</span><span>            sign = -</span><span style="color:#d08770;">1</span><span>;
+</span><span>        }
+</span><span>        </span><span style="color:#b48ead;">else if </span><span style="color:#96b5b4;">unlikely</span><span>(*b == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">.</span><span>&#39;) {
+</span><span>            </span><span style="color:#b48ead;">continue</span><span>;
+</span><span>        } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>            value = value * </span><span style="color:#d08770;">10 </span><span>+ (*b - </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">0</span><span>&#39;) as </span><span style="color:#b48ead;">i32</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>    value * sign
+</span><span>}
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">allow</span><span>(dead_code)]
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">ver6</span><span>() -&gt; Result&lt;HashMap&lt;String, (</span><span style="color:#b48ead;">f32</span><span>,</span><span style="color:#b48ead;">f32</span><span>,</span><span style="color:#b48ead;">f32</span><span>)&gt;, Box&lt;dyn std::error::Error&gt;&gt; {
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> file = std::fs::File::open(</span><span style="color:#d08770;">MEASUREMENT_FILE</span><span>)?;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> mmap = </span><span style="color:#b48ead;">unsafe </span><span>{ Mmap::map(&amp;file)? };
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> buf = mmap.</span><span style="color:#96b5b4;">as_ref</span><span>();
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">struct </span><span>Item {
+</span><span>        </span><span style="color:#bf616a;">min</span><span>: </span><span style="color:#b48ead;">i32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">max</span><span>: </span><span style="color:#b48ead;">i32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">count</span><span>: </span><span style="color:#b48ead;">u32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">sum</span><span>: </span><span style="color:#b48ead;">i32</span><span>,
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> hash: HashMap&lt;String, Item&gt; = HashMap::with_capacity(</span><span style="color:#d08770;">16384</span><span>);
+</span><span>    </span><span style="color:#65737e;">// let mut hash:FxHashMap&lt;String, Item&gt; = FxHashMap::with_capacity_and_hasher(16384, rustc_hash::FxBuildHasher::default());
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut </span><span style="color:#8fa1b3;">callback </span><span>= |</span><span style="color:#bf616a;">name</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>], </span><span style="color:#bf616a;">value</span><span>: </span><span style="color:#b48ead;">i32</span><span>| {
+</span><span>        </span><span style="color:#b48ead;">match</span><span> hash.</span><span style="color:#96b5b4;">get_mut</span><span>(</span><span style="color:#b48ead;">unsafe </span><span>{ core::str::from_utf8_unchecked(name) }) {
+</span><span>            Some(item) =&gt; {
+</span><span>                item.count += </span><span style="color:#d08770;">1</span><span>;
+</span><span>                item.sum += value;
+</span><span>                item.min = item.min.</span><span style="color:#96b5b4;">min</span><span>(value);
+</span><span>                item.max = item.max.</span><span style="color:#96b5b4;">max</span><span>(value);
+</span><span>            }
+</span><span>            None =&gt; {
+</span><span>                </span><span style="color:#b48ead;">let</span><span> item = Item {
+</span><span>                    min: value,
+</span><span>                    max: value,
+</span><span>                    count: </span><span style="color:#d08770;">1</span><span>,
+</span><span>                    sum: value
+</span><span>                };
+</span><span>                hash.</span><span style="color:#96b5b4;">insert</span><span>(</span><span style="color:#b48ead;">unsafe </span><span>{ core::str::from_utf8_unchecked(name) }.</span><span style="color:#96b5b4;">to_string</span><span>(), item);
+</span><span>            }
+</span><span>        }
+</span><span>    };
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> _no_used = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#65737e;">// let mut callback = |_name: &amp;[u8], value: i32| {
+</span><span>    </span><span style="color:#65737e;">//     _no_used += value;
+</span><span>    </span><span style="color:#65737e;">// };
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">loop </span><span>{
+</span><span>        </span><span style="color:#b48ead;">match </span><span style="color:#96b5b4;">memchr</span><span>(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">;</span><span>&#39;, &amp;buf[</span><span style="color:#d08770;">0</span><span>..]) { </span><span style="color:#65737e;">// scan ~14s
+</span><span>            Some(pos1) =&gt; {
+</span><span>                </span><span style="color:#b48ead;">let</span><span> name = &amp;buf[</span><span style="color:#d08770;">0</span><span>..pos1];
+</span><span>                </span><span style="color:#b48ead;">let</span><span> remain = &amp;buf[pos1+</span><span style="color:#d08770;">1</span><span>..];
+</span><span>                </span><span style="color:#b48ead;">match </span><span style="color:#96b5b4;">memchr</span><span>(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#96b5b4;">\n</span><span>&#39;, remain) {
+</span><span>                    Some(pos2) =&gt; {
+</span><span>                        </span><span style="color:#b48ead;">let</span><span> value = </span><span style="color:#96b5b4;">parse_value</span><span>(&amp;remain[</span><span style="color:#d08770;">0</span><span>..pos2]);
+</span><span>                        </span><span style="color:#96b5b4;">callback</span><span>(name, value);      </span><span style="color:#65737e;">// 7.5s
+</span><span>                        buf = &amp;remain[pos2+</span><span style="color:#d08770;">1</span><span>..];
+</span><span>                    }
+</span><span>                    None =&gt; {
+</span><span>                        </span><span style="color:#b48ead;">break</span><span>;
+</span><span>                    }
+</span><span>                }
+</span><span>            }
+</span><span>            None =&gt; {
+</span><span>                </span><span style="color:#b48ead;">break</span><span>;
+</span><span>            }
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> result = hash.</span><span style="color:#96b5b4;">iter</span><span>().</span><span style="color:#96b5b4;">map</span><span>(|(</span><span style="color:#bf616a;">name</span><span>, </span><span style="color:#bf616a;">item</span><span>)| {
+</span><span>        (name.</span><span style="color:#96b5b4;">to_string</span><span>(), (item.min as </span><span style="color:#b48ead;">f32 </span><span>/ </span><span style="color:#d08770;">10.0</span><span>, item.max as </span><span style="color:#b48ead;">f32 </span><span>/ </span><span style="color:#d08770;">10.0</span><span>, item.sum as </span><span style="color:#b48ead;">f32 </span><span>/ (</span><span style="color:#d08770;">10.0 </span><span>* item.count as </span><span style="color:#b48ead;">f32</span><span>)))
+</span><span>    }).</span><span style="color:#96b5b4;">collect</span><span>();
+</span><span>
+</span><span>    Ok(result)
+</span><span>}
+</span></code></pre>
+<p><a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver6.rs">ver6完整源代码</a></p>
+<p>性能数据：</p>
+<ol>
+<li>耗时：31s （vs ver4: -20.3s, +39.6%）（vs ver1: -76.9s, +71.1%）</li>
+<li><a href="https://share.firefox.dev/4hOMo5W">samply profile</a></li>
+</ol>
+<p>采用 zero copy 优化后，我们的性能获得了显著提升，相对于 ver1，耗时缩短到 29%。从 flame graph 中，可以看到，已经没有数据复制的成本了。
+目前，最大的几块耗时为：</p>
+<ul>
+<li><code>memchr::memchr::memchr</code> ~ 3.7s</li>
+<li><code>onebrc_rust::ver6::parse_value</code> ~ 4.87s</li>
+<li><code>std::collections::hash::map::HashMap::get_mut</code> ~ 19.5s， 有点奇怪，这里的耗时相比之前的版本，反而增加了。这个以后再分析。</li>
+</ul>
+<h1 id="ver7-25-5s">ver7, 25.5s</h1>
+<p>查看 ver6 的 flame graph，我们发现 HashMap 中最大的开销是 make_hash, 消耗了～16s 的时间，反而 其他的lookup 操作(~3s)并不大，经查阅资源，</p>
+<blockquote>
+<p>https://nnethercote.github.io/perf-book/hashing.html</p>
+<p>HashSet and HashMap are two widely-used types. The default hashing algorithm is not specified, but at the time of
+writing the default is an algorithm called SipHash 1-3. This algorithm is high quality—it provides high protection
+against collisions—but is relatively slow, particularly for short keys such as integers.</p>
+</blockquote>
+<p>可以看到，在 Rust 的哲学中，HashMap 的设计是为了保证高质量的 hash，而不是为了速度。</p>
+<p>按照文中的推荐，我们切换到 <a href="https://crates.io/crates/fxhash">fxhash</a>, 完整源代码参见：<a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver7.rs">ver7</a></p>
+<p>性能数据：</p>
+<ol>
+<li>耗时：25.5s (vs ver6: -5.5s, +21.5%) (vs ver1: -82.5s, +76.3%)</li>
+<li><a href="https://share.firefox.dev/4hE32Fs">samply profile</a>
+<ul>
+<li>make_hash 的时间大幅缩短，~5.1s</li>
+<li>lookup 的时间反而提升，从 ~3s 提升到 ～8.8s. 这个原因后续分析。</li>
+</ul>
+</li>
+</ol>
+<p>切换到 fxhash 后，性能又小幅度的提升，进入到 25s，当然，相比 ver1，我们已经有 4+倍 的性能提升了。</p>
+<h1 id="ver8-23-25s">ver8, 23.25s</h1>
+<p>在 ver1 - ver7 中，我们都没有使用 SIMD 这一技术，从 ver8 开始，我们将逐步引入 SIMD 技术。先从 查找分隔符开始。在之前的例子中，一直使用
+<code>memchr</code> 或 read_until(其内部也基于 memchr )，如果查找 crate.io 的文档，我们得知，memchr 内部也会采用 SIMD 技术进行优化，不过如果阅读
+源代码，memchr 尽在较大的数组中使用 SIMD，而对小数组则直接遍历。</p>
+<ol>
+<li>在 1brc 这个挑战赛中，平均每行的长度为 13.8 字符，而且每行包含2个分隔符，因此，memchr 大部份情况下都没有采用 SIMD 优化。</li>
+<li>ver1 - ver7 的版本中，每次都是获取下一个分隔符的位置，这并没有充分发挥 SIMD 的效率。我们完全可以一次读取一个 block(比如64B)，使用
+SIMD 指令一次找出全部的分隔符的位置，然后再进行处理。如果是 64B 的 Block，平均包含 4.6 行的数据，共 9.2 个分隔符。这就相当于原来需要
+9次 memchr 的操作可以在 单个 SIMD 操作中完成。</li>
+</ol>
+<p><a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver8.rs">ver8源代码</a></p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">ver8</span><span>() -&gt; Result&lt;HashMap&lt;String,(</span><span style="color:#b48ead;">f32</span><span>, </span><span style="color:#b48ead;">f32</span><span>, </span><span style="color:#b48ead;">f32</span><span>)&gt;, Box&lt;dyn std::error::Error&gt;&gt; {
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> file = std::fs::File::open(</span><span style="color:#d08770;">MEASUREMENT_FILE</span><span>)?;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> mmap = </span><span style="color:#b48ead;">unsafe </span><span>{ Mmap::map(&amp;file)? };
+</span><span>    </span><span style="color:#b48ead;">let</span><span> buf = mmap.</span><span style="color:#96b5b4;">as_ref</span><span>();
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">struct </span><span>Item {
+</span><span>        </span><span style="color:#bf616a;">min</span><span>: </span><span style="color:#b48ead;">i16</span><span>,
+</span><span>        </span><span style="color:#bf616a;">max</span><span>: </span><span style="color:#b48ead;">i16</span><span>,
+</span><span>        </span><span style="color:#bf616a;">count</span><span>: </span><span style="color:#b48ead;">u32</span><span>,
+</span><span>        </span><span style="color:#bf616a;">sum</span><span>: </span><span style="color:#b48ead;">i32</span><span>,
+</span><span>    }
+</span><span>    </span><span style="color:#65737e;">// let mut hash = HashMap::with_capacity_and_hasher(16384, fasthash::spooky::Hash64);
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> hash:FxHashMap&lt;String, Item&gt; = FxHashMap::with_capacity_and_hasher(</span><span style="color:#d08770;">16384</span><span>, rustc_hash::FxBuildHasher::default());
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// let mut sum = 0;
+</span><span>    </span><span style="color:#b48ead;">let mut </span><span style="color:#8fa1b3;">callback </span><span>= |</span><span style="color:#bf616a;">name</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>], </span><span style="color:#bf616a;">value</span><span>: </span><span style="color:#b48ead;">i16</span><span>| {  </span><span style="color:#65737e;">// ~13.5s 60%
+</span><span>        </span><span style="color:#b48ead;">match</span><span> hash.</span><span style="color:#96b5b4;">get_mut</span><span>(</span><span style="color:#b48ead;">unsafe </span><span>{ core::str::from_utf8_unchecked(name) }) {
+</span><span>            Some(item) =&gt; {
+</span><span>                item.count += </span><span style="color:#d08770;">1</span><span>;
+</span><span>                item.sum += value as </span><span style="color:#b48ead;">i32</span><span>;
+</span><span>                item.min = item.min.</span><span style="color:#96b5b4;">min</span><span>(value);
+</span><span>                item.max = item.max.</span><span style="color:#96b5b4;">max</span><span>(value);
+</span><span>            }
+</span><span>            None =&gt; {
+</span><span>                </span><span style="color:#b48ead;">let</span><span> item = Item {
+</span><span>                    min: value,
+</span><span>                    max: value,
+</span><span>                    count: </span><span style="color:#d08770;">1</span><span>,
+</span><span>                    sum: value as </span><span style="color:#b48ead;">i32</span><span>,
+</span><span>                };
+</span><span>                hash.</span><span style="color:#96b5b4;">insert</span><span>(</span><span style="color:#b48ead;">unsafe </span><span>{ core::str::from_utf8_unchecked(name) }.</span><span style="color:#96b5b4;">to_string</span><span>(), item);
+</span><span>            }
+</span><span>        }
+</span><span>    };
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> v01 = u8x64::splat(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">;</span><span>&#39;);
+</span><span>    </span><span style="color:#b48ead;">let</span><span> v02 = u8x64::splat(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#96b5b4;">\n</span><span>&#39;);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">enum </span><span>State {
+</span><span>        </span><span style="color:#d08770;">BEGIN</span><span>, </span><span style="color:#d08770;">POS1
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> state2: State = State::</span><span style="color:#d08770;">BEGIN</span><span>;     </span><span style="color:#65737e;">// BEGIN, POS1
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> line_begin: </span><span style="color:#b48ead;">usize </span><span>= </span><span style="color:#d08770;">0</span><span style="color:#b48ead;">usize</span><span>;  </span><span style="color:#65737e;">// always valid
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> pos1: </span><span style="color:#b48ead;">usize </span><span>= </span><span style="color:#d08770;">0</span><span>;        </span><span style="color:#65737e;">// when state2 is POS1
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> cursor: </span><span style="color:#b48ead;">usize </span><span>= </span><span style="color:#d08770;">0</span><span>;      </span><span style="color:#65737e;">// if block_is_tail, cursor can scroll forward, otherwise, cursor is always the head of the block
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> block_is_tail: </span><span style="color:#b48ead;">bool </span><span>= </span><span style="color:#d08770;">false</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> simd_mask: </span><span style="color:#b48ead;">u64 </span><span>= {      </span><span style="color:#65737e;">// when block_is_tail == false, simd_mask is the search mask
+</span><span>        </span><span style="color:#b48ead;">let</span><span> v1: u8x64 = u8x64::from_slice(buf);        </span><span style="color:#65737e;">// 64 bytes
+</span><span>        (v1.</span><span style="color:#96b5b4;">simd_eq</span><span>(v01) | v1.</span><span style="color:#96b5b4;">simd_eq</span><span>(v02)).</span><span style="color:#96b5b4;">to_bitmask</span><span>()
+</span><span>    };
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">loop </span><span>{
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">let</span><span> pos: </span><span style="color:#b48ead;">usize </span><span>=  </span><span style="color:#b48ead;">loop </span><span>{
+</span><span>            </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">likely</span><span>(block_is_tail == </span><span style="color:#d08770;">false</span><span>) {    </span><span style="color:#65737e;">// 1. simd_block
+</span><span>                </span><span style="color:#b48ead;">let</span><span> first = simd_mask.</span><span style="color:#96b5b4;">trailing_zeros</span><span>(); </span><span style="color:#65737e;">// 0..64
+</span><span>                </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">likely</span><span>(first &lt; </span><span style="color:#d08770;">64</span><span>) {  </span><span style="color:#65737e;">// 1.1 having a match
+</span><span>                    simd_mask &amp;= !(</span><span style="color:#d08770;">1 </span><span>&lt;&lt; first);
+</span><span>                    </span><span style="color:#b48ead;">break</span><span> cursor + first as </span><span style="color:#b48ead;">usize</span><span>;      </span><span style="color:#65737e;">// break result 1: from simd_block
+</span><span>                } </span><span style="color:#b48ead;">else </span><span>{  </span><span style="color:#65737e;">// 1.2 load next block and continue loop
+</span><span>                    cursor += </span><span style="color:#d08770;">64</span><span>;
+</span><span>                    </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">likely</span><span>(cursor + </span><span style="color:#d08770;">64 </span><span>&lt;= buf.</span><span style="color:#96b5b4;">len</span><span>()) { </span><span style="color:#65737e;">// 1.2.1 load next u8x64 block
+</span><span>                        </span><span style="color:#b48ead;">let</span><span> v1 = u8x64::from_slice(&amp;buf[cursor..cursor + </span><span style="color:#d08770;">64</span><span>]);
+</span><span>                        simd_mask = (v1.</span><span style="color:#96b5b4;">simd_eq</span><span>(v01) | v1.</span><span style="color:#96b5b4;">simd_eq</span><span>(v02)).</span><span style="color:#96b5b4;">to_bitmask</span><span>();
+</span><span>                    } </span><span style="color:#b48ead;">else </span><span>{    </span><span style="color:#65737e;">// 1.2.2 load the tail block
+</span><span>                        block_is_tail = </span><span style="color:#d08770;">true</span><span>;
+</span><span>                    }
+</span><span>                    </span><span style="color:#b48ead;">continue</span><span>;
+</span><span>                }
+</span><span>            } </span><span style="color:#b48ead;">else </span><span>{  </span><span style="color:#65737e;">// 2. tail block
+</span><span>                </span><span style="color:#b48ead;">match </span><span style="color:#96b5b4;">memchr2</span><span>(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">;</span><span>&#39;, </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#96b5b4;">\n</span><span>&#39;, &amp;buf[cursor..]) {
+</span><span>                    Some(index) =&gt; {
+</span><span>                        </span><span style="color:#b48ead;">let</span><span> result = cursor + index;
+</span><span>                        cursor += index + </span><span style="color:#d08770;">1</span><span>;
+</span><span>                        </span><span style="color:#b48ead;">break</span><span> result;   </span><span style="color:#65737e;">// break result 2: from tail block
+</span><span>                    }
+</span><span>                    None =&gt; {
+</span><span>                        unreachable!(&quot;</span><span style="color:#a3be8c;">tail block should always have a match</span><span>&quot;);
+</span><span>                    }
+</span><span>                }
+</span><span>            }
+</span><span>        };
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">match</span><span> state2 {
+</span><span>            State::</span><span style="color:#d08770;">BEGIN </span><span>=&gt; {
+</span><span>                pos1 = pos;
+</span><span>                state2 = State::</span><span style="color:#d08770;">POS1</span><span>;
+</span><span>            }
+</span><span>            State::</span><span style="color:#d08770;">POS1 </span><span>=&gt; {
+</span><span>                </span><span style="color:#b48ead;">let</span><span> pos2 = pos;
+</span><span>                </span><span style="color:#96b5b4;">callback</span><span>(&amp;buf[line_begin..pos1], </span><span style="color:#96b5b4;">parse_value</span><span>(&amp;buf[pos1+</span><span style="color:#d08770;">1</span><span>..pos2]));
+</span><span>                state2 = State::</span><span style="color:#d08770;">BEGIN</span><span>;
+</span><span>                line_begin = pos2 + </span><span style="color:#d08770;">1</span><span>;
+</span><span>            }
+</span><span>        }
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">unlikely</span><span>( pos + </span><span style="color:#d08770;">1 </span><span>== buf.</span><span style="color:#96b5b4;">len</span><span>() ) {
+</span><span>            </span><span style="color:#b48ead;">break</span><span>;
+</span><span>        }
+</span><span>
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> result = hash.</span><span style="color:#96b5b4;">iter</span><span>().</span><span style="color:#96b5b4;">map</span><span>(|(</span><span style="color:#bf616a;">name</span><span>, </span><span style="color:#bf616a;">item</span><span>)| {
+</span><span>        (name.</span><span style="color:#96b5b4;">clone</span><span>(), (item.min as </span><span style="color:#b48ead;">f32</span><span>/ </span><span style="color:#d08770;">10.0</span><span>, item.max as </span><span style="color:#b48ead;">f32 </span><span>/ </span><span style="color:#d08770;">10.0</span><span>, item.sum as </span><span style="color:#b48ead;">f32 </span><span>/ item.count as </span><span style="color:#b48ead;">f32 </span><span>/ </span><span style="color:#d08770;">10.0</span><span>))
+</span><span>    }).</span><span style="color:#96b5b4;">collect</span><span>();
+</span><span>
+</span><span>    Ok(result)
+</span><span>}
+</span><span>
+</span></code></pre>
+<p>性能数据：</p>
+<ol>
+<li>耗时: 23.25s (vs ver7: -2.25s, +9.2%) (vs ver1: -84.65s, +78.3%)</li>
+<li><a href="https://share.firefox.dev/3Er2Afo">samply profile</a></li>
+</ol>
+<p>对比ver7, 有小幅度提升（这是因为 v7 中 memchr 的耗时也只有 3s, 并不大）。</p>
+<p>切换成 SIMD 处理后，代码稍微又些复杂，这是因为在性能优化的过程中，我会产生越来越多的”自我控制“感，以避免编译期生成不佳的代码，也就是说，在
+很多情况下，高性能的代码与 zero cost abstraction 是有矛盾的。当然，后面我们也会看到，这种感觉并不可靠，很多情况下，现代编译期足以生成高效的
+代码，并且无悖于 zero cost abstraction。</p>
+<h1 id="ver9-23-76s">ver9, 23.76s</h1>
+<p>ver9 是在 ver8 的基础上，对 parse_value 进行优化，使用 SIMD 指令进行优化。</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span>#[</span><span style="color:#bf616a;">inline</span><span>]
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">parse_value</span><span>(</span><span style="color:#bf616a;">buf</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; </span><span style="color:#b48ead;">i16 </span><span>{    </span><span style="color:#65737e;">// ~0.5s
+</span><span>    </span><span style="color:#65737e;">// return 0;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> scale = u16x4::from_array( [</span><span style="color:#d08770;">100</span><span>, </span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">0</span><span>, </span><span style="color:#d08770;">1</span><span>] );
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sign = </span><span style="color:#b48ead;">if</span><span> buf[</span><span style="color:#d08770;">0</span><span>] == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">-</span><span>&#39; {-</span><span style="color:#d08770;">1</span><span style="color:#b48ead;">i16</span><span>} </span><span style="color:#b48ead;">else </span><span>{</span><span style="color:#d08770;">1</span><span>};
+</span><span>    </span><span style="color:#b48ead;">let</span><span> offset = </span><span style="color:#b48ead;">if</span><span> buf[</span><span style="color:#d08770;">0</span><span>] == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">-</span><span>&#39; {</span><span style="color:#d08770;">1</span><span>} </span><span style="color:#b48ead;">else </span><span>{</span><span style="color:#d08770;">0</span><span>};
+</span><span>    </span><span style="color:#b48ead;">let</span><span> v1 = {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> buf = &amp;buf[offset..];
+</span><span>        </span><span style="color:#b48ead;">let mut</span><span> arr: [</span><span style="color:#b48ead;">u8</span><span>; </span><span style="color:#d08770;">8</span><span>] = [</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">0</span><span>&#39; as </span><span style="color:#b48ead;">u8</span><span>; </span><span style="color:#d08770;">8</span><span>];
+</span><span>        arr[</span><span style="color:#d08770;">8 </span><span>- buf.</span><span style="color:#96b5b4;">len</span><span>()..].</span><span style="color:#96b5b4;">copy_from_slice</span><span>(buf);
+</span><span>        u16x4::from_array( [ arr[</span><span style="color:#d08770;">4</span><span>] as </span><span style="color:#b48ead;">u16</span><span>, arr[</span><span style="color:#d08770;">5</span><span>] as </span><span style="color:#b48ead;">u16</span><span>, arr[</span><span style="color:#d08770;">6</span><span>] as </span><span style="color:#b48ead;">u16</span><span>, arr[</span><span style="color:#d08770;">7</span><span>] as </span><span style="color:#b48ead;">u16 </span><span>] )
+</span><span>    };
+</span><span>    ((v1 - u16x4::splat(&#39;</span><span style="color:#a3be8c;">0</span><span>&#39; as </span><span style="color:#b48ead;">u16</span><span>))  * scale).</span><span style="color:#96b5b4;">reduce_sum</span><span>() as </span><span style="color:#b48ead;">i16 </span><span>* sign
+</span><span>}
+</span></code></pre>
+<p><a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver9.rs">ver9完整源代码</a></p>
+<p>性能数据：</p>
+<ol>
+<li>耗时：23.76s (vs ver8: +0.51s, -2.1%) (vs ver1: -84.14s, +78.1%)</li>
+<li><a href="https://share.firefox.dev/3EtGoRX">samply profile</a></li>
+</ol>
+<p>对 parse_value 进行 SIMD 优化并没有达到预期的结果。我们继续前行。</p>
+<h1 id="ver10-27-10s">ver10, 27.10s</h1>
+<p>在 ver9 的火焰图上，当前最大的开销是 <code>std::collections::hash::map::HashMap::get_mut</code>(~11.7s), ver10 尝试使用一个替代的 HashMap
+方案，来减少 hash 的计算开销和 lookup 的开销，不过，这个版本并没有达到预期的效果。 这里就不分析了。</p>
+<p><a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver10.rs">ver10源代码</a></p>
+<h1 id="ver12-13-07s">ver12，13.07s</h1>
+<p>在 ver10 中，我们尝试自建一个替代的 HashMap，基本的方向是将 city_name 映射为 integer, 然后使用一个稀疏的 Vec 来存储 key-value，
+在 ver10 中尝试是失败的，主要是 HashMap 的 Miss 比例过高（50%）,即有50%的 key 都需要进行都多余1次的查找。</p>
+<p>在 ver12 中，我们继续优化数据结构，尝试将 flame graph 中目前最大的开销 <code>std::collections::hash::map::HashMap::get_mut</code>(~11.7s)
+降下来。</p>
+<p>优化后的算法：</p>
+<ol>
+<li>将 city_name 映射为 i128, 即仅取 city_name 的最多16字节作为 key。（有些取巧，在测试中，所有的city name 截取前16个字节时，是没有
+重复的。）</li>
+<li>使用如下算法将 i128 映射为 i20:<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span> </span><span style="color:#b48ead;">let</span><span> key_a: </span><span style="color:#b48ead;">i64 </span><span>= ??? </span><span style="color:#65737e;">// 低64位
+</span><span> </span><span style="color:#b48ead;">let</span><span> key_b: </span><span style="color:#b48ead;">i64 </span><span>= ??? </span><span style="color:#65737e;">// 高64位
+</span><span> </span><span style="color:#b48ead;">let</span><span> hash = { </span><span style="color:#65737e;">// b[0..19] ^ b[20..39] ^ b[40..59] ^ b[64..83] ^ b[84..103] ^ b[104..123]
+</span><span>         </span><span style="color:#b48ead;">let</span><span> p0 = key_a &amp; mask;
+</span><span>         </span><span style="color:#b48ead;">let</span><span> p1 = (key_a &gt;&gt; </span><span style="color:#d08770;">20</span><span>) &amp; mask;
+</span><span>         </span><span style="color:#b48ead;">let</span><span> p2 = (key_a &gt;&gt; </span><span style="color:#d08770;">40</span><span>) &amp; mask;
+</span><span>         </span><span style="color:#b48ead;">let</span><span> p3 = key_b &amp; mask;
+</span><span>         </span><span style="color:#b48ead;">let</span><span> p4 = (key_b &gt;&gt; </span><span style="color:#d08770;">20</span><span>) &amp; mask;
+</span><span>         </span><span style="color:#b48ead;">let</span><span> p5 = (key_b &gt;&gt; </span><span style="color:#d08770;">40</span><span>) &amp; mask;
+</span><span>         p0 ^ p1 ^ p2 ^ p3 ^ p4 ^ p5
+</span><span>     };
+</span></code></pre>
+</li>
+<li>分配一个 2^20 + 1024 的 Vec<AggrItem>, 其中: AggrItem 是每一个汇总项（占用56字节大小）<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">struct </span><span>AggrItem {
+</span><span> </span><span style="color:#bf616a;">key_a</span><span>:  </span><span style="color:#b48ead;">u64</span><span>,     </span><span style="color:#65737e;">// 32
+</span><span> </span><span style="color:#bf616a;">key_b</span><span>:  </span><span style="color:#b48ead;">u64</span><span>,     </span><span style="color:#65737e;">// 40
+</span><span> </span><span style="color:#bf616a;">key</span><span>: Vec&lt;</span><span style="color:#b48ead;">u8</span><span>&gt;,    </span><span style="color:#65737e;">// 24
+</span><span> </span><span style="color:#bf616a;">min</span><span>: </span><span style="color:#b48ead;">i16</span><span>,       </span><span style="color:#65737e;">// 42
+</span><span> </span><span style="color:#bf616a;">max</span><span>: </span><span style="color:#b48ead;">i16</span><span>,       </span><span style="color:#65737e;">// 44
+</span><span> </span><span style="color:#bf616a;">count</span><span>: </span><span style="color:#b48ead;">u32</span><span>,     </span><span style="color:#65737e;">// 48
+</span><span> </span><span style="color:#bf616a;">sum</span><span>: </span><span style="color:#b48ead;">i32</span><span>,       </span><span style="color:#65737e;">// 52
+</span><span>}
+</span></code></pre>
+</li>
+<li>根据 city_name 计算 128位的 key 值，并使用上述的 hash 算法，计算 hash 值(0 - 2^20-1), 然后使用该 hash 值直接访问数组
+<ul>
+<li>由于可能存在重复的 hash 值，因此，需要比较 key 值是否一致，一致则命中。</li>
+<li>不命中则搜索数组中的下一项，直到 hash 值相同</li>
+<li>最多搜索1024次，否则直接报错。</li>
+</ul>
+</li>
+</ol>
+<p>设计这个算法的原因是：</p>
+<ol>
+<li>1brc 挑战的数据集中，共有443个城市，city_name 长度为 3..33，选取前16个字符时，即可保证唯一性。</li>
+<li>设计一个包含 1M 大小的 HashMap，并通过精心设计的 hash 算法，可以确保该 HashMap 的稀疏性，绝大部分的 city 应该唯一命中某个 slot 而无需
+遍历。</li>
+<li>使用 i128 作为 key 的唯一性，避免了进行字符串比较的开销。</li>
+<li>上述的 hash 算法，是简单的数学运算，相比字符串计算 hash 要快捷很多（且不涉及内存访问）。</li>
+</ol>
+<p><a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver12.rs">ver12 完整源代码</a></p>
+<p>性能数据:</p>
+<ol>
+<li>耗时： 13.07s (vs ver9: -10.69s, +45.1%) (vs ver1: -93.83s, +87.1%)</li>
+<li><a href="https://share.firefox.dev/414vPNO">samply profile</a></li>
+</ol>
+<p>非常可喜的突破，通过独特设计的 HashMap，我们获得了比使用 <code>std::collections::hash::map::HashMap</code> 快得多的性能，原来 HashMap 11.7s 的开销
+降低到了 2 s，更让我们的程序相比 ver1 提高了 8+ 倍的性能提升。</p>
+<p>现在，主要的耗时：</p>
+<ul>
+<li>处理分隔符：~3.15s</li>
+<li>parse_value ～4.7s</li>
+<li>hash aggregate: ~2.4s</li>
+</ul>
+<p>还可以进行哪些优化呢？</p>
+<h1 id="ver13-9-12s">ver13, 9.12s</h1>
+<p>在ver9 中，我们使用 SIMD 优化了 parse_value，但是并没有达到预期的效果，如果我们将多行的 value 放到一起来使用 SIMD 呢？另外，loop unroll
+也是一种常见的优化手段，在我们前面的版本中，每次循环都是处理1行，而我们现在的版本已经每次读取 64 字节的 block，使用 SIMD 来进行分隔符检测，
+那么我们也可以尝试把一个 block 中的多行数据放到一起来处理。根据上面的数据分析，每个block 包含 1-8 行数据，平均为 4.6 行。</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">unsafe fn </span><span style="color:#8fa1b3;">parse_values</span><span>(</span><span style="color:#bf616a;">val1</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>], </span><span style="color:#bf616a;">val2</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>], </span><span style="color:#bf616a;">val3</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>], </span><span style="color:#bf616a;">val4</span><span>: &amp;[</span><span style="color:#b48ead;">u8</span><span>]) -&gt; (</span><span style="color:#b48ead;">i16</span><span>, </span><span style="color:#b48ead;">i16</span><span>, </span><span style="color:#b48ead;">i16</span><span>, </span><span style="color:#b48ead;">i16</span><span>) {
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> pad_1 = </span><span style="color:#d08770;">8 </span><span>- val1.</span><span style="color:#96b5b4;">len</span><span>() as </span><span style="color:#b48ead;">isize</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> pad_2 = </span><span style="color:#d08770;">8 </span><span>- val2.</span><span style="color:#96b5b4;">len</span><span>() as </span><span style="color:#b48ead;">isize</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> pad_3 = </span><span style="color:#d08770;">8 </span><span>- val3.</span><span style="color:#96b5b4;">len</span><span>() as </span><span style="color:#b48ead;">isize</span><span>;
+</span><span>    </span><span style="color:#b48ead;">let</span><span> pad_4 = </span><span style="color:#d08770;">8 </span><span>- val4.</span><span style="color:#96b5b4;">len</span><span>() as </span><span style="color:#b48ead;">isize</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> ptr1 = val1.</span><span style="color:#96b5b4;">as_ptr</span><span>().</span><span style="color:#96b5b4;">offset</span><span>( -pad_1);
+</span><span>    </span><span style="color:#b48ead;">let</span><span> ptr2 = val2.</span><span style="color:#96b5b4;">as_ptr</span><span>().</span><span style="color:#96b5b4;">offset</span><span>(-pad_2);
+</span><span>    </span><span style="color:#b48ead;">let</span><span> ptr3 = val3.</span><span style="color:#96b5b4;">as_ptr</span><span>().</span><span style="color:#96b5b4;">offset</span><span>(-pad_3);
+</span><span>    </span><span style="color:#b48ead;">let</span><span> ptr4 = val4.</span><span style="color:#96b5b4;">as_ptr</span><span>().</span><span style="color:#96b5b4;">offset</span><span>(-pad_4);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> l1 = </span><span style="color:#b48ead;">u64</span><span>::from_be_bytes( *(ptr1 as </span><span style="color:#b48ead;">*const </span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) );
+</span><span>    </span><span style="color:#b48ead;">let</span><span> l2 = </span><span style="color:#b48ead;">u64</span><span>::from_be_bytes( *(ptr2 as </span><span style="color:#b48ead;">*const </span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) );
+</span><span>    </span><span style="color:#b48ead;">let</span><span> l3 = </span><span style="color:#b48ead;">u64</span><span>::from_be_bytes( *(ptr3 as </span><span style="color:#b48ead;">*const </span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) );
+</span><span>    </span><span style="color:#b48ead;">let</span><span> l4 = </span><span style="color:#b48ead;">u64</span><span>::from_be_bytes( *(ptr4 as </span><span style="color:#b48ead;">*const </span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) );
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// clear top pad_1 * 8 bits of l1
+</span><span>    </span><span style="color:#b48ead;">let</span><span> l1 = l1 &amp; (</span><span style="color:#b48ead;">u64</span><span>::</span><span style="color:#d08770;">MAX </span><span>&gt;&gt; (pad_1 * </span><span style="color:#d08770;">8</span><span>));
+</span><span>    </span><span style="color:#b48ead;">let</span><span> l2 = l2 &amp; (</span><span style="color:#b48ead;">u64</span><span>::</span><span style="color:#d08770;">MAX </span><span>&gt;&gt; (pad_2 * </span><span style="color:#d08770;">8</span><span>));
+</span><span>    </span><span style="color:#b48ead;">let</span><span> l3 = l3 &amp; (</span><span style="color:#b48ead;">u64</span><span>::</span><span style="color:#d08770;">MAX </span><span>&gt;&gt; (pad_3 * </span><span style="color:#d08770;">8</span><span>));
+</span><span>    </span><span style="color:#b48ead;">let</span><span> l4 = l4 &amp; (</span><span style="color:#b48ead;">u64</span><span>::</span><span style="color:#d08770;">MAX </span><span>&gt;&gt; (pad_4 * </span><span style="color:#d08770;">8</span><span>));
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sign_1 = </span><span style="color:#b48ead;">if</span><span> val1[</span><span style="color:#d08770;">0</span><span>] == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">-</span><span>&#39; { -</span><span style="color:#d08770;">1 </span><span>} </span><span style="color:#b48ead;">else </span><span>{ </span><span style="color:#d08770;">1 </span><span>};
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sign_2 = </span><span style="color:#b48ead;">if</span><span> val2[</span><span style="color:#d08770;">0</span><span>] == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">-</span><span>&#39; { -</span><span style="color:#d08770;">1 </span><span>} </span><span style="color:#b48ead;">else </span><span>{ </span><span style="color:#d08770;">1 </span><span>};
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sign_3 = </span><span style="color:#b48ead;">if</span><span> val3[</span><span style="color:#d08770;">0</span><span>] == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">-</span><span>&#39; { -</span><span style="color:#d08770;">1 </span><span>} </span><span style="color:#b48ead;">else </span><span>{ </span><span style="color:#d08770;">1 </span><span>};
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sign_4 = </span><span style="color:#b48ead;">if</span><span> val4[</span><span style="color:#d08770;">0</span><span>] == </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">-</span><span>&#39; { -</span><span style="color:#d08770;">1 </span><span>} </span><span style="color:#b48ead;">else </span><span>{ </span><span style="color:#d08770;">1 </span><span>};
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> v: u32x4 = u32x4::from_array([l1 as </span><span style="color:#b48ead;">u32</span><span>, l2 as </span><span style="color:#b48ead;">u32</span><span>, l3 as </span><span style="color:#b48ead;">u32</span><span>,  l4 as </span><span style="color:#b48ead;">u32</span><span>]);
+</span><span>    </span><span style="color:#b48ead;">let</span><span> v2: i8x16 = </span><span style="color:#96b5b4;">transmute</span><span>(v);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> v2  = </span><span style="color:#b48ead;">unsafe </span><span>{ </span><span style="color:#96b5b4;">extend_i8x16</span><span>(v2) };
+</span><span>    </span><span style="color:#65737e;">// let v2: i16x32 = simd_swizzle!(v2, [7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8, 23, 22, 21, 20, 19, 18, 17, 16, 31, 30, 29, 28, 27, 26, 25, 24]);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> scale: i16x16 = i16x16::from_array([ </span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">0</span><span>, </span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">100</span><span>, </span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">0</span><span>, </span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">100</span><span>, </span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">0</span><span>, </span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">100</span><span>, </span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">0</span><span>, </span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">100 </span><span>] );
+</span><span>    </span><span style="color:#b48ead;">let</span><span> mask = v2.</span><span style="color:#96b5b4;">simd_ge</span><span>(i16x16::splat(&#39;</span><span style="color:#a3be8c;">0</span><span>&#39; as </span><span style="color:#b48ead;">i16</span><span>));
+</span><span>    </span><span style="color:#b48ead;">let</span><span> v2 = mask.</span><span style="color:#96b5b4;">select</span><span>(v2, i16x16::splat(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">0</span><span>&#39; as </span><span style="color:#b48ead;">i16</span><span>));
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sub = v2 - i16x16::splat(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">0</span><span>&#39; as </span><span style="color:#b48ead;">i16</span><span>);      </span><span style="color:#65737e;">// (c - &#39;0&#39;)
+</span><span>    </span><span style="color:#b48ead;">let</span><span> mul = sub * scale;                                </span><span style="color:#65737e;">// (c - &#39;0&#39;) * scale
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> mul_2 = mul.rotate_elements_right::&lt;2&gt;();       </span><span style="color:#65737e;">// 100 + 0, 10 + 1
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sum = mul + mul_2;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sum_2 = sum.rotate_elements_right::&lt;1&gt;();       </span><span style="color:#65737e;">// 100 + 0 + 10 + 1
+</span><span>    </span><span style="color:#b48ead;">let</span><span> sum = sum + sum_2;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> array: &amp;[</span><span style="color:#b48ead;">i16</span><span>;</span><span style="color:#d08770;">16</span><span>] = &amp; </span><span style="color:#96b5b4;">transmute</span><span>(sum);
+</span><span>    (sign_1 * array[</span><span style="color:#d08770;">3</span><span>], sign_2 * array[</span><span style="color:#d08770;">7</span><span>], sign_3 * array[</span><span style="color:#d08770;">11</span><span>], sign_4 * array[</span><span style="color:#d08770;">15</span><span>])
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">struct </span><span>FileReader {
+</span><span>    </span><span style="color:#bf616a;">_mmap</span><span>: Mmap,         </span><span style="color:#65737e;">// const
+</span><span>    </span><span style="color:#bf616a;">length</span><span>: </span><span style="color:#b48ead;">usize</span><span>,      </span><span style="color:#65737e;">// const
+</span><span>    </span><span style="color:#bf616a;">buf</span><span>: </span><span style="color:#b48ead;">*const u8</span><span>,     </span><span style="color:#65737e;">// const
+</span><span>    </span><span style="color:#bf616a;">eof</span><span>: </span><span style="color:#b48ead;">bool</span><span>,          </span><span style="color:#65737e;">// has more content
+</span><span>    </span><span style="color:#bf616a;">cursor</span><span>: </span><span style="color:#b48ead;">usize</span><span>,      </span><span style="color:#65737e;">// read_more will update, 当前读取位置，已读取并分析结果保存在 mask 中
+</span><span>    </span><span style="color:#bf616a;">mask</span><span>:   </span><span style="color:#b48ead;">u64</span><span>,        </span><span style="color:#65737e;">// read_more will set, next will clear
+</span><span>    </span><span style="color:#bf616a;">line_begin</span><span>: </span><span style="color:#b48ead;">usize</span><span>,    </span><span style="color:#65737e;">// next will update，下一行的开始位置
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">impl </span><span>FileReader {
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">new</span><span>(</span><span style="color:#bf616a;">mmap</span><span>: Mmap) -&gt; FileReader {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> length = mmap.</span><span style="color:#96b5b4;">len</span><span>();
+</span><span>        </span><span style="color:#b48ead;">let</span><span> buf = mmap.</span><span style="color:#96b5b4;">as_ptr</span><span>();
+</span><span>        </span><span style="color:#b48ead;">let</span><span> u8x64 = u8x64::from_array( </span><span style="color:#b48ead;">unsafe </span><span>{ *( buf as </span><span style="color:#b48ead;">*const</span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">64</span><span>]) } );
+</span><span>        </span><span style="color:#b48ead;">let</span><span> mask_v1: u8x64 = u8x64::splat(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">;</span><span>&#39;);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> mask_v2: u8x64 = u8x64::splat(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#96b5b4;">\n</span><span>&#39;);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> mask: Mask&lt;</span><span style="color:#b48ead;">i8</span><span>, 64&gt; = u8x64.</span><span style="color:#96b5b4;">simd_eq</span><span>(mask_v1) | u8x64.</span><span style="color:#96b5b4;">simd_eq</span><span>(mask_v2);
+</span><span>        </span><span style="color:#b48ead;">let</span><span> mask = mask.</span><span style="color:#96b5b4;">to_bitmask</span><span>();
+</span><span>        FileReader {
+</span><span>            _mmap: mmap,
+</span><span>            length,
+</span><span>            buf,
+</span><span>            eof: </span><span style="color:#d08770;">false</span><span>,
+</span><span>            cursor: </span><span style="color:#d08770;">0</span><span>,
+</span><span>            mask,
+</span><span>            line_begin: </span><span style="color:#d08770;">0
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    #[</span><span style="color:#bf616a;">inline</span><span>]
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">read_block_at_cursor</span><span>(&amp;</span><span style="color:#b48ead;">mut </span><span style="color:#bf616a;">self</span><span>) {
+</span><span>        </span><span style="color:#65737e;">// change to unlikely fastup from 11.5s ~ 6.65s
+</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">unlikely</span><span>(</span><span style="color:#bf616a;">self</span><span>.mask == </span><span style="color:#d08770;">0</span><span>) {    </span><span style="color:#65737e;">// need more
+</span><span>
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.cursor += </span><span style="color:#d08770;">64</span><span>;
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">likely</span><span>(</span><span style="color:#bf616a;">self</span><span>.cursor + </span><span style="color:#d08770;">64 </span><span>&lt;= </span><span style="color:#bf616a;">self</span><span>.length) {
+</span><span>                </span><span style="color:#b48ead;">let</span><span> mask_v1: u8x64 = u8x64::splat(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">;</span><span>&#39;);
+</span><span>                </span><span style="color:#b48ead;">let</span><span> mask_v2: u8x64 = u8x64::splat(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#96b5b4;">\n</span><span>&#39;);
+</span><span>
+</span><span>                </span><span style="color:#b48ead;">let</span><span> u8x64 = u8x64::from_array( </span><span style="color:#b48ead;">unsafe </span><span>{ *( </span><span style="color:#bf616a;">self</span><span>.buf.</span><span style="color:#96b5b4;">add</span><span>(</span><span style="color:#bf616a;">self</span><span>.cursor) as </span><span style="color:#b48ead;">*const</span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">64</span><span>]) } );
+</span><span>                </span><span style="color:#b48ead;">let</span><span> mask: Mask&lt;</span><span style="color:#b48ead;">i8</span><span>, 64&gt; = u8x64.</span><span style="color:#96b5b4;">simd_eq</span><span>(mask_v1) | u8x64.</span><span style="color:#96b5b4;">simd_eq</span><span>(mask_v2);
+</span><span>                </span><span style="color:#bf616a;">self</span><span>.mask = mask.</span><span style="color:#96b5b4;">to_bitmask</span><span>();
+</span><span>            }
+</span><span>            </span><span style="color:#b48ead;">else </span><span>{
+</span><span>                </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#96b5b4;">read_last_block</span><span>();      </span><span style="color:#65737e;">//
+</span><span>            }
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    #[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">read_last_block</span><span>(&amp;</span><span style="color:#b48ead;">mut </span><span style="color:#bf616a;">self</span><span>) {
+</span><span>        </span><span style="color:#b48ead;">let</span><span> ptr = </span><span style="color:#b48ead;">unsafe </span><span>{ </span><span style="color:#bf616a;">self</span><span>.buf.</span><span style="color:#96b5b4;">add</span><span>(</span><span style="color:#bf616a;">self</span><span>.cursor) };
+</span><span>        </span><span style="color:#b48ead;">let</span><span> count = </span><span style="color:#bf616a;">self</span><span>.length - </span><span style="color:#bf616a;">self</span><span>.cursor;  </span><span style="color:#65737e;">// maybe zero
+</span><span>        </span><span style="color:#b48ead;">let</span><span> slice = </span><span style="color:#b48ead;">unsafe </span><span>{ std::slice::from_raw_parts(ptr, count) };
+</span><span>        </span><span style="color:#b48ead;">let mut</span><span> base = </span><span style="color:#d08770;">0</span><span style="color:#b48ead;">usize</span><span>;
+</span><span>        </span><span style="color:#b48ead;">loop </span><span>{
+</span><span>            </span><span style="color:#b48ead;">if</span><span> base &gt;= count {
+</span><span>                </span><span style="color:#b48ead;">break</span><span>;
+</span><span>            }
+</span><span>            </span><span style="color:#b48ead;">match </span><span style="color:#96b5b4;">memchr2</span><span>(</span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#a3be8c;">;</span><span>&#39;, </span><span style="color:#b48ead;">b</span><span>&#39;</span><span style="color:#96b5b4;">\n</span><span>&#39;, &amp;slice[base..]) {
+</span><span>                Some(index) =&gt; {
+</span><span>                    </span><span style="color:#bf616a;">self</span><span>.mask |= </span><span style="color:#d08770;">1 </span><span>&lt;&lt; (base+index);
+</span><span>                    base += index+</span><span style="color:#d08770;">1</span><span>;
+</span><span>                }
+</span><span>                _ =&gt; {
+</span><span>                    panic!(&quot;</span><span style="color:#a3be8c;">tail block should always have a match</span><span>&quot;);
+</span><span>                }
+</span><span>            }
+</span><span>        }
+</span><span>        </span><span style="color:#bf616a;">self</span><span>.eof = </span><span style="color:#d08770;">true</span><span>;
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// TODO wrongs for the last line
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">next</span><span>(&amp;</span><span style="color:#b48ead;">mut </span><span style="color:#bf616a;">self</span><span>) -&gt; Option&lt;(&amp;</span><span style="color:#b48ead;">&#39;static</span><span> [</span><span style="color:#b48ead;">u8</span><span>], &amp;</span><span style="color:#b48ead;">&#39;static</span><span> [</span><span style="color:#b48ead;">u8</span><span>])&gt; {
+</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">likely</span><span>(</span><span style="color:#bf616a;">self</span><span>.eof == </span><span style="color:#d08770;">false</span><span>) {
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#96b5b4;">read_block_at_cursor</span><span>();
+</span><span>            </span><span style="color:#b48ead;">let</span><span> first = {
+</span><span>                </span><span style="color:#b48ead;">let</span><span> index = </span><span style="color:#bf616a;">self</span><span>.mask.</span><span style="color:#96b5b4;">trailing_zeros</span><span>();
+</span><span>                </span><span style="color:#bf616a;">self</span><span>.mask &amp;= !(</span><span style="color:#d08770;">1 </span><span>&lt;&lt; index);
+</span><span>                </span><span style="color:#bf616a;">self</span><span>.cursor + index as </span><span style="color:#b48ead;">usize
+</span><span>            };
+</span><span>
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#96b5b4;">read_block_at_cursor</span><span>();
+</span><span>            </span><span style="color:#b48ead;">let</span><span> second = {
+</span><span>                </span><span style="color:#b48ead;">let</span><span> index = </span><span style="color:#bf616a;">self</span><span>.mask.</span><span style="color:#96b5b4;">trailing_zeros</span><span>();
+</span><span>                </span><span style="color:#bf616a;">self</span><span>.mask &amp;= !(</span><span style="color:#d08770;">1 </span><span>&lt;&lt; index);
+</span><span>                </span><span style="color:#bf616a;">self</span><span>.cursor + index as </span><span style="color:#b48ead;">usize
+</span><span>            };
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key: &amp;[</span><span style="color:#b48ead;">u8</span><span>] = </span><span style="color:#b48ead;">unsafe </span><span>{ std::slice::from_raw_parts(</span><span style="color:#bf616a;">self</span><span>.buf.</span><span style="color:#96b5b4;">add</span><span>(</span><span style="color:#bf616a;">self</span><span>.line_begin), first - </span><span style="color:#bf616a;">self</span><span>.line_begin) };
+</span><span>            </span><span style="color:#b48ead;">let</span><span> value: &amp;[</span><span style="color:#b48ead;">u8</span><span>] = </span><span style="color:#b48ead;">unsafe </span><span>{ std::slice::from_raw_parts(</span><span style="color:#bf616a;">self</span><span>.buf.</span><span style="color:#96b5b4;">add</span><span>(first + </span><span style="color:#d08770;">1</span><span>), second - first - </span><span style="color:#d08770;">1</span><span>) };
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> result = (key, value);
+</span><span>            </span><span style="color:#bf616a;">self</span><span>.line_begin = second + </span><span style="color:#d08770;">1</span><span>;
+</span><span>            Some(result)
+</span><span>        }
+</span><span>        </span><span style="color:#b48ead;">else </span><span>{
+</span><span>            None
+</span><span>        }
+</span><span>    }
+</span><span>}
+</span><span>
+</span><span>...
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">inline</span><span>(never)]
+</span><span style="color:#65737e;">// based on ver12
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">ver13</span><span>() -&gt; Result&lt;HashMap&lt;String,(</span><span style="color:#b48ead;">f32</span><span>, </span><span style="color:#b48ead;">f32</span><span>, </span><span style="color:#b48ead;">f32</span><span>)&gt;, Box&lt;dyn std::error::Error&gt;&gt; {     </span><span style="color:#65737e;">// 8.96s
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> file = std::fs::File::open(</span><span style="color:#d08770;">MEASUREMENT_FILE</span><span>)?;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let</span><span> mmap = </span><span style="color:#b48ead;">unsafe </span><span>{ Mmap::map(&amp;file)? };
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> reader = FileReader::new(mmap);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> aggr = AggrInfo::new();
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">loop </span><span>{
+</span><span>        </span><span style="color:#b48ead;">let</span><span> r1 = reader.</span><span style="color:#96b5b4;">next</span><span>();
+</span><span>        </span><span style="color:#b48ead;">let</span><span> r2 = reader.</span><span style="color:#96b5b4;">next</span><span>();
+</span><span>        </span><span style="color:#b48ead;">let</span><span> r3 = reader.</span><span style="color:#96b5b4;">next</span><span>();
+</span><span>        </span><span style="color:#b48ead;">let</span><span> r4 = reader.</span><span style="color:#96b5b4;">next</span><span>();
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">likely</span><span>(r4.</span><span style="color:#96b5b4;">is_some</span><span>()) {
+</span><span>            </span><span style="color:#b48ead;">let </span><span>Some((r1_name, r1_value)) = r1 </span><span style="color:#b48ead;">else </span><span>{ unreachable!() };
+</span><span>            </span><span style="color:#b48ead;">let </span><span>Some((r2_name, r2_value)) = r2 </span><span style="color:#b48ead;">else </span><span>{ unreachable!() };
+</span><span>            </span><span style="color:#b48ead;">let </span><span>Some((r3_name, r3_value)) = r3 </span><span style="color:#b48ead;">else </span><span>{ unreachable!() };
+</span><span>            </span><span style="color:#b48ead;">let </span><span>Some((r4_name, r4_value)) = r4 </span><span style="color:#b48ead;">else </span><span>{ unreachable!() };
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> ptr1 = r1_name.</span><span style="color:#96b5b4;">as_ptr</span><span>();
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_a_1: </span><span style="color:#b48ead;">u64 </span><span>= </span><span style="color:#b48ead;">u64</span><span>::from_le_bytes( </span><span style="color:#b48ead;">unsafe </span><span>{ *(ptr1 as </span><span style="color:#b48ead;">*const</span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) });
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_b_1: </span><span style="color:#b48ead;">u64 </span><span>= </span><span style="color:#b48ead;">u64</span><span>::from_le_bytes( </span><span style="color:#b48ead;">unsafe </span><span>{ *(ptr1.</span><span style="color:#96b5b4;">add</span><span>(</span><span style="color:#d08770;">8</span><span>) as </span><span style="color:#b48ead;">*const</span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) });
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> ptr2 = r2_name.</span><span style="color:#96b5b4;">as_ptr</span><span>();
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_a_2: </span><span style="color:#b48ead;">u64 </span><span>= </span><span style="color:#b48ead;">u64</span><span>::from_le_bytes( </span><span style="color:#b48ead;">unsafe </span><span>{ *(ptr2 as </span><span style="color:#b48ead;">*const</span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) });
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_b_2: </span><span style="color:#b48ead;">u64 </span><span>= </span><span style="color:#b48ead;">u64</span><span>::from_le_bytes( </span><span style="color:#b48ead;">unsafe </span><span>{ *(ptr2.</span><span style="color:#96b5b4;">add</span><span>(</span><span style="color:#d08770;">8</span><span>) as </span><span style="color:#b48ead;">*const</span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) });
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> ptr3 = r3_name.</span><span style="color:#96b5b4;">as_ptr</span><span>();
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_a_3: </span><span style="color:#b48ead;">u64 </span><span>= </span><span style="color:#b48ead;">u64</span><span>::from_le_bytes( </span><span style="color:#b48ead;">unsafe </span><span>{ *(ptr3 as </span><span style="color:#b48ead;">*const</span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) });
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_b_3: </span><span style="color:#b48ead;">u64 </span><span>= </span><span style="color:#b48ead;">u64</span><span>::from_le_bytes( </span><span style="color:#b48ead;">unsafe </span><span>{ *(ptr3.</span><span style="color:#96b5b4;">add</span><span>(</span><span style="color:#d08770;">8</span><span>) as </span><span style="color:#b48ead;">*const</span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) });
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> ptr4 = r4_name.</span><span style="color:#96b5b4;">as_ptr</span><span>();
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_a_4: </span><span style="color:#b48ead;">u64 </span><span>= </span><span style="color:#b48ead;">u64</span><span>::from_le_bytes( </span><span style="color:#b48ead;">unsafe </span><span>{ *(ptr4 as </span><span style="color:#b48ead;">*const</span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) });
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_b_4: </span><span style="color:#b48ead;">u64 </span><span>= </span><span style="color:#b48ead;">u64</span><span>::from_le_bytes( </span><span style="color:#b48ead;">unsafe </span><span>{ *(ptr4.</span><span style="color:#96b5b4;">add</span><span>(</span><span style="color:#d08770;">8</span><span>) as </span><span style="color:#b48ead;">*const</span><span>[</span><span style="color:#b48ead;">u8</span><span>;</span><span style="color:#d08770;">8</span><span>]) });
+</span><span>
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> len_a_1 = </span><span style="color:#b48ead;">if</span><span> r1_name.</span><span style="color:#96b5b4;">len</span><span>() &gt;= </span><span style="color:#d08770;">8 </span><span>{ </span><span style="color:#d08770;">8 </span><span>} </span><span style="color:#b48ead;">else </span><span>{ r1_name.</span><span style="color:#96b5b4;">len</span><span>() };
+</span><span>            </span><span style="color:#b48ead;">let</span><span> len_b_1 = </span><span style="color:#b48ead;">if</span><span> r1_name.</span><span style="color:#96b5b4;">len</span><span>() &gt;= </span><span style="color:#d08770;">16 </span><span>{ </span><span style="color:#d08770;">8 </span><span>} </span><span style="color:#b48ead;">else if</span><span> r1_name.</span><span style="color:#96b5b4;">len</span><span>() &gt; </span><span style="color:#d08770;">8 </span><span>{ r1_name.</span><span style="color:#96b5b4;">len</span><span>() - </span><span style="color:#d08770;">8 </span><span>}  </span><span style="color:#b48ead;">else </span><span>{ </span><span style="color:#d08770;">0 </span><span>};
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> len_a_2 = </span><span style="color:#b48ead;">if</span><span> r2_name.</span><span style="color:#96b5b4;">len</span><span>() &gt;= </span><span style="color:#d08770;">8 </span><span>{ </span><span style="color:#d08770;">8 </span><span>} </span><span style="color:#b48ead;">else </span><span>{ r2_name.</span><span style="color:#96b5b4;">len</span><span>() };
+</span><span>            </span><span style="color:#b48ead;">let</span><span> len_b_2 = </span><span style="color:#b48ead;">if</span><span> r2_name.</span><span style="color:#96b5b4;">len</span><span>() &gt;= </span><span style="color:#d08770;">16 </span><span>{ </span><span style="color:#d08770;">8 </span><span>} </span><span style="color:#b48ead;">else if</span><span> r2_name.</span><span style="color:#96b5b4;">len</span><span>() &gt; </span><span style="color:#d08770;">8 </span><span>{ r2_name.</span><span style="color:#96b5b4;">len</span><span>() - </span><span style="color:#d08770;">8 </span><span>}  </span><span style="color:#b48ead;">else </span><span>{ </span><span style="color:#d08770;">0 </span><span>};
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> len_a_3 = </span><span style="color:#b48ead;">if</span><span> r3_name.</span><span style="color:#96b5b4;">len</span><span>() &gt;= </span><span style="color:#d08770;">8 </span><span>{ </span><span style="color:#d08770;">8 </span><span>} </span><span style="color:#b48ead;">else </span><span>{ r3_name.</span><span style="color:#96b5b4;">len</span><span>() };
+</span><span>            </span><span style="color:#b48ead;">let</span><span> len_b_3 = </span><span style="color:#b48ead;">if</span><span> r3_name.</span><span style="color:#96b5b4;">len</span><span>() &gt;= </span><span style="color:#d08770;">16 </span><span>{ </span><span style="color:#d08770;">8 </span><span>} </span><span style="color:#b48ead;">else if</span><span> r3_name.</span><span style="color:#96b5b4;">len</span><span>() &gt; </span><span style="color:#d08770;">8 </span><span>{ r3_name.</span><span style="color:#96b5b4;">len</span><span>() - </span><span style="color:#d08770;">8 </span><span>}  </span><span style="color:#b48ead;">else </span><span>{ </span><span style="color:#d08770;">0 </span><span>};
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> len_a_4 = </span><span style="color:#b48ead;">if</span><span> r4_name.</span><span style="color:#96b5b4;">len</span><span>() &gt;= </span><span style="color:#d08770;">8 </span><span>{ </span><span style="color:#d08770;">8 </span><span>} </span><span style="color:#b48ead;">else </span><span>{ r4_name.</span><span style="color:#96b5b4;">len</span><span>()  };
+</span><span>            </span><span style="color:#b48ead;">let</span><span> len_b_4 = </span><span style="color:#b48ead;">if</span><span> r4_name.</span><span style="color:#96b5b4;">len</span><span>() &gt;= </span><span style="color:#d08770;">16 </span><span>{ </span><span style="color:#d08770;">8 </span><span>} </span><span style="color:#b48ead;">else if</span><span> r4_name.</span><span style="color:#96b5b4;">len</span><span>() &gt; </span><span style="color:#d08770;">8 </span><span>{ r4_name.</span><span style="color:#96b5b4;">len</span><span>() - </span><span style="color:#d08770;">8 </span><span>}  </span><span style="color:#b48ead;">else </span><span>{ </span><span style="color:#d08770;">0 </span><span>};
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_a_1 = key_a_1 &amp; </span><span style="color:#d08770;">MASKS</span><span>[len_a_1];
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_b_1 = key_b_1 &amp; </span><span style="color:#d08770;">MASKS</span><span>[len_b_1];
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_a_2 = key_a_2 &amp; </span><span style="color:#d08770;">MASKS</span><span>[len_a_2];
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_b_2 = key_b_2 &amp; </span><span style="color:#d08770;">MASKS</span><span>[len_b_2];
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_a_3 = key_a_3 &amp; </span><span style="color:#d08770;">MASKS</span><span>[len_a_3];
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_b_3 = key_b_3 &amp; </span><span style="color:#d08770;">MASKS</span><span>[len_b_3];
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_a_4 = key_a_4 &amp; </span><span style="color:#d08770;">MASKS</span><span>[len_a_4];
+</span><span>            </span><span style="color:#b48ead;">let</span><span> key_b_4 = key_b_4 &amp; </span><span style="color:#d08770;">MASKS</span><span>[len_b_4];
+</span><span>
+</span><span>            </span><span style="color:#b48ead;">let </span><span>(v1, v2, v3, v4) = </span><span style="color:#b48ead;">unsafe </span><span>{ </span><span style="color:#96b5b4;">parse_values</span><span>(r1_value, r2_value, r3_value, r4_value) };
+</span><span>            aggr.</span><span style="color:#96b5b4;">save_item</span><span>(r1_name, key_a_1, key_b_1, v1);
+</span><span>            aggr.</span><span style="color:#96b5b4;">save_item</span><span>(r2_name, key_a_2, key_b_2, v2);
+</span><span>            aggr.</span><span style="color:#96b5b4;">save_item</span><span>(r3_name, key_a_3, key_b_3, v3);
+</span><span>            aggr.</span><span style="color:#96b5b4;">save_item</span><span>(r4_name, key_a_4, key_b_4, v4);
+</span><span>
+</span><span>        }
+</span><span>        </span><span style="color:#b48ead;">else </span><span>{
+</span><span>            </span><span style="color:#b48ead;">if let </span><span>Some((name, value)) = r1 {
+</span><span>                </span><span style="color:#96b5b4;">process_one</span><span>(name, value, &amp;</span><span style="color:#b48ead;">mut</span><span> aggr);
+</span><span>            }
+</span><span>            </span><span style="color:#b48ead;">if let </span><span>Some((name, value)) = r2 {
+</span><span>                </span><span style="color:#96b5b4;">process_one</span><span>(name, value, &amp;</span><span style="color:#b48ead;">mut</span><span> aggr);
+</span><span>            }
+</span><span>            </span><span style="color:#b48ead;">if let </span><span>Some((name, value)) = r3 {
+</span><span>                </span><span style="color:#96b5b4;">process_one</span><span>(name, value, &amp;</span><span style="color:#b48ead;">mut</span><span> aggr);
+</span><span>            }
+</span><span>            </span><span style="color:#b48ead;">break</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// check_result(&amp;aggr);
+</span><span>
+</span><span>    Ok( HashMap::new() )
+</span><span>}
+</span><span>
+</span></code></pre>
+<p>ver13 源代码：<a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver13.rs">ver13</a></p>
+<p>性能数据：</p>
+<ol>
+<li>耗时：9.12s (vs ver12: -3.95s, +30.2%) (vs ver1: -97.58s, +91.4%)</li>
+<li><a href="https://share.firefox.dev/3Q6KCBh">samply profile</a></li>
+</ol>
+<p>parse_values 的耗时从降到了 0.56s，从 4.7s 减少到了 0.56s，甚至超出了我们的预期。当然，1brc 首次进入10秒以内的成绩，相比 ver1 提升了 11.8 倍。</p>
+<p>现在，主要的耗时：</p>
+<ul>
+<li>遍历读取 block：5.35s</li>
+<li>hash aggregator: 1.97s</li>
+<li>parse_values: 0.56s</li>
+</ul>
+<h1 id="ver14-13-06s">ver14, 13.06s</h1>
+<p>在 ver13 中，我们尝试在一个循环中处理多行数据，获得了很好的效果，是否可以继续这一策略，在一个循环中处理更多的数据？</p>
+<p>在 ver14 中，我们尝试一次读取 256 字节大小的 block, 尝试使用 u8x64 （512b) 的向量规模来扫描分隔符，很不幸，这个版本的性能退化到了 13s。
+<img src="https://wangzaixiang.github.io/blog/the-1brc-program/img_1.png" alt="img_1.png" /></p>
+<p>详细源代码：<a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver14.rs">ver14</a></p>
+<p>原因分析：</p>
+<ol>
+<li>M1 只支持 128b 的向量，更大的向量其实是软件模拟，而非硬件支持。</li>
+<li>相似的，在 M1 上并没有 native 的 u128 支持，使用 （u64, u64) 替代 u128 可能会性能更佳。（u128底层使用软件模拟）</li>
+<li>在循环处理中引入数组等数据结构<code>mask: [u64;4]</code>，数组访问等并不利于 SSA 优化，在循环处理中会增加对内存的 load/store 访问，而 SSA 优化后
+能够更好的使用 register 来替代数据，减少内存访问操作。寄存器相比内存（即使是L1 hited）,也会有更低的成本。</li>
+</ol>
+<p>性能数据：</p>
+<ol>
+<li>耗时：13.06s (vs ver13: +3.94s, -30.2%) (vs ver1: -93.64s, +87.5%)</li>
+<li><a href="https://share.firefox.dev/4gJ8ztC">samply profile</a></li>
+</ol>
+<p>优化失败，绕行...</p>
+<h1 id="ver15-10-52s">ver15, 10.52s</h1>
+<p>尝试在 ver13 的基础上，每次读取 128B 的 Block，并将分隔符扫描的结果存储在 i128 中（不使用数据，从而可以更好的使用寄存器优化）。</p>
+<p>性能数据：</p>
+<ol>
+<li>耗时：10.52s (vs ver13: +1.4s, -13.4%) (vs ver1: -90.18s, +84.3%)</li>
+<li><a href="https://share.firefox.dev/4bbGCJP">samply profile</a></li>
+</ol>
+<p>减少内存访问，还是有一定的效果的，相比 v14 要好一些的，但仍然没有达到 ver13 的效果。</p>
+<h1 id="ver16-8-55s">ver16, 8.55s</h1>
+<p>在 ver15 的技术上，使用 (u64, u64) 替代 u128，尝试进一步优化。</p>
+<p>完整源代码：[ver16](https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver16.rs）</p>
+<p>性能数据：</p>
+<ol>
+<li>耗时：8.55s (vs ver15: -1.97s, -18.8%) (vs ver13: -0.56s, + 6% )(vs ver1: -92.15s, +86.2%)</li>
+<li><a href="https://share.firefox.dev/4hTD3d4">samply profile</a></li>
+</ol>
+<p>减少到了9秒内。原因是在 ARM 中，通用寄存器是 64 位的，即使是对128位的向量寄存器，单个Lane 也最多仅支持 64b, 在 Rust 中的u128 实际上是通过
+软件进行模拟的,对 u128 的操作远比 u64 要低效。在 v16 中，我们直接使用 (u64, u64) 来替代 u128，避免了软件模拟的开销,相比使用 u128 要更快一些。</p>
+<p>在 ver16 中，每次只处理 64B 的block, 并将行中的<code>;</code> 分隔符 和 行末的 <code>\n</code>分隔符的位置分开存储 为 mask1, mask2，这样，在后续处理中，对两个 mask
+的 获取操作可以并行进行，提高指令的并行度。</p>
+<h1 id="ver17-16-2s">ver17: 16.2s</h1>
+<p>ver17 尝试对代码进行一些重构，使得代码的可读性更好一些，将主流程的循环处理从主函数中抽出来，转移到 scan_loop 中，同时，将循环的一些上下文变量
+从 struct 字段转移到 scan_loop 的局部变量中，当时的考虑是编译器可以更好的进行 SSA 优化，减少内存访问。</p>
+<p>rust 在很多情况下，可以直接将 struct 字段的变量也 SSA 优化，到来的优势就是这些字段会直接保存在 register 中，而不是在内存中，访问寄存器相比
+访问内存，有更低的成本（虽然在很多情况下，由于L1 Cache的优化以及其他优化，这个差距可能并不明显，但使用寄存器总是更为性能有好的）。</p>
+<p>这个版本的性能退化到了 16.2s，原因是在 scan_loop 中，因此，本文不对其进行展开说明，直接跳过。</p>
+<p>完整源代码：<a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver17.rs">ver17</a>
+性能说明：</p>
+<ol>
+<li>耗时：16.2s (vs ver16: +7.65s, -89.4%) (vs ver1: -84.48s, +82.4%)</li>
+<li><a href="https://share.firefox.dev/3QnKGgg">samply profile</a></li>
+</ol>
+<h1 id="ver18-6-76s">ver18: 6.76s</h1>
+<p>在 ver17 的基础上，我们进行了一些优化：</p>
+<ol>
+<li>每次读取 64B 的block，而不是 128B, 64B 的 block 可以更好的匹配 ARM 的 64b 架构。</li>
+<li>使用 3 行一个批量的方式进行处理，减少分支预测失败的情况。</li>
+</ol>
+<p>完整源代码：<a href="https://github.com/wangzaixiang/onebrc_rust/blob/master/src/ver18.rs">ver18</a></p>
+<p>性能说明：</p>
+<ol>
+<li>耗时：6.76s (vs ver17: -9.44s, -58.4%) (vs ver1: -94.32s, +93.3%)</li>
+<li><a href="https://share.firefox.dev/4gQ8hB3">samply profile</a></li>
+</ol>
+<p>这个版本的性能有了很大的提升，我们进入了 7s 以内的范围（原项目中Java第一名在我本地的单线程成绩为7.10s），ver18 首次超过了 Java Top 1的成绩。
+可喜可贺，是否还有更进一步的优化空间呢？</p>
+<h1 id="ver21-6-17s">ver21: 6.17s</h1>
+<h1 id="ver22-5-38s">ver22: 5.38s</h1>
+<h1 id="ver22-pgo-5-25s">ver22 + pgo: 5.25s</h1>
+<p>在 ver22 的基础上，使用 <a href="https://doc.rust-lang.org/rustc/profile-guided-optimization.html#:~:text=rustc%20supports%20doing%20profile-guided%20optimization%20%28PGO%29.%20This%20chapter,it%20can%20be%20used.%20What%20Is%20Profiled-Guided%20Optimization%3F">profile guided optimization</a>
+进行编译优化，相比 ~pgo 的版本，提升了约 %2 的性能。虽然比例不大，不过胜在成本低。</p>
+<p>没有对比生成的代码，估计是基于 profile data, 对 register allocation 等做了策略性的优化。</p>
+<p>未完，待续......</p>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/measure-ipc-for-m1/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/learning-llvm-2/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

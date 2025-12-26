@@ -1,0 +1,1203 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>require与module.exports - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="require与moduleexports"><a class="header" href="#require与moduleexports">require与module.exports</a></h1>
+<p>本章深入探讨CommonJS模块系统的两个核心机制：<code>require()</code>函数和<code>module.exports</code>对象。理解它们的工作原理和最佳实践对于编写高质量的Node.js代码至关重要。</p>
+<h2 id="require函数深入解析"><a class="header" href="#require函数深入解析">require()函数深入解析</a></h2>
+<h3 id="require的工作流程"><a class="header" href="#require的工作流程">require()的工作流程</a></h3>
+<pre><code class="language-javascript">// require()的内部工作流程示例
+
+// 1. 路径解析
+const resolvedPath = require.resolve('./my-module');
+
+// 2. 检查缓存
+if (require.cache[resolvedPath]) {
+    return require.cache[resolvedPath].exports;
+}
+
+// 3. 创建新模块对象
+const module = {
+    id: resolvedPath,
+    filename: resolvedPath,
+    loaded: false,
+    parent: currentModule,
+    children: [],
+    exports: {}
+};
+
+// 4. 加载并执行模块
+const moduleWrapper = NativeModule.wrap(moduleContent);
+const compiledWrapper = vm.runInThisContext(moduleWrapper);
+compiledWrapper.call(module.exports, module.exports, require, module, __filename, __dirname);
+
+// 5. 标记模块已加载
+module.loaded = true;
+
+// 6. 缓存模块
+require.cache[resolvedPath] = module;
+
+// 7. 返回exports
+return module.exports;
+</code></pre>
+<h3 id="require的不同用法"><a class="header" href="#require的不同用法">require()的不同用法</a></h3>
+<pre><code class="language-javascript">// require-usage.js
+
+// 1. 基本用法
+const fs = require('fs');
+const path = require('path');
+const myModule = require('./my-module');
+
+// 2. 条件require
+let config;
+if (process.env.NODE_ENV === 'production') {
+    config = require('./config/production.json');
+} else {
+    config = require('./config/development.json');
+}
+
+// 3. 动态require
+function loadModule(moduleName) {
+    try {
+        return require(moduleName);
+    } catch (error) {
+        console.log(`Module ${moduleName} not found`);
+        return null;
+    }
+}
+
+// 4. require表达式计算
+const moduleName = './modules/' + process.argv[2];
+const dynamicModule = require(moduleName);
+
+// 5. 解构require
+const { readFile, writeFile } = require('fs/promises');
+const { join, dirname } = require('path');
+
+// 6. require JSON文件
+const packageInfo = require('./package.json');
+const config = require('./config.json');
+
+// 7. require.resolve - 仅解析路径不加载
+const modulePath = require.resolve('lodash');
+console.log('Lodash path:', modulePath);
+
+// 8. 检查模块是否存在
+function moduleExists(name) {
+    try {
+        require.resolve(name);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+</code></pre>
+<h3 id="require缓存机制"><a class="header" href="#require缓存机制">require缓存机制</a></h3>
+<pre><code class="language-javascript">// require-cache.js
+
+// 演示模块缓存
+console.log('=== 模块缓存演示 ===');
+
+// 第一次require - 执行模块代码
+console.log('First require:');
+const module1 = require('./counter-module');
+console.log('Counter value:', module1.getValue()); // 0
+
+// 增加计数
+module1.increment();
+module1.increment();
+console.log('After increment:', module1.getValue()); // 2
+
+// 第二次require - 返回缓存
+console.log('Second require:');
+const module2 = require('./counter-module');
+console.log('Counter value:', module2.getValue()); // 2 (不是0!)
+
+// 验证是同一个对象
+console.log('Same object?', module1 === module2); // true
+
+// counter-module.js
+console.log('Counter module executing...');
+
+let counter = 0;
+
+module.exports = {
+    increment() {
+        counter++;
+    },
+    getValue() {
+        return counter;
+    }
+};
+
+// 缓存操作
+console.log('\n=== 缓存操作 ===');
+
+// 查看缓存的模块
+console.log('Cached modules:');
+Object.keys(require.cache).forEach(key =&gt; {
+    console.log(key);
+});
+
+// 删除缓存并重新加载
+const modulePath = require.resolve('./counter-module');
+delete require.cache[modulePath];
+
+console.log('After clearing cache:');
+const module3 = require('./counter-module');
+console.log('Counter value:', module3.getValue()); // 0 (重新执行了模块)
+</code></pre>
+<h3 id="require的错误处理"><a class="header" href="#require的错误处理">require()的错误处理</a></h3>
+<pre><code class="language-javascript">// require-error-handling.js
+
+// 基本错误处理
+function safeRequire(modulePath, defaultValue = null) {
+    try {
+        return require(modulePath);
+    } catch (error) {
+        console.log(`Failed to require ${modulePath}:`, error.message);
+        return defaultValue;
+    }
+}
+
+// 区分不同类型的错误
+function detailedRequire(modulePath) {
+    try {
+        return require(modulePath);
+    } catch (error) {
+        switch (error.code) {
+            case 'MODULE_NOT_FOUND':
+                console.log(`Module not found: ${modulePath}`);
+                break;
+            case 'ENOENT':
+                console.log(`File not found: ${modulePath}`);
+                break;
+            default:
+                console.log(`Error loading module: ${error.message}`);
+                throw error; // 重新抛出未知错误
+        }
+        return null;
+    }
+}
+
+// 可选依赖加载
+function loadOptionalDependencies(dependencies) {
+    const loaded = {};
+    
+    dependencies.forEach(dep =&gt; {
+        try {
+            loaded[dep] = require(dep);
+            console.log(`✅ Loaded: ${dep}`);
+        } catch (error) {
+            console.log(`⚠️  Optional dependency not found: ${dep}`);
+            loaded[dep] = null;
+        }
+    });
+    
+    return loaded;
+}
+
+// 使用示例
+const optionalDeps = loadOptionalDependencies([
+    'colors',
+    'moment',
+    'non-existent-package'
+]);
+
+// 带重试的require
+function requireWithRetry(modulePath, maxRetries = 3) {
+    for (let i = 0; i &lt; maxRetries; i++) {
+        try {
+            return require(modulePath);
+        } catch (error) {
+            if (i === maxRetries - 1) {
+                throw error;
+            }
+            console.log(`Retry ${i + 1} for ${modulePath}`);
+        }
+    }
+}
+</code></pre>
+<h2 id="moduleexports详解"><a class="header" href="#moduleexports详解">module.exports详解</a></h2>
+<h3 id="moduleexports-vs-exports"><a class="header" href="#moduleexports-vs-exports">module.exports vs exports</a></h3>
+<pre><code class="language-javascript">// exports-comparison.js
+
+// 理解module.exports和exports的关系
+console.log('初始状态:');
+console.log('exports === module.exports:', exports === module.exports); // true
+
+// exports是module.exports的引用
+exports.method1 = function() {
+    return 'method1 from exports';
+};
+
+module.exports.method2 = function() {
+    return 'method2 from module.exports';
+};
+
+console.log('添加方法后:');
+console.log('exports === module.exports:', exports === module.exports); // 仍然是true
+
+// 危险操作：重新赋值exports
+exports = {
+    method3: function() {
+        return 'method3';
+    }
+};
+
+console.log('重新赋值exports后:');
+console.log('exports === module.exports:', exports === module.exports); // false!
+
+// 此时module.exports仍然包含method1和method2
+// 但exports指向了新对象，包含method3
+
+// 正确的重新赋值方式
+module.exports = {
+    method4: function() {
+        return 'method4';
+    }
+};
+
+// 现在module.exports只包含method4了
+</code></pre>
+<h3 id="不同的导出模式"><a class="header" href="#不同的导出模式">不同的导出模式</a></h3>
+<pre><code class="language-javascript">// export-patterns.js
+
+// 1. 对象导出模式
+module.exports = {
+    name: 'MyModule',
+    version: '1.0.0',
+    
+    init() {
+        console.log(`${this.name} v${this.version} initialized`);
+    },
+    
+    process(data) {
+        return data.toUpperCase();
+    }
+};
+
+// 2. 类导出模式
+class Calculator {
+    add(a, b) { return a + b; }
+    subtract(a, b) { return a - b; }
+    multiply(a, b) { return a * b; }
+    divide(a, b) { 
+        if (b === 0) throw new Error('Division by zero');
+        return a / b; 
+    }
+}
+
+module.exports = Calculator;
+
+// 3. 函数导出模式
+function createLogger(level = 'info') {
+    const levels = ['debug', 'info', 'warn', 'error'];
+    const currentLevel = levels.indexOf(level);
+    
+    return {
+        log(message, msgLevel = 'info') {
+            const msgIndex = levels.indexOf(msgLevel);
+            if (msgIndex &gt;= currentLevel) {
+                console.log(`[${msgLevel.toUpperCase()}] ${message}`);
+            }
+        }
+    };
+}
+
+module.exports = createLogger;
+
+// 4. 混合导出模式
+function mainFunction() {
+    return 'Main functionality';
+}
+
+// 将函数本身作为默认导出
+module.exports = mainFunction;
+
+// 添加额外的属性和方法
+module.exports.helper = function() {
+    return 'Helper functionality';
+};
+
+module.exports.constant = 42;
+
+module.exports.SubClass = class {
+    constructor() {
+        this.name = 'SubClass';
+    }
+};
+
+// 5. 条件导出模式
+if (process.env.NODE_ENV === 'development') {
+    module.exports = {
+        log: console.log,
+        warn: console.warn,
+        error: console.error,
+        debug: console.debug
+    };
+} else {
+    module.exports = {
+        log() {}, // 生产环境静默
+        warn: console.warn,
+        error: console.error,
+        debug() {}
+    };
+}
+</code></pre>
+<h3 id="渐进式导出"><a class="header" href="#渐进式导出">渐进式导出</a></h3>
+<pre><code class="language-javascript">// progressive-exports.js
+
+// 可以逐步构建exports对象
+
+// 先创建基础结构
+module.exports = {};
+
+// 添加常量
+module.exports.VERSION = '2.1.0';
+module.exports.DEFAULT_CONFIG = {
+    timeout: 5000,
+    retries: 3
+};
+
+// 添加工具函数
+module.exports.utils = {};
+
+module.exports.utils.formatDate = function(date) {
+    return date.toISOString().split('T')[0];
+};
+
+module.exports.utils.generateId = function() {
+    return Math.random().toString(36).substr(2, 9);
+};
+
+// 添加主要功能
+module.exports.createClient = function(config = {}) {
+    const finalConfig = { ...module.exports.DEFAULT_CONFIG, ...config };
+    
+    return {
+        config: finalConfig,
+        
+        async request(url) {
+            console.log(`Requesting ${url} with timeout ${finalConfig.timeout}ms`);
+            // 模拟请求
+            return { status: 200, data: 'response data' };
+        }
+    };
+};
+
+// 添加错误类
+class ClientError extends Error {
+    constructor(message, code) {
+        super(message);
+        this.name = 'ClientError';
+        this.code = code;
+    }
+}
+
+module.exports.ClientError = ClientError;
+
+// 添加验证函数
+module.exports.validate = {
+    url(url) {
+        try {
+            new URL(url);
+            return true;
+        } catch {
+            return false;
+        }
+    },
+    
+    config(config) {
+        if (typeof config !== 'object') return false;
+        if (config.timeout &amp;&amp; typeof config.timeout !== 'number') return false;
+        if (config.retries &amp;&amp; typeof config.retries !== 'number') return false;
+        return true;
+    }
+};
+</code></pre>
+<h2 id="高级模式和技巧"><a class="header" href="#高级模式和技巧">高级模式和技巧</a></h2>
+<h3 id="1-模块工厂模式"><a class="header" href="#1-模块工厂模式">1. 模块工厂模式</a></h3>
+<pre><code class="language-javascript">// module-factory.js
+
+// 工厂函数创建配置化的模块
+function createDatabase(options = {}) {
+    const {
+        host = 'localhost',
+        port = 5432,
+        database = 'myapp',
+        pool = { min: 2, max: 10 }
+    } = options;
+    
+    let connection = null;
+    
+    return {
+        async connect() {
+            if (!connection) {
+                console.log(`Connecting to ${host}:${port}/${database}`);
+                connection = { 
+                    host, 
+                    port, 
+                    database, 
+                    connected: true 
+                };
+            }
+            return connection;
+        },
+        
+        async query(sql, params = []) {
+            const conn = await this.connect();
+            console.log(`Executing: ${sql}`, params);
+            return { rows: [], rowCount: 0 };
+        },
+        
+        async close() {
+            if (connection) {
+                console.log('Closing database connection');
+                connection.connected = false;
+                connection = null;
+            }
+        },
+        
+        getConfig() {
+            return { host, port, database, pool };
+        }
+    };
+}
+
+module.exports = createDatabase;
+
+// 使用工厂模式
+// const db = require('./database-factory')({
+//     host: 'prod-server',
+//     port: 5432,
+//     database: 'production_db'
+// });
+</code></pre>
+<h3 id="2-单例模式"><a class="header" href="#2-单例模式">2. 单例模式</a></h3>
+<pre><code class="language-javascript">// singleton-pattern.js
+
+// 单例配置管理器
+let instance = null;
+
+class ConfigManager {
+    constructor() {
+        if (instance) {
+            return instance;
+        }
+        
+        this.config = {};
+        this.loaded = false;
+        instance = this;
+    }
+    
+    load(configPath) {
+        if (!this.loaded) {
+            try {
+                this.config = require(configPath);
+                this.loaded = true;
+                console.log('Configuration loaded');
+            } catch (error) {
+                console.error('Failed to load configuration:', error);
+                this.config = {};
+            }
+        }
+        return this;
+    }
+    
+    get(key, defaultValue = null) {
+        return this.getNestedValue(this.config, key, defaultValue);
+    }
+    
+    set(key, value) {
+        this.setNestedValue(this.config, key, value);
+    }
+    
+    getNestedValue(obj, path, defaultValue) {
+        const keys = path.split('.');
+        let current = obj;
+        
+        for (const key of keys) {
+            if (current === null || current === undefined || !(key in current)) {
+                return defaultValue;
+            }
+            current = current[key];
+        }
+        
+        return current;
+    }
+    
+    setNestedValue(obj, path, value) {
+        const keys = path.split('.');
+        const lastKey = keys.pop();
+        let current = obj;
+        
+        for (const key of keys) {
+            if (!(key in current)) {
+                current[key] = {};
+            }
+            current = current[key];
+        }
+        
+        current[lastKey] = value;
+    }
+}
+
+// 导出单例实例
+module.exports = new ConfigManager();
+
+// 无论在哪里require，都是同一个实例
+// const config1 = require('./config-manager');
+// const config2 = require('./config-manager');
+// console.log(config1 === config2); // true
+</code></pre>
+<h3 id="3-插件系统"><a class="header" href="#3-插件系统">3. 插件系统</a></h3>
+<pre><code class="language-javascript">// plugin-system.js
+
+class PluginManager {
+    constructor() {
+        this.plugins = new Map();
+        this.hooks = new Map();
+    }
+    
+    register(name, plugin) {
+        if (typeof plugin !== 'object') {
+            throw new Error('Plugin must be an object');
+        }
+        
+        if (typeof plugin.init !== 'function') {
+            throw new Error('Plugin must have an init method');
+        }
+        
+        this.plugins.set(name, plugin);
+        console.log(`Plugin registered: ${name}`);
+        
+        // 初始化插件
+        plugin.init(this);
+        
+        // 注册插件的钩子
+        if (plugin.hooks) {
+            Object.entries(plugin.hooks).forEach(([hookName, handler]) =&gt; {
+                this.addHook(hookName, handler);
+            });
+        }
+    }
+    
+    addHook(name, handler) {
+        if (!this.hooks.has(name)) {
+            this.hooks.set(name, []);
+        }
+        this.hooks.get(name).push(handler);
+    }
+    
+    async executeHook(name, ...args) {
+        const handlers = this.hooks.get(name) || [];
+        const results = [];
+        
+        for (const handler of handlers) {
+            try {
+                const result = await handler(...args);
+                results.push(result);
+            } catch (error) {
+                console.error(`Hook ${name} error:`, error);
+            }
+        }
+        
+        return results;
+    }
+    
+    getPlugin(name) {
+        return this.plugins.get(name);
+    }
+    
+    unregister(name) {
+        const plugin = this.plugins.get(name);
+        if (plugin &amp;&amp; typeof plugin.destroy === 'function') {
+            plugin.destroy();
+        }
+        this.plugins.delete(name);
+        console.log(`Plugin unregistered: ${name}`);
+    }
+}
+
+// 导出插件管理器
+const pluginManager = new PluginManager();
+
+// 提供便捷的插件加载函数
+function loadPlugin(pluginPath) {
+    try {
+        const plugin = require(pluginPath);
+        const name = plugin.name || require('path').basename(pluginPath);
+        pluginManager.register(name, plugin);
+        return plugin;
+    } catch (error) {
+        console.error(`Failed to load plugin ${pluginPath}:`, error);
+        return null;
+    }
+}
+
+module.exports = {
+    pluginManager,
+    loadPlugin
+};
+</code></pre>
+<h3 id="4-延迟初始化"><a class="header" href="#4-延迟初始化">4. 延迟初始化</a></h3>
+<pre><code class="language-javascript">// lazy-initialization.js
+
+// 延迟初始化的数据库连接
+let _connection = null;
+let _connecting = false;
+let _connectionPromise = null;
+
+async function getConnection() {
+    if (_connection) {
+        return _connection;
+    }
+    
+    if (_connecting) {
+        return _connectionPromise;
+    }
+    
+    _connecting = true;
+    _connectionPromise = initializeConnection();
+    
+    try {
+        _connection = await _connectionPromise;
+        return _connection;
+    } finally {
+        _connecting = false;
+        _connectionPromise = null;
+    }
+}
+
+async function initializeConnection() {
+    console.log('Initializing database connection...');
+    
+    // 模拟异步连接过程
+    await new Promise(resolve =&gt; setTimeout(resolve, 1000));
+    
+    const connection = {
+        id: Math.random().toString(36),
+        connected: true,
+        
+        async query(sql) {
+            if (!this.connected) {
+                throw new Error('Connection closed');
+            }
+            console.log(`Executing: ${sql}`);
+            return { rows: [], count: 0 };
+        },
+        
+        async close() {
+            this.connected = false;
+            _connection = null;
+            console.log('Connection closed');
+        }
+    };
+    
+    console.log('Database connection established');
+    return connection;
+}
+
+// 导出接口
+module.exports = {
+    async query(sql) {
+        const conn = await getConnection();
+        return conn.query(sql);
+    },
+    
+    async close() {
+        if (_connection) {
+            await _connection.close();
+        }
+    },
+    
+    isConnected() {
+        return _connection &amp;&amp; _connection.connected;
+    }
+};
+</code></pre>
+<h2 id="性能优化技巧"><a class="header" href="#性能优化技巧">性能优化技巧</a></h2>
+<h3 id="1-条件require"><a class="header" href="#1-条件require">1. 条件require</a></h3>
+<pre><code class="language-javascript">// conditional-require.js
+
+// 避免不必要的require
+let heavyModule = null;
+
+function getHeavyModule() {
+    if (!heavyModule) {
+        console.log('Loading heavy module...');
+        heavyModule = require('./heavy-computation');
+    }
+    return heavyModule;
+}
+
+// 只有在需要时才加载
+function performHeavyOperation(data) {
+    const heavy = getHeavyModule();
+    return heavy.process(data);
+}
+
+// 基于功能检测的条件require
+let cryptoModule = null;
+
+function getCrypto() {
+    if (!cryptoModule) {
+        try {
+            cryptoModule = require('crypto');
+        } catch (error) {
+            // 回退到其他实现
+            cryptoModule = require('./crypto-fallback');
+        }
+    }
+    return cryptoModule;
+}
+
+// 基于环境的条件require
+const debugMode = process.env.NODE_ENV === 'development';
+
+let debugUtils = null;
+if (debugMode) {
+    debugUtils = require('./debug-utils');
+}
+
+function debug(message) {
+    if (debugMode &amp;&amp; debugUtils) {
+        debugUtils.log(message);
+    }
+}
+
+module.exports = {
+    performHeavyOperation,
+    getCrypto,
+    debug
+};
+</code></pre>
+<h3 id="2-require缓存优化"><a class="header" href="#2-require缓存优化">2. require缓存优化</a></h3>
+<pre><code class="language-javascript">// cache-optimization.js
+
+// 手动管理require缓存
+class RequireCache {
+    static clear(modulePath) {
+        const resolvedPath = require.resolve(modulePath);
+        delete require.cache[resolvedPath];
+    }
+    
+    static clearPattern(pattern) {
+        const regex = new RegExp(pattern);
+        Object.keys(require.cache).forEach(key =&gt; {
+            if (regex.test(key)) {
+                delete require.cache[key];
+            }
+        });
+    }
+    
+    static preload(modules) {
+        modules.forEach(modulePath =&gt; {
+            try {
+                require(modulePath);
+                console.log(`Preloaded: ${modulePath}`);
+            } catch (error) {
+                console.warn(`Failed to preload: ${modulePath}`);
+            }
+        });
+    }
+    
+    static getStats() {
+        const cached = Object.keys(require.cache);
+        return {
+            count: cached.length,
+            modules: cached.map(path =&gt; ({
+                path,
+                loaded: require.cache[path].loaded
+            }))
+        };
+    }
+}
+
+// 智能require封装
+function smartRequire(modulePath, options = {}) {
+    const { cache = true, reload = false } = options;
+    
+    if (reload) {
+        RequireCache.clear(modulePath);
+    }
+    
+    const module = require(modulePath);
+    
+    if (!cache) {
+        // 立即清除缓存
+        setImmediate(() =&gt; {
+            RequireCache.clear(modulePath);
+        });
+    }
+    
+    return module;
+}
+
+module.exports = {
+    RequireCache,
+    smartRequire
+};
+</code></pre>
+<h2 id="调试和监控"><a class="header" href="#调试和监控">调试和监控</a></h2>
+<h3 id="1-require跟踪"><a class="header" href="#1-require跟踪">1. require跟踪</a></h3>
+<pre><code class="language-javascript">// require-tracer.js
+
+// 跟踪require调用
+const originalRequire = module.constructor.prototype.require;
+
+module.constructor.prototype.require = function(id) {
+    const start = Date.now();
+    console.log(`📦 Requiring: ${id}`);
+    
+    try {
+        const result = originalRequire.call(this, id);
+        const duration = Date.now() - start;
+        console.log(`✅ Loaded: ${id} (${duration}ms)`);
+        return result;
+    } catch (error) {
+        const duration = Date.now() - start;
+        console.log(`❌ Failed: ${id} (${duration}ms) - ${error.message}`);
+        throw error;
+    }
+};
+
+// 使用示例
+const fs = require('fs');        // 📦 Requiring: fs / ✅ Loaded: fs (1ms)
+const path = require('path');    // 📦 Requiring: path / ✅ Loaded: path (0ms)
+
+// 恢复原始require
+function restoreRequire() {
+    module.constructor.prototype.require = originalRequire;
+}
+
+module.exports = { restoreRequire };
+</code></pre>
+<h3 id="2-模块依赖分析"><a class="header" href="#2-模块依赖分析">2. 模块依赖分析</a></h3>
+<pre><code class="language-javascript">// dependency-analyzer.js
+
+class DependencyAnalyzer {
+    constructor() {
+        this.dependencies = new Map();
+        this.loadTimes = new Map();
+    }
+    
+    analyze() {
+        Object.entries(require.cache).forEach(([path, moduleObj]) =&gt; {
+            const deps = moduleObj.children.map(child =&gt; child.filename);
+            this.dependencies.set(path, deps);
+        });
+        
+        return this.generateReport();
+    }
+    
+    generateReport() {
+        const report = {
+            totalModules: this.dependencies.size,
+            dependencies: {},
+            circularDependencies: this.findCircularDependencies(),
+            heaviestModules: this.findHeaviestModules()
+        };
+        
+        this.dependencies.forEach((deps, module) =&gt; {
+            report.dependencies[module] = {
+                dependsOn: deps,
+                dependentCount: deps.length
+            };
+        });
+        
+        return report;
+    }
+    
+    findCircularDependencies() {
+        // 简化的循环依赖检测
+        const visited = new Set();
+        const visiting = new Set();
+        const cycles = [];
+        
+        const dfs = (module, path = []) =&gt; {
+            if (visiting.has(module)) {
+                const cycleStart = path.indexOf(module);
+                cycles.push(path.slice(cycleStart).concat(module));
+                return;
+            }
+            
+            if (visited.has(module)) return;
+            
+            visiting.add(module);
+            path.push(module);
+            
+            const deps = this.dependencies.get(module) || [];
+            deps.forEach(dep =&gt; dfs(dep, [...path]));
+            
+            visiting.delete(module);
+            visited.add(module);
+        };
+        
+        this.dependencies.forEach((_, module) =&gt; {
+            if (!visited.has(module)) {
+                dfs(module);
+            }
+        });
+        
+        return cycles;
+    }
+    
+    findHeaviestModules(top = 10) {
+        const modules = Array.from(this.dependencies.entries())
+            .map(([module, deps]) =&gt; ({
+                module,
+                dependencyCount: deps.length
+            }))
+            .sort((a, b) =&gt; b.dependencyCount - a.dependencyCount)
+            .slice(0, top);
+        
+        return modules;
+    }
+}
+
+module.exports = DependencyAnalyzer;
+</code></pre>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p><code>require()</code>和<code>module.exports</code>是CommonJS模块系统的核心：</p>
+<ul>
+<li>✅ <strong>require()</strong>: 同步加载、缓存机制、路径解析</li>
+<li>✅ <strong>module.exports</strong>: 灵活的导出方式、与exports的关系</li>
+<li>✅ <strong>高级模式</strong>: 工厂模式、单例模式、插件系统</li>
+<li>✅ <strong>性能优化</strong>: 条件加载、缓存管理、延迟初始化</li>
+<li>✅ <strong>调试工具</strong>: 依赖跟踪、性能监控、循环依赖检测</li>
+</ul>
+<p>理解这些机制有助于编写更高效、更可维护的Node.js应用。</p>
+<hr>
+<p><strong>下一章</strong>: <a href="./caching.html">模块缓存机制</a> →</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../cjs/basics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../cjs/caching.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../cjs/basics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../cjs/caching.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

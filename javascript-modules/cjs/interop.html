@@ -1,0 +1,777 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>与ES模块的互操作 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="模块互操作性"><a class="header" href="#模块互操作性">模块互操作性</a></h1>
+<p>在现代JavaScript开发中，经常需要在同一个项目中使用不同的模块系统。本章将深入探讨CommonJS与ES模块的互操作性，以及如何在实际项目中处理模块系统的混合使用。</p>
+<h2 id="commonjs与es模块的差异"><a class="header" href="#commonjs与es模块的差异">CommonJS与ES模块的差异</a></h2>
+<h3 id="1-语法差异"><a class="header" href="#1-语法差异">1. 语法差异</a></h3>
+<pre><code class="language-javascript">// CommonJS
+const fs = require('fs');
+const { readFile } = require('fs');
+module.exports = { utility };
+exports.helper = function() {};
+
+// ES模块
+import fs from 'fs';
+import { readFile } from 'fs';
+export { utility };
+export const helper = function() {};
+export default utility;
+</code></pre>
+<h3 id="2-执行时机差异"><a class="header" href="#2-执行时机差异">2. 执行时机差异</a></h3>
+<pre><code class="language-javascript">// CommonJS - 同步加载
+console.log('开始');
+const utils = require('./utils'); // 同步执行
+console.log('结束');
+
+// ES模块 - 静态分析
+console.log('开始');
+import utils from './utils.js'; // 编译时确定
+console.log('结束');
+</code></pre>
+<h3 id="3-值复制-vs-实时绑定"><a class="header" href="#3-值复制-vs-实时绑定">3. 值复制 vs 实时绑定</a></h3>
+<pre><code class="language-javascript">// CommonJS - 值复制
+// counter.js (CommonJS)
+let count = 0;
+function increment() {
+    count++;
+}
+function getCount() {
+    return count;
+}
+module.exports = { count, increment, getCount };
+
+// main.js
+const { count, increment, getCount } = require('./counter');
+console.log(count); // 0
+increment();
+console.log(count); // 0 (值复制，不会更新)
+console.log(getCount()); // 1 (通过函数获取最新值)
+</code></pre>
+<pre><code class="language-javascript">// ES模块 - 实时绑定
+// counter.mjs (ES模块)
+let count = 0;
+export function increment() {
+    count++;
+}
+export { count };
+
+// main.mjs
+import { count, increment } from './counter.mjs';
+console.log(count); // 0
+increment();
+console.log(count); // 1 (实时绑定，会更新)
+</code></pre>
+<h2 id="nodejs中的互操作性"><a class="header" href="#nodejs中的互操作性">Node.js中的互操作性</a></h2>
+<h3 id="1-es模块导入commonjs"><a class="header" href="#1-es模块导入commonjs">1. ES模块导入CommonJS</a></h3>
+<pre><code class="language-javascript">// utils.js (CommonJS)
+function add(a, b) {
+    return a + b;
+}
+
+function multiply(a, b) {
+    return a * b;
+}
+
+module.exports = {
+    add,
+    multiply,
+    default: { add, multiply } // 可选：显式默认导出
+};
+</code></pre>
+<pre><code class="language-javascript">// main.mjs (ES模块)
+
+// 方式1：默认导入
+import utils from './utils.js';
+console.log(utils.add(2, 3)); // 5
+
+// 方式2：命名导入（如果CommonJS模块支持）
+import { add, multiply } from './utils.js';
+console.log(add(2, 3)); // 5
+
+// 方式3：命名空间导入
+import * as utils from './utils.js';
+console.log(utils.add(2, 3)); // 5
+</code></pre>
+<h3 id="2-commonjs导入es模块"><a class="header" href="#2-commonjs导入es模块">2. CommonJS导入ES模块</a></h3>
+<p>CommonJS不能直接使用<code>import</code>，需要使用动态导入：</p>
+<pre><code class="language-javascript">// math.mjs (ES模块)
+export function add(a, b) {
+    return a + b;
+}
+
+export function subtract(a, b) {
+    return a - b;
+}
+
+export default {
+    version: '1.0.0'
+};
+</code></pre>
+<pre><code class="language-javascript">// app.js (CommonJS)
+
+// 方式1：使用动态import
+async function main() {
+    const math = await import('./math.mjs');
+    console.log(math.add(2, 3)); // 5
+    console.log(math.default.version); // '1.0.0'
+    
+    // 解构导入
+    const { add, subtract } = await import('./math.mjs');
+    console.log(add(5, 3)); // 8
+}
+
+main();
+
+// 方式2：使用import()表达式
+import('./math.mjs').then(math =&gt; {
+    console.log(math.add(2, 3));
+});
+
+// 方式3：在函数中使用
+function loadMath() {
+    return import('./math.mjs');
+}
+</code></pre>
+<h3 id="3-混合使用示例"><a class="header" href="#3-混合使用示例">3. 混合使用示例</a></h3>
+<pre><code class="language-javascript">// config.js (CommonJS)
+const defaults = {
+    port: 3000,
+    host: 'localhost'
+};
+
+function createConfig(overrides = {}) {
+    return { ...defaults, ...overrides };
+}
+
+module.exports = { defaults, createConfig };
+</code></pre>
+<pre><code class="language-javascript">// server.mjs (ES模块)
+import express from 'express';
+import configModule from './config.js';
+
+const { createConfig } = configModule;
+
+const config = createConfig({
+    port: process.env.PORT || 8080
+});
+
+const app = express();
+
+app.listen(config.port, () =&gt; {
+    console.log(`Server running on port ${config.port}`);
+});
+</code></pre>
+<h2 id="打包工具中的互操作性"><a class="header" href="#打包工具中的互操作性">打包工具中的互操作性</a></h2>
+<h3 id="1-webpack配置"><a class="header" href="#1-webpack配置">1. Webpack配置</a></h3>
+<pre><code class="language-javascript">// webpack.config.js
+module.exports = {
+    entry: './src/index.js',
+    module: {
+        rules: [
+            {
+                test: /\.m?js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            ['@babel/preset-env', {
+                                modules: false // 保持ES模块用于tree shaking
+                            }]
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    resolve: {
+        extensions: ['.js', '.mjs', '.cjs']
+    }
+};
+</code></pre>
+<h3 id="2-rollup配置"><a class="header" href="#2-rollup配置">2. Rollup配置</a></h3>
+<pre><code class="language-javascript">// rollup.config.js
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+
+export default {
+    input: 'src/index.js',
+    output: {
+        file: 'dist/bundle.js',
+        format: 'esm'
+    },
+    plugins: [
+        nodeResolve({
+            preferBuiltins: false
+        }),
+        commonjs({
+            // 将CommonJS模块转换为ES模块
+            transformMixedEsModules: true
+        })
+    ]
+};
+</code></pre>
+<h3 id="3-vite配置"><a class="header" href="#3-vite配置">3. Vite配置</a></h3>
+<pre><code class="language-javascript">// vite.config.js
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+    build: {
+        rollupOptions: {
+            output: {
+                format: 'esm'
+            }
+        }
+    },
+    optimizeDeps: {
+        include: ['legacy-commonjs-package']
+    }
+});
+</code></pre>
+<h2 id="实际互操作模式"><a class="header" href="#实际互操作模式">实际互操作模式</a></h2>
+<h3 id="1-渐进式迁移"><a class="header" href="#1-渐进式迁移">1. 渐进式迁移</a></h3>
+<pre><code class="language-javascript">// 步骤1：创建兼容层
+// compat.js
+const legacyUtils = require('./legacy-utils');
+
+// 包装CommonJS模块为ES模块友好的格式
+export const { helper1, helper2 } = legacyUtils;
+export default legacyUtils;
+</code></pre>
+<pre><code class="language-javascript">// 步骤2：新代码使用ES模块
+// new-feature.mjs
+import { helper1 } from './compat.js';
+import modernUtil from './modern-util.mjs';
+
+export function newFeature() {
+    return helper1() + modernUtil();
+}
+</code></pre>
+<h3 id="2-双模式包"><a class="header" href="#2-双模式包">2. 双模式包</a></h3>
+<p>创建同时支持CommonJS和ES模块的包：</p>
+<pre><code class="language-json">// package.json
+{
+  "name": "my-dual-package",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  }
+}
+</code></pre>
+<pre><code class="language-javascript">// src/index.js (源码)
+export function utility() {
+    return 'Hello from utility';
+}
+
+export default {
+    utility
+};
+</code></pre>
+<pre><code class="language-javascript">// build/build-cjs.js (构建CommonJS版本)
+const fs = require('fs');
+
+const esmCode = `
+export function utility() {
+    return 'Hello from utility';
+}
+
+export default {
+    utility
+};
+`;
+
+const cjsCode = `
+function utility() {
+    return 'Hello from utility';
+}
+
+module.exports = {
+    utility,
+    default: { utility }
+};
+`;
+
+fs.writeFileSync('./dist/index.cjs', cjsCode);
+fs.writeFileSync('./dist/index.mjs', esmCode);
+</code></pre>
+<h3 id="3-条件导入"><a class="header" href="#3-条件导入">3. 条件导入</a></h3>
+<pre><code class="language-javascript">// dynamic-loader.js
+async function loadModule(modulePath) {
+    try {
+        // 尝试ES模块导入
+        return await import(modulePath);
+    } catch (error) {
+        // 降级到CommonJS
+        if (error.code === 'ERR_REQUIRE_ESM') {
+            return require(modulePath);
+        }
+        throw error;
+    }
+}
+
+// 使用示例
+async function main() {
+    const module = await loadModule('./some-module');
+    console.log(module.default || module);
+}
+</code></pre>
+<h2 id="常见问题和解决方案"><a class="header" href="#常见问题和解决方案">常见问题和解决方案</a></h2>
+<h3 id="1-__dirname和__filename在es模块中的替代"><a class="header" href="#1-__dirname和__filename在es模块中的替代">1. __dirname和__filename在ES模块中的替代</a></h3>
+<pre><code class="language-javascript">// utils.mjs
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// ES模块中获取当前文件路径
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export { __filename, __dirname };
+</code></pre>
+<pre><code class="language-javascript">// 兼容函数
+// path-utils.mjs
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+export function getCurrentDir(importMetaUrl) {
+    return dirname(fileURLToPath(importMetaUrl));
+}
+
+export function resolvePath(importMetaUrl, ...paths) {
+    const currentDir = getCurrentDir(importMetaUrl);
+    return join(currentDir, ...paths);
+}
+
+// 使用
+import { resolvePath } from './path-utils.mjs';
+const configPath = resolvePath(import.meta.url, 'config.json');
+</code></pre>
+<h3 id="2-requireresolve在es模块中的替代"><a class="header" href="#2-requireresolve在es模块中的替代">2. require.resolve在ES模块中的替代</a></h3>
+<pre><code class="language-javascript">// resolve-utils.mjs
+import { createRequire } from 'module';
+
+// 创建require函数
+const require = createRequire(import.meta.url);
+
+export function resolveModule(modulePath) {
+    return require.resolve(modulePath);
+}
+
+export function importModule(modulePath) {
+    return require(modulePath);
+}
+
+// 使用示例
+const modulePath = resolveModule('lodash');
+console.log(modulePath); // 绝对路径
+</code></pre>
+<h3 id="3-动态require在es模块中的实现"><a class="header" href="#3-动态require在es模块中的实现">3. 动态require在ES模块中的实现</a></h3>
+<pre><code class="language-javascript">// dynamic-require.mjs
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+
+export function dynamicRequire(modulePath) {
+    return require(modulePath);
+}
+
+export async function universalImport(modulePath) {
+    try {
+        // 首先尝试ES模块导入
+        return await import(modulePath);
+    } catch (esError) {
+        try {
+            // 降级到CommonJS
+            return { default: require(modulePath) };
+        } catch (cjsError) {
+            throw new Error(`无法加载模块 ${modulePath}: ${esError.message}`);
+        }
+    }
+}
+</code></pre>
+<h3 id="4-模块类型检测"><a class="header" href="#4-模块类型检测">4. 模块类型检测</a></h3>
+<pre><code class="language-javascript">// module-detector.mjs
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+export function isESModule(packagePath) {
+    try {
+        const packageJsonPath = resolve(packagePath, 'package.json');
+        const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+        return packageJson.type === 'module';
+    } catch {
+        return false;
+    }
+}
+
+export function getModuleType(filePath) {
+    if (filePath.endsWith('.mjs')) return 'esm';
+    if (filePath.endsWith('.cjs')) return 'commonjs';
+    
+    // 检查package.json
+    const packageDir = findPackageDir(filePath);
+    return isESModule(packageDir) ? 'esm' : 'commonjs';
+}
+
+function findPackageDir(startPath) {
+    let currentPath = resolve(startPath);
+    while (currentPath !== resolve(currentPath, '..')) {
+        try {
+            readFileSync(resolve(currentPath, 'package.json'));
+            return currentPath;
+        } catch {
+            currentPath = resolve(currentPath, '..');
+        }
+    }
+    return null;
+}
+</code></pre>
+<h2 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h2>
+<h3 id="1-新项目建议"><a class="header" href="#1-新项目建议">1. 新项目建议</a></h3>
+<pre><code class="language-javascript">// 推荐的项目结构
+project/
+├── package.json          // type: "module"
+├── src/
+│   ├── index.mjs         // ES模块入口
+│   ├── utils/
+│   │   ├── modern.mjs    // 新代码使用ES模块
+│   │   └── legacy.cjs    // 旧代码保持CommonJS
+│   └── compat/
+│       └── require-wrapper.mjs // CommonJS兼容层
+└── build/
+    ├── build-dual.js     // 构建双模式包
+    └── test-compat.js    // 兼容性测试
+</code></pre>
+<h3 id="2-迁移策略"><a class="header" href="#2-迁移策略">2. 迁移策略</a></h3>
+<pre><code class="language-javascript">// 阶段1：准备阶段
+// package.json
+{
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  }
+}
+
+// 阶段2：渐进迁移
+// 保持CommonJS接口不变，内部逐步迁移
+// 阶段3：完全切换
+// 移除CommonJS兼容层
+</code></pre>
+<h3 id="3-库开发建议"><a class="header" href="#3-库开发建议">3. 库开发建议</a></h3>
+<pre><code class="language-javascript">// lib/index.js (源码使用ES模块)
+export function utility() {
+    return 'utility function';
+}
+
+export class Helper {
+    constructor(options) {
+        this.options = options;
+    }
+    
+    process() {
+        return 'processed';
+    }
+}
+
+export default {
+    utility,
+    Helper
+};
+</code></pre>
+<pre><code class="language-javascript">// scripts/build-dual.js
+import { rollup } from 'rollup';
+
+async function buildDual() {
+    // 构建ES模块版本
+    const esmBundle = await rollup({
+        input: 'lib/index.js',
+        external: ['fs', 'path']
+    });
+    
+    await esmBundle.write({
+        file: 'dist/index.mjs',
+        format: 'esm'
+    });
+    
+    // 构建CommonJS版本
+    const cjsBundle = await rollup({
+        input: 'lib/index.js',
+        external: ['fs', 'path']
+    });
+    
+    await cjsBundle.write({
+        file: 'dist/index.cjs',
+        format: 'cjs'
+    });
+}
+
+buildDual();
+</code></pre>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>模块互操作性是现代JavaScript开发的重要话题：</p>
+<ul>
+<li>
+<p>✅ <strong>渐进迁移</strong>: 可以逐步从CommonJS迁移到ES模块</p>
+</li>
+<li>
+<p>✅ <strong>工具支持</strong>: 现代构建工具提供了良好的互操作支持</p>
+</li>
+<li>
+<p>✅ <strong>双模式包</strong>: 可以创建同时支持两种模块系统的包</p>
+</li>
+<li>
+<p>✅ <strong>动态导入</strong>: 提供了运行时模块加载的灵活性</p>
+</li>
+<li>
+<p>⚠️ <strong>性能考虑</strong>: 频繁的动态导入可能影响性能</p>
+</li>
+<li>
+<p>⚠️ <strong>复杂性</strong>: 混合使用增加了项目的复杂性</p>
+</li>
+<li>
+<p>⚠️ <strong>调试困难</strong>: 互操作问题可能难以调试</p>
+</li>
+</ul>
+<p>理解和掌握模块互操作性对于维护现有项目和开发新项目都至关重要。随着生态系统的发展，ES模块正在成为主流，但CommonJS仍将在相当长的时间内存在。</p>
+<hr>
+<p><strong>下一章</strong>: <a href="../amd/basics.html">AMD模块系统</a> →</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../cjs/caching.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../amd/basics.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../cjs/caching.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../amd/basics.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

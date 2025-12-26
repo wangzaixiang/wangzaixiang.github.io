@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>使用 ADT 代数数据类型 进行数据建模 | 程序人生</title>
+<meta name="description" content="程序 = 数据结构 + 算法， 数据结构、数据模型在软件架构中的重要性是不言而喻的，本文介绍了基于 ADT 进行数据建模的一些实践思考">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/adt/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="使用 ADT 代数数据类型 进行数据建模">
+  <meta name="twitter:description" content="程序 = 数据结构 + 算法， 数据结构、数据模型在软件架构中的重要性是不言而喻的，本文介绍了基于 ADT 进行数据建模的一些实践思考">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="使用 ADT 代数数据类型 进行数据建模">
+  <meta property="og:description" content="程序 = 数据结构 + 算法， 数据结构、数据模型在软件架构中的重要性是不言而喻的，本文介绍了基于 ADT 进行数据建模的一些实践思考">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/adt/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="使用 ADT 代数数据类型 进行数据建模">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/adt/"
+      },
+      "headline": "使用 ADT 代数数据类型 进行数据建模",
+      "image": ,
+      "datePublished": "2024-09-01",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "使用 ADT 代数数据类型 进行数据建模"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "使用 ADT 代数数据类型 进行数据建模",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "程序 = 数据结构 + 算法， 数据结构、数据模型在软件架构中的重要性是不言而喻的，本文介绍了基于 ADT 进行数据建模的一些实践思考"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Adt",
+            "item": "https://wangzaixiang.github.io/blog/adt/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/adt/#1-shen-me-shi-adt">1. 什么是 ADT?</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/adt/#she-ji-zhi-shan-yi-jing-shu-ju-zhi-dong-xing-wei-dong-jing-fen-chi">设计之禅：以静（数据）制动（行为），动静分离</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/adt/#she-ji-zhi-shan-qiong-jin-mei-ju-zu-gou-fu-gai">设计之禅：穷尽枚举，足够覆盖</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/adt/#2-json-with-adt">2. JSON with ADT</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/adt/#2-1-json-schema">2.1 JSON Schema</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/adt/#2-2-wjson">2.2 wjson</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>使用 ADT 代数数据类型 进行数据建模</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/tabular/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted September  1, 2024 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>12&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/sql-optimize/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="1-shen-me-shi-adt">1. 什么是 ADT?</h1>
+<p>代数数据类型 ADT 是 Haskell 等函数式编程语言中的一个重要概念，通过两种构造方式，即 product type 和 sum type，就可以构造出复杂的
+数据结构，并且可以通过 pattern matching 来对这些数据结构进行处理。</p>
+<ul>
+<li>
+<p>sum type</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span>  </span><span style="color:#b48ead;">data </span><span style="color:#d08770;">Bool </span><span>= </span><span style="color:#d08770;">True </span><span>| </span><span style="color:#d08770;">False
+</span><span>  </span><span style="color:#b48ead;">data </span><span style="color:#d08770;">Maybe</span><span> a = </span><span style="color:#d08770;">Just</span><span> a | </span><span style="color:#d08770;">Nothing
+</span><span>  </span><span style="color:#b48ead;">data </span><span style="color:#d08770;">Either</span><span> a b = </span><span style="color:#d08770;">Left</span><span> a | </span><span style="color:#d08770;">Right</span><span> b
+</span><span>  </span><span style="color:#b48ead;">data </span><span style="color:#d08770;">List</span><span> a = </span><span style="color:#d08770;">Nil </span><span>| </span><span style="color:#d08770;">Cons</span><span> a (</span><span style="color:#d08770;">List</span><span> a)
+</span></code></pre>
+<p>在 Scala 和 Rust 中，sum type 是通过 enum 来实现的。可以这样理解， sum type 的取值空间是所有构造子的并集。</p>
+</li>
+<li>
+<p>product type</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span>      </span><span style="color:#b48ead;">data </span><span style="color:#d08770;">Pair</span><span> a b = </span><span style="color:#d08770;">Pair</span><span> a b
+</span><span>      </span><span style="color:#b48ead;">data </span><span style="color:#d08770;">Triple</span><span> a b c = </span><span style="color:#d08770;">Triple</span><span> a b c
+</span></code></pre>
+<p>在 Scala 和 Rust 中，product type 是通过 case class 或 struct 来实现的。可以这样理解， product type 的取值空间
+是所有构造子的笛卡尔积。</p>
+</li>
+</ul>
+<p>很多的基础类型，例如：boolean, int, float 等都可以视为某种 SUM 类型，但在 scala/rust 等语言中，我们一般将这些类型视为基础类型
+（primitive type），基于这些基础类型，通过 SUM / PRODUCT 就可以构造出复杂的数据结构，用于对目标领域的建模。</p>
+<h2 id="she-ji-zhi-shan-yi-jing-shu-ju-zhi-dong-xing-wei-dong-jing-fen-chi">设计之禅：以静（数据）制动（行为），动静分离</h2>
+<p>目前更为流行的面向对象编程（OOP）中，使用类（class）来进行数据建模，在 OOP 中更强调如下的方法：</p>
+<ol>
+<li>
+<p>继承：即通过创建子类的方式。 OOP 中一个类的子类往往是开放的，可以随意的定义新的子类，提供扩展的属性，并改变父类的行为。</p>
+<blockquote>
+<p>受 Liskov Substitution Principle 的限制, 子类的行为必顿要与父类一致，现实建模中，很少有真正的 is-a 关系，更多的是 has-a 关系。
+大部份的继承关系都是错误的设计，因此，现在语言如 rust/go 等都不再提供继承的方式，而是使用组合的方式来实现类似的功能。</p>
+</blockquote>
+</li>
+<li>
+<p>接口定义：一般的，通过 interface 的方式来定义一组行为，子类（或实现者）提供对 interface 的实现。</p>
+<blockquote>
+<p>OOP 将数据与行为 强行绑定在一起，这样会导致频繁的更新类的定义（扩展方法、变更行为）。一个笑话就是，如果要发送订单的邮件通知，就需要
+在订单类中增加一个 sendEmail 方法，如果要发送短信通知，就需要增加一个 sendSMS 方法。假以时日，订单类就会变得臃肿不堪。</p>
+</blockquote>
+<blockquote>
+<p>在 DDD 中，有一个 充血模型 和 贫血模型 的概念，充血模型是指领域对象具有丰富的行为，而贫血模型则是指领域对象只有数据，没有行为。
+很多的 DDD 理论都倾向于充血模型，并使用 OOP 的方式，将数据与行为耦合在一起。但是，这种方式实际上是教条的，或者在很多方面是
+自相矛盾的。
+在商业系统中，数据结构（实体、数据库结构）是相对稳定的，但行为则是高度不稳定的，会随着时间、空间的变化而变化。因此，将数据与行为
+绑定到一起，实际上是不合理的。</p>
+</blockquote>
+</li>
+<li>
+<p>函数式编程 与 ADT 更倾向于数据的封闭性（而非扩展性），任何对数据模型的修改，都应该维护到一个 ADT 模型中，并通过类型检查的方式来检查现有的
+代码是否有正确的覆盖新的类型，通过静态的类型检查，可以避免很多的运行时错误。
+当然，这种方式也确实会带来一定的限制：即动态能力会受到限制。
+通常情况下，对复杂的系统，我们会更倾向于追求通过静态类型检查即可保证的正确性，而将需要动态性的部分，限制在一个更小的边界内。</p>
+</li>
+</ol>
+<h2 id="she-ji-zhi-shan-qiong-jin-mei-ju-zu-gou-fu-gai">设计之禅：穷尽枚举，足够覆盖</h2>
+<p>在 OOP 中，我们一般会将某一类对象抽象抽象为父类、子类的方式，或者 interface、实现类的方式，然后在使用时，通过多态的方式来进行处理。
+而在 ADT 中，我们一般会将某一类对象抽象为一个 enum 类型，然后通过 pattern matching 的方式来进行处理。</p>
+<h1 id="2-json-with-adt">2. JSON with ADT</h1>
+<p>数据结构除了广泛的存在于内存之中，承担着运行过程中的血液和神经的作用，还会被序列化到磁盘、网络中，作为：</p>
+<ul>
+<li>持久化存储</li>
+<li>网络传输、数据交换</li>
+<li>配置文件</li>
+</ul>
+<p>从某个角度来看，这些外部的序列化的数据结构承担着更为重要的作用，因为这些数据结构是更加面向人的，需要有良好的可理解性，同时，一般的，它与
+运行期的数据结构是有一定的相关性的，某种程度上决定了内部数据结构与处理代码的设计。<strong>由外而内，外部决定内部</strong></p>
+<p>这些年来，随着 Restful API 的流行，JSON 作为一种轻量级的数据交换格式，已经成为了事实上的标准。很多的系统都使用 JSON 来作为文件存储的格式、
+网络传输的格式。相比于 XML，JSON 更加简洁、易读、易写，也更加容易的被程序处理（写一个JSON Parser只需要100-200行代码就足够了，而且性能足够快
+，而XML Parser则可能需要上万行代码），相比于二进制格式，JSON 更加容易的被人类理解，这在网络调试、配置文件等方面有着很大的优势。</p>
+<p>JSON 的自由也很容易滥用，一些复杂的系统会随着时间的演化，而导致 JSON 结构的不断的变化，出现很多的质量问题：</p>
+<ol>
+<li>出现大量的冗余字段，或者废弃但遗留的字段。</li>
+<li>历史版本的 字段的结构、类型、语义的变化，导致了很多的兼容性和不一致的问题。</li>
+</ol>
+<p>当混乱发展到一定程度，存储文件结构的变化，会变成整个系统沉重的包袱，此时，在代码处理时，需要面对很多的兼容性问题，很多的代码删不得，改不动，
+只能不断的通过补丁的方式，叠加分支的方式，来维护这些历史遗留的问题。在这个时候，我们就会发现，JSON 的自由性，实际上是一种负担。</p>
+<blockquote>
+<p>复杂的软件世界，其实并不需要太多的自由，相反，更需要的是保证质量的规则，诸如强类型编程语言，相比于动态语言，就失去了一定的自由，但
+可以通过类型体系，更好的保证的代码的正确性。所谓：动态语言一时爽，一直动态一直爽，重构代码火葬场。</p>
+</blockquote>
+<blockquote>
+<p>同理，rust 语言的 borrow checker 也是一种规则，它限制了程序员的自由，但却可以保证代码的正确性。虽然和编译期的错误交流，对大部份
+的初学者是一件痛苦的事情，但是，大部份代码编译通过就可以无错运行，这种感觉是非常美妙的。同理，在code review时，也可以更加专注于
+核心逻辑，而无需为一些低级错误而烦恼。</p>
+</blockquote>
+<h2 id="2-1-json-schema">2.1 JSON Schema</h2>
+<p>类似于XML Schema，<a href="https://json-schema.org">JSON Schema</a> 是一种用于描述 JSON 数据结构的规范，它可以描述 JSON 数据结构的类型、结构、约束等信息，本质上就是
+JSON 的类型体系。</p>
+<blockquote>
+<p>实际上，JSON schema 相比大部份的编程语言的类型体系，对数据的 constraint 的描述更加丰富，例如：可以描述数据的长度、取值范围、正则表达式等。
+我觉得 ADT 中也需要一套 constraint 的描述，这样可以更好的描述数据的约束。
+在 design-by-contract 的设计理念中，也需要一种 contract 的描述语言，这些都是目前的语言中缺失的。</p>
+</blockquote>
+<p>通过 JSON schema，我们可以:</p>
+<ol>
+<li>使用 JSON schema 对 JSON 数据结构进行校验。</li>
+<li>在 Visual Code、IntelliJ IDEA 等编辑器中，可以对JSON 编辑来提供更好的提示、补全、校验等功能。</li>
+<li>可以将 Schema 作为元信息，在代码生成、文档生成等方面发挥作用，例如 API 文档等。</li>
+</ol>
+<h2 id="2-2-wjson">2.2 wjson</h2>
+<p>在我开发的 <a href="https://github.com/wangzaixiang/wjson">wjson</a> 中，提供了一种面向 Scala3 ADT 的 JSON 工具包：</p>
+<ul>
+<li>Bean/JSON 映射支持: 支持 ADT 类型到 JSON 的映射，以及 JSON 到 ADT 类型的映射。</li>
+<li>JSON Schema generator: 支持自动根据 ADT 类型生成 JSON Schema，便于在前端、IDE等其他工具中对JSON进行数据提示、校验和代码补全等功能</li>
+<li>规划的多版本支持功能：可以在后续版本中，增加新的字段，或者废弃旧的字段，支持新版本软件的向下兼容（新版本软件可以读写旧版本文件），和一定程度的
+的向上兼容（旧版本软件可以读新版本文件）。
+相关的技术文档参考：<a href="/wjson/index.html">wjson docs</a></li>
+</ul>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/tabular/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/sql-optimize/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>
