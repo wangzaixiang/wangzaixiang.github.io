@@ -69,8 +69,32 @@ template = "blog/page.html"
      - 级间压缩：类似于 BtrBlock。
      - 极致扩展性：容许用户自定义编码，布局策略和压缩算法。
      
-
 # Web & Frontend
+- Elm
+  手痒，又摸了一下 elm 这个语言。
+  - 纯函数式语言，类似 Haskell。
+  - 没有 null 和 undefined，所有值都是不可变的。
+  - 强类型系统，类型推导。重构时非常友好、安全。
+  - model-view-update 架构。非常的函数式。
+  - 号称：“没有运行时错误的语言”。
+  - 性能不错：
+    - 收益于不可变数据结构，可以使用 === 来快速比较数据变化。
+    - Html.Lazy 来避免不必要的 DOM 更新。（不仅可以避免更新，甚至 view 函数都不会被执行）
+    - Keyed 节点重用。
+  - 激进优化
+    - 纯函数 + 不可变 + 强类型，没有动态属性访问。
+    - record renaming：编译时将 record 的字段名替换为数字索引，避免运行时的字符串查找。
+    - static function inlining。
+    - ELM 的类型系统保证了一个 Record 结构在运行期不会动态变化，匹配浏览器的 shape optimization。
+    - constant folding。
+  - 最小提及：25-30K，但随着应用规模的增长，Elm 的体积增增长曲线要比 JS 平缓得多。
+  - [A Real-World Comparison Of Front-End Frameworks With Benchmarks 2024](https://expertbeacon.com/a-real-world-comparison-of-front-end-frameworks-with-benchmarks/)
+  - 代码密度：
+    - UI 描述：代码量偏多
+    - 状态管理：Model -> Msg -> Update -> View，代码量偏多(每次修改都需要同步这4个地方)，但非常清晰。
+    - 业务逻辑：代码量适中，但非常清晰。
+    - 可读性最佳。
+  - [ROC](https://www.roc-lang.org) : 类似 Elm 的纯函数式语言，基于 Rust 语言，脱离 JavaScript 生态。
 
 # AI & Agent
 
