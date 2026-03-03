@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>Vibe Coding 实践记录 | 程序人生</title>
+<meta name="description" content="本文记录最近使用 vibe coding 的一些实战记录">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/vibe-coding-2/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="Vibe Coding 实践记录">
+  <meta name="twitter:description" content="本文记录最近使用 vibe coding 的一些实战记录">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="Vibe Coding 实践记录">
+  <meta property="og:description" content="本文记录最近使用 vibe coding 的一些实战记录">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/vibe-coding-2/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="Vibe Coding 实践记录">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/vibe-coding-2/"
+      },
+      "headline": "Vibe Coding 实践记录",
+      "image": ,
+      "datePublished": "2025-12-14",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "Vibe Coding 实践记录"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Vibe Coding 实践记录",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文记录最近使用 vibe coding 的一些实战记录"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Vibe Coding 2",
+            "item": "https://wangzaixiang.github.io/blog/vibe-coding-2/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding-2/#bei-jing">背景</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding-2/#molap-storage">molap storage</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/vibe-coding-2/#reactive-system">reactive-system</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding-2/#workflow-feature-phase-task-workflow">workflow: feature-phase-task workflow</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding-2/#ai-de-chang-xiang-yu-duan-ban">AI 的 长项 与 短板</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding-2/#da-dao-kuo-fu-de-zhong-gou">大刀阔斧的重构</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/vibe-coding-2/#faq">FAQ</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>Vibe Coding 实践记录</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/agents/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted December 14, 2025&nbsp;&hyphen;&nbsp;<strong>24&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="bei-jing">背景</h1>
+<p>最近一段时间，比较重度的使用 AI 开发了2个软件，都还是蛮有挑战性的：</p>
+<h2 id="molap-storage">molap storage</h2>
+<p>说是 MOLAP(Multi-dimension Online Analysis Process) storage，这个名字起得大了一些，其实本项目只是针对 MOLAP 计算中的计算度量的预计算
+的存储。一般的 MOLAP 引擎紧处理原子度量的预计算的存储，因为原子度量自身具备再聚合的能力，其存储的性价比相对较高，而且其本身对计算度量的计算
+也是具有加速效果的。而大部份的计算度量，不具有再计算性。</p>
+<p>本质而言，这个存储引擎就是一个简单的 Key-Value 存储引擎，其基本的 API 是：</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">trait </span><span>DB {
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">put</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">cube_id</span><span>: </span><span style="color:#b48ead;">u16</span><span>, </span><span style="color:#bf616a;">dimensions</span><span>: &amp;[&amp;</span><span style="color:#b48ead;">str</span><span>], </span><span style="color:#bf616a;">value</span><span>: Value) -&gt; Result&lt;()&gt;;
+</span><span>    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">get</span><span>(&amp;</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">cube_id</span><span>: </span><span style="color:#b48ead;">u16</span><span>, </span><span style="color:#bf616a;">dimension</span><span>: &amp;[&amp;</span><span style="color:#b48ead;">str</span><span>]) -&gt; Result&lt;Value&gt;;
+</span><span>}
+</span></code></pre>
+<p>不过，简单的 API 背后，蕴含了不少复杂的设计挑战：</p>
+<ul>
+<li>高效的存储格式设计，作为预计算的存储引擎，而不仅仅是存放到内存中。</li>
+<li>高效的读写性能，尤其是读性能，在我最早的设计目标中，希望能够达到 10M QPS 的读性能。(单个请求耗时 ~100ns)，这里需要尽可能的匹配现代 CPU 的特性，
+包括缓存有好、SIMD 指令集的使用等。</li>
+<li>高效的内存使用。这个 API 将在 JVM 中使用，如果需要占用过多的 JVM Heap 内存，将会影响到整体的 JVM 性能。</li>
+<li>零启动开销。即使对一次性的脚本任务，也希望能够快速启动，避免因为存储引擎的初始化而带来过多的延迟。设计目标是小于 1ms 的启动时间（读），
+一个重大的挑战就是可直接 mmap 的数据结构，避免任何的数据序列化操作和数据复制开销。</li>
+</ul>
+<p>在<a href="https://wangzaixiang.github.io/blog/the-1brc-program/">the 1brc program</a> 项目中的极致性能挑战，为 molap storage 的设计提供了很好的经验积累,
+在这项目的开发过程中，我基本上没有花费太大的代价，只经历了几轮快速调优后，就达到了性能上的极致目标。</p>
+<p>上述的设计目标，一开始就注定这个项目是极具挑战性的，也能充分发挥 Rust 的顶层编程和高性能的挑战。</p>
+<h2 id="reactive-system">reactive-system</h2>
+<p>这个项目是一个响应式系统引擎，是我规划中的 Analysis Report(一个类似于 Observable Notebook 的数据分析工具)的核心引擎。这个引擎的设计目标是：</p>
+<ul>
+<li>支持异步的响应式计算。</li>
+<li>为交互式 notebook 提供高效的响应式计算引擎。</li>
+<li>支持复杂的响应式计算图，支持动态的计算图结构。</li>
+<li>保守保证计算的因果一致性，绝不出现“时间倒流”、“数据不一致”的现象。</li>
+<li>激进的调度优化：严格的拓扑排序下的调度，避免重复计算，并且在因为变化而导致的计算过期时，能够及时取消过期计算，节省计算资源。</li>
+</ul>
+<p>24年，我设计过 reactive-system 的第一个版本，并且在公司的交互式仪表盘中应用，对解决交互式数据分析中的数据依赖、数据联动等问题，发挥了重要的
+作用（这一块也是产品历史BUG的重灾区）。在 V1 的设计基础上，我为响应式系统进行引入了新的目标：</p>
+<ul>
+<li>支持 notebook 中 code cell 这样的 多输入，多输出的计算单元（V1 是多输入，单输出）。</li>
+<li>定义了更保守的因果一致性模型，确保在异步计算环境下，数据的一致性和正确性。</li>
+<li>引入了更激进的调度优化策略，对任何过时的计算任务，能够及时取消，节省计算资源。</li>
+<li>更明确的异常传播机制。将异常作为计算结果的一部分进行传播，确保下游计算能够正确处理上游的异常情况。</li>
+</ul>
+<p>这个系统的核心 API 很简单：</p>
+<pre data-lang="typescript" style="background-color:#2b303b;color:#c0c5ce;" class="language-typescript "><code class="language-typescript" data-lang="typescript"><span style="color:#b48ead;">interface </span><span>ReativeModule {
+</span><span>    </span><span style="color:#8fa1b3;">defineSource</span><span>(</span><span style="color:#bf616a;">source</span><span>: { </span><span style="color:#bf616a;">id</span><span>: string, </span><span style="color:#bf616a;">initialValue</span><span>?: any}): void;
+</span><span>    </span><span style="color:#8fa1b3;">defineComputation</span><span>(</span><span style="color:#bf616a;">computation</span><span>: {
+</span><span>        </span><span style="color:#bf616a;">id</span><span>: string;
+</span><span>        </span><span style="color:#bf616a;">inputIds</span><span>: string[];
+</span><span>        </span><span style="color:#bf616a;">outputIds</span><span>: string[];
+</span><span>        </span><span style="color:#8fa1b3;">body</span><span>: (</span><span style="color:#bf616a;">scope</span><span>: Scope, </span><span style="color:#bf616a;">signal</span><span>: AbortSignal) </span><span style="color:#b48ead;">=&gt; </span><span>Promise&lt;Record&lt;string, any&gt;&gt;;
+</span><span>    }): void;
+</span><span>    </span><span style="color:#8fa1b3;">updateSource</span><span>(</span><span style="color:#bf616a;">id</span><span>: string, </span><span style="color:#bf616a;">newValue</span><span>: any): void;
+</span><span>    </span><span style="color:#8fa1b3;">getValue</span><span>(</span><span style="color:#bf616a;">id</span><span>: string): Promise&lt;any&gt;;
+</span><span>    </span><span style="color:#8fa1b3;">observe</span><span>(</span><span style="color:#bf616a;">id</span><span>: string, </span><span style="color:#8fa1b3;">observer</span><span>: (</span><span style="color:#bf616a;">result</span><span>: Result&lt;any&gt;) </span><span style="color:#b48ead;">=&gt; </span><span>void): Unsubscribe;
+</span><span>}
+</span><span style="color:#b48ead;">interface </span><span>Scope {
+</span><span>    [</span><span style="color:#bf616a;">variableId</span><span>: string]: Promise&lt;any&gt;;
+</span><span>    </span><span style="color:#8fa1b3;">__getResult</span><span>: (</span><span style="color:#bf616a;">variableId</span><span>: string) </span><span style="color:#b48ead;">=&gt; </span><span>Promise&lt;Result&lt;any&gt;&gt;;
+</span><span>}
+</span><span style="color:#b48ead;">type </span><span>Unsubscribe = () </span><span style="color:#b48ead;">=&gt; </span><span>void;
+</span><span>
+</span></code></pre>
+<p>当然，24年我仅是作为设计者，而开发是由一位前端同事完成的，而且，彼时并没有借助 AI 的力量，开发过程相对较长，而且也是在开发的过程中不算确认设计
+细节。而现在，则是由我来亲自设计、编码，并且是借助 Claude Code /Gemini 等 AI 助力来完成开发任务，这个过程也想比传统的开发方式有了很大的不同，
+在差不多2周的时间里，我其实是完成了2版大型的设计改造（从 V2 的 MVCC 设计，到 V3 的基于 cause_at 的时间因果设计），在第3版中，又进行多次的
+实现细节的重大调整，对调度、取消机制、状态管理等都做了好几次的重构，几乎是每天一次大型的代码重构），最终完成了 V3 的设计和实现，达到了我心目中
+（暂时）比较完美的感觉。</p>
+<hr />
+<p>简单来说，这两个系统都比较类似于 《A Philosophy of Software Design》一书中的原则：</p>
+<ul>
+<li>更窄的接口：接口提供了高度简单、抽象的语义，隐藏了复杂的实现细节。</li>
+<li>更深的实现：在简单的接口之后，隐藏了复杂的实现细节，这些细节都是偏重于性能、一致性的机制优化，但并不暴露使用的复杂性。</li>
+</ul>
+<h1 id="workflow-feature-phase-task-workflow">workflow: feature-phase-task workflow</h1>
+<p>在这两个项目的开发过程中，我逐步形成了我自己的一套 workflow，非常适合于 vibe coding 的开发模式，相关的文档可以参考：</p>
+<ul>
+<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/">feature-phase-task workflow</a></li>
+</ul>
+<p>使用这个 workflow 优点：</p>
+<ul>
+<li>贴合 Spec First 的模式：我们主要的精力在于需求规格和设计文档的准备上（当然这个过程 AI 可以给你很多的助力，但主要的职责是你）</li>
+<li>在 Spec 准备好之后，我们可以先和 AI 一起评估一个开发的计划：分解成为多个 phase,每个 phase 包含多个 task。</li>
+<li>对于不确定比较高的系统，我们需要启动 phase 0 阶段：通过定义end-to-end 的使用场景，基于这些使用场景，编写测试用例，确定整体的 API 设计，
+在确定了 API 设计之后，再进行后续的 phase 拆解和 task 的拆解。</li>
+<li>feature 对应于 Feature Driven Development 的 feature，或者 git flow 中的一个 feature 分支，一个 Pull Request。是一个完整的功能特性。
+多个 feature 可以并行进行开发，最后 merge 到主分支。</li>
+<li>phase 对应于一个小的迭代目标，一个 phase 可以用于验证某个原型，为下一个 phase 做准备，可以是丢弃型的原型开发，也可以是增量式的开发。</li>
+<li>task 对应于一个具体的开发任务，可以是一个小的功能点，或者一个模块的实现。task 是最小的开发单元。</li>
+<li>完成规划后，就可以以 AI 为主的方式去进行推进，在开发的过程中，适当的进行干预即可，而无需高频率的进行讨论和编码沟通。这也使得我们可以并行进行多个
+feature 的开发。</li>
+</ul>
+<h1 id="ai-de-chang-xiang-yu-duan-ban">AI 的 长项 与 短板</h1>
+<p>这两个2项目，一个是 Rust，一个是 TypeScript，两个语言我都是有一定了解，但都不是非常熟练。整个开发过程中，我体验了 claude code 和 gemini 两个 agent，
+他们彼此的习性也有所不同。在实战过程中，有的任务，AI 能够非常好的完成，而有的任务，则还是传统的 IDE 更为适合。当然，在能力上，AI 也有长项和短板。</p>
+<p>了解 AI 的长项和短板，有助于我们更好的利用 AI 来完成开发任务，以及如何在一个恰当的成本上，完成开发工作。否则，你就会烧掉大量的 token 却难以达成目标。</p>
+<ol>
+<li>
+<p>AI 非常适合于代码的生成，却不一定适合于代码的修改，尤其是大范围的代码修改。如果某个结构性的设计的调整，导致了大范围的代码修改，大量的代码错误，大量的单元测试失败，
+那么这时，你依赖 AI 来进行代码的修改，会是一个相当漫长、且烧钱的过程。</p>
+<ul>
+<li>这时，可能人工介入的，基于传统的 IDE 的重构的方式，可能是更为高效的方式。</li>
+<li>如果因为设计调整导致大量的单元测试失效，那么与其让其逐个修复单元测试，不如废弃掉这些单元测试，重新编写（生成）新的单元测试，可能会更为高效。</li>
+<li>如果某个任务，AI 陷入了无限循环，在不断的修改代码尝试通过的时候，可能就需要及时介入，给予新的指导，或者直接人工介入完成任务。</li>
+</ul>
+</li>
+<li>
+<p>结构性的重构，可能导致现有的代码大面积失效，这时，与其让 AI 去修复这些代码，不如大刀阔斧的进行重写</p>
+<ul>
+<li>重新和 AI 讨论设计细节，讨论开发计划的规划，与其让其修改现有代码，不如让其基于新的设计，重新编写新的代码。</li>
+<li>如果在上次迭代中，AI 生成的代码质量并不高，那么在新的设计中，对这些不清晰的地方，强调设计的细节，包括：
+<ul>
+<li>核心的数据结构</li>
+<li>API 定义，包括输入、输出等签名信息，以及语义的定义，Design by Contract 也是非常适合于 AI 编程。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>AI 在写代码的速度上，可能是优秀工程师的10倍+（更可能是普通工程师的几十倍），但是它有一个巨大的问题：就是在设计不够清晰、确定的情况下，它也会
+按照一个“快枪手”的思维模式，应付式、快速的达成眼下的目标（如通过单元测试），这一点倒是非常象一个没有追求的，有丰富经验的工程师：它无所不能的可以达成
+当下的目标，却完全不管不顾会为后续留下多少技术债务。（很多公司都有这样的“技术高手”，什么问题都能解决，当然，大部份的问题也都是他埋下的坑，一旦问其
+他来，理由就是：当时要求的时间那么急，只能这么解决了，至于技术债务，我都知道，但是后面也没有时间去处理了）。</p>
+<ul>
+<li>所以，不要太信任 AI 生成的代码，一定要有严格的 code review 机制。如果发现代码质量不高，大部份是我们过于相信 AI，而在没有足够清晰的设计细节下，就让 AI 进行发挥。</li>
+<li>这个时候，是重新评估我们的设计细节的时候，需要重新敲定设计，明确数据结构、API 的契约。</li>
+<li>评估这个改进是 AI 擅长的，还是不擅长的（一般的，语义确定、契约清晰，要求明确的，AI一般都是比较擅长的），来选择：
+<ul>
+<li>是让 AI 来进行重构、修改，</li>
+<li>还是废弃当前的修改，让 AI 重新基于新的设计，重新编写代码。（有的时候，这会比修改现有代码来得更为有效）</li>
+<li>还是人工介入，基于传统的 IDE 来完成重构任务。</li>
+<li>抑或是人工介入，编写框架行的代码，让 AI 来完成剩余的细节工作。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>对某些代码质量要求不高，只需要达成目标即可的任务，AI 是非常适合的，这种场景下，只需要进行相对明确的目标定义，而无需进行过多的架构、设计细节的定义，
+可以完全放手让 AI 来完成任务。</p>
+<ul>
+<li>在开发 molap storage 过程中，我需要一个 CLI 工具来查看存储文件的内容，以核实存储文档是否符合预期。我并不关心这个 CLI 工具的代码质量，只需要它能工作即可。
+这个时候，我就只需要描述目标，而让 AI 来自由发挥。整个过程，我基本上没有看过或修改过它的代码。</li>
+<li>在开发过程中的一些脚本工具，也是可以采用这种方式来完成。</li>
+</ul>
+</li>
+<li>
+<p>编写更小的模块、更小的函数，这会显著提升 AI 编写代码的速度、质量，同时，也是减少 token 消耗的有效方式。</p>
+<ul>
+<li>在一个 2000 行的代码文件上进行修改，AI 需要理解大量的上下文信息，才能进行有效的修改，这会显著增加 token 的消耗。你可能需要消耗大量的花费。</li>
+<li>相反，如果你把代码拆解成多个小的模块、多个小的函数，那么 AI 只需要理解局部的上下文信息，就能完成修改任务，这会显著减少 token 的消耗。</li>
+<li>我也尝试过，如果对一个大的函数（实际上，超过50行的代码，人的理解速度就会指数下降），使用 SLAP 原则进行拆解，不仅让我们阅读代码更为容易，
+也会显著提升 AI 进行代码修改的效率。</li>
+<li>推荐使用 FP 的编程范式，这不仅可以让代码更为简短，也更容易让 AI 理解代码的意图。</li>
+</ul>
+</li>
+</ol>
+<h1 id="da-dao-kuo-fu-de-zhong-gou">大刀阔斧的重构</h1>
+<p>未完，待续</p>
+<h1 id="faq">FAQ</h1>
+<ol>
+<li>
+<p>AI 生成的代码质量不高，怎么办？</p>
+<blockquote>
+<ul>
+<li>不要太信任 AI 的能力，部份情况下，它就是可能无法生成高质量的代码。这个时候，需要有严格的 code review 机制，给出你的明确的改进意见。</li>
+<li>必要的时候，你必须躬身入局，完成这一块代码的编写。</li>
+<li>不过，大部份的情况下，我们应该反思，是不是我的需求规格不够清晰，设计细节不够明确，或者是其中存在矛盾和歧义，导致 AI 理解错误，或者自由发挥过度。</li>
+<li>实际上，没有 AI 之前，这个问题也是普遍存在的，如果是需求规格、设计上的问题，我们很多时候会因为对需求规格、设计规格的变更代价的恐惧，更倾向于
+使用打补丁的方式来解决问题，而不是重新评估设计，进行更大范围的重构。</li>
+<li>现在，有了 AI 的助力，我们可以更大胆的进行设计的调整和重构，以及重新审视我们的早期设计的不足的能力。这可能会倒逼设计者提高自身的思维严谨能力。</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>在 AI 编程时代，工程师不再重要了，我们只需要产品经理，或者几个初级工程师就足够了？</p>
+<blockquote>
+<ul>
+<li>看场景：如果是一些简单的 CRUD 应用，或者是一些已经很成熟的问题领域，这个说法可能是成立的。</li>
+<li>我的不同看法是：AI 时代，初级工程师的价值反而下降了，而高级工程师的价值反而提升了。</li>
+<li>AI coding 其实是能力的复制器，而不是能力的创造器。</li>
+<li>60分的工程师 + AI 可能相当于 2-3 个 60分的工程师，</li>
+<li>70分的工程师 + AI 可能相当于 2-4 个 70分的工程师，能力高的工程师，可能也会更擅长使用 AI 工具，</li>
+<li>80分的工程师 + AI 可能相当于 3-6 个 80分的工程师，</li>
+<li>90分的工程师 + AI 可能相当于 4-8 个 90分的工程师。</li>
+<li>在质量优先的场景下，需要小心初级工程师的质量效应：没有 AI 时，每个月可能只会产出 2000行 低质量的代码，而有了 AI 之后，可能每个月产出 20,000行
+低质量的代码，这些代码可能会带来大量的技术债务。</li>
+<li>所以，在 AI coding 时代，更需要高级工程师来进行设计、架构、代码质量的把控，确保产出的代码质量。一个高水平的工程师，就相当于传统模式下
+的一个高水平团队。</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>AI coding 会不会带来大量的技术债务？</p>
+<blockquote>
+<ul>
+<li>这完全取决于我们如何使用 AI coding 工具。</li>
+<li>如果我们过于相信 AI coding 的能力，而忽视了设计细节、代码质量，那么 AI coding 可能会带来大量的技术债务。</li>
+<li>相反，如果我们能够严格把控设计细节、代码质量，那么 AI coding 反而可以帮助我们减少技术债务。</li>
+<li>从另外一个角度来看：AI coding 的极致效率，可以让我们的设计、架构前期的不足以尽快的速度被暴露出来，对其进行彻底重构的成本也大幅降低，这个成本
+在传统模式下可能是望而生畏的，而在 AI coding 时代，变得没那么恐怖了（仍然是巨大的）</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>工程师如何在 AI 时代提升自己的价值？</p>
+<blockquote>
+<ul>
+<li>提升自己的设计能力、架构能力，在每次 AI 交互中，反思自己的指令（包括需求规格、设计规格、开发过程分解）是否合理。我们有更多的时间去做
+高价值的思考工作了。但你需要去思考、去练习，去改进。提升这方面的能力，我们的能力才会得到质的提升。</li>
+<li>AI 可能是最好的老师。在大部份领域，他都是一个80-90分的高手，你可以随时请教，相当于你随时可以向任意领域的专家请教问题，几乎没有任何成本。</li>
+<li>你会问问题的能力，决定了你能从 AI 那里学到多少东西。</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/agents/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

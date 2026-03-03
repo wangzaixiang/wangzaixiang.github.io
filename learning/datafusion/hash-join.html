@@ -1,0 +1,617 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Hashjoin - learning</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-6a75639e.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-ee0f8769.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                        <a href="/" class="icon-button"> Home </a>
+                    </div>
+
+                    <h1 class="menu-title">learning</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="datafusion-hashjoin-源代码阅读"><a class="header" href="#datafusion-hashjoin-源代码阅读">DataFusion HashJoin 源代码阅读</a></h1>
+<h1 id="concepts"><a class="header" href="#concepts">Concepts</a></h1>
+<ol>
+<li>struct JoinLeftData: build side struct (习惯上，我之前会将 probe side 称为 left side, 但在 df 中，将 build side 称为 left side)。
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span> struct JoinLeftData {
+     hash_map: JoinHashMap,  /// 一个由 first 和 next 组成的 特殊 hashmap
+     batch: RecordBatch,     /// build side 的数据
+     values: Vec&lt;ArrayRef&gt;,  /// build side 的关联列
+     visited_indices_bitmap: SharedBitmapBuilder,    /// 已使用的行 bitmap，在 left/right/full join 等场景下需要
+     
+     probe_threads_counter: AtomicUsize,
+     _reservation: MemoryReservation,    // 用于跟踪内存使用情况
+ }
+<span class="boring">}</span></code></pre>
+</li>
+<li>struct HashJoinExec: HashJoin 算子
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span> struct HashJoinExec {
+     // base
+     left: Arc&lt;dyn ExecutionPlan&gt;,   // build side 
+     right: Arc&lt;dyn ExecutionPlan&gt;,  // probe side
+     on: Vec&lt;(PhysicalExprRef, PhysicalExprRef)&gt;,  // join key
+     filter: Option&lt;JoinFilter&gt;,    // join table r on r.id &gt; 10 非 join 条件
+     join_type: JoinType,          // INNER, LEFT, RIGHT, FULL, LEFT_SEMI, LEFT_ANTI, RIGHT_SEMI, RIGHT_ANTI, LEFT_MARK
+     project: Option&lt;Vec&lt;usize&gt;&gt;,    //
+     mode: PartitionMode,  // Partitioned: build/probe 都是分区的，必须在关联字段上有相同的分区, CollectLeft: build 不分区, Auto： 在物理计划中必须已明确
+     null_equals_null: bool,  // null 是否相等
+
+     // calcuated
+     join_schema: SchemaRef,  // join 后的 schema, 如果有 projection, 则 output schmea 可能会不同
+     column_indices: Vec&lt;ColumnIndex&gt;,   // （index: usize, side: JoinSide)
+     random_state: RandomState,  // 用于生成 hash 值
+     cache: PlanProperties,   // TODO
+   
+     // execution runtime
+     left_fut: OnceAsync&lt;JoinLeftData&gt;,  // build side 的数据
+     metrics: ExecutionPlanMetricsSet,  // 运行时的 metrics
+ }
+<span class="boring">}</span></code></pre>
+<ol>
+<li>build HashJoinExec: 是否有好的 builder API?</li>
+<li>1个算子，会在不同线程中执行不同的分区任务</li>
+</ol>
+</li>
+<li>struct HashJoinStream
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span> struct HashJoinStream {
+     schema: Arc&lt;Schema&gt;,    // output schema
+     on_right: Vec&lt;PhysicalExprRef&gt;,  // probe side 的 join key
+     filter: Option&lt;JoinFilter&gt;,  // join filter
+     join_type: JoinType,   // join type
+     
+     right:  SendableRecordBatchStream,  // probe side 的数据
+     random_state: RandomState,  // 用于生成 hash 值
+     join_metrics: BuildProbeJoinMetrics,  // 运行时的 metrics
+     column_indices: Vec&lt;ColumnIndex&gt;,  // (index: usize, side: JoinSide)
+     null_equals_null: bool,  // null 是否相等
+     
+     state: HashJoinStreamState, 
+     build_side: BuildSide,
+     batch_size: usize,  // 每次处理的 batch 大小
+     hashes_buffer: Vec&lt;u64&gt;,  // hash 值
+     right_side_ordered: bool,
+ }
+
+ enum HashJoinStreamState {
+     WaitBuildSide,
+     FetchProbeBatch,
+     ProcessProbeBatch(ProcessProbeBatchState),
+     ExhaustedProbeSide,
+     Completed,
+ }
+
+ enum BuildSide {
+     Initial(BuildSideInitialState),  // left_fut: OnceFut&lt;JoinLeftData&gt;
+     Ready(BuildSideReadyState),      // Arc&lt;JoinLeftData&gt;
+ }
+
+<span class="boring">}</span></code></pre>
+</li>
+</ol>
+<h1 id="flow"><a class="header" href="#flow">flow</a></h1>
+<h2 id="process_probe_batch-40188580--745"><a class="header" href="#process_probe_batch-40188580--745">process_probe_batch (40%+18%+8.5%+8.0% = 74.5%)</a></h2>
+<p>对 case45 这个 join 查询，process_probe_batch 的耗时总占比高达 74.5%，是这个查询性能优化的主要点。</p>
+<ol>
+<li>当前环境</li>
+<li>let (left_indices: UInt64Array, right_indices: UInt64Array, next_offset: Option<joinhashmapoffset> ) = lookup_join_hashmap(…);
+根据 hash 值，计算一个 (build_indices, probe_indices) 的列表，表示这两个 indices 之间的 关联列 相等。目前，这一步的耗时是最多的(74%, 30%+11%+7.7%+7.1%=55.8%)。
+<ol>
+<li>build_hashmap.get_matched_indices_with_limit_offset
+<ul>
+<li>hash_values: &amp;[u64]</li>
+</ul>
+</li>
+<li>equal_row_arr</li>
+</ol>
+</joinhashmapoffset></li>
+<li>处理 filter, 类似于 <code>from a join b on a.id = b.id and b.age &gt; 10</code> 这样的过滤，裁剪掉 (build_indices, probe_indices) 元组</li>
+<li>adjust_indices_by_join_type: 对 left/right join, 补充上缺失的 pair。(耗时约 14%, 4.1%+5.2%+0.6%+0.6%=10.5%)</li>
+<li>build_batch_from_indices: 根据 left_indices, right_indices, 生成新的 batch，返回给上层的 pipeline （耗时约 9.5%, 4.6%+2.1%+0.1%+0.2% = 7% ）。</li>
+</ol>
+<h2 id="samply-使用技巧"><a class="header" href="#samply-使用技巧">samply 使用技巧</a></h2>
+<ul>
+<li>合并函数: 将函数从调用栈上删除（减少调用栈层次）</li>
+<li>只合并节点</li>
+<li>聚焦于函数： 以当前函数为栈顶（多个caller信息的信息会合并，多个子树）</li>
+<li>只聚焦于子树：只聚焦于当前子树。</li>
+<li>聚焦于分类 Regular</li>
+<li>折叠函数。 不显示这个函数的 callee 信息</li>
+<li>折叠 project：不显示当前项目模块中的函数开销</li>
+<li>丢弃与此函数相关的样本：从当前火焰图中删除所有这个函数（不仅当前子树）</li>
+</ul>
+<h2 id=""><a class="header" href="#"></a></h2>
+<ol>
+<li>JoinHashMap
+<ul>
+<li>map: HashTable&lt;(u64, u64)&gt;</li>
+</ul>
+</li>
+</ol>
+<h2 id="其他开销"><a class="header" href="#其他开销">其他开销</a></h2>
+<p>忽略 process_probe_batch 后，其他几块的开销主要是：</p>
+<ol>
+<li>
+<p>datafusion_physical_plan::filter::filter_and_project 13%</p>
+</li>
+<li>
+<p>datafusion_physical_plan::coalesce::BatchCoalescer::push_batch 46%</p>
+</li>
+<li>
+<p>datafusion_physical_plan::joins::hash_join::update_hash 11%</p>
+</li>
+<li>
+<p>按照目前的设计，JoinHashMap 中 next 是非常稀疏的。 如果 build table 使用 join_key 作为主键时，一般没有 next。</p>
+<ul>
+<li>优化：在 hash_map 中存储 index 使用最高位作为 next 标记：为1时表示有 next，为 0 时表示无。在大部份情况下，仅需一次 lookup 而无需 next 处理。</li>
+<li>vec.push 操作优化，避免内存分配。</li>
+<li>优化2: 重新设计 next 结构，使得更为 cache local，避免反复的跳转。</li>
+</ul>
+</li>
+</ol>
+<p>疑点：</p>
+<ol>
+<li>get_matched_indices_with_limit_offset &gt; chain_traverse 并没有真实的并行化
+<ul>
+<li>vec.push 有额外的开销，包括容量检查等，内存分配等</li>
+<li>循环过程没有很好的向量化。</li>
+<li>尝试写一个单元测试，看看 IPC 如何？</li>
+<li>next 数组是否缓存友好？</li>
+</ul>
+</li>
+</ol>
+<h1 id="todos"><a class="header" href="#todos">todos</a></h1>
+<p>-[ ] how to modify and debug 3rd party crate?
+1. update source at ~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crate-name-version/src/some.rs
+2. rm -fr target/debug/.fingerprint/crate-name-hash/
+3. cargo build 会重新编译该模块。
+4. cargo clean 不会删除 ~/.cargo/registry 下的文件</p>
+<pre><code>or
+1. git clone 
+2. Cargo.toml, change as `datafusion = { path = "/Users/wangzaixiang/workspaces/github.com/datafusion/datafusion/core", version = "46.0.1"}`
+3. 修改了文件时，cargo build 会重新编译该模块，方便进行代码的调试。
+</code></pre>
+<ul>
+<li>
+<p>ProcessProbeBatchState</p>
+<ul>
+<li>offset?</li>
+<li>joined_probe_idx</li>
+</ul>
+</li>
+<li>
+<p>partition</p>
+<ul>
+<li>如何仅在某个 partition 进行调试？</li>
+<li>如何设定近使用1个 partition?</li>
+<li>阅读代码，理解如何从 LogicPlan 生成 PhysicalPlan
+config.optimizer.repartition_joins</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span> let config = SessionConfig::new().with_repartition_joins(false);
+ let ctx = SessionContext::new_with_config(config);
+<span class="boring">}</span></code></pre>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/p/666465496?utm_medium=social&amp;utm_psn=1897664392729982364&amp;utm_source=ZHShareTargetIDMore">Coroutine 重构数据库算子——以 hash join probe 为例</a>
+对使用 coroutine 来提高这一块的性能表示怀疑，主要是因为 coroutine 的调度开销会更大。</p>
+</li>
+<li>
+<p>datafusion 中的内存管理</p>
+</li>
+<li>
+<p>datafusion 中的 macro 使用</p>
+</li>
+<li>
+<p>datafusion 中的 metric 信息 和 explain analyze 格式化</p>
+</li>
+<li>
+<p>datafusion 中的 逻辑算子和物理算子</p>
+</li>
+<li>
+<p>哪些操作没有向量化</p>
+<ul>
+<li>create hashes</li>
+</ul>
+</li>
+<li>
+<p>循环类代码的 IPC?</p>
+</li>
+<li>
+<p>新的向量算法</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    struct FirstEntry {
+      // hash: u64,
+      first: u64,  // 0 表示没有 first
+      next:  u64,  // 0 表示没有 next
+      value: u64,
+    }
+    struct NextEntry {
+      // hash: u64,
+      index: u64, // &lt;= 0x7FFF_FFFF_FFFF_FFFF means no next, otherwise next
+      value: u64
+    }
+
+    struct HashMap {
+        firsts: Vec&lt;FirstEntry&gt;,
+        nexts: Vec&lt;NextEntry&gt;,
+    }
+      
+    fn lookup(hm:&amp;HashMap, probe: Vec&lt;u64&gt;) -&gt; (Vec&lt;u64&gt;, Vec&lt;u64&gt;) {
+        // 每次循环处理 4 个 probe
+        let probe1: u64x4 = u64x4::from(&amp;probe[0]);
+        let index1: u64x4 = probe1 % hm.firsts.len() as u64;    // 1 次随机访问
+        let build_index: u64x4 = hm.firsts[index1].first;
+        let build_next: u64x4 = hm.firsts[index1].next;
+        let build_value: u64x4 = hm.firsts[index1].value;
+          
+        let m1: u64x4 = first &gt; 0;
+        let eq: u64x4 = m1 &amp; (first == probe1);
+          
+        // 每次最多输出 4 个结果
+        // emit eq records
+          
+        let hash_next = build_next != 0;
+        while unlikely(has_next) {
+            let build_index: u64x4 = hm.nexts[build_next].index;
+            let build_value: u64x4 = hm.nexts[build_next].value;
+            let build_next: u64x4 = build_next + hash_next;
+              
+            let m1: u64x4 = build_index &gt; 0;
+            let eq: u64x4 = m1 &amp; (build_value == probe1);
+  
+            // emit eq records
+        }
+  
+    }
+
+<span class="boring">}</span></code></pre>
+</li>
+<li>
+<p>性能优化</p>
+<ol>
+<li>基于 profile 的性能优化：将执行过程中的时间信息收集起来，反馈到 LogicPan 中，下次执行时，根据 profile 信息优化查询计划
+<ul>
+<li>根据左表、右表的数据规模选择 build side</li>
+<li>消除不必要的 re-partition （数据量小于 1M 时，直接不做 partion 处理）</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h1 id="in_order-vs-out_of_order"><a class="header" href="#in_order-vs-out_of_order">in_order vs out_of_order</a></h1>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th></th><th>in_order</th><th>out_of_order</th><th>rate</th><th>description</th></tr>
+</thead>
+<tbody>
+<tr><td>collect_build_side</td><td>515</td><td>529</td><td>~</td><td></td></tr>
+<tr><td>fetch_probe_side</td><td>108</td><td>111</td><td>~</td><td></td></tr>
+<tr><td>process_probe_batch</td><td>2511</td><td>3991</td><td>+58%</td><td></td></tr>
+<tr><td>….equal_rows_arr</td><td>189</td><td>455</td><td>+141%</td><td>cache miss</td></tr>
+<tr><td>….get_matched_indices_with_limit_offset</td><td>1886</td><td>2897</td><td>+53%</td><td>cache miss</td></tr>
+<tr><td>….ht.find</td><td>171</td><td>989</td><td>+476%</td><td>cache miss</td></tr>
+<tr><td>….adjust_indices_by_join_type</td><td>248</td><td>198</td><td>-20%</td><td></td></tr>
+<tr><td>….build_batch_from_indices</td><td>173</td><td>430</td><td>+148%</td><td>cache miss</td></tr>
+<tr><td>total</td><td>3135</td><td>4632</td><td>+47%</td><td>cache miss</td></tr>
+</tbody>
+</table>
+</div>
+<h1 id="build_side--214s-vs-20m38s"><a class="header" href="#build_side--214s-vs-20m38s">BUILD_SIDE = 2（1.4s) vs 20M(3.8s)</a></h1>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>method</th><th>L1D_CACHE_MISS_LD</th><th>L1D_CACHE_MISS_LD_NONSPEC</th><th>L1D_CACHE_MISS_ST</th><th>L1D_CACHE_MISS_ST_NONSPEC</th><th>BRANCH_COND_MISPRED</th><th>Cycles</th></tr>
+</thead>
+<tbody>
+<tr><td>get_matched_indices_with_limit_offset-20M</td><td>281M</td><td>202M</td><td>404M</td><td>351M</td><td>1.35M</td><td>7157M</td></tr>
+<tr><td>get_matched_indices_with_limit_offset-2</td><td>19M</td><td>10M</td><td>94M</td><td>83M</td><td>40K</td><td>471M</td></tr>
+</tbody>
+</table>
+</div>
+<p>导致性能显著的下降的原因是 L1D_CACHE_MISS 还是 Branch missing?</p>
+<p>测试结论：</p>
+<ol>
+<li>目前的 hash join 在 build side 数据无序时，整体的效率会下降 50%。这些是由于 probe side 的数据是无序的，build side 采用
+列式存储反而会导致 cache miss，且理论上会因为 build side 的 column 数量增大而更为明显。（在这个例子中）</li>
+<li>cache miss 对 equal_rows_arr, ht.find, build_batch_from_indices 的影响是非常大的。</li>
+</ol>
+<h1 id="新的-hash-join-设计方案"><a class="header" href="#新的-hash-join-设计方案">新的 hash join 设计方案</a></h1>
+<ol>
+<li>build side 使用 row store</li>
+<li>重新设计 first 和 next 的存储方式
+<ul>
+<li>first: group = h1(hash) % n  每个 group 存储 16个 (h2 + next_index)
+<ul>
+<li>h2: 0x00 - 0x7F，使用 向量搜索 在一个组内进行匹配</li>
+<li>0xFF 表示为一个 EMPTY SLOT</li>
+<li>0xFE 表示为一个 OTHER SLOT: 当一个 group 中超过15个 slot 被占用时，第16个 slot 会
+使用 0xFE 来表示。（不进行二次搜索）</li>
+<li>entry: row + next_idx： 如果 next_idx == 0 表示没有 next</li>
+</ul>
+</li>
+<li>next[]
+每一行包括：hashcode + row, 其中 next_flag 为 0 时表示没有 next， 一般的 next_index 为当前 index + 1</li>
+</ul>
+</li>
+<li>非向量化 probe 过程
+<ul>
+<li>probe 行，计算 h1, h2</li>
+<li>根据 h1 计算 group，在 group 中搜索 h2
+<ul>
+<li>如果匹配 first 为 第一行的地址</li>
+<li>如果存在 0xFF 且未匹配，则 first = NULL</li>
+<li>入如果存在 0xFE 且未匹配，则 first = 该行</li>
+</ul>
+</li>
+<li>eq 测试 first 如果匹配，则输出该行（如果需要则 mark build bit）</li>
+<li>获取 next_index</li>
+<li>如果 next_index == 0 则结束，否则从 <code>next[next_index]</code> 获取下一行，循环上述过程</li>
+<li>如果 next_index == 0 则结束，如果需要 adjust 则输出 probe 行。</li>
+</ul>
+</li>
+<li>向量化 probe 过程
+<ul>
+<li>probe_hash: u64x4</li>
+<li>h1: u64x4</li>
+<li>h2: u8x4</li>
+<li>group 1:
+<ul>
+<li><code>groups[h1[0] % buckets]</code></li>
+<li>search <code>h2[0]</code></li>
+<li>search 0xFE</li>
+<li>first1</li>
+</ul>
+</li>
+<li>first2</li>
+<li>first3</li>
+<li>first4</li>
+<li>first: u64x4</li>
+<li>first_mask: Mask<u64x4></u64x4></li>
+<li>first_eq: 进行 eq 测试（不做分支处理）</li>
+<li>根据 first_eq 输出 行</li>
+<li>first = first.next</li>
+<li>update first mask</li>
+<li>if first_mask == 0 complete</li>
+</ul>
+</li>
+</ol>
+<p>关键点：</p>
+<ol>
+<li>将 build side 转为 row store, 并且具有相同 hash code 的数据连续存储</li>
+<li>h1/h2 的设计有高的概率会命中</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../sql-join.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../datafusion/window_function.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../sql-join.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../datafusion/window_function.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid-eefea253.min.js"></script>
+        <script src="../mermaid-init-025d9952.js"></script>
+
+
+
+    </div>
+    </body>
+</html>
