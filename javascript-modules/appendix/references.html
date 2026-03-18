@@ -1,0 +1,1046 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>参考资源 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="参考资源"><a class="header" href="#参考资源">参考资源</a></h1>
+<p>本章整理了JavaScript模块化学习和开发中的重要参考资源，包括官方文档、技术规范、实用工具、社区资源和推荐阅读。</p>
+<h2 id="官方文档和规范"><a class="header" href="#官方文档和规范">官方文档和规范</a></h2>
+<h3 id="ecmascript规范"><a class="header" href="#ecmascript规范">ECMAScript规范</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://tc39.es/ecma262/">ECMAScript 2025 Language Specification</a></strong></p>
+<ul>
+<li>JavaScript语言的官方规范</li>
+<li>包含最新的模块系统定义</li>
+<li>TC39提案和新特性跟踪</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://tc39.es/ecma262/#sec-modules">ECMAScript Modules (ESM) 规范</a></strong></p>
+<ul>
+<li>ES模块的详细技术规范</li>
+<li>模块解析算法</li>
+<li>动态导入语义</li>
+</ul>
+</li>
+</ul>
+<h3 id="浏览器api文档"><a class="header" href="#浏览器api文档">浏览器API文档</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://developer.mozilla.org/docs/Web/JavaScript/Guide/Modules">MDN Web Docs - JavaScript Modules</a></strong></p>
+<ul>
+<li>权威的JavaScript模块指南</li>
+<li>浏览器兼容性信息</li>
+<li>实用示例和最佳实践</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://developer.mozilla.org/docs/Web/HTML/Element/script/type/importmap">Web APIs - Import Maps</a></strong></p>
+<ul>
+<li>Import Maps规范和用法</li>
+<li>模块路径映射</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://developer.mozilla.org/docs/Web/HTML/Link_types/modulepreload">Web APIs - Module Preloading</a></strong></p>
+<ul>
+<li>模块预加载机制</li>
+<li>性能优化技巧</li>
+</ul>
+</li>
+</ul>
+<h3 id="nodejs文档"><a class="header" href="#nodejs文档">Node.js文档</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://nodejs.org/api/esm.html">Node.js ES Modules</a></strong></p>
+<ul>
+<li>Node.js中的ES模块支持</li>
+<li>CommonJS与ESM互操作</li>
+<li>模块解析算法</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://nodejs.org/api/modules.html">Node.js Modules</a></strong></p>
+<ul>
+<li>CommonJS模块系统</li>
+<li>require()和module.exports</li>
+<li>模块缓存机制</li>
+</ul>
+</li>
+</ul>
+<h2 id="构建工具文档"><a class="header" href="#构建工具文档">构建工具文档</a></h2>
+<h3 id="打包工具"><a class="header" href="#打包工具">打包工具</a></h3>
+<h4 id="webpack"><a class="header" href="#webpack">Webpack</a></h4>
+<ul>
+<li>
+<p><strong><a href="https://webpack.js.org/">Webpack官方文档</a></strong></p>
+<ul>
+<li>配置指南和API参考</li>
+<li>插件和loader生态</li>
+<li>代码分割和优化</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://webpack.js.org/concepts/module-resolution/">Webpack模块解析</a></strong></p>
+<ul>
+<li>模块解析配置</li>
+<li>别名和路径映射</li>
+</ul>
+</li>
+</ul>
+<h4 id="rollup"><a class="header" href="#rollup">Rollup</a></h4>
+<ul>
+<li><strong><a href="https://rollupjs.org/">Rollup官方文档</a></strong>
+<ul>
+<li>配置和插件系统</li>
+<li>Tree Shaking原理</li>
+<li>输出格式选择</li>
+</ul>
+</li>
+</ul>
+<h4 id="vite"><a class="header" href="#vite">Vite</a></h4>
+<ul>
+<li><strong><a href="https://vitejs.dev/">Vite官方文档</a></strong>
+<ul>
+<li>现代构建工具概念</li>
+<li>开发服务器和HMR</li>
+<li>插件开发指南</li>
+</ul>
+</li>
+</ul>
+<h4 id="esbuild"><a class="header" href="#esbuild">esbuild</a></h4>
+<ul>
+<li><strong><a href="https://esbuild.github.io/">esbuild文档</a></strong>
+<ul>
+<li>高性能构建配置</li>
+<li>API和命令行使用</li>
+<li>与其他工具集成</li>
+</ul>
+</li>
+</ul>
+<h3 id="转译工具"><a class="header" href="#转译工具">转译工具</a></h3>
+<h4 id="babel"><a class="header" href="#babel">Babel</a></h4>
+<ul>
+<li><strong><a href="https://babeljs.io/docs/">Babel官方文档</a></strong>
+<ul>
+<li>预设和插件配置</li>
+<li>模块转换规则</li>
+<li>兼容性处理</li>
+</ul>
+</li>
+</ul>
+<h4 id="swc"><a class="header" href="#swc">SWC</a></h4>
+<ul>
+<li><strong><a href="https://swc.rs/">SWC文档</a></strong>
+<ul>
+<li>Rust编写的快速编译器</li>
+<li>配置和使用指南</li>
+<li>性能基准测试</li>
+</ul>
+</li>
+</ul>
+<h4 id="typescript"><a class="header" href="#typescript">TypeScript</a></h4>
+<ul>
+<li><strong><a href="https://www.typescriptlang.org/docs/">TypeScript Handbook</a></strong>
+<ul>
+<li>模块系统支持</li>
+<li>配置和编译选项</li>
+<li>类型定义和声明</li>
+</ul>
+</li>
+</ul>
+<h2 id="运行时环境"><a class="header" href="#运行时环境">运行时环境</a></h2>
+<h3 id="nodejs生态"><a class="header" href="#nodejs生态">Node.js生态</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://docs.npmjs.com/">npm文档</a></strong></p>
+<ul>
+<li>包管理和发布</li>
+<li>package.json配置</li>
+<li>语义化版本控制</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://yarnpkg.com/">yarn文档</a></strong></p>
+<ul>
+<li>现代包管理器</li>
+<li>Workspaces和Monorepo</li>
+<li>Plug’n’Play特性</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://pnpm.io/">pnpm文档</a></strong></p>
+<ul>
+<li>高效的包管理器</li>
+<li>硬链接和符号链接</li>
+<li>空间节省策略</li>
+</ul>
+</li>
+</ul>
+<h3 id="现代运行时"><a class="header" href="#现代运行时">现代运行时</a></h3>
+<h4 id="deno"><a class="header" href="#deno">Deno</a></h4>
+<ul>
+<li><strong><a href="https://deno.land/manual">Deno官方文档</a></strong>
+<ul>
+<li>安全的JavaScript运行时</li>
+<li>内置TypeScript支持</li>
+<li>标准库和模块系统</li>
+</ul>
+</li>
+</ul>
+<h4 id="bun"><a class="header" href="#bun">Bun</a></h4>
+<ul>
+<li><strong><a href="https://bun.sh/docs">Bun文档</a></strong>
+<ul>
+<li>快速的JavaScript运行时</li>
+<li>内置包管理器</li>
+<li>兼容性和性能</li>
+</ul>
+</li>
+</ul>
+<h2 id="技术博客和文章"><a class="header" href="#技术博客和文章">技术博客和文章</a></h2>
+<h3 id="权威技术博客"><a class="header" href="#权威技术博客">权威技术博客</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://v8.dev/blog">V8 JavaScript Engine Blog</a></strong></p>
+<ul>
+<li>V8引擎技术深度分析</li>
+<li>性能优化技巧</li>
+<li>新特性实现细节</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://developer.chrome.com/blog/">Chrome Developers Blog</a></strong></p>
+<ul>
+<li>Web平台新特性</li>
+<li>性能优化指南</li>
+<li>开发者工具更新</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://hacks.mozilla.org/">Mozilla Hacks</a></strong></p>
+<ul>
+<li>Firefox浏览器技术</li>
+<li>Web标准和API</li>
+<li>开发最佳实践</li>
+</ul>
+</li>
+</ul>
+<h3 id="技术社区"><a class="header" href="#技术社区">技术社区</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://javascriptweekly.com/">JavaScript Weekly</a></strong></p>
+<ul>
+<li>JavaScript生态周报</li>
+<li>新工具和库推荐</li>
+<li>技术文章精选</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://dev.to/t/javascript">Dev.to JavaScript</a></strong></p>
+<ul>
+<li>开发者社区文章</li>
+<li>实战经验分享</li>
+<li>问题解答和讨论</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://stackoverflow.com/questions/tagged/javascript-modules">Stack Overflow</a></strong></p>
+<ul>
+<li>问题解答社区</li>
+<li>实际问题案例</li>
+<li>专家解决方案</li>
+</ul>
+</li>
+</ul>
+<h2 id="在线学习资源"><a class="header" href="#在线学习资源">在线学习资源</a></h2>
+<h3 id="免费课程"><a class="header" href="#免费课程">免费课程</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://javascript.info/modules">JavaScript.info - Modules</a></strong></p>
+<ul>
+<li>系统的JavaScript教程</li>
+<li>模块化概念讲解</li>
+<li>互动示例和练习</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://www.freecodecamp.org/">FreeCodeCamp</a></strong></p>
+<ul>
+<li>免费编程课程</li>
+<li>项目驱动学习</li>
+<li>社区支持</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://developer.mozilla.org/docs/Learn">MDN Learning Area</a></strong></p>
+<ul>
+<li>Web开发学习路径</li>
+<li>基础到高级内容</li>
+<li>实践项目指导</li>
+</ul>
+</li>
+</ul>
+<h3 id="付费课程"><a class="header" href="#付费课程">付费课程</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://frontendmasters.com/">Frontend Masters</a></strong></p>
+<ul>
+<li>专业前端课程</li>
+<li>行业专家授课</li>
+<li>深度技术讲解</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://egghead.io/">Egghead.io</a></strong></p>
+<ul>
+<li>简洁的技术视频</li>
+<li>特定技术专题</li>
+<li>实用技能培训</li>
+</ul>
+</li>
+</ul>
+<h2 id="工具和资源"><a class="header" href="#工具和资源">工具和资源</a></h2>
+<h3 id="开发工具"><a class="header" href="#开发工具">开发工具</a></h3>
+<h4 id="代码编辑器插件"><a class="header" href="#代码编辑器插件">代码编辑器插件</a></h4>
+<ul>
+<li><strong>VS Code Extensions</strong>
+<ul>
+<li>ES6 Module Snippets</li>
+<li>Auto Import - ES6, TS, JSX, TSX</li>
+<li>Path Intellisense</li>
+<li>Import Cost</li>
+</ul>
+</li>
+</ul>
+<h4 id="在线工具"><a class="header" href="#在线工具">在线工具</a></h4>
+<ul>
+<li>
+<p><strong><a href="https://github.com/webpack-contrib/webpack-bundle-analyzer">Webpack Bundle Analyzer</a></strong></p>
+<ul>
+<li>包体积分析工具</li>
+<li>依赖关系可视化</li>
+<li>优化建议</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://bundlephobia.com/">Bundlephobia</a></strong></p>
+<ul>
+<li>npm包大小分析</li>
+<li>打包影响评估</li>
+<li>替代方案推荐</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://caniuse.com/">Can I Use</a></strong></p>
+<ul>
+<li>浏览器兼容性查询</li>
+<li>功能支持状态</li>
+<li>使用统计数据</li>
+</ul>
+</li>
+</ul>
+<h3 id="代码示例和模板"><a class="header" href="#代码示例和模板">代码示例和模板</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://github.com/topics/javascript-modules">GitHub - Module Examples</a></strong></p>
+<ul>
+<li>开源模块示例</li>
+<li>最佳实践展示</li>
+<li>学习参考代码</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://codesandbox.io/">CodeSandbox</a></strong></p>
+<ul>
+<li>在线代码编辑器</li>
+<li>模块化项目模板</li>
+<li>实时协作开发</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://jsfiddle.net/">JSFiddle</a></strong></p>
+<ul>
+<li>快速原型开发</li>
+<li>代码片段分享</li>
+<li>实验和测试</li>
+</ul>
+</li>
+</ul>
+<h2 id="书籍推荐"><a class="header" href="#书籍推荐">书籍推荐</a></h2>
+<h3 id="经典技术书籍"><a class="header" href="#经典技术书籍">经典技术书籍</a></h3>
+<h4 id="javascript核心技术"><a class="header" href="#javascript核心技术">JavaScript核心技术</a></h4>
+<ul>
+<li>
+<p><strong>《JavaScript高级程序设计》</strong> (Professional JavaScript for Web Developers)</p>
+<ul>
+<li>作者: Nicholas C. Zakas</li>
+<li>全面的JavaScript语言指南</li>
+<li>模块化章节详细讲解</li>
+</ul>
+</li>
+<li>
+<p><strong>《你不知道的JavaScript》</strong> (You Don’t Know JS)</p>
+<ul>
+<li>作者: Kyle Simpson</li>
+<li>深入JavaScript语言机制</li>
+<li>模块系统底层原理</li>
+</ul>
+</li>
+<li>
+<p><strong>《JavaScript语言精粹》</strong> (JavaScript: The Good Parts)</p>
+<ul>
+<li>作者: Douglas Crockford</li>
+<li>JavaScript最佳实践</li>
+<li>代码组织和模块化思想</li>
+</ul>
+</li>
+</ul>
+<h4 id="前端工程化"><a class="header" href="#前端工程化">前端工程化</a></h4>
+<ul>
+<li>
+<p><strong>《前端工程化：体系设计与实践》</strong></p>
+<ul>
+<li>现代前端开发流程</li>
+<li>模块化工具链</li>
+<li>最佳实践案例</li>
+</ul>
+</li>
+<li>
+<p><strong>《Webpack实战：入门、进阶与优化》</strong></p>
+<ul>
+<li>Webpack深度使用指南</li>
+<li>模块打包优化</li>
+<li>实际项目应用</li>
+</ul>
+</li>
+</ul>
+<h3 id="在线电子书"><a class="header" href="#在线电子书">在线电子书</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://eloquentjavascript.net/">Eloquent JavaScript</a></strong></p>
+<ul>
+<li>免费的JavaScript教程</li>
+<li>模块化编程章节</li>
+<li>交互式练习</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://exploringjs.com/es6/">Exploring ES6</a></strong></p>
+<ul>
+<li>ES6新特性详解</li>
+<li>模块系统深入分析</li>
+<li>实用示例代码</li>
+</ul>
+</li>
+</ul>
+<h2 id="技术会议和活动"><a class="header" href="#技术会议和活动">技术会议和活动</a></h2>
+<h3 id="国际技术会议"><a class="header" href="#国际技术会议">国际技术会议</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://jsconf.com/">JSConf</a></strong></p>
+<ul>
+<li>JavaScript技术大会</li>
+<li>最新技术趋势</li>
+<li>社区交流平台</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://conf.reactjs.org/">React Conf</a></strong></p>
+<ul>
+<li>React生态大会</li>
+<li>组件和模块化</li>
+<li>最佳实践分享</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://vueconf.us/">VueConf</a></strong></p>
+<ul>
+<li>Vue.js技术大会</li>
+<li>现代前端开发</li>
+<li>工具链和生态</li>
+</ul>
+</li>
+</ul>
+<h3 id="国内技术活动"><a class="header" href="#国内技术活动">国内技术活动</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://gmtc.infoq.cn/">GMTC全球大前端技术大会</a></strong></p>
+<ul>
+<li>前端技术趋势</li>
+<li>大厂技术实践</li>
+<li>工程化经验分享</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://d2.alibaba-inc.com/">D2前端技术论坛</a></strong></p>
+<ul>
+<li>阿里巴巴前端大会</li>
+<li>技术创新和实践</li>
+<li>开源项目推广</li>
+</ul>
+</li>
+</ul>
+<h2 id="开源项目和案例"><a class="header" href="#开源项目和案例">开源项目和案例</a></h2>
+<h3 id="优秀开源项目"><a class="header" href="#优秀开源项目">优秀开源项目</a></h3>
+<h4 id="模块化库"><a class="header" href="#模块化库">模块化库</a></h4>
+<ul>
+<li>
+<p><strong><a href="https://github.com/lodash/lodash">Lodash</a></strong></p>
+<ul>
+<li>实用工具库</li>
+<li>模块化设计典范</li>
+<li>Tree Shaking友好</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://github.com/ReactiveX/rxjs">RxJS</a></strong></p>
+<ul>
+<li>响应式编程库</li>
+<li>操作符模块化</li>
+<li>函数式编程范式</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://github.com/mrdoob/three.js">Three.js</a></strong></p>
+<ul>
+<li>3D图形库</li>
+<li>大型项目模块组织</li>
+<li>插件式架构</li>
+</ul>
+</li>
+</ul>
+<h4 id="构建工具"><a class="header" href="#构建工具">构建工具</a></h4>
+<ul>
+<li>
+<p><strong><a href="https://github.com/facebook/create-react-app">Create React App</a></strong></p>
+<ul>
+<li>React应用脚手架</li>
+<li>零配置模块化构建</li>
+<li>最佳实践集成</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://github.com/vuejs/vue-cli">Vue CLI</a></strong></p>
+<ul>
+<li>Vue.js项目脚手架</li>
+<li>插件化架构</li>
+<li>现代工具链集成</li>
+</ul>
+</li>
+</ul>
+<h3 id="学习案例"><a class="header" href="#学习案例">学习案例</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://github.com/tastejs/todomvc">TodoMVC</a></strong></p>
+<ul>
+<li>相同应用不同框架实现</li>
+<li>模块化架构对比</li>
+<li>代码组织方式</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://github.com/gothinkster/realworld">RealWorld</a></strong></p>
+<ul>
+<li>全栈应用示例</li>
+<li>前后端模块化</li>
+<li>最佳实践展示</li>
+</ul>
+</li>
+</ul>
+<h2 id="标准和提案"><a class="header" href="#标准和提案">标准和提案</a></h2>
+<h3 id="w3c标准"><a class="header" href="#w3c标准">W3C标准</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://www.w3.org/TR/components-intro/">Web Components</a></strong></p>
+<ul>
+<li>组件化Web标准</li>
+<li>自定义元素和Shadow DOM</li>
+<li>模块化UI组件</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://www.w3.org/TR/service-workers/">Service Workers</a></strong></p>
+<ul>
+<li>离线功能和缓存</li>
+<li>模块化渐进式应用</li>
+<li>性能优化策略</li>
+</ul>
+</li>
+</ul>
+<h3 id="tc39提案"><a class="header" href="#tc39提案">TC39提案</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://github.com/tc39/proposal-import-assertions">Import Assertions</a></strong></p>
+<ul>
+<li>导入断言提案</li>
+<li>模块类型验证</li>
+<li>JSON模块支持</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://github.com/tc39/proposal-top-level-await">Top-level await</a></strong></p>
+<ul>
+<li>顶层await提案</li>
+<li>异步模块初始化</li>
+<li>模块依赖处理</li>
+</ul>
+</li>
+</ul>
+<h2 id="性能监控和分析"><a class="header" href="#性能监控和分析">性能监控和分析</a></h2>
+<h3 id="性能分析工具"><a class="header" href="#性能分析工具">性能分析工具</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://developers.google.com/web/tools/lighthouse">Lighthouse</a></strong></p>
+<ul>
+<li>Web性能审计工具</li>
+<li>模块加载性能分析</li>
+<li>优化建议生成</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://www.webpagetest.org/">WebPageTest</a></strong></p>
+<ul>
+<li>网页性能测试</li>
+<li>模块加载瀑布图</li>
+<li>真实用户体验模拟</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://developers.google.com/web/tools/chrome-devtools">Chrome DevTools</a></strong></p>
+<ul>
+<li>浏览器开发者工具</li>
+<li>网络面板分析</li>
+<li>性能面板调试</li>
+</ul>
+</li>
+</ul>
+<h3 id="监控服务"><a class="header" href="#监控服务">监控服务</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://sentry.io/">Sentry</a></strong></p>
+<ul>
+<li>错误监控和性能追踪</li>
+<li>模块加载错误分析</li>
+<li>用户体验监控</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://www.datadoghq.com/">DataDog</a></strong></p>
+<ul>
+<li>应用性能监控</li>
+<li>前端性能指标</li>
+<li>实时数据分析</li>
+</ul>
+</li>
+</ul>
+<h2 id="社区和论坛"><a class="header" href="#社区和论坛">社区和论坛</a></h2>
+<h3 id="技术社区-1"><a class="header" href="#技术社区-1">技术社区</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://www.reddit.com/r/javascript/">Reddit - JavaScript</a></strong></p>
+<ul>
+<li>JavaScript技术讨论</li>
+<li>新闻和资源分享</li>
+<li>问题求助和解答</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://discord.gg/javascript">Discord - JavaScript</a></strong></p>
+<ul>
+<li>实时技术交流</li>
+<li>社区互助</li>
+<li>项目展示</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://t.me/javascript">Telegram - JavaScript</a></strong></p>
+<ul>
+<li>技术资讯推送</li>
+<li>快速问题解答</li>
+<li>资源分享</li>
+</ul>
+</li>
+</ul>
+<h3 id="中文社区"><a class="header" href="#中文社区">中文社区</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://juejin.cn/frontend">掘金</a></strong></p>
+<ul>
+<li>中文技术社区</li>
+<li>前端技术文章</li>
+<li>经验分享和讨论</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://segmentfault.com/t/javascript">思否 (SegmentFault)</a></strong></p>
+<ul>
+<li>中文问答社区</li>
+<li>技术问题解决</li>
+<li>代码片段分享</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://www.v2ex.com/go/javascript">V2EX</a></strong></p>
+<ul>
+<li>创意工作者社区</li>
+<li>技术讨论和分享</li>
+<li>职业发展交流</li>
+</ul>
+</li>
+</ul>
+<h2 id="订阅推荐"><a class="header" href="#订阅推荐">订阅推荐</a></h2>
+<h3 id="技术周报"><a class="header" href="#技术周报">技术周报</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://javascriptweekly.com/">JavaScript Weekly</a></strong></p>
+<ul>
+<li>每周JavaScript资讯</li>
+<li>新工具和库推荐</li>
+<li>技术文章精选</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://frontendfoc.us/">Frontend Focus</a></strong></p>
+<ul>
+<li>前端技术周报</li>
+<li>设计和开发趋势</li>
+<li>浏览器新特性</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://react.statuscode.com/">React Status</a></strong></p>
+<ul>
+<li>React生态周报</li>
+<li>组件库和工具推荐</li>
+<li>最佳实践分享</li>
+</ul>
+</li>
+</ul>
+<h3 id="技术博客"><a class="header" href="#技术博客">技术博客</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://overreacted.io/">Overreacted</a></strong></p>
+<ul>
+<li>Dan Abramov的技术博客</li>
+<li>React和JavaScript深度文章</li>
+<li>技术思考和见解</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://2ality.com/">2ality</a></strong></p>
+<ul>
+<li>Dr. Axel Rauschmayer的博客</li>
+<li>JavaScript语言特性分析</li>
+<li>ECMAScript规范解读</li>
+</ul>
+</li>
+</ul>
+<h2 id="工具链配置模板"><a class="header" href="#工具链配置模板">工具链配置模板</a></h2>
+<h3 id="项目模板"><a class="header" href="#项目模板">项目模板</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://github.com/vitejs/vite/tree/main/packages/create-vite">create-vite</a></strong></p>
+<ul>
+<li>Vite项目模板</li>
+<li>多框架支持</li>
+<li>现代工具链配置</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://github.com/facebook/create-react-app">create-react-app</a></strong></p>
+<ul>
+<li>React项目模板</li>
+<li>零配置启动</li>
+<li>渐进式增强</li>
+</ul>
+</li>
+</ul>
+<h3 id="配置示例"><a class="header" href="#配置示例">配置示例</a></h3>
+<ul>
+<li>
+<p><strong><a href="https://github.com/webpack-contrib/awesome-webpack">Awesome Webpack</a></strong></p>
+<ul>
+<li>Webpack资源汇总</li>
+<li>配置示例集合</li>
+<li>插件和loader推荐</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="https://github.com/rollup/awesome">Awesome Rollup</a></strong></p>
+<ul>
+<li>Rollup生态资源</li>
+<li>插件和工具推荐</li>
+<li>配置示例和教程</li>
+</ul>
+</li>
+</ul>
+<h2 id="持续学习建议"><a class="header" href="#持续学习建议">持续学习建议</a></h2>
+<h3 id="学习路径"><a class="header" href="#学习路径">学习路径</a></h3>
+<ol>
+<li>
+<p><strong>基础阶段</strong></p>
+<ul>
+<li>掌握ES模块语法</li>
+<li>理解模块化概念</li>
+<li>学习基础工具使用</li>
+</ul>
+</li>
+<li>
+<p><strong>进阶阶段</strong></p>
+<ul>
+<li>深入构建工具配置</li>
+<li>性能优化技巧</li>
+<li>模块化架构设计</li>
+</ul>
+</li>
+<li>
+<p><strong>高级阶段</strong></p>
+<ul>
+<li>自定义构建工具</li>
+<li>大型项目架构</li>
+<li>团队协作和规范</li>
+</ul>
+</li>
+</ol>
+<h3 id="实践建议"><a class="header" href="#实践建议">实践建议</a></h3>
+<ul>
+<li><strong>动手实践</strong>: 通过实际项目加深理解</li>
+<li><strong>源码阅读</strong>: 学习优秀开源项目的模块化设计</li>
+<li><strong>社区参与</strong>: 积极参与技术讨论和贡献</li>
+<li><strong>持续关注</strong>: 跟进技术发展和新特性</li>
+</ul>
+<h3 id="关注重点"><a class="header" href="#关注重点">关注重点</a></h3>
+<ul>
+<li><strong>标准发展</strong>: 关注ECMAScript新特性</li>
+<li><strong>工具演进</strong>: 跟进构建工具的发展</li>
+<li><strong>性能优化</strong>: 持续学习性能优化技巧</li>
+<li><strong>最佳实践</strong>: 学习和应用行业最佳实践</li>
+</ul>
+<p>通过这些丰富的学习资源，开发者可以系统地掌握JavaScript模块化技术，并在实际项目中应用最佳实践。建议根据自己的技术水平和项目需求，有选择性地利用这些资源进行深入学习。</p>
+<hr>
+<p><strong>完结</strong> 🎉</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../appendix/faq.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../appendix/faq.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

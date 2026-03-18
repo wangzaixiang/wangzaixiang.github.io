@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>数据分析之表达式语言：DAX | 程序人生</title>
+<meta name="description" content="本文是数据分析表达式语言系列之一，主要介绍我对 DAX 的理解。">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/dax/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="数据分析之表达式语言：DAX">
+  <meta name="twitter:description" content="本文是数据分析表达式语言系列之一，主要介绍我对 DAX 的理解。">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="数据分析之表达式语言：DAX">
+  <meta property="og:description" content="本文是数据分析表达式语言系列之一，主要介绍我对 DAX 的理解。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/dax/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="数据分析之表达式语言：DAX">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/dax/"
+      },
+      "headline": "数据分析之表达式语言：DAX",
+      "image": ,
+      "datePublished": "2024-09-04",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "数据分析之表达式语言：DAX"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "数据分析之表达式语言：DAX",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "本文是数据分析表达式语言系列之一，主要介绍我对 DAX 的理解。"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Dax",
+            "item": "https://wangzaixiang.github.io/blog/dax/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/dax/#qian-yan">前言</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/dax/#dax-data-analysis-expressions-biao-da-shi-yu-yan">DAX(Data Analysis Expressions) 表达式语言</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/dax/#power-bi-zhong-de-shai-xuan-fang-xiang">Power BI 中的筛选方向</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/dax/#filter-context-vs-row-context">Filter Context vs Row Context</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/dax/#filter-context-yu-mdx-de-yi-tong">Filter Context 与 MDX 的异同</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>数据分析之表达式语言：DAX</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/duckdb-links/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted September  4, 2024 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>14&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/tabular/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="qian-yan">前言</h1>
+<p>计划整理有关“数据分析表达式语言”的系列文档，计划包括以下内容：</p>
+<ol>
+<li>
+<p>MDX(Multi-Dimensional Data Expression) 表达式语言</p>
+</li>
+<li>
+<p>DAX(Data Analysis Expressions) 表达式语言</p>
+</li>
+<li>
+<p>Tabula 表达式语言</p>
+<p><a href="https://www.tableau.com/zh-cn/blog/LOD-expressions#:~:text=Tableau">15 大详细级别表达式</a></p>
+</li>
+</ol>
+<p>在每一个数据分析产品的背后，必然有一个表达式语言，用于对一些复杂的业务分析，尤其是指标（Measure）进行表达，并提供一套优化的计算引擎，
+达成对数据的快速分析。例如：</p>
+<ol>
+<li>计算原始指标在查询结果中的排名、占比</li>
+<li>计算原始指标的时间快速计算如：
+<ul>
+<li>同期值、同比增长、同比增长率</li>
+<li>上期值、上期增长、上期增长率</li>
+<li>年累积、月累积</li>
+</ul>
+</li>
+<li>TopN 计算。</li>
+<li>15大详细级别表达式中的各种计算。</li>
+</ol>
+<p>在实际业务分析中，上述的这些分析需求其实是非常常见的，虽然这些都可以在 SQL 中进行计算，但即使是简单的排名、占比也会需要编写复杂的
+SQL 语句，而且，复杂的 SQL 语句的可读性也是相当糟糕的。对复杂的 SQL 语句，其执行性能也未必是最佳的。</p>
+<p>因此，一个表达式语言，主要就是承载如下目标：</p>
+<ol>
+<li>计算的表达能力。尽可能具备有完备的计算能力，能够表达各种复杂的计算逻辑。</li>
+<li>表达式语言的可读性、简单性。越高抽象的表达式语言，可以将复杂的计算逻辑简单化。便于用户理解、编写。</li>
+<li>计算的高效性。毕竟，数据分析往往面对的是一个巨大的数据集，如果计算非常耗时，那么就不实用了。</li>
+</ol>
+<h1 id="dax-data-analysis-expressions-biao-da-shi-yu-yan">DAX(Data Analysis Expressions) 表达式语言</h1>
+<p>DAX 是 Microsoft PowerBI 产品的表达式语言，也是 PowerBI 的产品灵魂。了解它的权威书籍是《The Definitive Guide to DAX》。</p>
+<p>我对 PowerBi 并没有太多的实战经验，对其的理解主要是在设计数据分析产品时，经常需要对一些分析逻辑，参考 PowerBI 的概念时，
+对 DAX 进行针对性的分析、揣测。</p>
+<h2 id="power-bi-zhong-de-shai-xuan-fang-xiang">Power BI 中的筛选方向</h2>
+<p>
+<img src="https:&#x2F;&#x2F;wangzaixiang.github.io&#x2F;processed_images&#x2F;表关系模型.fab5ed83851c9058.png" />
+筛选方向是 PowerBI 中的一个重要概念：</p>
+<ol>
+<li>选定给定 <code>日期</code> 时，按照上图，会自动的筛选：<code>销售</code>、<code>产品</code>，而不影响 <code>客户</code>、<code>产品分类</code> 的数据的可见性。
+（上图中销售 和 产品）设置了双向筛选。</li>
+<li>在多维查询时，维度就是筛选条件，作为结果，筛选出来的数据（多行）是一个结果集，在这个结果集上通过某个函数运算，得出的一个值
+称之为度量（Measure）。所以，度量是一个集合上的函数，而维度则是这个集合的筛选条件。</li>
+<li>一般的，维表 与 是事实表之间的关系是一对多的关系，即一个维表的一行对应多个事实表的行。
+一个维度表的一行对应多个事实表的行，这个是默认的筛选方向。</li>
+<li>Power BI 支持双向筛选，即从多方向一方的筛选。与一方对多方的筛选不同（一个事实总是有唯一的维度值），多方对一方的筛选，意味着
+一个事实的维度有多个值，例如：一个用户有多个标签，一个 SPU 可以有多个颜色。当你使用标签、颜色筛选用户、SPU时，就是多方对一方的筛选。</li>
+<li>按照图示的方式，是比较好理解一个维表的影响范围（即其筛选的范围）、或者一个事实表的边界（即哪些维度会影响这个事实表的范围）
+<ul>
+<li>在模型中，并不存在那个表是维表、那个表是事实表的概念，维表和事实表是根据场景来确定的</li>
+<li>销售与产品的双向筛选，意味着以销售为事实表是，产品是维度表，反之，以产品为事实表时，销售是维度表。</li>
+<li>在PowerBI的模型图中，顺着箭头的方向（筛选方向），就是维表的影响范围，反之所有可以顺着箭头触达事实表的都是这个表的维表。</li>
+</ul>
+</li>
+</ol>
+<h2 id="filter-context-vs-row-context">Filter Context vs Row Context</h2>
+<p>DAX 中有两种上下文：Filter Context 和 Row Context。 这个是很容易混淆的，或者错误使用的：</p>
+<ol>
+<li>
+<p>column reference and measure reference.</p>
+<ul>
+<li>column reference: <code>Sales[Quantity]</code> or <code>[Quantity]</code> in Sales Context(比如在 Sales 表的计算列定义中)</li>
+<li>measure reference: <code>[Sales Amount]</code></li>
+<li>table reference: <code>Sales</code></li>
+<li><input disabled="" type="checkbox" checked=""/>
+column reference 与 measure reference 如果有歧义，怎么处理？DAX 会优先解析为 column reference</li>
+</ul>
+</li>
+<li>
+<p>Filter Context: 用于对当前的数据范围进行筛选。</p>
+<ol>
+<li>Filter Context 是对整个模型有效的，如果有一个筛选条件 <code>[table1].[col1] = value1</code>, 那么，这个条件会筛选 table1 中满足条件的行，
+并根据模型中的筛选方向，传递到其他表中。可以简单的理解，通过 Filter Context, 一个模型的数据可见范围被动态的调整了，这时，任何一个表中
+的数据并不是原始表中的数据，而是经过筛选的数据。</li>
+<li>evaluation
+<ul>
+<li><code>table reference</code> 在 filter context 中求值</li>
+<li><code>measure reference</code> 在 filter context 中求值</li>
+</ul>
+</li>
+<li>创建/修改 Filter Context
+<ul>
+<li>在一个分析表格中，每个单元格都有自己的 Filter Context，一般由行，列，过滤器等决定。即使不同的单元格使用的是同一个计算公式，但由于
+Filter Context 的不同，计算结果也会不同。</li>
+<li>诸如 ALL, ALLEXCEPT, ALLSELECTED 等表函数，可以用于修改 Filter Context。
+<ul>
+<li>ALL(table) 函数，清除 table 上的所有筛选器</li>
+<li>ALL(table, column) 函数，清除 table 上的除了 column 列的所有筛选器</li>
+<li>ALLEXCEPT(table, column1, column2, ...) 函数，清除 table 上的除了 column1, column2, ... 列的所有筛选器</li>
+<li>ALLSELECTED(table) 函数，清除 table 上的所有筛选器(动态的筛选器)，但保留用户手动选择的筛选器（原始的筛选器）</li>
+<li>RelatedTable( table ) 将 当前 row context 添加到 table 的 filter 中。</li>
+</ul>
+</li>
+<li>CALCULATE(expr, filter1, filter2, filter3) 函数，可以用于修改 Filter Context，并在新的上下文中计算 expr 表达式的值。
+<ul>
+<li>boolean filter: <code>[column] = value</code></li>
+<li>table filter: <code>filter(table, expr)</code></li>
+<li>filter modifier:
+<ul>
+<li>ALL、ALLEXCEPT</li>
+<li>REMOVEFILTERS(table, column*)</li>
+<li>KEEPFILTERS(expr) 保留当前的筛选器，但可以合并值，不同于 boolean filter,那个是替换筛选器。</li>
+<li>USERELATIONSHIP/CROSSFILTER -- 修改表筛选关系</li>
+<li>Calculate 会将当前的 RowContext 转换为 FilterContext。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>FILTER 函数自身并不修改 Filter Context, 而是生成一个计算表。作为 Calculate 的参数时，其会修改原始表的数据范围。</li>
+<li><input disabled="" type="checkbox"/>
+表函数是否有2种语义：其一代表一个表的数据，其二代表修改在这个表上的 filter</li>
+</ul>
+</li>
+<li>Every measure reference always has an implicit CALCULATE surrounding it.
+<ul>
+<li>完成了将当前 Row Context 转化为 Filter Context，从而影响 Measure 的求值</li>
+</ul>
+</li>
+<li>两种 filter
+<ul>
+<li>column filter: 更高效</li>
+<li>table filter: a calculated table</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>Row Context</p>
+<ul>
+<li>创建 RowContext
+<ul>
+<li>计算列在 RowContext 中求值</li>
+<li>SUMX 等 iterate 函数会创建一个新的 RowContext</li>
+</ul>
+</li>
+<li>column reference <code>tab[col]</code> 可以在 RowContext 中求值
+<ul>
+<li>如果存在 1个 <code>tab</code> 的 row context，则在其中求值</li>
+<li>如果存在 多个 <code>tab</code> 的 row context，则在 latest 的 row context 中求值</li>
+<li>否则无法求值</li>
+</ul>
+</li>
+<li>在某个求值点，可能存在 0..N 个 RowContext 和 1 个 FilterContext。
+<ul>
+<li>EARLIER(column, number) 函数，可以在 RowContext(-number) 中的 column 列的值</li>
+<li>EALIST(column)</li>
+</ul>
+</li>
+<li>每个 row context 的范围是模型中的单个表，不会扩展到其他表去
+<ul>
+<li>Related(column) 与 row context 相关的 column，适合于 N:1 的关联字段</li>
+<li>RelatedTable(table) 与 row context 相关的 table，适合于 1: N 的关联。
+<ul>
+<li><input disabled="" type="checkbox" checked=""/>
+RelatedTable(table) 这里的 table 是否会受当前的 filter context 影响? Y</li>
+<li><input disabled="" type="checkbox"/>
+RelatedTable(table) 这里是创建了一个新的计算表，还是更新了 filter context?</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Calculate 会将当前的 RowContext 转换为 FilterContext，并消除掉所有的 RowContext.</li>
+</ul>
+</li>
+</ol>
+<p>其实，一个比较好的方式，是注明 DAX 函数的每个参数的求值上下文，是 Filter Context 还是 Row Context，这样就可以让这个概念
+更为清晰了。毕竟，只有少数的函数会创建新的上下文，大部分的函数都是在已有的上下文中进行计算。</p>
+<p>TODO: 举例说明(补充一个例子，可以看到 哪些是在 Filter Context 中计算，哪些是在 Row Context 中计算,
+以及如何通过 CALCULATE 函数，创建新的 Filter Context。）
+示例1:</p>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#65737e;">-- 在 SUMX 的 caller 中，有一个 Filter Context，这里假设为 fc0, 也可能有其他的 Row Context，这里假设为 rc0
+</span><span>SUMX (
+</span><span>    Sales, </span><span style="color:#65737e;">-- 在 fc0 中计算表
+</span><span>    Sales[Net Price] </span><span style="color:#bf616a;">* </span><span style="color:#d08770;">1</span><span>.</span><span style="color:#d08770;">1 </span><span style="color:#65737e;">-- SUMX 函数会生成一个RowContext，这里假设为 rc1, 这个表达式的求值上下文为： fc0 + rc0 + rc1
+</span><span>                           </span><span style="color:#65737e;">-- Sales[Net Price] 会在 rc1 中求值。
+</span><span>)   
+</span></code></pre>
+<p>示例2:</p>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span style="color:#65737e;">-- fc0 , rc0
+</span><span>SUMX (
+</span><span>    &#39;</span><span style="color:#a3be8c;">Product Category</span><span>&#39;, </span><span style="color:#65737e;">-- eval in fc0, and will create new Row Context rc1 for each row in &#39;Product Category&#39;
+</span><span>    </span><span style="color:#65737e;">-- 对 &#39;Product Category&#39; 中的每一行创建一个 Row Context: rc1
+</span><span>    SUMX ( </span><span style="color:#65737e;">-- eval in fc0 + rc0 + rc1(Product Category)
+</span><span>        RELATEDTABLE ( &#39;</span><span style="color:#a3be8c;">Product</span><span>&#39; ), </span><span style="color:#65737e;">-- eval in rc1
+</span><span>        </span><span style="color:#65737e;">--  对每一行 Product, 创建: rc2(Product)
+</span><span>        SUMX ( </span><span style="color:#65737e;">-- eval in fc0 + rc0 + rc1(Product Category) + rc2(Product)
+</span><span>            RELATEDTABLE ( Sales ) </span><span style="color:#65737e;">-- eval in rc2(Product) 
+</span><span>            </span><span style="color:#65737e;">-- 对每一行 Sales, 创建: rc3(Sales), 上下文为: fc0 + rc0 + rc1(Product Category) + rc2(Product) + rc3(Sales)
+</span><span>            Sales[Quantity] </span><span style="color:#65737e;">-- eval in rc3(Sales)
+</span><span>            </span><span style="color:#bf616a;">* </span><span>&#39;</span><span style="color:#a3be8c;">Product</span><span>&#39;[Unit Price] </span><span style="color:#65737e;">-- eval in rc2(Product)
+</span><span>            </span><span style="color:#bf616a;">* </span><span>&#39;</span><span style="color:#a3be8c;">Product Category</span><span>&#39;[Discount] </span><span style="color:#65737e;">-- eval in rc1(Product Category)
+</span><span>        )
+</span><span>    )
+</span><span>)
+</span></code></pre>
+<p>上面的这个表达式可以简化为：</p>
+<pre data-lang="sql" style="background-color:#2b303b;color:#c0c5ce;" class="language-sql "><code class="language-sql" data-lang="sql"><span>SUMX (
+</span><span>    Sales,
+</span><span>    Sales[Quantity] </span><span style="color:#bf616a;">*</span><span> RELATED ( &#39;</span><span style="color:#a3be8c;">Product</span><span>&#39;[Unit Price] ) </span><span style="color:#bf616a;">*</span><span> RELATED ( &#39;</span><span style="color:#a3be8c;">Product Category</span><span>&#39;[Discount] )
+</span><span>)
+</span></code></pre>
+<h2 id="filter-context-yu-mdx-de-yi-tong">Filter Context 与 MDX 的异同</h2>
+<p>在 MDX 引擎中，Filter Context 的概念是非常相似的，一般的， MDX 的 filter context 由一下几个部分组成：</p>
+<ol>
+<li>Filter axis：在 WHERE 子句中的筛选条件构成了 filter axis</li>
+<li>Column axis/Row axis: 在 SELECT 子句中的列、行构成了 Column axis/Row axis</li>
+<li>在 MDX 中，可以通过 <code>[Dim1].[ALL Dim1s]</code> 等语法手动的设置某个维度的筛选条件，改变其筛选条件。</li>
+</ol>
+<p>总的来说，DAX 的 Filter Context 相比 MDX 来说，要复杂的多，当然，也要强大的多，灵活的多，或者在很多场景下，也会有更好的性能：</p>
+<ol>
+<li>MDX 是 多维模型，一个 MDX 就是一个N维多维空间。 而 Power BI 是表-关系模型，每个事实表（根据其筛选关系构建的一个查询子图）都是一个
+独立的多维空间。 DAX 更可以动态的创建计算表，因此，灵活性就更大了。</li>
+<li>DAX 的 filter context 中， 分为 column based 的 table based，其中 column based 的 filter 是满足 SQL 下沉的
+基础的，这样在数据库上执行时，会有更好的效率。
+MDX 理论上也可以如此，目前的开源引擎 mondrian 在这方面做得不够，可以参加我整理的 <a href="/blog/mdx-optimize">MDX optimize</a> 一文</li>
+<li>MDX 对 filter context 的修改能力也较弱，不过这个理论上是可以通过 MDX 的函数来实现的，不算是引擎的问题。</li>
+</ol>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/duckdb-links/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/tabular/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

@@ -1,0 +1,825 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>论文阅读笔记</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-81fdbac2.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-5ccb3fc5.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                        <a href="/" class="icon-button"> Home </a>
+                    </div>
+
+                    <h1 class="menu-title">论文阅读笔记</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="access-path-selection-in-relation-database-management-system"><a class="header" href="#access-path-selection-in-relation-database-management-system">Access Path Selection in Relation Database Management System</a></h1>
+<p>本文是介绍数据库查询计划的鼻祖论文，基于 IBM 早起的 System R 试验性关系数据库，在现在看来，应该是关系数据库的“旧石器时代”。</p>
+<h2 id="1-introduction"><a class="header" href="#1-introduction">1. Introduction</a></h2>
+<h2 id="2-processing-of-an-sql-statement"><a class="header" href="#2-processing-of-an-sql-statement">2. Processing of an SQL statement</a></h2>
+<p>4 phases:</p>
+<ul>
+<li>parsing: SQL to Query Block(AST)</li>
+<li>optimization: catalog lookup, validate, plan generation(access plan selection)</li>
+<li>code generation</li>
+<li>execute</li>
+</ul>
+<h2 id="3-research-storage-system"><a class="header" href="#3-research-storage-system">3. Research Storage System</a></h2>
+<ol>
+<li>Relation: Set of Tuple</li>
+<li>Page(4K): Set of Tuple( each tuple tagged with relation-id, so can contain different relation’s tuple)
+<ul>
+<li>no tuple spans a page</li>
+</ul>
+</li>
+<li>Segment: Set of Page</li>
+<li>Index: B-trees
+<ul>
+<li>clustered index</li>
+</ul>
+</li>
+<li>SCAN: open, next, close
+<ul>
+<li>Segment scan</li>
+<li>Index scan</li>
+<li>scan filter</li>
+</ul>
+</li>
+</ol>
+<h2 id="4-costs-for-an-access-path"><a class="header" href="#4-costs-for-an-access-path">4. Costs for an access-path</a></h2>
+<p><code>COST = Page_Fetches + W * RSI_Calls</code></p>
+<ul>
+<li>Page Fetches: IO Cost</li>
+<li>RSI Calls: CPU Cost</li>
+</ul>
+<h2 id="5-access-path-selection-for-joins"><a class="header" href="#5-access-path-selection-for-joins">5. Access path selection for Joins</a></h2>
+<ol>
+<li>2-way join
+<ul>
+<li>selection 1: outer(probe side) and inner(build side)</li>
+<li>selection 2: join method
+<ul>
+<li>nested loops</li>
+<li>merging scan: 两个表在 join column 上已排序</li>
+<li>这篇文章没有提到 hash-join，这是现在主流数据库 join 的主要方式。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>N-way join is a recur 2-way join
+<ul>
+<li>paths: 最多 <code>N!</code> 种可能性</li>
+</ul>
+</li>
+<li>optimization
+<ul>
+<li>只考虑：inner side 与 outer side 有 join 连接的情况。</li>
+<li>构建一颗 access path tree，对每一条path，评估其 cost</li>
+<li>N: <code>C-outer</code>的基数： <code>N = (product of the cardinalities of all relations T of the join so far) * (product of the selectivity factors of al 1 applicable predicates)</code></li>
+<li><code>C-nested-loop-join(path1, path2) = C-outer(path1) + N * C-inner(path2)</code></li>
+<li><code>C-merge(path1, path2) = C-outer(path1) + N * C-inner(path2)</code> – 不太理解这个 cost 函数，merge 时，C-inner(path2) 会显著小于 nested loop。</li>
+</ul>
+</li>
+<li>思考：对最新的关系数据库而言，优化应考虑：
+<ul>
+<li>filter 尽量下压到 scan 阶段</li>
+<li>如果不能下压到 scan 阶段，则尽量提前到 join 之前。</li>
+<li>使用 hash-join 时，尽可能选择技术小的作为 build side，技术大的作为 input-side</li>
+<li>如果左右两侧已按 join column 排序，则可选择 merge-sort join</li>
+</ul>
+</li>
+</ol>
+<h2 id="6-nested-query"><a class="header" href="#6-nested-query">6. Nested Query</a></h2>
+<ol>
+<li>非相关子查询：如果子查询中未使用自由变量，则可以独立执行，而无需针对每一行展开执行。</li>
+<li>相关子查询</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="dynamic-programming-strikes-back-动态规划"><a class="header" href="#dynamic-programming-strikes-back-动态规划">Dynamic Programming Strikes Back (动态规划)</a></h1>
+<p>本文介绍了一种改进的 DPccp 算法，更好的支持复杂的 join predicate 和 outer joins，可以带来数量级上的性能提升。</p>
+<h1 id="1-简介"><a class="header" href="#1-简介">1. 简介</a></h1>
+<p>CBO：Cost Based Optimization
+RBO: Rule Based Optimization
+Join Order 在 CBO 中非常重要。
+经典论文：<a href="#access-path-selection-in-relation-database-management-system">access path selection</a>:</p>
+<ul>
+<li>按照数据规模从小到大的顺序（这一条并没有在该文中明确提到）</li>
+<li>left deep tree (虽然简单，但并不一定是最佳的)</li>
+<li>DPsize</li>
+</ul>
+<h1 id="超图"><a class="header" href="#超图">超图</a></h1>
+<ol>
+<li>超图
+<ul>
+<li>H = (V, E)</li>
+<li>V: a set of nodes (表、关系)</li>
+<li>E: a set of hyper edges （join)</li>
+<li>e: (u, v): u, v: non empty subset of V</li>
+<li>simple edge: |u| = |v| = 1</li>
+<li>simple graph: all edges are simple edges.</li>
+</ul>
+</li>
+<li>子图  H’ = (V’, E’)
+<ul>
+<li>$V’ \in V$</li>
+<li>$E’ \in E$</li>
+</ul>
+</li>
+<li>Connected
+<ul>
+<li>$|V| = 1$</li>
+<li>partition V’, V“, edge e = (u,v), $u \in V’, v \in V“$</li>
+</ul>
+</li>
+<li>CSG: connected subgraph, CMP: Connected Complement</li>
+<li>csg-cmp pair</li>
+</ol>
+<p>Join 顺序的问题，就演变为查找 csg + csp 对的问题。</p>
+<h1 id="算法"><a class="header" href="#算法">算法</a></h1>
+<h1 id="评估"><a class="header" href="#评估">评估</a></h1>
+<h2 id="参考"><a class="header" href="#参考">参考：</a></h2>
+<ol>
+<li><a href="https://developer.aliyun.com/article/789923">Dynamic Programming Strikes Back - MySQL8.0的新优化器</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="how-vega-works"><a class="header" href="#how-vega-works">How Vega Works</a></h1>
+<p>原始连接：https://observablehq.com/@vega/how-vega-works#inputSpec</p>
+<ol>
+<li>Vega 使用 JSON 描述，有对用 JSON-Schema 规范。</li>
+<li>Vega 不仅仅适用于静态的可视化，其具有交互能力和渲染动态数据的能力</li>
+</ol>
+<p>示例：</p>
+<pre><code class="language-json">{
+	"width": 200,
+	"height": 100,
+	"data": [{
+		"name": "table",
+		"values": [{
+			"key": "A",
+			"value": 4
+		}, {
+			"key": "B",
+			"value": 10
+		}, {
+			"key": "C",
+			"value": 7
+		}]
+	}],
+	"scales": [{
+		"name": "xscale",
+		"type": "band",
+		"domain": {
+			"data": "table",
+			"field": "key"
+		},
+		"padding": {
+			"signal": "scalePadding"
+		},
+		"range": "width"
+	}, {
+		"name": "yscale",
+		"type": "linear",
+		"domain": {
+			"data": "table",
+			"field": "value"
+		},
+		"range": "height"
+	}],
+	"marks": [{
+		"type": "rect",
+		"from": {
+			"data": "table"
+		},
+		"encode": {
+			"update": {
+				"x": {
+					"scale": "xscale",
+					"field": "key"
+				},
+				"y": {
+					"scale": "yscale",
+					"field": "value"
+				},
+				"y2": {
+					"scale": "yscale",
+					"value": 0
+				},
+				"width": {
+					"scale": "xscale",
+					"band": 1
+				},
+				"fill": {
+					"value": "steelblue"
+				}
+			}
+		}
+	}],
+	"signals": [{
+		"name": "scalePadding",
+		"value": 0.1,
+		"bind": {
+			"input": "range",
+			"min": 0,
+			"max": 0.99,
+			"step": 0.01
+		}
+	}]
+}
+</code></pre>
+<p><img src="how-vega-works-example.png" alt="img.png"></p>
+<h1 id="visualization-as-reaction-dataflows"><a class="header" href="#visualization-as-reaction-dataflows">Visualization as Reaction Dataflows</a></h1>
+<p>对一个源文件，Vega 会生成数据流图 dataflow graph，来处理从数据到可视化元素、坐标轴、图例的映射，以及响应交互式事件。</p>
+<p>dataflow graph 包括：</p>
+<ul>
+<li>nodes(operators)：处理数据计算（源数据、派生的数据、可视化图元数据，signal）</li>
+<li>edges: 数据流向
+<ul>
+<li>parameter edges</li>
+<li>pulse edges</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>灰色节点：signals</li>
+<li>红色节点：datasources</li>
+<li>blue 节点：可视化marks</li>
+<li>白色节点：内部的operators</li>
+<li>黑色边： 数据流依赖</li>
+<li>灰色边：parameter 依赖
+node 颜色：与目前产品中的不一致了。</li>
+</ol>
+<ul>
+<li>datajoin: map input data objects to scenegraph mark items</li>
+<li>collect: 收集 datajoin 的输出</li>
+<li>mark：bind mark to the scenegraph</li>
+<li>encode: 编码每个 mark 的属性</li>
+<li>bound： 计算每个 mark 的边界，用于布局，和处理点击事件</li>
+<li>render: 提交 scenegraph 修改到渲染队列中</li>
+<li>sieve: 传播 mark 的修改</li>
+</ul>
+<h1 id="parse-a-vega-spec"><a class="header" href="#parse-a-vega-spec">Parse a Vega Spec</a></h1>
+<pre><code class="language-javascript">parsedSpec = vega.parse(inputSpec)
+</code></pre>
+<ol>
+<li>解析 JSON，生成 dataflow graph, 这个 graph 目前并不是一个 JSON</li>
+<li>encode.update 编译为 JavaScript 代码
+<pre><code class="language-javascript">o.x = _["%xscale"](datum["key"]);
+o.y = _["%yscale"](datum["value"]);
+o.y2 = _["%yscale"](0);
+o.width = this.__bandwidth(_["%xscale"]);
+o.fill = "steelblue";
+</code></pre>
+节省后续的解释时间</li>
+</ol>
+<h1 id="view--dataflow-runtime"><a class="header" href="#view--dataflow-runtime">View &amp; Dataflow Runtime</a></h1>
+<h1 id="scenegraph--rendering"><a class="header" href="#scenegraph--rendering">Scenegraph &amp; Rendering</a></h1>
+<p>Vega Dataflow 计算并维护一个 scenegraph，这是一棵可视化元素的树，可以通过 SVG 或 Canvas 进行渲染。
+在图元中， mark 是一组 item（每个item 对应单次 encode ），这个与我之前理解的概念不同。
+对 scenegraph 进行更新后，也可以进行高效的更新，而非重新渲染整个图。
+使用 Canvas 时，如何进行增量式的渲染，应该还是很有技术挑战的。</p>
+<h1 id="坐标轴图例的处理"><a class="header" href="#坐标轴图例的处理">坐标轴、图例的处理</a></h1>
+<p>Vega 对 Axies 会生成 axis-grid, axis-tick, axis-label, axis-domain 等图元。
+对图例也是如此，其实还是相当于一个 Dataflow 的语法糖</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="vega-从-json-到-canvas-的完整流程分析"><a class="header" href="#vega-从-json-到-canvas-的完整流程分析">Vega 从 JSON 到 Canvas 的完整流程分析</a></h1>
+<p>本文档详细描述了 Vega 可视化库从读取 JSON 描述文件到最终渲染到 Canvas 的完整流程，包括每个步骤的行为和关键代码位置。</p>
+<h2 id="流程概览"><a class="header" href="#流程概览">流程概览</a></h2>
+<p>Vega 的渲染流程是一个响应式的数据驱动过程，主要包含以下 7 个阶段：</p>
+<ol>
+<li><strong>初始化阶段</strong> - View 构造和基础设施创建</li>
+<li><strong>JSON 解析阶段</strong> - 将声明式规范转换为可执行结构</li>
+<li><strong>数据流图构建阶段</strong> - 创建操作符管道和依赖关系</li>
+<li><strong>渲染器初始化阶段</strong> - 设置 Canvas 渲染环境</li>
+<li><strong>数据流执行阶段</strong> - 响应式数据处理和传播</li>
+<li><strong>场景图更新阶段</strong> - 更新可视元素属性</li>
+<li><strong>Canvas 渲染阶段</strong> - 最终绘制到画布</li>
+</ol>
+<h2 id="详细流程分析"><a class="header" href="#详细流程分析">详细流程分析</a></h2>
+<h3 id="1-初始化阶段-view-construction"><a class="header" href="#1-初始化阶段-view-construction">1. 初始化阶段 (View Construction)</a></h3>
+<p><strong>代码位置：</strong> <code>packages/vega-view/src/View.js:42</code></p>
+<pre><code class="language-javascript">export default function View(spec, options) {
+  // 创建 Dataflow 实例
+  Dataflow.call(view);
+  
+  // 初始化 scenegraph 和渲染器
+  view._scenegraph = new Scenegraph();
+  view._renderer = null;
+  view._renderType = options.renderer || RenderType.Canvas;
+  
+  // 解析规范并构建运行时
+  const ctx = runtime(view, spec, options.expr);
+}
+</code></pre>
+<p><strong>主要行为：</strong></p>
+<ul>
+<li>创建 View 实例，继承自 Dataflow 提供响应式数据流能力</li>
+<li>初始化场景图 (Scenegraph) 作为可视元素的层次结构</li>
+<li>设置渲染类型（默认 Canvas，也支持 SVG）</li>
+<li>创建事件处理器和信号绑定系统</li>
+</ul>
+<h3 id="2-json-解析阶段-specification-parsing"><a class="header" href="#2-json-解析阶段-specification-parsing">2. JSON 解析阶段 (Specification Parsing)</a></h3>
+<p><strong>代码位置：</strong> <code>packages/vega-parser/src/parse.js:6</code></p>
+<pre><code class="language-javascript">export default function(spec, config, options) {
+  if (!isObject(spec)) {
+    error('Input Vega specification must be an object.');
+  }
+  config = mergeConfig(defaults(), config, spec.config);
+  return parseView(spec, new Scope(config, options)).toRuntime();
+}
+</code></pre>
+<p><strong>代码位置：</strong> <code>packages/vega-runtime/src/context.js:5</code></p>
+<pre><code class="language-javascript">export default function(view, spec, expr) {
+  return context(view, transforms, functionContext, expr).parse(spec);
+}
+</code></pre>
+<p><strong>主要行为：</strong></p>
+<ul>
+<li>验证 JSON 规范的格式和结构</li>
+<li>合并默认配置、用户配置和规范中的配置</li>
+<li>创建解析上下文 (Context)，管理解析状态</li>
+<li>将声明式的 JSON 规范递归解析为可执行的数据流图结构</li>
+<li>解析数据源、变换、标记、比例尺、轴、图例等组件</li>
+</ul>
+<h3 id="3-数据流图构建阶段-dataflow-graph-construction"><a class="header" href="#3-数据流图构建阶段-dataflow-graph-construction">3. 数据流图构建阶段 (Dataflow Graph Construction)</a></h3>
+<p><strong>代码位置：</strong> <code>packages/vega-parser/src/parsers/mark.js:18</code></p>
+<p>对于每个 mark（图形标记），解析器会创建一系列操作符形成数据处理管道：</p>
+<pre><code class="language-javascript">// 数据连接操作符 - 将数据映射到可视项目
+op = scope.add(DataJoin({
+  key: input.key || (spec.key ? fieldRef(spec.key) : undefined),
+  pulse: input.pulse,
+  clean: !group
+}));
+
+// 收集操作符 - 收集可视项目
+op = store = scope.add(Collect({pulse: joinRef}));
+
+// 标记操作符 - 创建可视标记
+op = scope.add(Mark({
+  markdef: definition(spec),
+  interactive: interactive(spec.interactive, scope),
+  context: {$context: true},
+  pulse: ref(op)
+}));
+
+// 编码操作符 - 应用视觉编码
+op = enc = scope.add(Encode(parseEncode(
+  spec.encode, spec.type, role, spec.style, scope,
+  {mod: false, pulse: markRef}
+)));
+
+// 边界计算操作符 - 计算图形边界
+const bound = scope.add(Bound({mark: markRef, pulse: layoutRef || encodeRef}));
+
+// 渲染操作符 - 标记需要渲染的项目
+const render = scope.add(Render({pulse: boundRef}));
+</code></pre>
+<p><strong>主要行为：</strong></p>
+<ul>
+<li>为每个 mark 创建完整的数据处理管道</li>
+<li>建立操作符之间的依赖关系和数据流连接</li>
+<li>设置数据变换、视觉编码、布局计算的执行顺序</li>
+<li>构建响应式的计算图，支持增量更新</li>
+</ul>
+<h3 id="4-渲染器初始化阶段-renderer-initialization"><a class="header" href="#4-渲染器初始化阶段-renderer-initialization">4. 渲染器初始化阶段 (Renderer Initialization)</a></h3>
+<p><strong>代码位置：</strong> <code>packages/vega-view/src/initialize.js:8</code></p>
+<pre><code class="language-javascript">export default function(el, elBind) {
+  const view = this,
+        type = view._renderType,
+        module = renderModule(type);
+  
+  const Renderer = (el ? module.renderer : module.headless);
+  view._renderer = initializeRenderer(view, view._renderer, el, Renderer);
+}
+</code></pre>
+<p><strong>代码位置：</strong> <code>packages/vega-scenegraph/src/CanvasRenderer.js:20</code></p>
+<pre><code class="language-javascript">initialize(el, width, height, origin, scaleFactor, options) {
+  this._options = options || {};
+  this._canvas = this._options.externalContext
+    ? null
+    : canvas(1, 1, this._options.type);
+
+  if (el &amp;&amp; this._canvas) {
+    domClear(el, 0).appendChild(this._canvas);
+    this._canvas.setAttribute('class', 'marks');
+  }
+
+  return super.initialize(el, width, height, origin, scaleFactor);
+}
+</code></pre>
+<p><strong>主要行为：</strong></p>
+<ul>
+<li>根据配置选择合适的渲染器类型（Canvas/SVG/Headless）</li>
+<li>创建 Canvas 元素并添加到指定的 DOM 容器</li>
+<li>设置 Canvas 的尺寸、缩放比例和变换参数</li>
+<li>初始化渲染上下文和脏区域跟踪</li>
+</ul>
+<h3 id="5-数据流执行阶段-dataflow-execution"><a class="header" href="#5-数据流执行阶段-dataflow-execution">5. 数据流执行阶段 (Dataflow Execution)</a></h3>
+<p><strong>代码位置：</strong> <code>packages/vega-dataflow/src/dataflow/run.js:27</code></p>
+<pre><code class="language-javascript">export async function evaluate(encode, prerun, postrun) {
+  const df = this, async = [];
+
+  // 等待数据加载完成
+  if (df._pending) await df._pending;
+
+  // 增加时间戳
+  const stamp = ++df._clock;
+  df._pulse = new Pulse(df, stamp, encode);
+
+  // 初始化优先队列，处理所有被触碰的操作符
+  df._touched.forEach(op =&gt; df._enqueue(op, true));
+  df._touched = UniqueList(id);
+
+  let count = 0, op, next;
+
+  try {
+    while (df._heap.size() &gt; 0) {
+      // 取出优先级最高的操作符
+      op = df._heap.pop();
+
+      // 如果rank改变了，重新入队
+      if (op.rank !== op.qrank) {
+        df._enqueue(op, true);
+        continue;
+      }
+
+      // 执行操作符
+      next = op.run(df._getPulse(op, encode));
+
+      // 处理异步操作
+      if (next.then) {
+        next = await next;
+      } else if (next.async) {
+        async.push(next.async);
+        next = StopPropagation;
+      }
+
+      // 传播到依赖的操作符
+      if (next !== StopPropagation) {
+        if (op._targets) op._targets.forEach(op =&gt; df._enqueue(op));
+      }
+
+      ++count;
+    }
+  } catch (err) {
+    df._heap.clear();
+    error = err;
+  }
+}
+</code></pre>
+<p><strong>主要行为：</strong></p>
+<ul>
+<li>创建新的 Pulse 对象，包含时间戳和变更集信息</li>
+<li>按照依赖关系和优先级顺序执行所有被标记的操作符</li>
+<li>处理数据加载、转换、聚合、过滤等数据操作</li>
+<li>执行视觉编码、布局计算、边界计算等可视化操作</li>
+<li>支持异步操作和错误处理</li>
+</ul>
+<h3 id="6-场景图更新阶段-scenegraph-update"><a class="header" href="#6-场景图更新阶段-scenegraph-update">6. 场景图更新阶段 (Scenegraph Update)</a></h3>
+<p><strong>代码位置：</strong> <code>packages/vega-view-transforms/src/Render.js:13</code></p>
+<pre><code class="language-javascript">inherits(Render, Transform, {
+  transform(_, pulse) {
+    const view = pulse.dataflow;
+
+    // 遍历所有变更，将项目标记为脏数据
+    pulse.visit(pulse.ALL, item =&gt; view.dirty(item));
+
+    // 设置 z-index 脏标记
+    if (pulse.fields &amp;&amp; pulse.fields['zindex']) {
+      const item = pulse.source &amp;&amp; pulse.source[0];
+      if (item) item.mark.zdirty = true;
+    }
+  }
+});
+</code></pre>
+<p><strong>主要行为：</strong></p>
+<ul>
+<li>遍历所有添加、删除、修改的数据项</li>
+<li>将对应的可视元素标记为“脏“（需要重绘）</li>
+<li>处理 z-index 变更，标记需要重新排序的元素</li>
+<li>更新场景图中可视项目的属性和状态</li>
+</ul>
+<h3 id="7-canvas-渲染阶段-canvas-rendering"><a class="header" href="#7-canvas-渲染阶段-canvas-rendering">7. Canvas 渲染阶段 (Canvas Rendering)</a></h3>
+<p><strong>代码位置：</strong> <code>packages/vega-view/src/View.js:152</code></p>
+<pre><code class="language-javascript">async evaluate(encode, prerun, postrun) {
+  // 执行数据流
+  await Dataflow.prototype.evaluate.call(this, encode, prerun);
+
+  // 根据需要进行渲染
+  if (this._redraw || this._resize) {
+    try {
+      if (this._renderer) {
+        if (this._resize) {
+          this._resize = 0;
+          resizeRenderer(this);
+        }
+        await this._renderer.renderAsync(this._scenegraph.root);
+      }
+      this._redraw = false;
+    } catch (e) {
+      this.error(e);
+    }
+  }
+}
+</code></pre>
+<p><strong>代码位置：</strong> <code>packages/vega-scenegraph/src/CanvasRenderer.js:76</code></p>
+<pre><code class="language-javascript">_render(scene, markTypes) {
+  const g = this.context(),
+        o = this._origin,
+        w = this._width,
+        h = this._height,
+        db = this._dirty,
+        vb = viewBounds(o, w, h);
+
+  // 设置画布状态
+  g.save();
+  
+  // 计算需要更新的区域
+  const b = this._redraw || db.empty()
+    ? (this._redraw = false, vb.expand(1))
+    : clipToBounds(g, vb.intersect(db), o);
+
+  // 清除画布
+  this.clear(-o[0], -o[1], w, h);
+
+  // 绘制场景
+  this.draw(g, scene, b, markTypes);
+
+  // 恢复画布状态
+  g.restore();
+  db.clear();
+}
+
+draw(ctx, scene, bounds, markTypes) {
+  if (scene.marktype !== 'group' &amp;&amp; markTypes != null &amp;&amp; 
+      !markTypes.includes(scene.marktype)) {
+    return;
+  }
+
+  const mark = marks[scene.marktype];
+  if (scene.clip) clip(ctx, scene);
+  mark.draw.call(this, ctx, scene, bounds, markTypes);
+  if (scene.clip) ctx.restore();
+}
+</code></pre>
+<p><strong>主要行为：</strong></p>
+<ul>
+<li>获取 Canvas 2D 渲染上下文</li>
+<li>计算需要重绘的区域（增量渲染优化）</li>
+<li>设置裁剪区域，只重绘变更的部分</li>
+<li>清除需要更新的 Canvas 区域</li>
+<li>递归绘制所有场景图元素（group、mark、text等）</li>
+<li>应用变换、裁剪和样式</li>
+</ul>
+<h2 id="关键设计特点"><a class="header" href="#关键设计特点">关键设计特点</a></h2>
+<h3 id="响应式架构"><a class="header" href="#响应式架构">响应式架构</a></h3>
+<ul>
+<li>基于 Pulse 的变更传播机制</li>
+<li>增量更新，只处理变更的数据</li>
+<li>支持信号驱动的交互式更新</li>
+</ul>
+<h3 id="模块化设计"><a class="header" href="#模块化设计">模块化设计</a></h3>
+<ul>
+<li>每个功能模块独立打包（vega-dataflow、vega-parser等）</li>
+<li>清晰的职责分离和接口定义</li>
+<li>易于扩展和维护</li>
+</ul>
+<h3 id="性能优化"><a class="header" href="#性能优化">性能优化</a></h3>
+<ul>
+<li>脏区域追踪，只重绘变更部分</li>
+<li>优先级队列确保正确的执行顺序</li>
+<li>异步处理支持，避免阻塞UI</li>
+</ul>
+<h3 id="灵活性"><a class="header" href="#灵活性">灵活性</a></h3>
+<ul>
+<li>支持多种渲染后端（Canvas、SVG）</li>
+<li>可配置的变换和编码管道</li>
+<li>支持自定义函数和表达式</li>
+</ul>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>Vega 的整体架构是一个精心设计的响应式可视化系统。从 JSON 规范到最终的 Canvas 渲染，整个流程体现了声明式编程、函数式数据流和增量计算的设计理念。这种架构使得 Vega 能够高效地处理复杂的交互式可视化需求，同时保持良好的性能和可扩展性。</p>
+<p>流程的核心是将声明式的可视化规范转换为一个响应式的计算图，通过 Pulse 机制传播数据变更，最终通过高效的渲染器将结果绘制到画布上。这种设计使得任何数据或配置的变更都能自动触发相应的重新计算和重绘，实现了真正的响应式可视化。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="系列"><a class="header" href="#系列">系列</a></h1>
+<ol>
+<li>task weaver
+要理解 task weaver，看懂这个<a href="assets/llm_logs.yml">日志文件</a>，就可以很好的理解了</li>
+<li><a href="https://www.anthropic.com/engineering/multi-agent-research-system">How we built our multi-agent research system</a></li>
+<li>JoyAgent-JDGenie</li>
+<li>AnyTool</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-025d9952.js"></script>
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
