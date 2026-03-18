@@ -1,0 +1,16 @@
+[book]
+title = "OLAP 引擎技术对比分析"
+authors = ["wangzaixiang"]
+language = "zh"
+src = "src"
+
+[output.html]
+mathjax-support = true
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+optional = true
+
+[output.html.fold]
+enable = true
+level = 0
