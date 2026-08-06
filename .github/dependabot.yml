@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # adidoks 主题自带的 Bootstrap 源码构建依赖(devDependencies)。
+  # 部署链路(Zola/mdbook)不运行 npm,这些依赖只存在于 vendored 主题源码中:
+  # - 禁用自动更新(open-pull-requests-limit: 0),避免 dependabot 自动改动第三方主题
+  # - ignore 全部依赖,连安全更新 PR 也不开(漏洞不可达,见已 dismiss 的告警)
+  - package-ecosystem: npm
+    directory: /mysite/themes/adidoks/sass/bootstrap
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 0
+    ignore:
+      - dependency-name: "*"
