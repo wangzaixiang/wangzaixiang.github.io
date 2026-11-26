@@ -1,0 +1,16 @@
+[book]
+title = "Rust 语言机制：从字节到运行时"
+authors = ["wangzaixiang"]
+language = "zh"
+src = "src"
+
+[output.html]
+mathjax-support = true
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+optional = true
+
+[output.html.fold]
+enable = true
+level = 0

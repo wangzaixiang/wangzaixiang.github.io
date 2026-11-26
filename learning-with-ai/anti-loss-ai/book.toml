@@ -1,0 +1,17 @@
+[book]
+title = "视频 AI 防损系统设计"
+authors = ["wangzaixiang"]
+language = "zh"
+src = "src"
+
+[output.html]
+mathjax-support = true
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+optional = true
+
+[output.html.fold]
+enable = true
+level = 0

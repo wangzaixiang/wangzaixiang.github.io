@@ -1,0 +1,14 @@
+<!-- omp-mathjax-inline-support -->
+<!-- mdBook 默认以 MathJax 2.7 + TeX-AMS-MML_HTMLorMML 注入，其 tex2jax.inlineMath 只含 \( \)，
+     不含 $ $，导致行内 $...$ 原样显示。这里在 MathJax.js 之前显式补上 $ $ 定界符。
+     注意：启用后正文里的字面美元符号必须写成 \$，否则会被当作公式定界符。 -->
+<script>
+  window.MathJax = {
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      displayMath: [ ['$$', '$$'], ['\\[', '\\]'] ],
+      processEscapes: true,
+      processEnvironments: true
+    }
+  };
+</script>

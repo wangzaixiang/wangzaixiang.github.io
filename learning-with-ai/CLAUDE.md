@@ -21,3 +21,6 @@
 1. [attention is all you need 论文学习](./attention-is-all-you-need)
 2. [Lora 论文学习](./lora)
 3. [vega 学习](vega)
+4. [视频+AI（零售/生鲜视觉智能）](./video-ai)
+5. [视频 AI 防损系统设计（以 f 为中心）](./anti-loss-ai)
+6. [Rust 语言机制：从字节到运行时](./rust)

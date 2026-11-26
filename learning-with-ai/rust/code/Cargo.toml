@@ -1,0 +1,32 @@
+[package]
+name = "rust-book"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+# 每个章节一个 bin：cargo run --bin ch01_layout
+# 新增章节时在这里登记 [[bin]]（或省略，Cargo 会自动发现 src/bin/*.rs）
+# 保留显式登记，便于散文与代码一一对应。
+
+[[bin]]
+name = "ch01_layout"
+path = "src/bin/ch01_layout.rs"
+
+[[bin]]
+name = "ch02_move"
+path = "src/bin/ch02_move.rs"
+
+[[bin]]
+name = "ch03_refs"
+path = "src/bin/ch03_refs.rs"
+
+[[bin]]
+name = "ch04_cells"
+path = "src/bin/ch04_cells.rs"
+
+[[bin]]
+name = "ch05_heap"
+path = "src/bin/ch05_heap.rs"
+
+[profile.release]
+debug = true          # 保留符号，便于 cargo asm / 调试
