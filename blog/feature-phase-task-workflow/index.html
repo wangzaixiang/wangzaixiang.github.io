@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>FPT workflow | 程序人生</title>
+<meta name="description" content="这是我在使用 claude code 过程中，和 code agent 一起定义的开发流程规范，非常适合于使用后 vibe coding 进行复杂项目的开发">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="FPT workflow">
+  <meta name="twitter:description" content="这是我在使用 claude code 过程中，和 code agent 一起定义的开发流程规范，非常适合于使用后 vibe coding 进行复杂项目的开发">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="FPT workflow">
+  <meta property="og:description" content="这是我在使用 claude code 过程中，和 code agent 一起定义的开发流程规范，非常适合于使用后 vibe coding 进行复杂项目的开发">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="FPT workflow">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/feature-phase-task-workflow/"
+      },
+      "headline": "FPT workflow",
+      "image": ,
+      "datePublished": "2025-11-01",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "FPT workflow"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "FPT workflow",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "这是我在使用 claude code 过程中，和 code agent 一起定义的开发流程规范，非常适合于使用后 vibe coding 进行复杂项目的开发"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Feature Phase Task Workflow",
+            "item": "https://wangzaixiang.github.io/blog/feature-phase-task-workflow/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#feature-phase-task-workflow">Feature-Phase-Task Workflow</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#shu-yu-biao">术语表</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#jiao-se">角色</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#zhuang-tai-fu-hao-gui-fan">状态符号规范</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#0-feature-he-ceng-ji-jie-gou">0. Feature 和层级结构</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#1-kai-fa-liu-cheng-zong-lan">1. 开发流程总览</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#2-phase-hua-fen">2. Phase 划分</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#3-task-fen-jie-gui-ze">3. Task 分解规则</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#4-ce-shi-yong-li-gui-fan">4. 测试用例规范</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#5-shi-xian-liu-cheng-tdd-xun-huan">5. 实现流程（TDD 循环）</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#6-jin-du-gen-zong-gui-fan">6. 进度跟踪规范</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#7-yan-shou-biao-zhun">7. 验收标准</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#8-gou-tong-mo-shi">8. 沟通模式</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#9-yi-chang-chu-li-liu-cheng">9. 异常处理流程</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#10-git-gong-zuo-liu-ji-cheng">10. Git 工作流集成</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#xiang-guan-wen-dang">相关文档</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#checklist">Checklist</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/feature-phase-task-workflow/#11-chang-jian-wen-ti-pai-cha">11. 常见问题排查</a></li>
+  											
+  									</ul>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>FPT workflow</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/vibe-coding-2/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted November  1, 2025&nbsp;&hyphen;&nbsp;<strong>20&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/vibe-coding/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="feature-phase-task-workflow">Feature-Phase-Task Workflow</h1>
+<p>本文档定义了 Vibe Coding 实施项目的流程和规范。</p>
+<h2 id="shu-yu-biao">术语表</h2>
+<table><thead><tr><th>术语</th><th>定义</th><th>示例</th></tr></thead><tbody>
+<tr><td>Feature</td><td>独立的功能模块</td><td>scheme_v2, file_writer</td></tr>
+<tr><td>Phase</td><td>Feature 内的开发阶段</td><td>Phase 1, Phase 2</td></tr>
+<tr><td>Task</td><td>最小工作单元（0.5-1天）</td><td>Task 1, Task 2</td></tr>
+<tr><td>TDD</td><td>测试驱动开发</td><td>Red-Green-Refactor</td></tr>
+<tr><td>Stub</td><td>API 占位实现</td><td><code>fn foo() { todo!() }</code></td></tr>
+</tbody></table>
+<h2 id="jiao-se">角色</h2>
+<ul>
+<li><strong>Code Agent</strong>：负责和 Developer 进行交互，理解需求、编写文档、代码、测试</li>
+<li><strong>Developer</strong>：对 Code Agent 提出指令，审阅产出物，确认关键决策</li>
+</ul>
+<h2 id="zhuang-tai-fu-hao-gui-fan">状态符号规范</h2>
+<ul>
+<li>✅ 完成 (Completed)</li>
+<li>⏳ 进行中 (In Progress)</li>
+<li>⏸️ 待开始 (Pending)</li>
+<li>⚠️ 受阻 (Blocked)</li>
+<li>🔄 需重做 (Need Rework)</li>
+</ul>
+<p><strong>使用规则</strong>：</p>
+<ul>
+<li>每个 Phase/Task 必须有明确的状态符号</li>
+<li>Code Agent 必须在完成后立即更新状态</li>
+<li>Developer 可以将任务标记为 ⚠️ 或 🔄</li>
+</ul>
+<hr />
+<h2 id="0-feature-he-ceng-ji-jie-gou">0. Feature 和层级结构</h2>
+<h3 id="feature-ding-yi">Feature 定义</h3>
+<p>Feature 是一个<strong>独立的功能特性</strong>，可独立规划、开发、测试和交付，对应于 Git Workflow 中 Pull Request。</p>
+<p><strong>Feature 示例</strong>：</p>
+<ul>
+<li><code>scheme_v1</code>, <code>scheme_v2</code>, <code>scheme_v3</code>：不同的存储方案</li>
+<li><code>file_writer</code>：文件写入模块</li>
+<li><code>file_reader</code>：文件读取模块</li>
+<li><code>cli</code>：命令行工具</li>
+<li><code>lsm_compaction</code>：LSM 合并逻辑</li>
+</ul>
+<h3 id="san-ceng-zu-zhi-jie-gou">三层组织结构</h3>
+<pre><code>Feature → Phase → Task
+</code></pre>
+<ul>
+<li><strong>Feature</strong>：独立功能模块，有独立的 设计文档, task_list.md 和测试文件</li>
+<li>Feature 的设计文档在 fpt/features/{feature}/design.md 下。</li>
+<li><strong>Phase</strong>：Feature 内的开发阶段，相当于1个小的迭代，编号在 <strong>Feature 内独立</strong>（每个 Feature 从 Phase 1 开始）</li>
+<li><strong>Task</strong>：可在 0.5-1 天完成的最小工作单元</li>
+</ul>
+<p>如果与 Git Workflow 相对比：</p>
+<ul>
+<li>Feature 对应于 Pull Request，一般是一个完整的特性、场景。</li>
+<li>Phase 对应于一个 Feature 内的多个 iteration，每个 phase 完成一定的功能，并为下一个 phase 提供准备。部份代码可能再后续的 phase 清理、重构
+如果后续重构/删除了这个 phase 的代码，则也相应的重构/删除原有的测试用例。</li>
+<li>Task 则对应于 phase 内的字任务拆解，与TDD 的 test case 有较好的对应关系。</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code>Feature: file_writer
+  Phase 1: API 定义
+    Task 1: 创建核心数据结构
+    Task 2: 导出 API
+  Phase 2: Mmap 初始化
+    Task 1: 文件预分配
+    Task 2: Mmap 映射
+
+Feature: scheme_v2
+  Phase 1: Dictionary 实现
+    Task 1: DimDict API
+    Task 2: Encoding 逻辑
+</code></pre>
+<hr />
+<h2 id="1-kai-fa-liu-cheng-zong-lan">1. 开发流程总览</h2>
+<pre><code>规划 → 测试设计 → API 定义 → 测试评审 → 实现 → 验证 → 归档
+  ↓        ↓          ↓          ↓        ↓      ↓       ↓
+Phase   Test Cases  Signatures  Review   Code   Pass   Commit
+</code></pre>
+<h3 id="liu-cheng-shuo-ming">流程说明</h3>
+<ol>
+<li><strong>规划</strong>：将功能需求分解为 Feature、Phase 和 Task</li>
+<li><strong>测试设计</strong>：编写测试用例，定义预期行为</li>
+<li><strong>API 定义</strong>：定义数据结构和接口签名，使用 <code>todo!()</code> 占位</li>
+<li><strong>测试评审</strong>：Developer 确认测试用例、API 设计是否符合需求</li>
+<li><strong>实现</strong>：实现功能逻辑，使测试通过</li>
+<li><strong>验证</strong>：运行测试，确保所有测试通过</li>
+<li><strong>归档</strong>：更新 <code>fpt/features/{feature}/task_list.md</code>，提交代码</li>
+</ol>
+<hr />
+<h2 id="2-phase-hua-fen">2. Phase 划分</h2>
+<p>Phase 划分由 Code Agent 根据 Developer 指令进行，规划后需与 Developer 确认。</p>
+<h3 id="phase-gui-fan">Phase 规范</h3>
+<ul>
+<li>Phase 编号在 <strong>Feature 内独立</strong>，每个 Feature 从 Phase 1 开始</li>
+<li>每个 Phase 有清晰的开发目标，可作为后续 Phase 的基础（视为一个 Iteration）</li>
+<li>包含 3-8 个 Task，每个 Task 0.5-1 天可完成</li>
+<li>有明确的验收标准和产出物</li>
+</ul>
+<h3 id="ming-ming-gui-fan">命名规范</h3>
+<pre><code>Feature: file_writer
+  Phase 1: API 定义
+  Phase 2: Mmap 初始化
+  Phase 3: Schema 定义
+
+Feature: scheme_v2
+  Phase 1: Dictionary 实现
+  Phase 2: Encoding 逻辑
+</code></pre>
+<h3 id="phase-0-duan-dao-duan-de-api-she-ji-jie-duan">phase 0: 端到端的API 设计阶段</h3>
+<p>部份复杂性的任务需要插入 phase 0 的阶段，这个阶段的目的是：采用 TDD 的方式，通过定义端到端的场景，来定义相关的 API 和数据结构，评审通过后
+再开启下一阶段的的开发任务。</p>
+<ul>
+<li>定义端到端的API，即模块对外提供的 pub API + struct，而非内部的、实现细节粒度。</li>
+<li>编写测试用例来模拟使用场景，演示 API 的使用。</li>
+<li>仅编写最小化的代码（todo!() 替代实现），使其通过编译。</li>
+</ul>
+<p>一般的，在 phase 0 完成后，应该交给 developer 来进行评审，评审确认后，再开始工作：</p>
+<ul>
+<li>更新 task_list.md （需要根据评审中的变化而调整计划）</li>
+</ul>
+<hr />
+<h2 id="3-task-fen-jie-gui-ze">3. Task 分解规则</h2>
+<h3 id="task-gui-fan">Task 规范</h3>
+<ul>
+<li>单个 Task 不超过 0.5-1 天工作量</li>
+<li>可独立测试和验证</li>
+<li>有明确的输入和输出</li>
+</ul>
+<h3 id="ming-ming-gui-fan-1">命名规范</h3>
+<pre><code>Feature: file_writer
+  Phase 1: API 定义
+    Task 1: 创建核心数据结构
+    Task 2: 导出 API
+  Phase 2: Mmap 初始化
+    Task 1: 文件预分配
+    Task 2: Mmap 映射
+    Task 3: Drop 清理逻辑
+</code></pre>
+<hr />
+<h2 id="4-ce-shi-yong-li-gui-fan">4. 测试用例规范</h2>
+<h3 id="4-1-ming-ming-gui-fan">4.1 命名规范</h3>
+<p><strong>测试文件</strong>: <code>{crate}/tests/{feature}_phase_{seq}_description.rs</code></p>
+<ul>
+<li><code>crate</code>: 所在 crate（如 molap_file, lsm）</li>
+<li><code>feature</code>: Feature 名称（如 file_writer, scheme_v2）</li>
+<li><code>seq</code>: Phase 序号（在 Feature 内独立编号，<strong>仅1级编号</strong>，如 1, 2, 3）</li>
+<li><code>description</code>: 简短描述</li>
+</ul>
+<p><strong>测试函数</strong>: <code>task_{phase}_{task}_description</code></p>
+<ul>
+<li><code>phase</code>: Phase 序号（<strong>仅1级编号</strong>，如 1, 2, 3）</li>
+<li><code>task</code>: Task 序号（<strong>仅1级编号</strong>，如 1, 2, 3）</li>
+<li><code>_</code>: 下划线分隔符</li>
+<li><code>description</code>: 简短描述</li>
+</ul>
+<p><strong>示例</strong>:</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">&#x2F;&#x2F; 文件名: molap_file&#x2F;tests&#x2F;file_writer&#x2F;phase_2_mmap_init.rs
+
+&#x2F;&#x2F;&#x2F; Task 2-1: 文件预分配逻辑
+#[test]
+fn task_2_1_basic_file_creation() { ... }
+
+&#x2F;&#x2F;&#x2F; Task 2-3: Drop 清理逻辑
+#[test]
+fn task_2_3_drop_cleanup() { ... }
+</code></pre>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">&#x2F;&#x2F; 文件名: molap_file&#x2F;tests&#x2F;scheme_v2&#x2F;phase_1_dictionary.rs
+
+&#x2F;&#x2F;&#x2F; Task 1-1: DimDict API 定义
+#[test]
+fn task_1_1_dim_dict_api() { ... }
+
+&#x2F;&#x2F;&#x2F; Task 1-2: Encoding 逻辑
+#[test]
+fn task_1_2_encoding_logic() { ... }
+</code></pre>
+<h3 id="4-2-wen-jian-zu-zhi">4.2 文件组织</h3>
+<p><strong>按 Feature 分目录</strong>：每个 Feature 有独立的测试子目录</p>
+<pre><code>molap_file&#x2F;tests&#x2F;
+├── file_writer&#x2F;
+│   ├── phase_1_v1.rs              # Feature: file_writer, Phase 1
+│   ├── phase_2_mmap.rs            # Feature: file_writer, Phase 2
+│   └── phase_3_schema.rs          # Feature: file_writer, Phase 3
+├── scheme_v1&#x2F;
+│   └── phase_1_basic.rs           # Feature: scheme_v1, Phase 1
+└── scheme_v2&#x2F;
+    ├── phase_1_dictionary.rs      # Feature: scheme_v2, Phase 1
+    └── phase_2_encoding.rs        # Feature: scheme_v2, Phase 2
+
+lsm&#x2F;tests&#x2F;
+├── memtable&#x2F;
+│   └── phase_1_basic.rs           # Feature: memtable, Phase 1
+└── compaction&#x2F;
+    └── phase_1_merge.rs           # Feature: compaction, Phase 1
+</code></pre>
+<h3 id="4-2-1-ce-shi-wen-jian-lu-jing-sheng-cheng-gui-ze">4.2.1 测试文件路径生成规则</h3>
+<p>Code Agent 创建测试文件时，必须遵循以下规则：</p>
+<ol>
+<li><strong>确定 crate</strong>：根据功能所属的 crate（如 molap_file、lsm）</li>
+<li><strong>确定 feature</strong>：从 task_list.md 的文件路径中提取 feature 名称</li>
+<li><strong>确定 phase</strong>：从当前 Phase 标题中提取序号</li>
+<li><strong>生成路径</strong>：<code>{crate}/tests/{feature}/phase_{seq}_{description}.rs</code></li>
+</ol>
+<p><strong>示例</strong>：</p>
+<ul>
+<li>task_list 路径：<code>fpt/features/scheme_v2/task_list.md</code></li>
+<li>当前 Phase：<code>Phase 3: Data Encoding</code></li>
+<li>生成测试文件：<code>molap_file/tests/scheme_v2/phase_3_encoding.rs</code></li>
+</ul>
+<p><strong>文件内部按 Task 分组</strong>：</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">&#x2F;&#x2F;! Feature: file_writer
+&#x2F;&#x2F;! Phase 2: 文件预分配 + Mmap 初始化
+&#x2F;&#x2F;!
+&#x2F;&#x2F;! # Tasks
+&#x2F;&#x2F;! - Task 1: 文件预分配逻辑
+&#x2F;&#x2F;! - Task 2: Mmap 初始化
+&#x2F;&#x2F;! - Task 3: Drop 清理逻辑
+
+use molap_file::{FileWriter, FileConfig};
+use std::fs;
+
+&#x2F;&#x2F; ============================================================================
+&#x2F;&#x2F; 辅助函数
+&#x2F;&#x2F; ============================================================================
+
+fn cleanup_test_file(path: &amp;str) { ... }
+
+&#x2F;&#x2F; ============================================================================
+&#x2F;&#x2F; Task 1: 文件预分配
+&#x2F;&#x2F; ============================================================================
+
+&#x2F;&#x2F;&#x2F; Task 2-1: 文件预分配逻辑
+#[test]
+fn task_2_1_basic_file_creation() { ... }
+
+&#x2F;&#x2F; ============================================================================
+&#x2F;&#x2F; Task 2: Mmap 初始化
+&#x2F;&#x2F; ============================================================================
+
+&#x2F;&#x2F;&#x2F; Task 2-2: Mmap 初始化
+#[test]
+fn task_2_2_mmap_initialization() { ... }
+</code></pre>
+<h3 id="4-3-ce-shi-fu-gai">4.3 测试覆盖</h3>
+<p>每个 Phase 至少包含：</p>
+<ul>
+<li>正常流程测试</li>
+<li>边界情况测试</li>
+<li>错误处理测试</li>
+</ul>
+<p>每个测试函数对应一个或多个 Task，在文档注释中明确说明覆盖范围。</p>
+<hr />
+<h2 id="5-shi-xian-liu-cheng-tdd-xun-huan">5. 实现流程（TDD 循环）</h2>
+<h3 id="red-green-refactor-yan-ge-zhi-xing-shun-xu">Red → Green → Refactor（严格执行顺序）</h3>
+<p><strong>重要：Code Agent 必须严格按照以下顺序执行，禁止跳过或颠倒步骤</strong></p>
+<ol>
+<li>
+<p><strong>定义测试（Red）</strong>：</p>
+<ul>
+<li>先在 <code>tests/{feature}/phase_{seq}_*.rs</code> 中编写测试函数</li>
+<li>测试函数命名必须遵循 <code>task_{phase}_{task}_description</code> 格式</li>
+<li>验证测试失败（因为功能尚未实现）</li>
+</ul>
+</li>
+<li>
+<p><strong>定义 API（Stub）</strong>：</p>
+<ul>
+<li>定义满足测试的最小接口签名</li>
+<li>函数体使用 <code>todo!()</code> 或 <code>unimplemented!()</code></li>
+<li>确保 <code>cargo test --no-run</code> 编译通过</li>
+</ul>
+</li>
+<li>
+<p><strong>测试评审点</strong>：</p>
+<ul>
+<li>Code Agent 向 Developer 展示测试用例</li>
+<li>等待 Developer 确认后再继续实现</li>
+</ul>
+</li>
+<li>
+<p><strong>实现功能（Green）</strong>：</p>
+<ul>
+<li>实现逻辑，使测试通过</li>
+<li>优先最简单的实现，不过度设计</li>
+</ul>
+</li>
+<li>
+<p><strong>验证测试通过</strong>：</p>
+<ul>
+<li>运行 <code>cargo test task_{phase}_{task}</code></li>
+<li>所有测试必须通过，无 panic 或 warnings</li>
+</ul>
+</li>
+<li>
+<p><strong>重构（Refactor）</strong>：</p>
+<ul>
+<li>优化代码结构，保持测试通过</li>
+<li>每次重构后重新运行测试</li>
+</ul>
+</li>
+</ol>
+<h3 id="code-agent-cao-zuo-jian-cha-qing-dan">Code Agent 操作检查清单</h3>
+<p><strong>在每个 Task 开始前，Code Agent 必须</strong>：</p>
+<ul>
+<li>确认已读取 <code>fpt/features/{feature}/task_list.md</code></li>
+<li>确认当前 Task 的编号和描述</li>
+</ul>
+<p><strong>在每个 Task 完成后，Code Agent 必须</strong>：</p>
+<ul>
+<li>更新 <code>fpt/features/{feature}/task_list.md</code> 中的状态</li>
+<li>运行 <code>cargo test task_{phase}_{task}</code> 验证测试通过</li>
+</ul>
+<hr />
+<h2 id="6-jin-du-gen-zong-gui-fan">6. 进度跟踪规范</h2>
+<p>每个 Feature 的 Phase 和 Task 信息写入到 <code>fpt/features/{feature}/task_list.md</code> 文件。</p>
+<h3 id="wen-jian-lu-jing-gui-fan">文件路径规范</h3>
+<pre><code>fpt&#x2F;features&#x2F;
+├── file_writer&#x2F;
+│   └── design.md             # file_writer feature 的设计文档
+│   └── task_list.md          # file_writer feature 的任务清单
+└── cli&#x2F;
+    └── task_list.md
+</code></pre>
+<h3 id="geng-xin-zhi-ze">更新职责</h3>
+<ul>
+<li><strong>Code Agent</strong>：每个 Task/Phase 完成后自动更新</li>
+<li><strong>Developer</strong>：审阅并调整优先级或计划</li>
+</ul>
+<h3 id="wen-jian-ge-shi-shi-li">文件格式示例</h3>
+<pre data-lang="markdown" class="language-markdown "><code class="language-markdown" data-lang="markdown"># file_writer Task List
+
+**Git Branch**: `feature&#x2F;file_writer`
+**Base Branch**: `main`
+**Status**: ⏳ 进行中
+**Created**: 2025-01-10
+**Last Updated**: 2025-01-15
+
+---
+
+## Phase 1: API 定义 + 测试框架 (✅ 完成)
+- **状态**: ✅ 完成
+- **时间**: 2025-01-XX
+- **产出**: file_writer.rs, tests&#x2F;file_writer&#x2F;phase_1_v1.rs
+- **Commits**: `a1b2c3d` - `e4f5g6h`
+- **验收标准**: 所有 API 编译通过，测试框架就绪
+
+| Task | 描述 | 状态 |
+|------|------|------|
+| 1 | 创建核心数据结构 | ✅ 完成 |
+| 2 | 导出 API | ✅ 完成 |
+
+## Phase 2: 文件预分配 + Mmap 初始化 (⏳ 进行中)
+- **状态**: ⏳ 进行中
+- **产出**: FileWriter::new(), tests&#x2F;file_writer&#x2F;phase_2_mmap.rs
+- **验收标准**: 文件预分配正确，Mmap 初始化成功，资源正确清理
+
+| Task | 描述 | 状态 |
+|------|------|------|
+| 1 | 文件创建与预分配 | ✅ 完成 |
+| 2 | Mmap 初始化 | ⏳ 进行中 |
+| 3 | Drop 清理逻辑 | ⏸️ 待开始 |
+</code></pre>
+<p>注意事项：</p>
+<ul>
+<li>在 task_list 中，不要写入太多的技术细节，包括方案描述、代码等，重要在于描述任务目标，以维持该文件的简洁性。</li>
+<li>phase 题中包括该 phase 的当前状态，方便在 IDE 中快速通过 outline 查看进度。</li>
+<li>task table 需要包括： Task、Description, Status 三列。</li>
+<li>完成 task 或 phase 后，及时更新该文档的进度状态。</li>
+<li>在每个 phase 下，根据需要，可以补充上相关文档的链接。</li>
+</ul>
+<hr />
+<h2 id="7-yan-shou-biao-zhun">7. 验收标准</h2>
+<h3 id="task-wan-cheng-biao-zhun">Task 完成标准</h3>
+<ul>
+<li>✅ 对应测试通过（<code>cargo test task_{phase}_{task}</code>）</li>
+<li>✅ 代码有清晰注释</li>
+<li>✅ 无新增 warnings（除合理的 <code>unused</code>）</li>
+</ul>
+<h3 id="phase-wan-cheng-biao-zhun">Phase 完成标准</h3>
+<ul>
+<li>✅ 所有 Task 测试通过</li>
+<li>✅ 更新 <code>fpt/features/{feature}/task_list.md</code></li>
+<li>✅ Developer 确认验收</li>
+</ul>
+<hr />
+<h2 id="8-gou-tong-mo-shi">8. 沟通模式</h2>
+<h3 id="8-1-phase-kai-shi-qian">8.1 Phase 开始前</h3>
+<p><strong>Code Agent</strong>：</p>
+<ol>
+<li>展示完整的 Phase 计划（Task 清单、时间估算）</li>
+<li>说明技术方案和设计决策</li>
+<li>等待 Developer 确认后开始实施</li>
+</ol>
+<p><strong>Developer</strong>：</p>
+<ul>
+<li>审阅 Phase 计划</li>
+<li>提出调整建议或优化方案</li>
+<li>明确确认后 Code Agent 开始实施</li>
+</ul>
+<h3 id="8-2-shi-shi-guo-cheng-zhong">8.2 实施过程中</h3>
+<p><strong>Code Agent</strong>：</p>
+<ul>
+<li>每完成一个 Task 向 Developer 汇报进度</li>
+<li>遇到设计问题及时询问 Developer</li>
+</ul>
+<p><strong>Developer</strong>：</p>
+<ul>
+<li>及时回复问题</li>
+<li>确认关键设计决策</li>
+</ul>
+<h3 id="8-3-phase-wan-cheng-hou">8.3 Phase 完成后</h3>
+<p><strong>Code Agent</strong>：</p>
+<ol>
+<li>总结完成内容和测试结果</li>
+<li>更新 <code>doc/tdd/{feature}/task_list.md</code></li>
+<li>说明下一步计划</li>
+</ol>
+<p><strong>Developer</strong>：</p>
+<ul>
+<li>验证产出物</li>
+<li>确认是否进入下一 Phase</li>
+</ul>
+<h3 id="8-4-wan-zheng-dui-hua-shi-li">8.4 完整对话示例</h3>
+<p><strong>场景：开始 scheme_v2 Phase 1 Task 1</strong></p>
+<p><strong>Code Agent</strong>:</p>
+<blockquote>
+<p>我将开始 Feature <code>scheme_v2</code> 的 Phase 1 Task 1: "DimDict API 定义"</p>
+<p>我的计划是：</p>
+<ol>
+<li>创建测试文件 <code>molap_file/tests/scheme_v2/phase_1_dictionary.rs</code></li>
+<li>编写测试函数 <code>task_1_1_dim_dict_api()</code></li>
+<li>定义 DimDict 的数据结构和接口签名</li>
+<li>使用 <code>todo!()</code> 占位实现</li>
+<li>验证编译通过</li>
+</ol>
+<p>测试用例将验证：</p>
+<ul>
+<li>DimDict::new() 创建空字典</li>
+<li>DimDict::insert() 插入维度值</li>
+<li>DimDict::get() 查询维度 ID</li>
+</ul>
+<p>是否开始？</p>
+</blockquote>
+<p><strong>Developer</strong>:</p>
+<blockquote>
+<p>确认，开始吧。记得 DimDict 需要支持 Option<String> 类型。</p>
+</blockquote>
+<p><strong>Code Agent</strong>:</p>
+<blockquote>
+<p>收到，我会在测试中包含 None 值的处理。开始实施...</p>
+</blockquote>
+<hr />
+<h2 id="9-yi-chang-chu-li-liu-cheng">9. 异常处理流程</h2>
+<h3 id="9-1-ce-shi-bian-yi-shi-bai">9.1 测试编译失败</h3>
+<p>Code Agent 必须立即检查：</p>
+<ul>
+<li>API 签名是否与测试代码匹配</li>
+<li>依赖关系是否正确</li>
+<li>模块导出是否完整</li>
+</ul>
+<h3 id="9-2-ce-shi-yun-xing-shi-bai">9.2 测试运行失败</h3>
+<p>Code Agent 必须：</p>
+<ul>
+<li>仔细阅读测试输出和断言信息</li>
+<li>定位失败的具体测试函数</li>
+<li>修复实现代码，而不是修改测试（除非测试本身有错误）</li>
+<li>向 Developer 汇报持续失败的测试</li>
+</ul>
+<h3 id="9-3-ce-shi-tong-guo-dan-luo-ji-you-wen-ti">9.3 测试通过但逻辑有问题</h3>
+<p>当 Developer 发现问题时：</p>
+<ul>
+<li>Code Agent 必须先增加新的测试用例覆盖该场景</li>
+<li>然后修复实现使新测试通过</li>
+</ul>
+<hr />
+<h2 id="10-git-gong-zuo-liu-ji-cheng">10. Git 工作流集成</h2>
+<h3 id="10-1-fen-zhi-ce-lue-git-worktree">10.1 分支策略（Git Worktree）</h3>
+<h4 id="fen-zhi-ming-ming-gui-fan">分支命名规范</h4>
+<p>每个 Feature 对应一个独立的 Git 分支：</p>
+<pre><code>main                           # 主分支
+├── feature&#x2F;scheme_v2          # Feature 分支
+├── feature&#x2F;file_writer        # Feature 分支
+└── feature&#x2F;cli                # Feature 分支
+</code></pre>
+<p><strong>规则</strong>：</p>
+<ul>
+<li>每个 Feature 对应一个 <code>feature/{feature_name}</code> 分支</li>
+<li>Feature 分支从 <code>main</code> 分支创建</li>
+<li>Phase 和 Task 的 commit 都在 Feature 分支上进行</li>
+<li>Feature 完成后通过 Pull Request 合并回 <code>main</code></li>
+</ul>
+<h4 id="git-worktree-bing-xing-kai-fa-tui-jian">Git Worktree 并行开发（推荐）</h4>
+<p>使用 Git Worktree 实现多 Feature 真正并行开发：</p>
+<pre data-lang="bash" class="language-bash "><code class="language-bash" data-lang="bash"># 主工作目录
+cd &#x2F;path&#x2F;to&#x2F;{project}
+
+# 为每个 Feature 创建独立工作目录
+git worktree add ..&#x2F;{project}-scheme_v2 feature&#x2F;scheme_v2
+git worktree add ..&#x2F;{project}-file_writer feature&#x2F;file_writer
+
+# 在不同终端&#x2F;窗口中并行开发
+cd ..&#x2F;{project}-scheme_v2      # Terminal 1
+cd ..&#x2F;{project}-file_writer    # Terminal 2
+</code></pre>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>每个 Feature 有独立的工作目录和编译状态</li>
+<li>无需频繁切换分支</li>
+<li>可以同时运行多个测试套件</li>
+<li>避免分支切换导致的文件变动和重新编译</li>
+</ul>
+<p><strong>清理 Worktree</strong>：</p>
+<pre data-lang="bash" class="language-bash "><code class="language-bash" data-lang="bash"># Feature 合并后删除 worktree
+git worktree remove ..&#x2F;{project}-scheme_v2
+</code></pre>
+<h3 id="10-2-commit-gui-fan">10.2 Commit 规范</h3>
+<h4 id="task-wan-cheng-shi">Task 完成时</h4>
+<pre data-lang="bash" class="language-bash "><code class="language-bash" data-lang="bash">git add .
+git commit -m &quot;task: Phase {phase} Task {task} - {description}&quot;
+</code></pre>
+<p><strong>示例</strong>：</p>
+<pre data-lang="bash" class="language-bash "><code class="language-bash" data-lang="bash">git commit -m &quot;task: Phase 1 Task 2 - DimDict encoding logic&quot;
+git commit -m &quot;task: Phase 2 Task 1 - File preallocation&quot;
+</code></pre>
+<p><strong>说明</strong>：Feature 名称已包含在分支名中，无需在 commit message 中重复。</p>
+<h4 id="phase-wan-cheng-shi">Phase 完成时</h4>
+<pre data-lang="bash" class="language-bash "><code class="language-bash" data-lang="bash">git add fpt&#x2F;features&#x2F;{feature}&#x2F;task_list.md
+git commit -m &quot;phase: Phase {phase} complete - {summary}&quot;
+</code></pre>
+<p><strong>示例</strong>：</p>
+<pre data-lang="bash" class="language-bash "><code class="language-bash" data-lang="bash">git commit -m &quot;phase: Phase 1 complete - Dictionary implementation&quot;
+</code></pre>
+<h4 id="feature-wan-cheng-shi">Feature 完成时</h4>
+<pre data-lang="bash" class="language-bash "><code class="language-bash" data-lang="bash">git add .
+git commit -m &quot;feature: {feature} complete&quot;
+git push origin feature&#x2F;{feature}
+</code></pre>
+<h3 id="10-3-wan-zheng-gong-zuo-liu-cheng-shi-li">10.3 完整工作流程示例</h3>
+<pre data-lang="bash" class="language-bash "><code class="language-bash" data-lang="bash"># ========================================
+# Developer 启动新 Feature
+# ========================================
+cd &#x2F;path&#x2F;to&#x2F;{project}
+git checkout main
+git pull
+git checkout -b feature&#x2F;scheme_v2
+
+# 创建独立工作目录（使用 worktree）
+git worktree add ..&#x2F;{project}-scheme_v2 feature&#x2F;scheme_v2
+cd ..&#x2F;{project}-scheme_v2
+
+# 创建 Feature 文档
+mkdir -p fpt&#x2F;features&#x2F;scheme_v2
+# 编写 design.md 和 task_list.md
+
+git add fpt&#x2F;features&#x2F;scheme_v2&#x2F;
+git commit -m &quot;docs: Initialize scheme_v2 feature&quot;
+
+# ========================================
+# Code Agent 开始 Phase 1
+# ========================================
+# Task 1: DimDict API 定义
+# ... 编写测试、实现 ...
+git add .
+git commit -m &quot;task: Phase 1 Task 1 - DimDict API definition&quot;
+
+# Task 2: Encoding 逻辑
+# ... 编写测试、实现 ...
+git add .
+git commit -m &quot;task: Phase 1 Task 2 - Encoding logic&quot;
+
+# Phase 1 完成
+git add fpt&#x2F;features&#x2F;scheme_v2&#x2F;task_list.md
+git commit -m &quot;phase: Phase 1 complete - Dictionary implementation&quot;
+
+# ========================================
+# Phase 2, Phase 3 ...
+# ========================================
+# ... 重复上述流程 ...
+
+# ========================================
+# Feature 完成
+# ========================================
+# 所有测试通过
+cargo test --all
+
+# 最终更新
+git add .
+git commit -m &quot;feature: scheme_v2 complete&quot;
+
+# 推送并创建 PR
+git push origin feature&#x2F;scheme_v2
+gh pr create --title &quot;Feature: scheme_v2 - New storage scheme&quot; --base main
+
+# ========================================
+# Code Review &amp; Merge
+# ========================================
+# Developer 审查 PR
+# 合并到 main
+# 清理 worktree
+cd &#x2F;path&#x2F;to&#x2F;{project}
+git worktree remove ..&#x2F;{project}-scheme_v2
+git branch -d feature&#x2F;scheme_v2
+</code></pre>
+<h3 id="10-4-code-agent-jian-cha-qing-dan-git-xiang-guan">10.4 Code Agent 检查清单（Git 相关）</h3>
+<h4 id="zai-mei-ge-feature-kai-shi-qian">在每个 Feature 开始前</h4>
+<ul>
+<li>✅ 确认当前在正确的 Feature 分支（<code>git branch --show-current</code>）</li>
+<li>✅ 如果使用 worktree，确认在正确的工作目录</li>
+</ul>
+<h4 id="zai-mei-ge-task-wan-cheng-hou">在每个 Task 完成后</h4>
+<ul>
+<li>✅ 使用规范的 commit message（<code>task: Phase X Task Y - description</code>）</li>
+<li>✅ Commit 变更到当前 Feature 分支</li>
+</ul>
+<h4 id="zai-mei-ge-phase-wan-cheng-hou">在每个 Phase 完成后</h4>
+<ul>
+<li>✅ 更新 <code>task_list.md</code>（标记 Phase ✅）</li>
+<li>✅ 创建 Phase 总结 commit（<code>phase: Phase X complete - summary</code>）</li>
+</ul>
+<h4 id="zai-feature-wan-cheng-hou">在 Feature 完成后</h4>
+<ul>
+<li>✅ 所有 Phase 测试通过</li>
+<li>✅ 更新 <code>task_list.md</code>（标记 Feature ✅）</li>
+<li>✅ 推送到远程分支（<code>git push origin feature/{name}</code>）</li>
+<li>✅ 创建 Pull Request</li>
+</ul>
+<h3 id="10-5-pull-request-gui-fan">10.5 Pull Request 规范</h3>
+<h4 id="pr-biao-ti-ge-shi">PR 标题格式</h4>
+<pre><code>Feature: {feature_name} - {one-line summary}
+</code></pre>
+<h4 id="pr-miao-shu-mo-ban">PR 描述模板</h4>
+<pre data-lang="markdown" class="language-markdown "><code class="language-markdown" data-lang="markdown">## Feature 概述
+{简短描述功能}
+
+## Phase 清单
+- [x] Phase 1: Dictionary 实现
+- [x] Phase 2: Encoding 逻辑
+- [x] Phase 3: Integration 测试
+
+## 测试结果
+```bash
+cargo test --all
+# 所有测试通过
+</code></pre>
+<h2 id="xiang-guan-wen-dang">相关文档</h2>
+<ul>
+<li>设计文档: <code>fpt/features/scheme_v2/design.md</code></li>
+<li>任务清单: <code>fpt/features/scheme_v2/task_list.md</code></li>
+</ul>
+<h2 id="checklist">Checklist</h2>
+<ul>
+<li><input disabled="" type="checkbox" checked=""/>
+所有 Phase 测试通过</li>
+<li><input disabled="" type="checkbox" checked=""/>
+更新 task_list.md</li>
+<li><input disabled="" type="checkbox" checked=""/>
+无新增 warnings</li>
+<li><input disabled="" type="checkbox" checked=""/>
+代码审查通过</li>
+</ul>
+<pre><code>
+### 10.6 多 Feature 冲突处理
+
+#### 策略：定期同步 main 的变更
+
+```bash
+# 在 Feature 分支（每完成一个 Phase 后）
+git fetch origin main
+git rebase origin&#x2F;main
+
+# 解决冲突（如有）
+# ...
+
+git rebase --continue
+</code></pre>
+<p><strong>建议</strong>：</p>
+<ul>
+<li>优先使用 Rebase 保持线性历史</li>
+<li>在 Phase 完成后同步 main 的变更</li>
+<li>Code Agent 在 Phase 开始前检查是否需要同步</li>
+</ul>
+<hr />
+<h2 id="11-chang-jian-wen-ti-pai-cha">11. 常见问题排查</h2>
+<h3 id="q-ce-shi-wen-jian-zhao-bu-dao-bei-ce-shi-de-mo-kuai">Q: 测试文件找不到被测试的模块</h3>
+<p><strong>A</strong>: 检查 <code>Cargo.toml</code> 中的 <code>[lib]</code> 配置，确保模块已导出</p>
+<h3 id="q-phase-bian-hao-chong-tu">Q: Phase 编号冲突</h3>
+<p><strong>A</strong>: Phase 编号在 Feature 内独立，不同 Feature 可以有相同的 Phase 编号</p>
+<h3 id="q-ce-shi-han-shu-ming-ming-bu-fu-he-gui-fan">Q: 测试函数命名不符合规范</h3>
+<p><strong>A</strong>: 必须使用 <code>task_{phase}_{task}_description</code> 格式，phase 和 task 都是单层编号</p>
+<h3 id="q-cargo-test-zhao-bu-dao-te-ding-ce-shi">Q: <code>cargo test</code> 找不到特定测试</h3>
+<p><strong>A</strong>: 使用完整的测试名过滤，如 <code>cargo test task_2_1</code> 或 <code>cargo test --test phase_2_mmap</code></p>
+<h3 id="q-ce-shi-tong-guo-dan-code-agent-wei-geng-xin-task-list-md">Q: 测试通过但 Code Agent 未更新 task_list.md</h3>
+<p><strong>A</strong>: 这违反了操作检查清单，Code Agent 必须在每个 Task 完成后立即更新状态</p>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/vibe-coding-2/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/vibe-coding/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

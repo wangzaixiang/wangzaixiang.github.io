@@ -1,0 +1,1026 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>测试模块化代码 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="测试模块化代码"><a class="header" href="#测试模块化代码">测试模块化代码</a></h1>
+<p>模块化代码的测试策略与传统代码有所不同，需要考虑模块间的依赖关系、异步加载、隔离性等因素。本章将详细介绍如何有效测试JavaScript模块。</p>
+<h2 id="模块测试基础"><a class="header" href="#模块测试基础">模块测试基础</a></h2>
+<h3 id="单元测试策略"><a class="header" href="#单元测试策略">单元测试策略</a></h3>
+<pre><code class="language-javascript">// userService.js - 被测试的模块
+export class UserService {
+  constructor(httpClient, cache) {
+    this.httpClient = httpClient;
+    this.cache = cache;
+  }
+
+  async getUser(id) {
+    const cacheKey = `user:${id}`;
+    
+    // 先检查缓存
+    const cached = await this.cache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    // 从API获取
+    const user = await this.httpClient.get(`/users/${id}`);
+    
+    // 缓存结果
+    await this.cache.set(cacheKey, user, { ttl: 300 });
+    
+    return user;
+  }
+
+  async updateUser(id, data) {
+    const user = await this.httpClient.put(`/users/${id}`, data);
+    
+    // 清除相关缓存
+    await this.cache.delete(`user:${id}`);
+    
+    return user;
+  }
+}
+
+export const createUserService = (httpClient, cache) =&gt; {
+  return new UserService(httpClient, cache);
+};
+</code></pre>
+<pre><code class="language-javascript">// userService.test.js - 单元测试
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { UserService } from '../userService.js';
+
+describe('UserService', () =&gt; {
+  let userService;
+  let mockHttpClient;
+  let mockCache;
+
+  beforeEach(() =&gt; {
+    // 创建模拟依赖
+    mockHttpClient = {
+      get: vi.fn(),
+      put: vi.fn()
+    };
+    
+    mockCache = {
+      get: vi.fn(),
+      set: vi.fn(),
+      delete: vi.fn()
+    };
+
+    userService = new UserService(mockHttpClient, mockCache);
+  });
+
+  describe('getUser', () =&gt; {
+    it('should return cached user when available', async () =&gt; {
+      const userId = '123';
+      const cachedUser = { id: userId, name: 'John' };
+      
+      mockCache.get.mockResolvedValue(cachedUser);
+
+      const result = await userService.getUser(userId);
+
+      expect(result).toBe(cachedUser);
+      expect(mockCache.get).toHaveBeenCalledWith('user:123');
+      expect(mockHttpClient.get).not.toHaveBeenCalled();
+    });
+
+    it('should fetch from API and cache when not in cache', async () =&gt; {
+      const userId = '123';
+      const apiUser = { id: userId, name: 'John' };
+      
+      mockCache.get.mockResolvedValue(null);
+      mockHttpClient.get.mockResolvedValue(apiUser);
+
+      const result = await userService.getUser(userId);
+
+      expect(result).toBe(apiUser);
+      expect(mockHttpClient.get).toHaveBeenCalledWith('/users/123');
+      expect(mockCache.set).toHaveBeenCalledWith('user:123', apiUser, { ttl: 300 });
+    });
+  });
+
+  describe('updateUser', () =&gt; {
+    it('should update user and clear cache', async () =&gt; {
+      const userId = '123';
+      const updateData = { name: 'Jane' };
+      const updatedUser = { id: userId, name: 'Jane' };
+      
+      mockHttpClient.put.mockResolvedValue(updatedUser);
+
+      const result = await userService.updateUser(userId, updateData);
+
+      expect(result).toBe(updatedUser);
+      expect(mockHttpClient.put).toHaveBeenCalledWith('/users/123', updateData);
+      expect(mockCache.delete).toHaveBeenCalledWith('user:123');
+    });
+  });
+});
+</code></pre>
+<h3 id="模块隔离测试"><a class="header" href="#模块隔离测试">模块隔离测试</a></h3>
+<pre><code class="language-javascript">// testUtils.js - 测试工具
+export class ModuleTestEnvironment {
+  constructor() {
+    this.originalModules = new Map();
+    this.mockModules = new Map();
+  }
+
+  // 备份原始模块
+  backupModule(modulePath, moduleObject) {
+    this.originalModules.set(modulePath, moduleObject);
+  }
+
+  // 创建模块模拟
+  mockModule(modulePath, mockImplementation) {
+    this.mockModules.set(modulePath, mockImplementation);
+  }
+
+  // 恢复所有模块
+  restoreAll() {
+    this.originalModules.clear();
+    this.mockModules.clear();
+  }
+
+  // 获取模拟的模块
+  getMockedModule(modulePath) {
+    return this.mockModules.get(modulePath);
+  }
+}
+
+// 模块测试装饰器
+export function testModule(testFn) {
+  return async () =&gt; {
+    const env = new ModuleTestEnvironment();
+    
+    try {
+      await testFn(env);
+    } finally {
+      env.restoreAll();
+    }
+  };
+}
+
+// 使用示例
+import { testModule } from './testUtils.js';
+
+describe('Module Integration Tests', () =&gt; {
+  it('should handle module dependencies correctly', testModule(async (env) =&gt; {
+    // 模拟依赖模块
+    env.mockModule('./httpClient.js', {
+      get: vi.fn().mockResolvedValue({ data: 'mocked' }),
+      post: vi.fn().mockResolvedValue({ success: true })
+    });
+
+    env.mockModule('./logger.js', {
+      info: vi.fn(),
+      error: vi.fn()
+    });
+
+    // 导入并测试目标模块
+    const { DataService } = await import('./dataService.js');
+    const service = new DataService();
+    
+    const result = await service.fetchData();
+    expect(result.data).toBe('mocked');
+  }));
+});
+</code></pre>
+<h2 id="异步模块测试"><a class="header" href="#异步模块测试">异步模块测试</a></h2>
+<h3 id="动态导入测试"><a class="header" href="#动态导入测试">动态导入测试</a></h3>
+<pre><code class="language-javascript">// moduleLoader.js - 动态模块加载器
+export class ModuleLoader {
+  constructor() {
+    this.loadedModules = new Map();
+  }
+
+  async loadModule(modulePath) {
+    if (this.loadedModules.has(modulePath)) {
+      return this.loadedModules.get(modulePath);
+    }
+
+    try {
+      const module = await import(modulePath);
+      this.loadedModules.set(modulePath, module);
+      return module;
+    } catch (error) {
+      throw new Error(`Failed to load module ${modulePath}: ${error.message}`);
+    }
+  }
+
+  async loadModuleWithTimeout(modulePath, timeout = 5000) {
+    const timeoutPromise = new Promise((_, reject) =&gt;
+      setTimeout(() =&gt; reject(new Error('Module load timeout')), timeout)
+    );
+
+    return Promise.race([
+      this.loadModule(modulePath),
+      timeoutPromise
+    ]);
+  }
+
+  getLoadedModuleCount() {
+    return this.loadedModules.size;
+  }
+
+  clearCache() {
+    this.loadedModules.clear();
+  }
+}
+</code></pre>
+<pre><code class="language-javascript">// moduleLoader.test.js - 异步模块测试
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { ModuleLoader } from '../moduleLoader.js';
+
+describe('ModuleLoader', () =&gt; {
+  let loader;
+
+  beforeEach(() =&gt; {
+    loader = new ModuleLoader();
+  });
+
+  describe('loadModule', () =&gt; {
+    it('should load module successfully', async () =&gt; {
+      // 使用实际存在的模块进行测试
+      const module = await loader.loadModule('./testData/sampleModule.js');
+      
+      expect(module).toBeDefined();
+      expect(module.default).toBeDefined();
+      expect(loader.getLoadedModuleCount()).toBe(1);
+    });
+
+    it('should cache loaded modules', async () =&gt; {
+      const modulePath = './testData/sampleModule.js';
+      
+      const module1 = await loader.loadModule(modulePath);
+      const module2 = await loader.loadModule(modulePath);
+      
+      expect(module1).toBe(module2); // 应该是同一个对象
+      expect(loader.getLoadedModuleCount()).toBe(1);
+    });
+
+    it('should handle module load failure', async () =&gt; {
+      const invalidPath = './nonexistent/module.js';
+      
+      await expect(loader.loadModule(invalidPath))
+        .rejects
+        .toThrow(/Failed to load module/);
+    });
+  });
+
+  describe('loadModuleWithTimeout', () =&gt; {
+    it('should timeout when module takes too long to load', async () =&gt; {
+      // 模拟慢加载的模块
+      const slowModulePath = './testData/slowModule.js';
+      
+      await expect(loader.loadModuleWithTimeout(slowModulePath, 100))
+        .rejects
+        .toThrow('Module load timeout');
+    });
+  });
+});
+</code></pre>
+<h3 id="promise并发测试"><a class="header" href="#promise并发测试">Promise并发测试</a></h3>
+<pre><code class="language-javascript">// concurrentLoader.js - 并发模块加载器
+export class ConcurrentModuleLoader {
+  constructor(maxConcurrency = 3) {
+    this.maxConcurrency = maxConcurrency;
+    this.activeLoads = 0;
+    this.pendingLoads = [];
+    this.results = new Map();
+  }
+
+  async loadModules(modulePaths) {
+    const loadPromises = modulePaths.map(path =&gt; this.queueLoad(path));
+    
+    const results = await Promise.allSettled(loadPromises);
+    
+    return this.processResults(results, modulePaths);
+  }
+
+  async queueLoad(modulePath) {
+    if (this.results.has(modulePath)) {
+      return this.results.get(modulePath);
+    }
+
+    return new Promise((resolve, reject) =&gt; {
+      this.pendingLoads.push({ modulePath, resolve, reject });
+      this.processQueue();
+    });
+  }
+
+  async processQueue() {
+    if (this.activeLoads &gt;= this.maxConcurrency || this.pendingLoads.length === 0) {
+      return;
+    }
+
+    const { modulePath, resolve, reject } = this.pendingLoads.shift();
+    this.activeLoads++;
+
+    try {
+      const module = await import(modulePath);
+      this.results.set(modulePath, module);
+      resolve(module);
+    } catch (error) {
+      reject(error);
+    } finally {
+      this.activeLoads--;
+      this.processQueue();
+    }
+  }
+
+  processResults(results, modulePaths) {
+    const successful = [];
+    const failed = [];
+
+    results.forEach((result, index) =&gt; {
+      const modulePath = modulePaths[index];
+      
+      if (result.status === 'fulfilled') {
+        successful.push({ path: modulePath, module: result.value });
+      } else {
+        failed.push({ path: modulePath, error: result.reason });
+      }
+    });
+
+    return { successful, failed };
+  }
+}
+</code></pre>
+<pre><code class="language-javascript">// concurrentLoader.test.js - 并发测试
+import { describe, it, expect, beforeEach } from 'vitest';
+import { ConcurrentModuleLoader } from '../concurrentLoader.js';
+
+describe('ConcurrentModuleLoader', () =&gt; {
+  let loader;
+
+  beforeEach(() =&gt; {
+    loader = new ConcurrentModuleLoader(2); // 最大并发数为2
+  });
+
+  it('should load multiple modules concurrently', async () =&gt; {
+    const modulePaths = [
+      './testData/module1.js',
+      './testData/module2.js',
+      './testData/module3.js'
+    ];
+
+    const startTime = Date.now();
+    const result = await loader.loadModules(modulePaths);
+    const endTime = Date.now();
+
+    expect(result.successful).toHaveLength(3);
+    expect(result.failed).toHaveLength(0);
+    
+    // 验证并发加载确实更快
+    expect(endTime - startTime).toBeLessThan(3000); // 假设单个模块加载需要1秒
+  });
+
+  it('should handle mixed success and failure', async () =&gt; {
+    const modulePaths = [
+      './testData/validModule.js',
+      './nonexistent/module.js',
+      './testData/anotherValidModule.js'
+    ];
+
+    const result = await loader.loadModules(modulePaths);
+
+    expect(result.successful).toHaveLength(2);
+    expect(result.failed).toHaveLength(1);
+    
+    expect(result.failed[0].path).toBe('./nonexistent/module.js');
+  });
+
+  it('should respect concurrency limits', async () =&gt; {
+    const loader = new ConcurrentModuleLoader(1); // 限制为1
+    
+    let concurrentCount = 0;
+    let maxConcurrent = 0;
+
+    // 创建模拟模块路径
+    const modulePaths = Array.from({ length: 5 }, (_, i) =&gt; `./test${i}.js`);
+    
+    // 监控并发数
+    const originalImport = global.import;
+    global.import = async (path) =&gt; {
+      concurrentCount++;
+      maxConcurrent = Math.max(maxConcurrent, concurrentCount);
+      
+      await new Promise(resolve =&gt; setTimeout(resolve, 100));
+      
+      concurrentCount--;
+      return { default: `module-${path}` };
+    };
+
+    try {
+      await loader.loadModules(modulePaths);
+      expect(maxConcurrent).toBe(1);
+    } finally {
+      global.import = originalImport;
+    }
+  });
+});
+</code></pre>
+<h2 id="集成测试"><a class="header" href="#集成测试">集成测试</a></h2>
+<h3 id="模块间集成测试"><a class="header" href="#模块间集成测试">模块间集成测试</a></h3>
+<pre><code class="language-javascript">// integration.test.js - 集成测试
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+describe('Module Integration Tests', () =&gt; {
+  let testServer;
+  let testDatabase;
+
+  beforeEach(async () =&gt; {
+    // 启动测试环境
+    testDatabase = await startTestDatabase();
+    testServer = await startTestServer();
+  });
+
+  afterEach(async () =&gt; {
+    // 清理测试环境
+    await testServer.stop();
+    await testDatabase.cleanup();
+  });
+
+  it('should handle complete user workflow', async () =&gt; {
+    // 导入真实模块
+    const { UserService } = await import('../src/services/userService.js');
+    const { HttpClient } = await import('../src/http/httpClient.js');
+    const { RedisCache } = await import('../src/cache/redisCache.js');
+
+    // 创建真实的依赖实例
+    const httpClient = new HttpClient({
+      baseURL: testServer.url,
+      timeout: 5000
+    });
+
+    const cache = new RedisCache({
+      host: testDatabase.host,
+      port: testDatabase.port
+    });
+
+    const userService = new UserService(httpClient, cache);
+
+    // 测试完整的用户工作流
+    const userData = { name: 'Test User', email: 'test@example.com' };
+    
+    // 1. 创建用户
+    const createdUser = await userService.createUser(userData);
+    expect(createdUser.id).toBeDefined();
+
+    // 2. 获取用户（应该从API获取）
+    const fetchedUser = await userService.getUser(createdUser.id);
+    expect(fetchedUser.name).toBe(userData.name);
+
+    // 3. 再次获取用户（应该从缓存获取）
+    const cachedUser = await userService.getUser(createdUser.id);
+    expect(cachedUser.name).toBe(userData.name);
+
+    // 4. 更新用户
+    const updatedData = { name: 'Updated User' };
+    const updatedUser = await userService.updateUser(createdUser.id, updatedData);
+    expect(updatedUser.name).toBe(updatedData.name);
+
+    // 5. 验证缓存已被清除
+    const freshUser = await userService.getUser(createdUser.id);
+    expect(freshUser.name).toBe(updatedData.name);
+  });
+
+  it('should handle module loading failures gracefully', async () =&gt; {
+    // 模拟模块加载失败的情况
+    const { ModuleManager } = await import('../src/core/moduleManager.js');
+    
+    const manager = new ModuleManager();
+    
+    // 注册模块加载失败的处理器
+    const errorHandler = vi.fn();
+    manager.onModuleLoadError(errorHandler);
+
+    // 尝试加载不存在的模块
+    const result = await manager.loadOptionalModule('./nonexistent.js');
+    
+    expect(result).toBeNull();
+    expect(errorHandler).toHaveBeenCalled();
+  });
+});
+</code></pre>
+<h3 id="端到端测试"><a class="header" href="#端到端测试">端到端测试</a></h3>
+<pre><code class="language-javascript">// e2e.test.js - 端到端测试
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { chromium } from 'playwright';
+
+describe('End-to-End Module Tests', () =&gt; {
+  let browser;
+  let context;
+  let page;
+
+  beforeAll(async () =&gt; {
+    browser = await chromium.launch();
+    context = await browser.newContext();
+    page = await context.newPage();
+  });
+
+  afterAll(async () =&gt; {
+    await browser.close();
+  });
+
+  it('should load modules dynamically in browser', async () =&gt; {
+    // 访问测试页面
+    await page.goto('http://localhost:3000/test.html');
+
+    // 等待页面初始化
+    await page.waitForLoadState('networkidle');
+
+    // 触发动态模块加载
+    await page.click('[data-testid="load-chart-module"]');
+
+    // 等待模块加载完成
+    await page.waitForSelector('[data-testid="chart-container"]');
+
+    // 验证模块功能
+    const chartTitle = await page.textContent('[data-testid="chart-title"]');
+    expect(chartTitle).toBe('Sales Chart');
+
+    // 验证模块间通信
+    await page.click('[data-testid="update-chart-data"]');
+    
+    await page.waitForFunction(() =&gt; {
+      const chart = document.querySelector('[data-testid="chart-container"]');
+      return chart &amp;&amp; chart.dataset.updated === 'true';
+    });
+
+    const updatedData = await page.getAttribute('[data-testid="chart-container"]', 'data-points');
+    expect(parseInt(updatedData)).toBeGreaterThan(0);
+  });
+
+  it('should handle module load errors gracefully', async () =&gt; {
+    await page.goto('http://localhost:3000/error-test.html');
+
+    // 模拟网络故障
+    await page.route('**/modules/broken-module.js', route =&gt; {
+      route.fulfill({ status: 500, body: 'Server Error' });
+    });
+
+    // 触发有问题的模块加载
+    await page.click('[data-testid="load-broken-module"]');
+
+    // 验证错误处理
+    await page.waitForSelector('[data-testid="error-message"]');
+    
+    const errorMessage = await page.textContent('[data-testid="error-message"]');
+    expect(errorMessage).toContain('Module failed to load');
+
+    // 验证fallback机制
+    await page.waitForSelector('[data-testid="fallback-content"]');
+    
+    const fallbackText = await page.textContent('[data-testid="fallback-content"]');
+    expect(fallbackText).toBe('Using fallback implementation');
+  });
+});
+</code></pre>
+<h2 id="性能测试"><a class="header" href="#性能测试">性能测试</a></h2>
+<h3 id="模块加载性能测试"><a class="header" href="#模块加载性能测试">模块加载性能测试</a></h3>
+<pre><code class="language-javascript">// performance.test.js - 性能测试
+import { describe, it, expect } from 'vitest';
+import { performance } from 'perf_hooks';
+
+describe('Module Performance Tests', () =&gt; {
+  it('should load modules within acceptable time limits', async () =&gt; {
+    const moduleLoads = [
+      './src/modules/chart.js',
+      './src/modules/table.js',
+      './src/modules/form.js',
+      './src/modules/validation.js'
+    ];
+
+    const startTime = performance.now();
+    
+    const loadPromises = moduleLoads.map(async (modulePath) =&gt; {
+      const moduleStartTime = performance.now();
+      const module = await import(modulePath);
+      const moduleEndTime = performance.now();
+      
+      return {
+        path: modulePath,
+        loadTime: moduleEndTime - moduleStartTime,
+        module
+      };
+    });
+
+    const results = await Promise.all(loadPromises);
+    const totalTime = performance.now() - startTime;
+
+    // 验证总加载时间
+    expect(totalTime).toBeLessThan(2000); // 2秒内
+
+    // 验证单个模块加载时间
+    results.forEach(result =&gt; {
+      expect(result.loadTime).toBeLessThan(500); // 每个模块500ms内
+      expect(result.module).toBeDefined();
+    });
+
+    // 验证并发加载确实比串行快
+    const averageTime = totalTime / results.length;
+    expect(averageTime).toBeLessThan(totalTime);
+  });
+
+  it('should handle memory usage efficiently', async () =&gt; {
+    const initialMemory = process.memoryUsage();
+    
+    // 加载大量模块
+    const modulePromises = Array.from({ length: 50 }, (_, i) =&gt; 
+      import(`./testData/module${i % 5}.js`) // 重复使用5个模块
+    );
+
+    await Promise.all(modulePromises);
+
+    const finalMemory = process.memoryUsage();
+    const memoryIncrease = finalMemory.heapUsed - initialMemory.heapUsed;
+
+    // 验证内存增长在合理范围内（考虑模块缓存）
+    expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024); // 50MB
+  });
+
+  it('should demonstrate efficient module caching', async () =&gt; {
+    const modulePath = './src/modules/heavyModule.js';
+    
+    // 第一次加载
+    const firstLoadStart = performance.now();
+    const firstModule = await import(modulePath);
+    const firstLoadTime = performance.now() - firstLoadStart;
+
+    // 第二次加载（应该从缓存获取）
+    const secondLoadStart = performance.now();
+    const secondModule = await import(modulePath);
+    const secondLoadTime = performance.now() - secondLoadStart;
+
+    // 验证缓存效果
+    expect(secondModule).toBe(firstModule); // 同一个对象
+    expect(secondLoadTime).toBeLessThan(firstLoadTime * 0.1); // 缓存加载应该快很多
+  });
+});
+</code></pre>
+<h2 id="测试工具与配置"><a class="header" href="#测试工具与配置">测试工具与配置</a></h2>
+<h3 id="测试环境配置"><a class="header" href="#测试环境配置">测试环境配置</a></h3>
+<pre><code class="language-javascript">// vitest.config.js - 测试配置
+import { defineConfig } from 'vitest/config';
+import path from 'path';
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./tests/setup.js'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      exclude: [
+        'node_modules/',
+        'tests/',
+        '**/*.test.js',
+        '**/*.config.js'
+      ]
+    },
+    // 模块解析配置
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@tests': path.resolve(__dirname, './tests')
+    },
+    // 超时配置
+    testTimeout: 10000,
+    hookTimeout: 10000
+  },
+  // 模块转换配置
+  esbuild: {
+    target: 'es2020'
+  }
+});
+</code></pre>
+<pre><code class="language-javascript">// tests/setup.js - 测试设置
+import { vi } from 'vitest';
+
+// 全局模拟
+global.fetch = vi.fn();
+
+// 模拟浏览器API
+Object.defineProperty(window, 'performance', {
+  value: {
+    now: vi.fn(() =&gt; Date.now()),
+    mark: vi.fn(),
+    measure: vi.fn()
+  }
+});
+
+// 模拟动态导入
+const originalImport = global.import;
+global.import = vi.fn().mockImplementation((path) =&gt; {
+  // 对测试模块使用真实导入
+  if (path.startsWith('./testData/') || path.startsWith('../')) {
+    return originalImport(path);
+  }
+  
+  // 对其他模块返回模拟
+  return Promise.resolve({
+    default: `mocked-${path}`,
+    __esModule: true
+  });
+});
+
+// 清理函数
+afterEach(() =&gt; {
+  vi.clearAllMocks();
+});
+</code></pre>
+<h3 id="测试数据生成"><a class="header" href="#测试数据生成">测试数据生成</a></h3>
+<pre><code class="language-javascript">// tests/testDataGenerator.js - 测试数据生成器
+export class TestDataGenerator {
+  static createMockModule(name, exports = {}) {
+    return {
+      default: exports.default || (() =&gt; `Mock ${name}`),
+      ...exports,
+      __moduleName: name,
+      __isMock: true
+    };
+  }
+
+  static createModuleTree(depth = 3, breadth = 3) {
+    const tree = {
+      modules: new Map(),
+      dependencies: new Map()
+    };
+
+    for (let i = 0; i &lt; breadth; i++) {
+      const moduleName = `level0-module${i}`;
+      const module = this.createMockModule(moduleName);
+      
+      tree.modules.set(moduleName, module);
+      
+      if (depth &gt; 1) {
+        const children = this.createModuleTree(depth - 1, breadth);
+        tree.dependencies.set(moduleName, Array.from(children.modules.keys()));
+        
+        // 合并子模块
+        children.modules.forEach((module, name) =&gt; {
+          tree.modules.set(name, module);
+        });
+        
+        children.dependencies.forEach((deps, name) =&gt; {
+          tree.dependencies.set(name, deps);
+        });
+      }
+    }
+
+    return tree;
+  }
+
+  static async createAsyncModules(count = 10) {
+    const modules = [];
+    
+    for (let i = 0; i &lt; count; i++) {
+      const delay = Math.random() * 1000; // 0-1秒随机延迟
+      
+      const module = await new Promise(resolve =&gt; {
+        setTimeout(() =&gt; {
+          resolve(this.createMockModule(`async-module-${i}`, {
+            loadTime: delay,
+            id: i
+          }));
+        }, delay);
+      });
+      
+      modules.push(module);
+    }
+
+    return modules;
+  }
+}
+</code></pre>
+<p>通过这些全面的测试策略和工具，可以确保模块化代码的质量和可靠性，从单元测试到集成测试，从功能验证到性能监控，形成完整的测试体系。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../best-practices/error-handling.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../advanced/microfrontends.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../best-practices/error-handling.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../advanced/microfrontends.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

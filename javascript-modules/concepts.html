@@ -1,0 +1,791 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>模块化的核心概念 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="模块化的核心概念"><a class="header" href="#模块化的核心概念">模块化的核心概念</a></h1>
+<p>本章将介绍 JavaScript 模块化的基础概念，帮助你建立对模块系统的整体认知。</p>
+<h2 id="什么是模块"><a class="header" href="#什么是模块">什么是模块</a></h2>
+<p><strong>模块（Module）</strong> 是一个独立的、可复用的代码单元，它封装了特定的功能，并可以与其他模块进行交互。</p>
+<h3 id="模块的基本特征"><a class="header" href="#模块的基本特征">模块的基本特征</a></h3>
+<ol>
+<li><strong>封装性</strong>: 模块内部实现细节对外部不可见</li>
+<li><strong>独立性</strong>: 模块具有独立的作用域</li>
+<li><strong>可复用性</strong>: 可以在多个地方使用同一个模块</li>
+<li><strong>接口明确</strong>: 通过明确的接口进行交互</li>
+</ol>
+<pre><code class="language-javascript">// 一个简单的模块示例
+// math.js
+const PI = 3.14159;
+
+function add(a, b) {
+    return a + b;
+}
+
+function multiply(a, b) {
+    return a * b;
+}
+
+// 对外提供的接口
+export { add, multiply, PI };
+</code></pre>
+<h2 id="模块系统的核心组成"><a class="header" href="#模块系统的核心组成">模块系统的核心组成</a></h2>
+<h3 id="1-模块定义module-definition"><a class="header" href="#1-模块定义module-definition">1. 模块定义（Module Definition）</a></h3>
+<p>模块定义规定了如何创建和组织模块：</p>
+<pre><code class="language-javascript">// ES6 模块定义
+// user.js
+class User {
+    constructor(name, email) {
+        this.name = name;
+        this.email = email;
+    }
+    
+    getInfo() {
+        return `${this.name} &lt;${this.email}&gt;`;
+    }
+}
+
+// 导出模块
+export default User;
+export { User as UserClass };
+</code></pre>
+<h3 id="2-模块导入module-import"><a class="header" href="#2-模块导入module-import">2. 模块导入（Module Import）</a></h3>
+<p>定义如何使用其他模块的功能：</p>
+<pre><code class="language-javascript">// app.js
+import User from './user.js';              // 导入默认导出
+import { UserClass } from './user.js';     // 导入命名导出
+import * as UserModule from './user.js';   // 导入所有导出
+
+const user = new User('John', 'john@example.com');
+</code></pre>
+<h3 id="3-模块解析module-resolution"><a class="header" href="#3-模块解析module-resolution">3. 模块解析（Module Resolution）</a></h3>
+<p>规定如何查找和加载模块：</p>
+<pre><code class="language-javascript">// 不同的模块路径解析
+import utils from './utils.js';           // 相对路径
+import lodash from 'lodash';              // npm 包
+import config from '../config/app.js';   // 相对路径（上级目录）
+import api from '/src/api/index.js';     // 绝对路径
+</code></pre>
+<h3 id="4-模块加载module-loading"><a class="header" href="#4-模块加载module-loading">4. 模块加载（Module Loading）</a></h3>
+<p>模块系统决定何时以及如何加载模块：</p>
+<pre><code class="language-javascript">// 静态导入（编译时确定）
+import { calculateTax } from './tax-utils.js';
+
+// 动态导入（运行时确定）
+const loadTaxUtils = async () =&gt; {
+    const module = await import('./tax-utils.js');
+    return module.calculateTax;
+};
+</code></pre>
+<h2 id="模块的作用域module-scope"><a class="header" href="#模块的作用域module-scope">模块的作用域（Module Scope）</a></h2>
+<h3 id="作用域隔离"><a class="header" href="#作用域隔离">作用域隔离</a></h3>
+<p>每个模块都有自己的作用域，不会污染全局作用域：</p>
+<pre><code class="language-javascript">// module1.js
+const message = 'Hello from module1';
+let counter = 0;
+
+export function increment() {
+    counter++;
+    console.log(`Module1 counter: ${counter}`);
+}
+
+// module2.js  
+const message = 'Hello from module2'; // 不会与 module1 冲突
+let counter = 100;
+
+export function increment() {
+    counter++;
+    console.log(`Module2 counter: ${counter}`);
+}
+</code></pre>
+<h3 id="私有和公开成员"><a class="header" href="#私有和公开成员">私有和公开成员</a></h3>
+<pre><code class="language-javascript">// user-service.js
+// 私有成员（不导出）
+const API_KEY = 'secret-key';
+const cache = new Map();
+
+function validateUser(user) {
+    return user &amp;&amp; user.name &amp;&amp; user.email;
+}
+
+// 公开成员（导出）
+export class UserService {
+    async getUser(id) {
+        if (cache.has(id)) {
+            return cache.get(id);
+        }
+        
+        const user = await fetch(`/api/users/${id}`, {
+            headers: { 'Authorization': API_KEY }
+        }).then(r =&gt; r.json());
+        
+        if (validateUser(user)) {
+            cache.set(id, user);
+            return user;
+        }
+        
+        throw new Error('Invalid user data');
+    }
+}
+</code></pre>
+<h2 id="模块依赖关系"><a class="header" href="#模块依赖关系">模块依赖关系</a></h2>
+<h3 id="依赖图dependency-graph"><a class="header" href="#依赖图dependency-graph">依赖图（Dependency Graph）</a></h3>
+<p>模块之间的依赖关系构成了一个有向图：</p>
+<pre><code class="language-javascript">// 依赖关系示例
+// app.js → user-controller.js → user-service.js → api-client.js
+
+// api-client.js
+export class ApiClient {
+    async get(url) { /* ... */ }
+    async post(url, data) { /* ... */ }
+}
+
+// user-service.js
+import { ApiClient } from './api-client.js';
+
+export class UserService {
+    constructor() {
+        this.apiClient = new ApiClient();
+    }
+}
+
+// user-controller.js
+import { UserService } from './user-service.js';
+
+export class UserController {
+    constructor() {
+        this.userService = new UserService();
+    }
+}
+
+// app.js
+import { UserController } from './user-controller.js';
+
+const userController = new UserController();
+</code></pre>
+<h3 id="循环依赖问题"><a class="header" href="#循环依赖问题">循环依赖问题</a></h3>
+<p>循环依赖是模块化中需要避免的问题：</p>
+<pre><code class="language-javascript">// 问题示例：循环依赖
+// moduleA.js
+import { functionB } from './moduleB.js';
+
+export function functionA() {
+    return functionB() + 1;
+}
+
+// moduleB.js
+import { functionA } from './moduleA.js'; // 循环依赖！
+
+export function functionB() {
+    return functionA() + 1; // 将导致错误
+}
+</code></pre>
+<p><strong>解决方案</strong>：</p>
+<pre><code class="language-javascript">// 方案 1：提取公共依赖
+// common.js
+export function baseFunction() {
+    return 42;
+}
+
+// moduleA.js
+import { baseFunction } from './common.js';
+
+export function functionA() {
+    return baseFunction() + 1;
+}
+
+// moduleB.js
+import { baseFunction } from './common.js';
+
+export function functionB() {
+    return baseFunction() + 2;
+}
+</code></pre>
+<h2 id="模块的生命周期"><a class="header" href="#模块的生命周期">模块的生命周期</a></h2>
+<h3 id="1-模块加载阶段"><a class="header" href="#1-模块加载阶段">1. 模块加载阶段</a></h3>
+<pre><code class="language-javascript">// 模块被首次导入时执行
+console.log('Module initializing...');
+
+const config = {
+    apiUrl: process.env.API_URL || 'http://localhost:3000'
+};
+
+export { config };
+</code></pre>
+<h3 id="2-模块缓存"><a class="header" href="#2-模块缓存">2. 模块缓存</a></h3>
+<p>模块只会被加载和执行一次，后续导入会使用缓存：</p>
+<pre><code class="language-javascript">// counter.js
+let count = 0;
+
+export function increment() {
+    return ++count;
+}
+
+export function getCount() {
+    return count;
+}
+
+// main.js
+import { increment, getCount } from './counter.js';
+import { increment as inc2 } from './counter.js'; // 同一个模块实例
+
+console.log(increment()); // 1
+console.log(inc2());      // 2 (共享状态)
+console.log(getCount());  // 2
+</code></pre>
+<h2 id="模块化设计原则"><a class="header" href="#模块化设计原则">模块化设计原则</a></h2>
+<h3 id="1-单一职责原则srp"><a class="header" href="#1-单一职责原则srp">1. 单一职责原则（SRP）</a></h3>
+<p>每个模块应该只有一个明确的职责：</p>
+<pre><code class="language-javascript">// 好的示例：单一职责
+// email-validator.js - 只负责邮箱验证
+export function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// password-validator.js - 只负责密码验证
+export function validatePassword(password) {
+    return password.length &gt;= 8 &amp;&amp; /[A-Z]/.test(password);
+}
+</code></pre>
+<h3 id="2-接口隔离原则isp"><a class="header" href="#2-接口隔离原则isp">2. 接口隔离原则（ISP）</a></h3>
+<p>模块应该提供精细化的接口：</p>
+<pre><code class="language-javascript">// user-operations.js
+export { createUser } from './user-create.js';
+export { updateUser } from './user-update.js';
+export { deleteUser } from './user-delete.js';
+export { findUser } from './user-query.js';
+
+// 使用者可以按需导入
+import { createUser, findUser } from './user-operations.js';
+</code></pre>
+<h3 id="3-依赖倒置原则dip"><a class="header" href="#3-依赖倒置原则dip">3. 依赖倒置原则（DIP）</a></h3>
+<p>高层模块不应该依赖于低层模块，都应该依赖于抽象：</p>
+<pre><code class="language-javascript">// 抽象接口
+// storage-interface.js
+export class StorageInterface {
+    async save(key, value) {
+        throw new Error('Method must be implemented');
+    }
+    
+    async load(key) {
+        throw new Error('Method must be implemented');
+    }
+}
+
+// 具体实现
+// local-storage.js
+import { StorageInterface } from './storage-interface.js';
+
+export class LocalStorage extends StorageInterface {
+    async save(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+    
+    async load(key) {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : null;
+    }
+}
+
+// 高层模块
+// user-service.js
+export class UserService {
+    constructor(storage) { // 依赖抽象，而非具体实现
+        this.storage = storage;
+    }
+    
+    async saveUser(user) {
+        await this.storage.save(`user_${user.id}`, user);
+    }
+}
+</code></pre>
+<h2 id="主流模块系统对比"><a class="header" href="#主流模块系统对比">主流模块系统对比</a></h2>
+<p>在了解了模块化的核心概念后，让我们来对比一下 JavaScript 生态系统中的主要模块系统：</p>
+<h3 id="基本特性对比"><a class="header" href="#基本特性对比">基本特性对比</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>特性</th><th>ES Modules (ESM)</th><th>CommonJS (CJS)</th><th>AMD</th><th>UMD</th><th>RequireJS</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>标准状态</strong></td><td>✅ ECMA标准</td><td>❌ Node.js事实标准</td><td>❌ 社区标准</td><td>❌ 社区标准</td><td>❌ 库实现</td></tr>
+<tr><td><strong>首次发布</strong></td><td>2015 (ES6)</td><td>2009</td><td>2011</td><td>2013</td><td>2010</td></tr>
+<tr><td><strong>加载方式</strong></td><td>静态 + 动态</td><td>同步</td><td>异步</td><td>通用</td><td>异步</td></tr>
+<tr><td><strong>运行环境</strong></td><td>浏览器 + Node.js</td><td>Node.js 主要</td><td>浏览器主要</td><td>通用</td><td>浏览器主要</td></tr>
+<tr><td><strong>语法复杂度</strong></td><td>简单</td><td>简单</td><td>中等</td><td>复杂</td><td>中等</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="语法对比"><a class="header" href="#语法对比">语法对比</a></h3>
+<h4 id="模块定义语法"><a class="header" href="#模块定义语法"><strong>模块定义语法</strong></a></h4>
+<pre><code class="language-javascript">// ===== ES Modules (ESM) =====
+// 命名导出
+export const PI = 3.14159;
+export function add(a, b) { return a + b; }
+
+// 默认导出
+export default class Calculator {
+  multiply(a, b) { return a * b; }
+}
+
+// ===== CommonJS (CJS) =====
+// 导出
+const PI = 3.14159;
+function add(a, b) { return a + b; }
+
+module.exports = { PI, add };
+// 或者
+exports.PI = PI;
+exports.add = add;
+
+// 默认导出
+module.exports = class Calculator {
+  multiply(a, b) { return a * b; }
+};
+
+// ===== AMD =====
+define(['dependency1', 'dependency2'], function(dep1, dep2) {
+  const PI = 3.14159;
+  
+  function add(a, b) { return a + b; }
+  
+  class Calculator {
+    multiply(a, b) { return a * b; }
+  }
+  
+  return {
+    PI,
+    add,
+    Calculator
+  };
+});
+
+// ===== UMD =====
+(function (root, factory) {
+  if (typeof define === 'function' &amp;&amp; define.amd) {
+    // AMD
+    define(['dependency'], factory);
+  } else if (typeof module === 'object' &amp;&amp; module.exports) {
+    // CommonJS
+    module.exports = factory(require('dependency'));
+  } else {
+    // Browser globals
+    root.MyModule = factory(root.Dependency);
+  }
+}(typeof self !== 'undefined' ? self : this, function (dependency) {
+  const PI = 3.14159;
+  
+  function add(a, b) { return a + b; }
+  
+  return { PI, add };
+}));
+
+// ===== RequireJS =====
+// 定义模块
+define('math-utils', ['jquery'], function($) {
+  const PI = 3.14159;
+  
+  function add(a, b) { return a + b; }
+  
+  return {
+    PI: PI,
+    add: add
+  };
+});
+</code></pre>
+<h4 id="模块导入语法"><a class="header" href="#模块导入语法"><strong>模块导入语法</strong></a></h4>
+<pre><code class="language-javascript">// ===== ES Modules (ESM) =====
+import Calculator, { PI, add } from './math.js';
+import * as MathUtils from './math.js';
+
+// 动态导入
+const module = await import('./math.js');
+
+// ===== CommonJS (CJS) =====
+const { PI, add } = require('./math');
+const Calculator = require('./math');
+const MathUtils = require('./math');
+
+// ===== AMD =====
+require(['./math'], function(MathUtils) {
+  console.log(MathUtils.PI);
+});
+
+// ===== RequireJS =====
+requirejs.config({
+  paths: {
+    'math': './math'
+  }
+});
+
+requirejs(['math'], function(MathUtils) {
+  console.log(MathUtils.PI);
+});
+</code></pre>
+<h3 id="技术特性对比"><a class="header" href="#技术特性对比">技术特性对比</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>特性</th><th>ESM</th><th>CommonJS</th><th>AMD</th><th>UMD</th><th>RequireJS</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Tree Shaking</strong></td><td>✅ 原生支持</td><td>❌ 需工具支持</td><td>❌ 有限支持</td><td>❌ 不支持</td><td>❌ 不支持</td></tr>
+<tr><td><strong>静态分析</strong></td><td>✅ 编译时确定</td><td>❌ 运行时确定</td><td>❌ 运行时确定</td><td>❌ 运行时确定</td><td>❌ 运行时确定</td></tr>
+<tr><td><strong>循环依赖</strong></td><td>✅ 原生处理</td><td>⚠️ 部分支持</td><td>⚠️ 部分支持</td><td>⚠️ 部分支持</td><td>⚠️ 部分支持</td></tr>
+<tr><td><strong>代码分割</strong></td><td>✅ 动态导入</td><td>❌ 不支持</td><td>✅ 异步加载</td><td>❌ 取决于环境</td><td>✅ 异步加载</td></tr>
+<tr><td><strong>浏览器支持</strong></td><td>✅ 现代浏览器</td><td>❌ 需要打包</td><td>✅ 直接支持</td><td>✅ 通用支持</td><td>✅ 直接支持</td></tr>
+<tr><td><strong>Node.js支持</strong></td><td>✅ v12+</td><td>✅ 原生支持</td><td>❌ 需要库</td><td>✅ 通过包装</td><td>❌ 需要库</td></tr>
+<tr><td><strong>打包工具支持</strong></td><td>✅ 广泛支持</td><td>✅ 广泛支持</td><td>⚠️ 部分支持</td><td>✅ 广泛支持</td><td>⚠️ 特定工具</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="性能对比"><a class="header" href="#性能对比">性能对比</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>指标</th><th>ESM</th><th>CommonJS</th><th>AMD</th><th>UMD</th><th>RequireJS</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>加载性能</strong></td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+<tr><td><strong>解析速度</strong></td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐</td><td>⭐⭐⭐</td></tr>
+<tr><td><strong>运行时开销</strong></td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐</td><td>⭐⭐⭐</td></tr>
+<tr><td><strong>打包体积</strong></td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐</td><td>⭐⭐⭐</td></tr>
+<tr><td><strong>启动时间</strong></td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="适用场景"><a class="header" href="#适用场景">适用场景</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>模块系统</th><th>最佳适用场景</th><th>不适用场景</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>ES Modules</strong></td><td>• 现代Web应用<br>• Node.js新项目<br>• 需要Tree Shaking<br>• 库开发</td><td>• 旧浏览器支持<br>• 旧版Node.js项目</td></tr>
+<tr><td><strong>CommonJS</strong></td><td>• Node.js服务端<br>• 现有Node.js项目<br>• npm包开发</td><td>• 浏览器直接使用<br>• 需要异步加载</td></tr>
+<tr><td><strong>AMD</strong></td><td>• 浏览器应用<br>• 需要异步加载<br>• 复杂依赖关系</td><td>• Node.js环境<br>• 简单项目</td></tr>
+<tr><td><strong>UMD</strong></td><td>• 跨平台库<br>• 向后兼容<br>• 第三方库发布</td><td>• 现代应用开发<br>• 性能敏感应用</td></tr>
+<tr><td><strong>RequireJS</strong></td><td>• 旧版浏览器应用<br>• 渐进式升级<br>• 教学演示</td><td>• 新项目开发<br>• 现代工具链</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="生态系统支持"><a class="header" href="#生态系统支持">生态系统支持</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>方面</th><th>ESM</th><th>CommonJS</th><th>AMD</th><th>UMD</th><th>RequireJS</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>框架支持</strong></td><td>React, Vue, Angular等</td><td>Express, Koa等</td><td>部分旧框架</td><td>通用支持</td><td>旧版库</td></tr>
+<tr><td><strong>工具链</strong></td><td>Webpack, Vite, Rollup</td><td>Webpack, Browserify</td><td>r.js, Webpack</td><td>所有打包工具</td><td>r.js优化器</td></tr>
+<tr><td><strong>TypeScript</strong></td><td>✅ 完全支持</td><td>✅ 完全支持</td><td>⚠️ 配置复杂</td><td>⚠️ 类型推导难</td><td>⚠️ 配置复杂</td></tr>
+<tr><td><strong>测试工具</strong></td><td>Jest, Vitest等</td><td>Jest, Mocha等</td><td>特定配置</td><td>需要适配</td><td>特定配置</td></tr>
+<tr><td><strong>CDN支持</strong></td><td>Skypack, esm.sh</td><td>需要打包</td><td>jsDelivr等</td><td>广泛支持</td><td>jsDelivr等</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="迁移路径"><a class="header" href="#迁移路径">迁移路径</a></h3>
+<pre><code class="language-javascript">// 从 CommonJS 迁移到 ESM
+// Before (CommonJS)
+const express = require('express');
+const { createUser } = require('./user-service');
+
+module.exports = {
+  startServer: () =&gt; {
+    const app = express();
+    // ...
+  }
+};
+
+// After (ESM)
+import express from 'express';
+import { createUser } from './user-service.js';
+
+export function startServer() {
+  const app = express();
+  // ...
+}
+
+// 从 AMD 迁移到 ESM
+// Before (AMD)
+define(['lodash', './utils'], function(_, utils) {
+  return {
+    processData: function(data) {
+      return _.map(data, utils.transform);
+    }
+  };
+});
+
+// After (ESM)
+import _ from 'lodash';
+import { transform } from './utils.js';
+
+export function processData(data) {
+  return _.map(data, transform);
+}
+</code></pre>
+<h3 id="未来趋势"><a class="header" href="#未来趋势">未来趋势</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>趋势</th><th>说明</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>ESM 标准化</strong></td><td>成为唯一标准</td><td>其他系统逐步淘汰</td></tr>
+<tr><td><strong>原生支持增强</strong></td><td>浏览器和Node.js完全支持</td><td>减少工具依赖</td></tr>
+<tr><td><strong>Import Maps</strong></td><td>标准化模块映射</td><td>简化依赖管理</td></tr>
+<tr><td><strong>动态导入普及</strong></td><td>代码分割标准化</td><td>提升应用性能</td></tr>
+<tr><td><strong>工具链整合</strong></td><td>围绕ESM构建</td><td>开发体验提升</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>模块化的核心概念包括：</p>
+<ul>
+<li>✅ <strong>模块定义</strong>: 如何创建和组织模块</li>
+<li>✅ <strong>导入导出</strong>: 模块间的接口交互</li>
+<li>✅ <strong>作用域隔离</strong>: 保证模块独立性</li>
+<li>✅ <strong>依赖管理</strong>: 构建清晰的依赖关系</li>
+<li>✅ <strong>设计原则</strong>: 遵循良好的模块化实践</li>
+</ul>
+<h3 id="选择建议"><a class="header" href="#选择建议">选择建议</a></h3>
+<ul>
+<li><strong>新项目</strong>: 优先选择 <strong>ES Modules</strong></li>
+<li><strong>Node.js服务</strong>: <strong>CommonJS</strong> 仍然是主流，但可考虑 <strong>ESM</strong></li>
+<li><strong>库开发</strong>: <strong>ESM</strong> + <strong>UMD</strong> 兼容发布</li>
+<li><strong>旧项目维护</strong>: 渐进式迁移到 <strong>ESM</strong></li>
+<li><strong>浏览器兼容</strong>: 使用构建工具将 <strong>ESM</strong> 转译为合适格式</li>
+</ul>
+<p>理解这些核心概念和各系统的特点是掌握任何模块系统的基础。在接下来的章节中，我们将深入探讨具体的模块系统实现。</p>
+<hr>
+<p><strong>下一章</strong>: <a href="./esm/basics.html">ES模块基础</a> →</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="why-modules.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="esm/basics.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="why-modules.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="esm/basics.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

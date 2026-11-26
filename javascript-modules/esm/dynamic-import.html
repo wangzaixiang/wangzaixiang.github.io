@@ -1,0 +1,959 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>动态导入 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="动态导入"><a class="header" href="#动态导入">动态导入</a></h1>
+<p>动态导入（Dynamic Import）是ES2020引入的功能，允许在运行时按需加载模块。与静态导入不同，动态导入提供了更大的灵活性，支持条件加载、懒加载和代码分割等高级用法。</p>
+<h2 id="基本语法"><a class="header" href="#基本语法">基本语法</a></h2>
+<h3 id="import-函数"><a class="header" href="#import-函数">import() 函数</a></h3>
+<pre><code class="language-javascript">// 基本动态导入语法
+import('./module.js')
+    .then(module =&gt; {
+        // 使用导入的模块
+        console.log(module.default);
+        console.log(module.namedExport);
+    })
+    .catch(err =&gt; {
+        console.error('Failed to load module:', err);
+    });
+
+// 使用 async/await
+async function loadModule() {
+    try {
+        const module = await import('./module.js');
+        return module;
+    } catch (error) {
+        console.error('Module loading failed:', error);
+        throw error;
+    }
+}
+</code></pre>
+<h3 id="顶层-await-与动态导入"><a class="header" href="#顶层-await-与动态导入">顶层 await 与动态导入</a></h3>
+<pre><code class="language-javascript">// top-level-await.js
+// 在支持顶层await的环境中使用
+
+// 条件性加载模块
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+if (isDevelopment) {
+    const devTools = await import('./dev-tools.js');
+    devTools.setup();
+    console.log('Development tools loaded');
+}
+
+// 动态选择实现
+const preferredImplementation = getPreferredImplementation();
+const implementation = await import(`./implementations/${preferredImplementation}.js`);
+
+export default implementation.default;
+</code></pre>
+<h2 id="动态导入的应用场景"><a class="header" href="#动态导入的应用场景">动态导入的应用场景</a></h2>
+<h3 id="1-条件加载"><a class="header" href="#1-条件加载">1. 条件加载</a></h3>
+<pre><code class="language-javascript">// conditional-loading.js
+
+// 根据用户权限加载不同的模块
+async function loadUserInterface(userRole) {
+    switch (userRole) {
+        case 'admin':
+            const adminUI = await import('./admin-ui.js');
+            return adminUI.default;
+            
+        case 'moderator':
+            const modUI = await import('./moderator-ui.js');
+            return modUI.default;
+            
+        case 'user':
+        default:
+            const userUI = await import('./user-ui.js');
+            return userUI.default;
+    }
+}
+
+// 根据功能特性加载polyfill
+async function loadPolyfills() {
+    const promises = [];
+    
+    if (!('IntersectionObserver' in window)) {
+        promises.push(import('./polyfills/intersection-observer.js'));
+    }
+    
+    if (!('fetch' in window)) {
+        promises.push(import('./polyfills/fetch.js'));
+    }
+    
+    if (!('Promise' in window)) {
+        promises.push(import('./polyfills/promise.js'));
+    }
+    
+    return Promise.all(promises);
+}
+
+// 使用示例
+const user = getCurrentUser();
+const ui = await loadUserInterface(user.role);
+ui.render(document.body);
+</code></pre>
+<h3 id="2-懒加载和代码分割"><a class="header" href="#2-懒加载和代码分割">2. 懒加载和代码分割</a></h3>
+<pre><code class="language-javascript">// lazy-loading.js
+
+// 路由懒加载
+const routes = {
+    '/': () =&gt; import('./pages/Home.js'),
+    '/about': () =&gt; import('./pages/About.js'),
+    '/contact': () =&gt; import('./pages/Contact.js'),
+    '/dashboard': () =&gt; import('./pages/Dashboard.js'),
+    '/settings': () =&gt; import('./pages/Settings.js')
+};
+
+async function navigateTo(path) {
+    const loadPage = routes[path];
+    
+    if (!loadPage) {
+        throw new Error(`No route found for ${path}`);
+    }
+    
+    try {
+        const pageModule = await loadPage();
+        const page = new pageModule.default();
+        
+        // 清理当前页面
+        clearCurrentPage();
+        
+        // 渲染新页面
+        page.render(document.getElementById('app'));
+        
+        // 更新浏览器历史
+        history.pushState({}, '', path);
+    } catch (error) {
+        console.error(`Failed to load page ${path}:`, error);
+        showErrorPage();
+    }
+}
+
+// 组件懒加载
+class ComponentLoader {
+    constructor() {
+        this.cache = new Map();
+    }
+    
+    async loadComponent(name) {
+        // 检查缓存
+        if (this.cache.has(name)) {
+            return this.cache.get(name);
+        }
+        
+        try {
+            const module = await import(`./components/${name}.js`);
+            const component = module.default;
+            
+            // 缓存组件
+            this.cache.set(name, component);
+            
+            return component;
+        } catch (error) {
+            console.error(`Failed to load component ${name}:`, error);
+            return null;
+        }
+    }
+}
+
+const loader = new ComponentLoader();
+
+// 使用示例
+document.addEventListener('click', async (event) =&gt; {
+    if (event.target.dataset.component) {
+        const componentName = event.target.dataset.component;
+        const Component = await loader.loadComponent(componentName);
+        
+        if (Component) {
+            const instance = new Component();
+            instance.mount(event.target.parentElement);
+        }
+    }
+});
+</code></pre>
+<h3 id="3-插件系统"><a class="header" href="#3-插件系统">3. 插件系统</a></h3>
+<pre><code class="language-javascript">// plugin-system.js
+
+class PluginManager {
+    constructor() {
+        this.plugins = new Map();
+        this.hooks = new Map();
+    }
+    
+    // 动态加载插件
+    async loadPlugin(pluginName, config = {}) {
+        try {
+            const pluginModule = await import(`./plugins/${pluginName}/index.js`);
+            const PluginClass = pluginModule.default;
+            
+            const plugin = new PluginClass(config);
+            
+            // 初始化插件
+            if (typeof plugin.init === 'function') {
+                await plugin.init();
+            }
+            
+            // 注册插件
+            this.plugins.set(pluginName, plugin);
+            
+            // 注册插件的钩子
+            if (plugin.hooks) {
+                Object.entries(plugin.hooks).forEach(([hookName, handler]) =&gt; {
+                    this.registerHook(hookName, handler);
+                });
+            }
+            
+            console.log(`Plugin ${pluginName} loaded successfully`);
+            return plugin;
+        } catch (error) {
+            console.error(`Failed to load plugin ${pluginName}:`, error);
+            throw error;
+        }
+    }
+    
+    // 卸载插件
+    async unloadPlugin(pluginName) {
+        const plugin = this.plugins.get(pluginName);
+        
+        if (!plugin) {
+            return false;
+        }
+        
+        // 执行清理
+        if (typeof plugin.destroy === 'function') {
+            await plugin.destroy();
+        }
+        
+        // 移除钩子
+        if (plugin.hooks) {
+            Object.keys(plugin.hooks).forEach(hookName =&gt; {
+                this.unregisterHook(hookName, plugin.hooks[hookName]);
+            });
+        }
+        
+        this.plugins.delete(pluginName);
+        console.log(`Plugin ${pluginName} unloaded`);
+        return true;
+    }
+    
+    registerHook(hookName, handler) {
+        if (!this.hooks.has(hookName)) {
+            this.hooks.set(hookName, []);
+        }
+        this.hooks.get(hookName).push(handler);
+    }
+    
+    unregisterHook(hookName, handler) {
+        const handlers = this.hooks.get(hookName);
+        if (handlers) {
+            const index = handlers.indexOf(handler);
+            if (index &gt; -1) {
+                handlers.splice(index, 1);
+            }
+        }
+    }
+    
+    // 触发钩子
+    async triggerHook(hookName, ...args) {
+        const handlers = this.hooks.get(hookName) || [];
+        const results = await Promise.all(
+            handlers.map(handler =&gt; handler(...args))
+        );
+        return results;
+    }
+}
+
+// 使用示例
+const pluginManager = new PluginManager();
+
+// 加载插件
+await pluginManager.loadPlugin('analytics', {
+    trackingId: 'GA-XXXXXX-X'
+});
+
+await pluginManager.loadPlugin('chat-widget', {
+    apiKey: 'chat-api-key',
+    position: 'bottom-right'
+});
+
+// 触发钩子
+await pluginManager.triggerHook('user-login', { userId: 123 });
+</code></pre>
+<h3 id="4-国际化和本地化"><a class="header" href="#4-国际化和本地化">4. 国际化和本地化</a></h3>
+<pre><code class="language-javascript">// i18n.js
+
+class I18nManager {
+    constructor(defaultLocale = 'en') {
+        this.currentLocale = defaultLocale;
+        this.translations = new Map();
+        this.fallbacks = new Map();
+    }
+    
+    // 动态加载语言包
+    async loadLocale(locale) {
+        if (this.translations.has(locale)) {
+            return this.translations.get(locale);
+        }
+        
+        try {
+            // 尝试加载完整语言包
+            const fullModule = await import(`./locales/${locale}.js`);
+            this.translations.set(locale, fullModule.default);
+            return fullModule.default;
+        } catch (error) {
+            // 如果失败，尝试加载语言的基础版本
+            const baseLang = locale.split('-')[0];
+            if (baseLang !== locale) {
+                try {
+                    const baseModule = await import(`./locales/${baseLang}.js`);
+                    this.fallbacks.set(locale, baseModule.default);
+                    return baseModule.default;
+                } catch (baseError) {
+                    console.error(`Failed to load locale ${locale} and ${baseLang}:`, error, baseError);
+                }
+            }
+            throw error;
+        }
+    }
+    
+    // 设置当前语言
+    async setLocale(locale) {
+        await this.loadLocale(locale);
+        this.currentLocale = locale;
+        
+        // 触发语言变更事件
+        document.dispatchEvent(new CustomEvent('locale-changed', {
+            detail: { locale, translations: this.translations.get(locale) }
+        }));
+    }
+    
+    // 获取翻译
+    t(key, params = {}) {
+        const translations = this.translations.get(this.currentLocale) ||
+                           this.fallbacks.get(this.currentLocale) ||
+                           this.translations.get('en');
+        
+        if (!translations) {
+            return key;
+        }
+        
+        let text = this.getNestedValue(translations, key) || key;
+        
+        // 替换参数
+        Object.entries(params).forEach(([param, value]) =&gt; {
+            text = text.replace(new RegExp(`\\{\\{${param}\\}\\}`, 'g'), value);
+        });
+        
+        return text;
+    }
+    
+    getNestedValue(obj, path) {
+        return path.split('.').reduce((current, key) =&gt; {
+            return current &amp;&amp; current[key] !== undefined ? current[key] : null;
+        }, obj);
+    }
+}
+
+// 使用示例
+const i18n = new I18nManager('en');
+
+// 检测用户语言并加载
+const userLocale = navigator.language || navigator.userLanguage || 'en';
+await i18n.setLocale(userLocale);
+
+// 在应用中使用
+console.log(i18n.t('welcome.message', { name: 'John' }));
+console.log(i18n.t('navigation.home'));
+
+// 语言切换器
+async function switchLanguage(locale) {
+    try {
+        await i18n.setLocale(locale);
+        updateUI();
+    } catch (error) {
+        console.error('Failed to switch language:', error);
+    }
+}
+</code></pre>
+<h2 id="动态导入的高级用法"><a class="header" href="#动态导入的高级用法">动态导入的高级用法</a></h2>
+<h3 id="1-并行加载多个模块"><a class="header" href="#1-并行加载多个模块">1. 并行加载多个模块</a></h3>
+<pre><code class="language-javascript">// parallel-loading.js
+
+// 并行加载多个相关模块
+async function loadDashboardModules() {
+    const [
+        chartsModule,
+        tablesModule,
+        filtersModule,
+        exportModule
+    ] = await Promise.all([
+        import('./charts.js'),
+        import('./tables.js'),
+        import('./filters.js'),
+        import('./export.js')
+    ]);
+    
+    return {
+        Charts: chartsModule.default,
+        Tables: tablesModule.default,
+        Filters: filtersModule.default,
+        Export: exportModule.default
+    };
+}
+
+// 使用Promise.allSettled处理部分失败
+async function loadOptionalModules() {
+    const results = await Promise.allSettled([
+        import('./analytics.js'),
+        import('./chat.js'),
+        import('./notifications.js'),
+        import('./help.js')
+    ]);
+    
+    const loadedModules = {};
+    
+    results.forEach((result, index) =&gt; {
+        const moduleNames = ['analytics', 'chat', 'notifications', 'help'];
+        const moduleName = moduleNames[index];
+        
+        if (result.status === 'fulfilled') {
+            loadedModules[moduleName] = result.value.default;
+            console.log(`${moduleName} module loaded successfully`);
+        } else {
+            console.warn(`${moduleName} module failed to load:`, result.reason);
+        }
+    });
+    
+    return loadedModules;
+}
+</code></pre>
+<h3 id="2-模块预加载"><a class="header" href="#2-模块预加载">2. 模块预加载</a></h3>
+<pre><code class="language-javascript">// preloading.js
+
+class ModulePreloader {
+    constructor() {
+        this.preloadCache = new Map();
+        this.loadingPromises = new Map();
+    }
+    
+    // 预加载模块（但不执行）
+    preload(modulePath) {
+        if (this.preloadCache.has(modulePath)) {
+            return this.preloadCache.get(modulePath);
+        }
+        
+        // 创建link标签进行预加载
+        const link = document.createElement('link');
+        link.rel = 'modulepreload';
+        link.href = modulePath;
+        document.head.appendChild(link);
+        
+        const promise = import(modulePath).then(module =&gt; {
+            this.preloadCache.set(modulePath, module);
+            return module;
+        });
+        
+        this.loadingPromises.set(modulePath, promise);
+        return promise;
+    }
+    
+    // 立即获取预加载的模块
+    async getPreloaded(modulePath) {
+        if (this.preloadCache.has(modulePath)) {
+            return this.preloadCache.get(modulePath);
+        }
+        
+        if (this.loadingPromises.has(modulePath)) {
+            return this.loadingPromises.get(modulePath);
+        }
+        
+        return import(modulePath);
+    }
+    
+    // 批量预加载
+    preloadBatch(modulePaths) {
+        return Promise.all(modulePaths.map(path =&gt; this.preload(path)));
+    }
+    
+    // 智能预加载：根据用户行为预测
+    intelligentPreload(userBehavior) {
+        const predictions = this.predictNextModules(userBehavior);
+        return this.preloadBatch(predictions);
+    }
+    
+    predictNextModules(behavior) {
+        // 简单的预测逻辑
+        const moduleMap = {
+            'viewing-products': ['./cart.js', './checkout.js'],
+            'in-cart': ['./payment.js', './shipping.js'],
+            'profile-page': ['./settings.js', './orders.js']
+        };
+        
+        return moduleMap[behavior] || [];
+    }
+}
+
+const preloader = new ModulePreloader();
+
+// 在应用启动时预加载关键模块
+preloader.preloadBatch([
+    './router.js',
+    './auth.js',
+    './api-client.js'
+]);
+
+// 根据用户行为智能预加载
+document.addEventListener('mouseover', (event) =&gt; {
+    if (event.target.dataset.preload) {
+        preloader.preload(event.target.dataset.preload);
+    }
+});
+</code></pre>
+<h3 id="3-容错和重试机制"><a class="header" href="#3-容错和重试机制">3. 容错和重试机制</a></h3>
+<pre><code class="language-javascript">// error-handling.js
+
+class RobustModuleLoader {
+    constructor(options = {}) {
+        this.maxRetries = options.maxRetries || 3;
+        this.retryDelay = options.retryDelay || 1000;
+        this.fallbacks = options.fallbacks || {};
+    }
+    
+    async loadWithRetry(modulePath, retryCount = 0) {
+        try {
+            return await import(modulePath);
+        } catch (error) {
+            console.warn(`Failed to load ${modulePath} (attempt ${retryCount + 1}):`, error);
+            
+            if (retryCount &lt; this.maxRetries) {
+                // 指数退避
+                const delay = this.retryDelay * Math.pow(2, retryCount);
+                await this.sleep(delay);
+                return this.loadWithRetry(modulePath, retryCount + 1);
+            }
+            
+            // 尝试使用fallback
+            const fallbackPath = this.fallbacks[modulePath];
+            if (fallbackPath &amp;&amp; fallbackPath !== modulePath) {
+                console.log(`Trying fallback for ${modulePath}: ${fallbackPath}`);
+                return this.loadWithRetry(fallbackPath);
+            }
+            
+            throw new Error(`Failed to load module ${modulePath} after ${this.maxRetries} retries`);
+        }
+    }
+    
+    async loadWithFallback(primaryPath, fallbackPath) {
+        try {
+            return await import(primaryPath);
+        } catch (error) {
+            console.warn(`Primary module ${primaryPath} failed, using fallback:`, error);
+            return import(fallbackPath);
+        }
+    }
+    
+    sleep(ms) {
+        return new Promise(resolve =&gt; setTimeout(resolve, ms));
+    }
+}
+
+// 使用示例
+const loader = new RobustModuleLoader({
+    maxRetries: 3,
+    retryDelay: 1000,
+    fallbacks: {
+        './advanced-charts.js': './basic-charts.js',
+        './high-res-images.js': './low-res-images.js'
+    }
+});
+
+try {
+    const chartsModule = await loader.loadWithRetry('./advanced-charts.js');
+    console.log('Advanced charts loaded successfully');
+} catch (error) {
+    console.error('All chart loading attempts failed:', error);
+}
+</code></pre>
+<h2 id="性能考虑"><a class="header" href="#性能考虑">性能考虑</a></h2>
+<h3 id="1-模块大小优化"><a class="header" href="#1-模块大小优化">1. 模块大小优化</a></h3>
+<pre><code class="language-javascript">// module-optimization.js
+
+// 分割大模块为小块
+// 代替一个大的utils模块：
+// import * as utils from './large-utils.js';
+
+// 使用按需导入：
+const stringUtils = () =&gt; import('./utils/string.js');
+const arrayUtils = () =&gt; import('./utils/array.js');
+const dateUtils = () =&gt; import('./utils/date.js');
+
+// 只在需要时加载具体功能
+async function formatUserData(userData) {
+    const { format } = await import('./utils/string.js');
+    const { sortBy } = await import('./utils/array.js');
+    const { formatDate } = await import('./utils/date.js');
+    
+    return {
+        name: format(userData.name),
+        dates: userData.dates.map(formatDate),
+        sorted: sortBy(userData.items, 'priority')
+    };
+}
+</code></pre>
+<h3 id="2-缓存策略"><a class="header" href="#2-缓存策略">2. 缓存策略</a></h3>
+<pre><code class="language-javascript">// caching.js
+
+class ModuleCache {
+    constructor(options = {}) {
+        this.cache = new Map();
+        this.maxAge = options.maxAge || 300000; // 5分钟
+        this.maxSize = options.maxSize || 50;
+    }
+    
+    async loadModule(modulePath) {
+        const cacheKey = modulePath;
+        const cached = this.cache.get(cacheKey);
+        
+        if (cached &amp;&amp; this.isValid(cached)) {
+            return cached.module;
+        }
+        
+        const module = await import(modulePath);
+        
+        this.cache.set(cacheKey, {
+            module,
+            timestamp: Date.now()
+        });
+        
+        this.cleanup();
+        return module;
+    }
+    
+    isValid(cached) {
+        return Date.now() - cached.timestamp &lt; this.maxAge;
+    }
+    
+    cleanup() {
+        if (this.cache.size &lt;= this.maxSize) {
+            return;
+        }
+        
+        // 移除最旧的条目
+        const entries = Array.from(this.cache.entries());
+        entries.sort((a, b) =&gt; a[1].timestamp - b[1].timestamp);
+        
+        const toRemove = entries.slice(0, this.cache.size - this.maxSize);
+        toRemove.forEach(([key]) =&gt; this.cache.delete(key));
+    }
+    
+    clear() {
+        this.cache.clear();
+    }
+}
+
+const moduleCache = new ModuleCache({ maxAge: 600000, maxSize: 100 });
+</code></pre>
+<h2 id="动态导入的局限性"><a class="header" href="#动态导入的局限性">动态导入的局限性</a></h2>
+<h3 id="1-静态分析限制"><a class="header" href="#1-静态分析限制">1. 静态分析限制</a></h3>
+<pre><code class="language-javascript">// limitations.js
+
+// ❌ 这些用法会使打包工具无法进行静态分析
+const moduleName = getUserPreference();
+import(moduleName); // 完全动态的路径
+
+const modules = ['a', 'b', 'c'];
+modules.forEach(name =&gt; import(name)); // 循环中的动态导入
+
+// ✅ 更好的做法：使用部分静态路径
+const theme = getUserTheme();
+import(`./themes/${theme}.js`); // 部分静态路径
+
+// ✅ 或使用显式的模块映射
+const moduleMap = {
+    theme1: () =&gt; import('./themes/theme1.js'),
+    theme2: () =&gt; import('./themes/theme2.js'),
+    theme3: () =&gt; import('./themes/theme3.js')
+};
+
+const themeLoader = moduleMap[theme];
+if (themeLoader) {
+    themeLoader().then(module =&gt; {
+        // 使用主题模块
+    });
+}
+</code></pre>
+<h3 id="2-错误处理的重要性"><a class="header" href="#2-错误处理的重要性">2. 错误处理的重要性</a></h3>
+<pre><code class="language-javascript">// error-handling-best-practices.js
+
+// ❌ 没有错误处理
+import('./module.js').then(module =&gt; {
+    module.default(); // 如果模块加载失败，这里会出错
+});
+
+// ✅ 完善的错误处理
+async function loadAndUseModule() {
+    try {
+        const module = await import('./module.js');
+        
+        if (!module || !module.default) {
+            throw new Error('Module does not have expected exports');
+        }
+        
+        return module.default();
+    } catch (error) {
+        console.error('Module loading or execution failed:', error);
+        
+        // 提供fallback逻辑
+        return useDefaultBehavior();
+    }
+}
+
+function useDefaultBehavior() {
+    // 默认行为实现
+    console.log('Using default behavior due to module loading failure');
+}
+</code></pre>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>动态导入为JavaScript模块系统带来了强大的运行时灵活性：</p>
+<ul>
+<li>✅ <strong>按需加载</strong>: 减少初始包大小，提升应用启动速度</li>
+<li>✅ <strong>条件加载</strong>: 根据用户环境、权限等条件加载不同模块</li>
+<li>✅ <strong>代码分割</strong>: 自动将代码分割为更小的块</li>
+<li>✅ <strong>插件系统</strong>: 支持运行时扩展应用功能</li>
+<li>✅ <strong>懒加载</strong>: 延迟加载非关键功能</li>
+<li>✅ <strong>国际化</strong>: 动态加载语言包和地区化内容</li>
+</ul>
+<p>动态导入是现代Web应用性能优化和架构设计的重要工具，合理使用能够显著提升用户体验和应用的可维护性。</p>
+<hr>
+<p><strong>下一章</strong>: <a href="./resolution.html">模块解析机制</a> →</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../esm/import-export.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../esm/resolution.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../esm/import-export.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../esm/resolution.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

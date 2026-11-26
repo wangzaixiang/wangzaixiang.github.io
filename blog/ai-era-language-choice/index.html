@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>AI时代的商业软件编程语言选择 | 程序人生</title>
+<meta name="description" content="从零售 ERP 后端这个具体领域出发，讨论 AI 时代的编程语言选型：类型系统、表达能力、DSL 与宏、OO 与 FP、Direct Style、ORM-less，以及 Scala 3 在其中的位置">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/ai-era-language-choice/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="AI时代的商业软件编程语言选择">
+  <meta name="twitter:description" content="从零售 ERP 后端这个具体领域出发，讨论 AI 时代的编程语言选型：类型系统、表达能力、DSL 与宏、OO 与 FP、Direct Style、ORM-less，以及 Scala 3 在其中的位置">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="AI时代的商业软件编程语言选择">
+  <meta property="og:description" content="从零售 ERP 后端这个具体领域出发，讨论 AI 时代的编程语言选型：类型系统、表达能力、DSL 与宏、OO 与 FP、Direct Style、ORM-less，以及 Scala 3 在其中的位置">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/ai-era-language-choice/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="AI时代的商业软件编程语言选择">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/ai-era-language-choice/"
+      },
+      "headline": "AI时代的商业软件编程语言选择",
+      "image": ,
+      "datePublished": "2026-08-06",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "AI时代的商业软件编程语言选择"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AI时代的商业软件编程语言选择",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "从零售 ERP 后端这个具体领域出发，讨论 AI 时代的编程语言选型：类型系统、表达能力、DSL 与宏、OO 与 FP、Direct Style、ORM-less，以及 Scala 3 在其中的位置"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Ai Era Language Choice",
+            "item": "https://wangzaixiang.github.io/blog/ai-era-language-choice/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#bei-jing">背景</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#shang-ye-ruan-jian-de-te-zheng">商业软件的特征</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#1-ping-jing-zai-shu-ju-ku-bu-zai-cpu">1. 瓶颈在数据库，不在 CPU</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#2-ye-wu-gui-ze-mi-ji">2. 业务规则密集</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#3-chang-qi-yan-jin">3. 长期演进</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#4-duo-zu-hu">4. 多租户</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#1-lei-xing-xi-tong">1. 类型系统</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#yu-yan-de-qiang-ruo-dui-bi">语言的强弱对比</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#qiang-lei-xing-neng-li-quan-jing">强类型能力全景</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#adt-ye-wu-mo-xing-de-qiang-biao-da-neng-li">ADT：业务模型的强表达能力</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#zi-mian-liang-lei-xing">字面量类型</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#null-an-quan-xiao-mie-shi-yi-mei-yuan-de-cuo-wu">Null 安全：消灭十亿美元的错误</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#wei-shen-me-ai-shi-dai-kan-zhong-qiang-lei-xing">为什么 AI 时代看重&quot;强类型&quot;</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#2-biao-da-neng-li-yu-jian-ji-xing">2. 表达能力与简洁性</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#yun-suan-fu-zhong-zai-shi-fou-bi-yao">运算符重载是否必要？</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#biao-da-shi-neng-li-biao-da-huan-shi-yu-ju">表达式能力：表达还是语句</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#ji-he-cao-zuo-neng-li">集合操作能力</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#mo-shi-pi-pei">模式匹配</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#kuo-zhan-fang-fa-neng-li-er-bu-dong-lei-xing">扩展方法：能力而不动类型</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#lei-xing-biao-da-x-biao-da-shi-dui-bi">类型表达 × 表达式对比</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#dong-tai-yu-yan-biao-da-li-de-ling-yi-mian">动态语言：表达力的另一面</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#go-rust-biao-da-li-yu-ding-wei">Go &#x2F; Rust：表达力与定位</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#dui-java-de-guan-gan">对 Java 的观感</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#ai-bian-cheng-yu-biao-da-neng-li-de-guan-xi">AI 编程与表达能力的关系</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#3-dsl-yu-macro">3. DSL 与 Macro</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#sql-ji-dsl">SQL 即 DSL</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#bian-yi-qi-sql-jian-cha-yu-duo-zu-hu-zhu-ru">编译期 SQL 检查与多租户注入</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#beanbuilder-bian-yi-qi-dui-xiang-zhuan-huan">BeanBuilder：编译期对象转换</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#batch-zhi-xing-ce-lue-de-bian-yi-qi-zhong-xie">Batch：执行策略的编译期重写</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#hong-yu-ai-huan-jue-lan-jie-qi">宏与 AI：幻觉拦截器</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#4-oo-yu-fp">4. OO 与 FP</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#tu-ling-ji-vs-lyan-suan">图灵机 vs λ演算</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#yi-jing-zhi-dong-shu-ju-yu-xing-wei-fen-chi">以静制动：数据与行为分离</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#fen-ceng-gui-ze-ceng-fp-ji-chu-she-shi-ceng-ming-ling-shi">分层：规则层 FP，基础设施层命令式</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#ji-suan-jie-shi-mo-xing-ge-chi-fu-zuo-yong-de-luo-di-fang-fa">计算-解释模型：隔离副作用的落地方法</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#5-direct-style-yu-effect-monad">5. Direct Style 与 Effect Monad</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#effect-system-de-shui">Effect System 的税</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#bu-bi-yin-wei-fp-er-mi-lian-monad">不必因为 FP 而迷恋 Monad</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#shi-wu-shi-kuai">事务是块</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#virtual-threads-direct-style-de-bing-fa-da-an">Virtual Threads：Direct Style 的并发答案</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#6-orm-or-orm-less">6. ORM or ORM-less</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#orm-yu-adt-de-chong-tu">ORM 与 ADT 的冲突</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#sql-dang-yi-deng-dsl-wsql-shi-zheng">SQL 当一等 DSL：wsql 实证</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#duo-zu-hu-shu-ju-fang-wen-db-schema-gong-xiang-biao">多租户数据访问：DB + schema + 共享表</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#ai-shi-dai-de-zhong-xin-ping-gu">AI 时代的重新评估</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/#jie-lun-jue-ce-kuang-jia">结论：决策框架</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>AI时代的商业软件编程语言选择</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/best-coding-harness/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted August  6, 2026 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>62&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/explore-rust-pin/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="bei-jing">背景</h1>
+<p>语言之争永远都是话题。近期 21CTO
+的一篇文章<a href="https://mp.weixin.qq.com/s/iSdP6DedB-MTZQsO4WMxkQ">《从性能、生产力和 AI 实现的角度，Go、Rust 和 Zig 谁才是最终赢家？》</a>
+提出一个很有意思的观点：当开发范式从"人类手写代码"转向"AI 生成 + 自动 Review +
+人类架构审批"，编程语言的选型标准也随之改变——除了性能和生态，一个新的核心指标正在决定成败： <strong>AI
+到底能不能高效、准确地写好一门语言</strong>。</p>
+<p>这篇文章的结论是：在 AI 驱动的开发中，Go
+展现出压倒性优势——语法极简、编译极快、标准库强大、幻觉率低，形成了"生成-验证-修复"的完美闭环。而 Rust 受困于借用检查的反馈时延，Zig
+则因语料匮乏而难以被 AI 拟合。</p>
+<p>这个论点在微服务、API、CLI 场景下是成立的。但如果我们聚焦到 <strong>商业软件</strong>这个具体领域——以零售 ERP
+后端为代表、以数据库为核心的业务流程与业务逻辑——结论会被大幅改写。这篇文章试图从六个维度回答：在这个领域，什么才是真正重要的选型标准？</p>
+<p>需要先声明我的立场： <strong>我是 Scala 爱好者，函数式编程的实践者</strong>。这篇文章不是中立的产品对比文档，而是一个在商业软件领域摸爬滚打多年、把
+Scala 3 用于核心产品重构的人的选型思考。我会尽量给出证据，但偏好是明牌的。</p>
+<h1 id="shang-ye-ruan-jian-de-te-zheng">商业软件的特征</h1>
+<p>以零售 ERP 为例：进销存、POS、财务核算、促销、多门店、供应链。这类系统的技术特征是什么？</p>
+<h2 id="1-ping-jing-zai-shu-ju-ku-bu-zai-cpu">1. 瓶颈在数据库，不在 CPU</h2>
+<p>高并发写（订单、扣库存、流水）、复杂查询（报表、对账、毛利分析）。Rust/Zig 那点性能优势在这里几乎用不上——网络和 SQL 才是大头，GC
+的开销无关痛痒。 <strong>性能不是这个领域的选型主导因素。</strong></p>
+<h2 id="2-ye-wu-gui-ze-mi-ji">2. 业务规则密集</h2>
+<p>代码量里 80% 是 CRUD + 规则编排：促销叠加、定价、税务、库存分配、门店调拨、退换货。业务规则的正确性、可维护性，远比执行效率重要。</p>
+<h2 id="3-chang-qi-yan-jin">3. 长期演进</h2>
+<p>ERP 是 10~20 年的系统（SAP 跑了 50 年）。可维护性、人才供给、生态稳定性，权重远高于语言的新鲜度。</p>
+<h2 id="4-duo-zu-hu">4. 多租户</h2>
+<p>SaaS 化的商业软件几乎必然走向多租户。租户隔离是生死题——漏写一个隔离条件就是跨租户数据泄露。</p>
+<p>结论先行： <strong>这个领域的选型主导因素是"类型系统表达能力 + 业务逻辑表达密度 + 编译期能拦住多少业务错误 + 长期可维护性"
+，不是性能，也不是 AI 反馈时延。</strong> 下面从六个维度展开。</p>
+<h1 id="1-lei-xing-xi-tong">1. 类型系统</h1>
+<p>很多语言之争，本质上是类型系统之争。而类型系统有两个正交的维度，常被混为一谈：</p>
+<ul>
+<li><strong>静态 vs 动态</strong>：类型检查发生在编译期，还是运行时；</li>
+<li><strong>强 vs 弱</strong>：类型约束的严格程度——隐式转换是否泛滥，类型错误能否被容忍。</li>
+</ul>
+<p><strong>"强 vs 弱"是对"静态 vs 动态"的一次升级</strong>：静态/动态只决定检查的 <em>时机</em>，强/弱决定约束的 <em>质量</em>。静态语言可能弱（Java
+的隐式转换泛滥），动态语言可能强（Python 的严格报错）——两者并不绑定。</p>
+<h2 id="yu-yan-de-qiang-ruo-dui-bi">语言的强弱对比</h2>
+<table><thead><tr><th>语言</th><th>静态/动态</th><th>强/弱</th><th>弱在哪里（证据）</th></tr></thead><tbody>
+<tr><td>Rust</td><td>静态</td><td>强（顶格）</td><td>所有权 + 借用，零隐式转换，整数溢出都不静默</td></tr>
+<tr><td>Haskell</td><td>静态</td><td>强</td><td>纯函数 + 类型类</td></tr>
+<tr><td>Scala 3</td><td>静态</td><td>强</td><td>opaque type、ADT，转换必须显式（given/implicit）</td></tr>
+<tr><td>Kotlin</td><td>静态</td><td>强</td><td>少数妥协：平台类型、<code>!!</code> 非空断言</td></tr>
+<tr><td>C#</td><td>静态</td><td>强</td><td>仅受限的隐式数值转换</td></tr>
+<tr><td>Go</td><td>静态</td><td>强（有逃逸口）</td><td>类型系统本身严格，但 <code>any</code>/<code>interface{}</code> 随处逃逸</td></tr>
+<tr><td>Java</td><td>静态</td><td><strong>半强</strong></td><td>隐式 widening、自动装箱、null 黑洞、泛型擦除</td></tr>
+<tr><td>C / C++</td><td>静态</td><td>弱</td><td>指针隐式转换、整型提升，无类型安全</td></tr>
+<tr><td>Python</td><td>动态</td><td>强</td><td><code>"1" + 1</code> 直接报错</td></tr>
+<tr><td>Ruby</td><td>动态</td><td>较强</td><td>duck typing，约束弱于 Python</td></tr>
+<tr><td>JavaScript</td><td>动态</td><td>弱</td><td><code>"1" + 1 == "11"</code>，<code>==</code> 宽松相等</td></tr>
+</tbody></table>
+<p>两个反直觉的结论：</p>
+<ol>
+<li><strong>Java 是静态语言，却只是"半强"</strong>。隐式 widening（Int 自动转 Long）、自动装箱、null
+黑洞、泛型擦除，让大量类型错误绕过了编译器，延迟到运行时才暴露。商业软件里大量"看起来编译过了、运行时 ClassCastException"的
+bug，根源就在这里。</li>
+<li><strong>Python 是动态语言，类型约束却相当严格</strong>。<code>"1" + 1</code> 直接报错，而 JavaScript 返回 <code>"11"</code>——同样是动态语言，强弱差异巨大。</li>
+</ol>
+<h2 id="qiang-lei-xing-neng-li-quan-jing">强类型能力全景</h2>
+<p>更进一步，把"类型能力"的视野放宽—— <strong>凡是类型系统能在编译期强制的约束，都是类型能力</strong>。除了强弱之外，还包括：</p>
+<ul>
+<li><strong>ADT（代数数据类型）</strong>：sum type + product type + 穷尽匹配，非法状态不可表示（后文详述）；</li>
+<li><strong>字面量类型（literal type）</strong>：把业务取值空间写进类型（<code>"CNY" | "USD"</code>）（后文详述）；</li>
+<li><strong>opaque / newtype</strong>：给同一底层类型建立语义不同的新类型（Money ≠ BigDecimal），编译期禁止混用；</li>
+<li><strong>null 安全</strong>：用 Option/Maybe 显式建模可空性，消灭 null 黑洞（后文详述）；</li>
+<li><strong>生命周期（lifetime）</strong>：引用有效性由类型系统证明，杜绝悬垂引用（Rust 独有）；</li>
+<li><strong>只读 / 不可变</strong>：类型层面强制 <code>val</code>/<code>readonly</code>，让不可变性成为编译期约束而非编码约定；</li>
+<li><strong>capability（能力）</strong>：把权限、副作用、错误通道变成类型化的"能力"传递，调用方拿不到能力就做不了对应的事（Scala 3 的
+can-cc/CanThrow 目前仍是 <em>实验特性</em>，capability 传递更多是社区实践；Haskell 的 IO 类型化副作用是成熟形态）；</li>
+<li><strong>并发安全</strong>：编译期排除数据竞争（Rust 的 Send/Sync 是类型化保证；Haskell 靠纯函数 + STM；JVM
+系靠锁与并发工具，靠约定而非类型，数据竞争要等运行时工具才暴露）；</li>
+<li><strong>类型化错误</strong>：错误路径进入类型签名（Result/Either/checked exception），强迫调用方处理；</li>
+<li><strong>类型级计算</strong>：类型本身参与计算（match types、GADT、const generics）；</li>
+<li><strong>宏 / 编译期元编程</strong>：把约束从类型进一步扩展到业务规则（后文详述）。</li>
+</ul>
+<table><thead><tr><th>能力</th><th>Scala 3</th><th>Rust</th><th>Haskell</th><th>Kotlin</th><th>C#</th><th>Java</th><th>Go</th><th>TypeScript</th></tr></thead><tbody>
+<tr><td>ADT + 穷尽匹配</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>❌</td><td>✅</td></tr>
+<tr><td>字面量类型</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+<tr><td>opaque / newtype</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>⚠️</td><td>❌</td><td>❌</td><td>⚠️</td></tr>
+<tr><td>null 安全</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>⚠️</td><td>❌</td><td>❌</td><td>✅</td></tr>
+<tr><td>生命周期</td><td>—</td><td>✅</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>并发安全</td><td>⚠️</td><td>✅</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>⚠️</td></tr>
+<tr><td>只读 / 不可变</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>❌</td><td>✅</td></tr>
+<tr><td>capability</td><td>✅*</td><td>⚠️</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td></tr>
+<tr><td>类型化错误</td><td>⚠️</td><td>✅</td><td>✅</td><td>❌</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>⚠️</td></tr>
+<tr><td>类型级计算</td><td>✅</td><td>⚠️</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>⚠️</td></tr>
+<tr><td>宏 / 元编程</td><td>✅</td><td>✅</td><td>⚠️</td><td>❌</td><td>⚠️</td><td>❌</td><td>❌</td><td>❌</td></tr>
+</tbody></table>
+<p>图例：✅ 原生支持；⚠️ 部分支持或需妥协；❌ 无；— 无此概念（GC 语言不需要生命周期，Rust 独有）。<code>\*</code> 表示该能力目前为实验特性（Scala
+3 的 can-cc/CanThrow 尚未稳定）。并发安全一行的 ⚠️ 语义不同：JVM 系靠锁与并发工具、Go 靠 goroutine +
+channel，但都不是编译期类型保证；TypeScript 单线程 + worker 消息传递，无共享内存数据竞争问题。</p>
+<p>几个值得注意的观察：</p>
+<ol>
+<li><strong>Rust 的"强"是独占路径</strong>——生命周期与并发安全两行，Rust 都是类型级保证（Haskell 的并发安全来自纯函数 +
+STM），代价是其他行（宏之外的开发体验、类型化错误之外的学习曲线）与商业软件需求错位；且并发安全的类型化保证在商业软件里的权重低于系统软件——ERP
+的并发仲裁在数据库层（行锁/事务），进程内数据竞争相对次要；</li>
+<li><strong>Go 是弱化版的 Java</strong>——在 ADT、null 安全、opaque、只读上全面 ❌，其"静态 + 强"的定位主要靠"无隐式转换"撑着，业务建模能力是空白的；</li>
+<li><strong>Scala 3 是唯一全表拉满的</strong>——除生命周期（GC 语言不需要）外无一处 ❌（并发安全是 ⚠️ 而非 ❌），且宏/元编程 ✅
+意味着它的能力矩阵还能继续扩展；</li>
+<li><strong>动态语言（Python/Ruby/JS）在绝大多数能力上为 ❌</strong>，仅 TypeScript 例外（ADT、字面量、null 安全、只读四项 ✅）——这也是
+TypeScript 在 AI 时代受欢迎的类型学原因。</li>
+</ol>
+<p><strong>能力越多，编译器替业务兜的底越厚。</strong> 这张表也回答了"为什么选 Scala 3"：不是某单一特性，而是能力矩阵的整体覆盖。</p>
+<h2 id="adt-ye-wu-mo-xing-de-qiang-biao-da-neng-li">ADT：业务模型的强表达能力</h2>
+<p>ADT（代数数据类型）是"强类型"从"防类型错误"升级到"防业务错误"的第一块基石。它的价值不是多一种语法，而是
+<strong>把业务语义直接编码为类型</strong>——业务模型本身成为类型系统的一部分，编译器因此能替你检查业务规则。</p>
+<p><strong>1. 业务词汇即类型。</strong> 订单状态、促销规则、税务类别、支付方式——业务领域的概念直接成为 <code>enum</code>/<code>case class</code>。<code>OrderStatus</code>
+就是"订单状态"这个词本身，业务代码里不再有散落各处的字符串魔法值。</p>
+<p><strong>2. 业务不变量进入类型：非法状态不可表示。</strong> 这是 ADT 表达能力的核心——业务规则"不允许"的组合，在类型层面根本构造不出来：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">enum OrderStatus: Draft, Submitted, Paid, Shipped, Completed, Cancelled
+case class Order(status: OrderStatus, total: Money)  &#x2F;&#x2F; 不存在 &quot;PAIDD&quot;; 状态取值空间封闭
+
+def ship(o: Order): Order = o.status match
+  case Paid =&gt; o.copy(status = Shipped)   &#x2F;&#x2F; 只有 Paid 才能发货
+  case _    =&gt; throw IllegalStateException &#x2F;&#x2F; 编译器逼你处理其余每个状态
+</code></pre>
+<p><strong>3. 业务分支变化的穷尽覆盖。</strong>
+业务加一种促销类型、一种支付方式——编译器立刻列出所有需要处理的位置，漏一处就是编译错误而非线上事故。在业务高度易变的时代，这是对"变更"最强的保险。</p>
+<p><strong>4. 业务模型的演进追踪。</strong> 改一个字段、加一个状态，编译器把所有影响点指出来——重构的安全网是类型系统本身，而不是文档和记忆。</p>
+<p>商业软件里最易错的状态机、促销规则、税务类别，正是 ADT
+的主场。我在<a href="https://wangzaixiang.github.io/blog/adt/">《使用 ADT 代数数据类型 进行数据建模》</a>
+中有更完整的讨论——包括数据与行为分离（数据稳定、行为易变，以静制动）、JSON 与 ADT
+的映射，以及"动态语言一时爽，一直动态一直爽，重构代码火葬场"的教训。</p>
+<h2 id="zi-mian-liang-lei-xing">字面量类型</h2>
+<p>字面量类型把业务取值空间写进类型：<code>"CNY" | "USD"</code>、<code>1 | 2 | 3</code>，比 String/Int 精确一个量级——货币代码拼错、状态值写错，编译期就拦下：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; 字面量类型: 取值空间进入类型
+def fx(c: &quot;CNY&quot; | &quot;USD&quot; | &quot;EUR&quot;): BigDecimal = ...
+fx(&quot;RMB&quot;)   &#x2F;&#x2F; 编译错误: RMB 不在字面量联合中
+</code></pre>
+<p>与 ADT 配合，业务语义（状态、枚举、单位、货币）全部成为编译期事实，运行时不可能出现类型签名之外的取值。</p>
+<h2 id="null-an-quan-xiao-mie-shi-yi-mei-yuan-de-cuo-wu">Null 安全：消灭十亿美元的错误</h2>
+<p>null 是类型系统的后门。类型签名说"这里是 String"，实际运行时可能是 null—— <strong>类型承诺被静默违背</strong>，编译器无能为力，错误延迟到运行时才炸。Tony
+Hoare 在 1965 年发明 null 引用后，称它为"十亿美元的错误"（billion-dollar mistake）——这个数字在商业软件领域只多不少：空指针异常是生产环境最高频的故障类型之一。</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; Scala: Option 显式建模可空性, 编译器强制处理 None 分支
+def findUser(id: Id): Option[User] = ...
+findUser(id) match
+  case Some(u) =&gt; u.name
+  case None    =&gt; &quot;unknown&quot;
+
+&#x2F;&#x2F; Scala 3 explicit nulls: 引用类型默认非空, null 必须显式联合
+def findUser2(id: Id): User | Null = ...
+findUser2(id) match
+  case u: User =&gt; u.name
+  case null    =&gt; &quot;unknown&quot;
+&#x2F;&#x2F; 或直接剥离: findUser2(id).nn
+
+&#x2F;&#x2F; Java: 签名说&quot;非空&quot;, 实际可能是 null, 编译器不帮你
+String name = user.getName();   &#x2F;&#x2F; 运行时 NPE
+</code></pre>
+<p>各语言的解法，强制程度差异明显：</p>
+<table><thead><tr><th>语言</th><th>null 安全机制</th><th>强制程度</th></tr></thead><tbody>
+<tr><td>Scala 3</td><td>Option + explicit nulls（<code>T|Null</code>，实验特性）</td><td>编译器强制，None 分支必须处理；开启 explicit nulls 后引用类型默认非空，null 必须显式联合</td></tr>
+<tr><td>Rust</td><td><code>&amp;T</code> 引用永不为 null + Option</td><td>语言级保证：引用类型天然非空，可空只能显式 <code>Option&lt;&amp;T&gt;</code>；裸指针 <code>*const T</code> 可为 null 但解引用必须 unsafe</td></tr>
+<tr><td>Haskell</td><td>Maybe</td><td>编译器强制，Just/None 分支必须处理</td></tr>
+<tr><td>Kotlin</td><td>可空类型 <code>T?</code></td><td>编译器强制（与 Java 互操作处有漏洞）</td></tr>
+<tr><td>TypeScript</td><td>strictNullChecks</td><td>编译期检查，生态可选</td></tr>
+<tr><td>C#</td><td>可空引用类型（NRT）</td><td>警告级别，非强制</td></tr>
+<tr><td>Java</td><td>Optional（仅是容器）</td><td>无——null 到处合法，Optional 当字段/参数反而是反模式</td></tr>
+<tr><td>Go</td><td>无，零值惯例</td><td>无</td></tr>
+<tr><td>Python / Ruby / JS</td><td>None / nil / undefined</td><td>运行时</td></tr>
+</tbody></table>
+<p>Scala 3 的 explicit nulls 值得单独说明：开启 <code>-Yexplicit-nulls</code> 后，<code>User</code> 类型 <strong>默认不含 null</strong>，可空值必须显式写成
+<code>User | Null</code>，读取时必须剥离（<code>.nn</code>）或模式匹配—— <strong>null 从隐式威胁变成显式类型</strong>。它与 Option 互为补充：Option 提供容器抽象，
+<code>T\|Null</code> 提供精确的可空建模，后者尤其适合数据库映射（数据库 NULL 天然是"值或空"，而非"容器"）。</p>
+<p>对比 Scala 的"显式化"路径，Rust 走的是"结构性"路径：<code>&amp;T</code> 引用在类型层面 <strong>就不可能为 null</strong>（语言规范保证，编译器还据此做非空优化——
+<code>Option&lt;&amp;T&gt;</code> 与 <code>&amp;T</code> 同尺寸零开销），空值只能通过 <code>Option</code> 或需要 <code>unsafe</code> 的裸指针表达。一个是"把 null 显式化"，一个是"让
+null 在引用上不存在"——两种哲学殊途同归：null 都从"隐式威胁"变成了"显式类型"。</p>
+<p><strong>商业软件里 null 的最大来源是数据库</strong>。SQL 的 NULL
+自带三值逻辑（TRUE/FALSE/UNKNOWN），语义模糊（是"未知"还是"不存在"？），列可空性五花八门。落到 ERP 场景，语言层的 null
+安全本质就是"数据库 NULL 与领域模型映射"的正确性——这是我做 wsql 时最花心思的地方：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; wsql 中的实证: T|Null 与 Option 显式建模数据库可空列
+case class Order(id: Long, remark: Option[String], paidAt: Option[Timestamp])
+&#x2F;&#x2F; 列值为 NULL → None, 编译器保证访问前必须处理
+&#x2F;&#x2F; 值类型&#x2F;引用类型分别走 _opt_nn &#x2F; _opt_null 两条路径, 避免 wasNull 判断泄漏到业务层
+</code></pre>
+<p>null 安全的本质，是 <strong>类型系统是否允许 null 绕过类型承诺</strong>
+。强类型语言把可空性显式化（Option/T?），半强语言（Java/C#）靠约定和警告凑合，弱语言干脆放弃——这一行差异，决定了"空指针"是编译错误，还是凌晨三点的报警。</p>
+<h2 id="wei-shen-me-ai-shi-dai-kan-zhong-qiang-lei-xing">为什么 AI 时代看重"强类型"</h2>
+<p><strong>对 AI 编程，真正重要的是"强"，不是"静态"。</strong> 理由有三：</p>
+<ol>
+<li><strong>强类型 = 给 AI 的免费验证器</strong>。AI
+生成的代码类型不匹配、参数传错，强类型语言在编译期就拦下，形成"生成-验证-修复"闭环——21CTO
+文章所说的反馈闭环，其质量本质上取决于"编译能拦住多少错"，而不只是"编译有多快"。</li>
+<li><strong>弱类型 = AI 幻觉放大器</strong>。JavaScript 的隐式转换、Java 的自动装箱，让"编译通过了但语义错了"成为常态，AI
+无法预测这些隐式行为，生成结果更加不可控。</li>
+<li><strong>类型标注是 AI 的监督信号</strong>。语料中的类型信息越丰富，AI 对结构的把握越准。</li>
+</ol>
+<p>一个极端的证据来自 Rust。Rust 社区有句流传的话： <strong>"If it compiles, it works"（一旦编译通过，基本就能正确运行）</strong>
+——这不是营销话术，而是机制使然：所有权/借用/生命周期把内存错误推到了编译期，Send/Sync
+把数据竞争推到了编译期，强类型把类型错误推到了编译期，剩下的大多是纯逻辑错误。对 AI 编程这意味着：AI 生成的 Rust
+代码，"编译通过"这个验收标准本身就携带了极高的正确性置信度——生成-验证-修复的闭环终点是可信的。对比弱类型语言，"编译通过"几乎不携带任何语义保证（隐式转换、null、类型擦除让"编译过但语义错"成为常态）。
+<strong>编译从"语法检查"升级为"语义检查"——AI 时代最有价值的不是编译快，而是编译能证明什么。</strong></p>
+<p>当然要诚实限定：编译期拦不住的是逻辑错误（业务规则算错、边界条件漏判），而这恰恰是商业软件的主要风险领域——所以对商业软件而言，Rust
+的"编译即正确"覆盖的是内存与类型层，业务逻辑层的正确性要靠 ADT 与宏补上。这正是后文的伏笔： <strong>Scala 3 用 ADT 把"
+非法状态不可表示"、用宏把"租户条件/表结构校验"推进编译期，是在业务规则层逼近"编译通过 ≈ 正确"</strong>。</p>
+<p>这个维度也修正了 21CTO 文章的一个隐含归因： <strong>Go 的 AI 优势不只是"语法极简、编译快"，更是"静态 + 强类型"给 AI 的强约束</strong>
+——而在这个维度上，Scala、Kotlin、C#、Rust 并不输 Go。静态 + 强类型，是 AI 时代商业软件语言的第一门槛。</p>
+<h1 id="2-biao-da-neng-li-yu-jian-ji-xing">2. 表达能力与简洁性</h1>
+<p>如果说类型系统决定"编译器能替你检查多少"，表达能力与简洁性则决定"业务逻辑写起来像不像需求本身"。我倾向"有很简洁的类型支持和表达式能力"的语言——一个
+<code>price * qty * discount</code> 能直接写出来的语言，和一个要 <code>price.multiply(qty).multiply(discount)</code> 的语言，在业务代码的可读性上是数量级的差距。
+<strong>业务逻辑的表达密度，直接决定商业软件的可维护性。</strong></p>
+<h2 id="yun-suan-fu-zhong-zai-shi-fou-bi-yao">运算符重载是否必要？</h2>
+<p>先给反对者的立场：运算符重载容易被滥用（C++ 的 <code>&lt;&lt;</code> 流运算符被批评为可读性灾难），Java/Go 因此干脆禁止。但商业软件的实情是：
+<strong>金额运算是领域核心，<code>price * qty * discount</code> 就是业务语言本身</strong>。Java 里同一段逻辑被迫写成方法调用串：</p>
+<pre data-lang="java" class="language-java "><code class="language-java" data-lang="java">BigDecimal total = price.multiply(qty)
+    .multiply(discount)
+    .add(price.multiply(qty).multiply(discount).multiply(taxRate))
+    .setScale(2, RoundingMode.HALF_UP);
+</code></pre>
+<p>对比 C#——decimal 是原生类型，运算符直接可用：</p>
+<pre data-lang="csharp" class="language-csharp "><code class="language-csharp" data-lang="csharp">decimal total = Math.Round(price * qty * discount * (1m + taxRate), 2, MidpointRounding.AwayFromZero);
+</code></pre>
+<p>同一段业务逻辑，一个像数学表达式，一个像方法调用串——表达密度的差距直接转化为可读性和出错率的差距。 <strong>问题的关键不是"
+要不要重载"，而是"重载的克制"</strong>：Scala 3 允许任意符号重载，但工程约定把它限制在领域类型上（Money、Quantity），滥用是工程纪律问题，不是语言能力问题：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; 领域类型 + 运算符重载: 业务表达式一行数学, 顺带解决单位安全
+opaque type Money = BigDecimal
+object Money:
+  def apply(v: BigDecimal): Money = v
+  extension (m: Money)
+    def *(r: BigDecimal): Money = Money((m * r).setScale(2, RoundingMode.HALF_UP))
+    def +(o: Money): Money = Money(m + o)
+
+val total = price * qty * discount * (1 + TAX_RATE)  &#x2F;&#x2F; 业务表达式一行数学
+val x: BigDecimal = total   &#x2F;&#x2F; 编译错误: Money 不能当 BigDecimal 用
+</code></pre>
+<p>注意单位安全是重载的伴生价值：C# 的 <code>decimal</code> 原生但没有单位安全（金额 × 金额编译器不拦你，财务大忌）；Scala 的 opaque type 把
+Money 建成独立类型，重载的 <code>*</code>/<code>+</code> 内聚舍入逻辑，业务层写不出金额 × 金额。Kotlin 的 value class 也能做类似的事，但建模能力弱一档；Java
+只能退回 BigDecimal 加人肉纪律。</p>
+<h2 id="biao-da-shi-neng-li-biao-da-huan-shi-yu-ju">表达式能力：表达还是语句</h2>
+<p>定点数解决"怎么算"，表达式能力决定业务逻辑的 <em>形状</em>。表达式（expression）代表一个计算过程并产生值；语句（statement）执行副作用但不返回值——
+<code>1 + 2 * 3</code> 是表达式，<code>if (flag) a = 1 else a = 0</code> 是语句。</p>
+<p>Java 中 if-else、for、while、switch、try-catch 全部是语句（唯一的表达式是 <code>?:</code> 三目运算符）——业务逻辑被迫写成"步骤序列 +
+可变变量赋值"，这是 Java 代码啰嗦的一个隐藏根源。而 Kotlin、Scala 中，if-else、match/switch、for、try-catch <strong>全部是表达式</strong>：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; Scala: if-else 是表达式, 有返回值
+val discount = if (member) 0.9 else 1.0
+
+&#x2F;&#x2F; Scala: match 是表达式
+val fee = order.status match
+  case Draft =&gt; 0
+  case Paid  =&gt; order.total * 0.01
+  case _     =&gt; 0
+
+&#x2F;&#x2F; Java 的等价物: 语句 + 必须先声明再赋值的可变变量
+double discount;
+if (member) discount = 0.9; else discount = 1.0;
+</code></pre>
+<p>表达式风格的意义：业务逻辑从"命令序列"变成"值转换"——每个分支产生一个值，没有中间可变状态，天然契合后文的 FP
+分层与不可变数据。再叠加运算符重载（见上一节）与字符串插值（<code>sql"..."</code>，见 DSL 一章），业务代码才能写成"需求本身的样子"。</p>
+<h2 id="ji-he-cao-zuo-neng-li">集合操作能力</h2>
+<p>ERP 的数据变换（订单行聚合、库存过滤、报表统计）本质上都是集合操作——map/filter/fold/groupBy
+的组合。集合操作能力决定"数据流水线"写起来多直接：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; Scala: 组合子直接表达
+val totalQty = orderLines.filter(_.valid).map(_.qty).sum
+val byStatus = orders.groupBy(_.status).view.mapValues(_.map(_.total).sum).toMap
+
+&#x2F;&#x2F; Java 8+: Stream 两段式 + Collectors 噪音
+int totalQty = orderLines.stream()
+    .filter(Line::isValid)
+    .mapToInt(Line::getQty)
+    .sum();
+</code></pre>
+<p>加上不可变集合默认（呼应 #1 的只读能力），集合变换天然无副作用、可组合、可测试。Go
+没有泛型集合组合子，这类逻辑退化为手写循环——表达力差距在报表、对账这种数据密集代码里是数量级的。</p>
+<h2 id="mo-shi-pi-pei">模式匹配</h2>
+<p>模式匹配是"表达能力之王"：它是表达式（产生值）+ 解构（拆开数据结构）+ 穷尽（编译器检查所有分支）三者的合一：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">val amount = payment match
+  case Cash(paid)          =&gt; paid
+  case Card(_, fee, paid)  =&gt; paid - fee   &#x2F;&#x2F; 解构
+  case Wechat(discount, _) =&gt; ...
+</code></pre>
+<p>配合 #1 的 ADT，新增一种支付方式时编译器立刻指出所有遗漏的 match——业务分支的变化被模式匹配变成编译期事件。对比：Java 21
+才勉强有 instanceof 模式匹配（雏形），Go 完全没有。</p>
+<h2 id="kuo-zhan-fang-fa-neng-li-er-bu-dong-lei-xing">扩展方法：能力而不动类型</h2>
+<p>给既有类型加领域能力，而不修改类型定义本身——Scala 3 的 extension、Kotlin 的扩展函数、C# 的扩展方法。上面的 Money 运算符、
+<code>date + 1.month</code> 这类业务化操作，都挂在既有类型上（BigDecimal、LocalDate），领域代码与基础类型解耦：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; Scala 3: 给 BigDecimal 挂业务运算符, 不动 BigDecimal 本身
+extension (bd: BigDecimal)
+  def *(rate: BigDecimal): Money = Money(bd * rate)
+</code></pre>
+<p>Java 无此能力——只能包装类（Wrapper）或工具类（XxxUtils），前者侵入类型，后者散落逻辑。</p>
+<h2 id="lei-xing-biao-da-x-biao-da-shi-dui-bi">类型表达 × 表达式对比</h2>
+<table><thead><tr><th>语言</th><th>类型表达能力</th><th>表达式能力</th><th>定点数体验</th></tr></thead><tbody>
+<tr><td>Java</td><td>★★</td><td>★</td><td>BigDecimal 无重载</td></tr>
+<tr><td>C#</td><td>★★★★</td><td>★★★★★</td><td>decimal 原生</td></tr>
+<tr><td>Kotlin</td><td>★★★★★</td><td>★★★★</td><td>value class 自建</td></tr>
+<tr><td>Scala 3</td><td>★★★★★</td><td>★★★★★</td><td>opaque type 自建，可做到最强</td></tr>
+<tr><td>Go</td><td>★★★</td><td>★★</td><td>比 Java 还啰嗦</td></tr>
+<tr><td>Rust</td><td>★★★★★</td><td>★★★★</td><td>rust_decimal</td></tr>
+</tbody></table>
+<h2 id="dong-tai-yu-yan-biao-da-li-de-ling-yi-mian">动态语言：表达力的另一面</h2>
+<p>业务高度易变的商业环境里，动态语言靠谱吗？我的观点是： <strong>"不靠谱"的不是动态语言，是"没有纪律的动态语言"
+——缺测试、缺类型标注、缺模块边界。</strong></p>
+<p>反例是硬证据：Shopify（Ruby on Rails）承载了全球最大的零售电商平台之一，多商户、促销、定价规则之复杂不亚于任何 ERP，活了近 20
+年；Odoo（Python）是完整的开源 ERP。它们的业务规则变更频率比大多数 Java 系统都高——动态语言的表达力是真实的。</p>
+<p>但正例也有：SAP、Oracle EBS、用友、金蝶全部是静态语言（ABAP/Java/.NET）。长期演进 + 大团队 +
+高频重构时，编译期保障确实值钱——编译器是免费的"变更影响面扫描器"，动态语言把正确性责任全部转移给测试，而业务系统的测试覆盖率通常赶不上变更速度。</p>
+<h2 id="go-rust-biao-da-li-yu-ding-wei">Go / Rust：表达力与定位</h2>
+<p>回到 21CTO 那篇文章。Go 的优势（极简语法、秒级编译、AI 友好）是真实的，但它恰好解决的是微服务场景的问题。放在商业软件里：</p>
+<ul>
+<li>Go 没有运算符重载，decimal 全靠方法调用（shopspring/decimal），比 Java 还啰嗦；</li>
+<li>Go 的 CRUD + 规则代码异常啰嗦（<code>if err != nil</code> 洪流）；</li>
+<li>Rust 的借用检查在这个领域没有用武之地——ERP 几乎没有内存安全问题，却天天被编译等待拖累。</li>
+</ul>
+<p>所以这两门语言在这个领域的定位是： <strong>Go 适合高吞吐周边服务（订单、库存扣减、价格计算），Rust
+适合毫秒级定价引擎这类热路径，但不是核心业务逻辑的答案。</strong></p>
+<h2 id="dui-java-de-guan-gan">对 Java 的观感</h2>
+<p>可能是我有偏见：使用 Java，太容易受不良习惯的左右，很难编写出好的代码；而应用
+Scala，我们通过施加一些简单的限制原则，就可以强迫开发人员改变习惯，编写成可读性、可维护性显著改进的代码。这句话我在<a href="https://wangzaixiang.github.io/blog/trying-scala3/">Scala3 浅尝</a>
+中写过——那是用 Scala 3 重构核心产品后的总结，两年过去，这个判断依然成立。</p>
+<h2 id="ai-bian-cheng-yu-biao-da-neng-li-de-guan-xi">AI 编程与表达能力的关系</h2>
+<p>表达力与 AI 编程是双刃剑，两个方向都真实：</p>
+<p><strong>方向一：高表达力 = 低生成成本。</strong> 同一业务逻辑，表达密度高意味着代码量少——AI 生成的 token 少、出错空间小、Review 成本低。
+<code>price * qty * discount</code> 一行 vs <code>price.multiply(qty).multiply(discount)</code> 三行，AI 生成前者的正确率天然更高：更少的代码 =
+更少的犯错机会。</p>
+<p><strong>方向二：高表达力 = 写法多样 = AI 拟合更难。</strong> 表达力强的语言，同一逻辑的合法写法更多（运算符重载、扩展方法、given/implicit、集合组合子的多种组合），AI
+缺乏强统计先验；而 Java/Go 写法单一、语料统计性强，AI"照着写"几乎不会错。这正是 21CTO 文章里 Go 胜出的深层原因—— <strong>极简 =
+少样 = 高可预测性</strong>。</p>
+<p><strong>关键：张力被编译期反馈补偿。</strong> 表达力带来的拟合难度，被强类型 + 宏的编译期检查对冲——AI 生成的代码错了，编译器立刻指出并进入修复闭环（呼应
+#1 与 #3）。于是两种语言的 AI 策略分野：</p>
+<table><thead><tr><th></th><th>低表达力（Java/Go）</th><th>高表达力（Scala 3）</th></tr></thead><tbody>
+<tr><td>AI 生成</td><td>写法单一，近对率高</td><td>写法多样，近对率中</td></tr>
+<tr><td>错误发现</td><td>运行时 / 测试</td><td>编译期（类型 + 宏）</td></tr>
+<tr><td>校验成本</td><td>高（测试 + 人工）</td><td>低（编译器兜底）</td></tr>
+<tr><td>人类可维护性</td><td>低</td><td>高</td></tr>
+</tbody></table>
+<p><strong>结论：不要因为"AI 拟合度"选低表达力语言</strong>——那是用人类十年的可维护性换 AI 短期的便利。正确姿势是高表达力 + 编译期校验闭环：AI
+负责生成，编译器负责把关，人类负责架构——这正是 Scala 3 的定位。</p>
+<h1 id="3-dsl-yu-macro">3. DSL 与 Macro</h1>
+<p>商业软件的 bug 几乎不是"算法错"，而是"规则漏分支、字段拼错、SQL 漏条件、类型错位"—— <strong>这四个恰好全是编译期可拦的</strong>
+。而"把业务不变式推进编译期"这件事，正是宏（编译期元编程）的价值。</p>
+<p>Scala 3 的宏（quotes/splicing）本质上是一个"编译期 DSL 引擎"：验证型宏（编译期解析 + 报错）、生成型宏（编译期生成代码）、求值型宏（inline
+计算）。它们遵守一个关键分工： <strong>编译期做结构分析和注入计划，生成"带注入点的代码"，运行时只填值</strong>。编译期可知的是 SQL
+文本结构、表列名、case class 字段、类型；编译期不可知的是租户值、连接、参数值——后者永远只能生成注入点。</p>
+<p>我在自己的库 <a href="https://github.com/wangzaixiang/scala-sql">scala-sql（wsql）</a> 中实践了这些特性。按场景组织：</p>
+<table><thead><tr><th>DSL 场景</th><th>宏机制</th><th>商业软件的价值</th></tr></thead><tbody>
+<tr><td>SQL 语法检查</td><td><code>SQL""</code> 宏编译期解析校验</td><td>表名/字段名/租户条件拼错，编译期报错而非线上事故</td></tr>
+<tr><td>ResultSetMapper：强类型的轻度 ORM</td><td>宏生成 case class 行映射</td><td>零反射、编译期字段类型检查，替代 ORM 的可变实体</td></tr>
+<tr><td>Batch 语法改写</td><td><code>createMySqlBatch</code> 宏重写 <code>set → values</code></td><td>可读语法 + 批处理性能兼得，语法转换编译期完成</td></tr>
+<tr><td>BeanBuilder</td><td>宏生成对象转换代码</td><td>模型层（行模型 → 领域模型 → DTO）转换零样板、零反射</td></tr>
+<tr><td>StringInterpolation + 子语言</td><td><code>sql"..."</code> 插值</td><td>SQL 成为类型安全子语言，参数自动绑定、防注入是结构性的</td></tr>
+</tbody></table>
+<h2 id="sql-ji-dsl">SQL 即 DSL</h2>
+<p><code>sql""</code> 字符串插值把 SQL 变成类型安全的一等 DSL——参数自动参数化（防注入是结构性的，不存在 <code>${}</code> 拼接的危险通道），参数类型编译期检查（
+<code>JdbcValueAccessor</code> 隐式约束），宏生成 case class 的行映射（零反射）：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; wsql 的真实用法: 宏按字段名自动映射 case class, 零反射, 返回 Option
+def loadOrder(id: OrderId): Option[Order] =
+  dataSource.row[Order](sql&quot;SELECT * FROM orders WHERE id = $id&quot;)
+
+&#x2F;&#x2F; 上面的宏展开等价于手写映射 (Row API 只是兜底路径, 用于自定义类型映射):
+&#x2F;&#x2F;   dataSource.row[Row](sql&quot;...&quot;).map { row =&gt;
+&#x2F;&#x2F;     Order(row.get[Long](&quot;id&quot;), row.get[String](&quot;status&quot;), row.get[BigDecimal](&quot;total&quot;))
+&#x2F;&#x2F;   }
+&#x2F;&#x2F; 自定义类型 (OrderStatus&#x2F;Money) 提供 JdbcValueAccessor 即可接入, 列名&#x2F;字段名默认按名对应
+</code></pre>
+<h2 id="bian-yi-qi-sql-jian-cha-yu-duo-zu-hu-zhu-ru">编译期 SQL 检查与多租户注入</h2>
+<p><code>SQL""</code> 宏更进一步：编译期解析 SQL 并校验。这分两层——静态 SQL 在宏层面检查（多租户表必须带租户谓词，缺则编译报错），动态拼接的
+SQL 走独立的租户作用域 API 强制注入：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; 静态: 编译期检查
+val a = SQL&quot;select * from orders where tenant_id = $t&quot;   &#x2F;&#x2F; ✅ 编译过
+val b = SQL&quot;select * from orders where status = &#x27;PAID&#x27;&quot;  &#x2F;&#x2F; ❌ 编译失败: 缺租户条件
+
+&#x2F;&#x2F; 动态: 租户作用域强制, 运行时自动注入
+dataSource.withTenant(TenantId(&quot;t_42&quot;)) { ds =&gt;
+  ds.rows[Order](sql&quot;select * from orders&quot;)              &#x2F;&#x2F; 自动注入 and tenant_id = ?
+}
+ds.rows[Order](sql&quot;select * from orders&quot;)   &#x2F;&#x2F; ❌ 无租户上下文, 拒绝执行
+</code></pre>
+<h2 id="beanbuilder-bian-yi-qi-dui-xiang-zhuan-huan">BeanBuilder：编译期对象转换</h2>
+<p>模型层转换（数据库行模型 → 领域模型 → API DTO）是 ERP 里最频繁的样板。BeanBuilder 用宏在编译期生成转换代码，零反射、零运行时开销——
+<strong>转换规则（字段匹配、类型转换）在编译期确定，错误在编译期暴露</strong>：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; 基础: 字段同名自动映射, 缺失字段用目标默认值
+case class UserRow(name: String, age: Int)
+case class User(name: String, age: Int, status: String = &quot;active&quot;)
+val user = BeanBuilder.build[User](row)
+
+&#x2F;&#x2F; 类型转换 + Option + 集合: 数据库列 → 领域类型
+given Conversion[String, PhoneNumber] = PhoneNumber.parse
+val user = BeanBuilder.build[User](row)   &#x2F;&#x2F; String → PhoneNumber, 集合 Seq → List, 可空列 → Option 自动
+
+&#x2F;&#x2F; 多源合并: 一个目标从多个源组装
+val order = BeanBuilder.build[Order](orderRow, summary)
+
+&#x2F;&#x2F; additions: 显式覆盖&#x2F;补字段 (最高优先级)
+val user = BeanBuilder.build[User](row)(&quot;status&quot; -&gt; &quot;vip&quot;)
+</code></pre>
+<h3 id="yu-java-sheng-tai-de-dui-bi">与 Java 生态的对比</h3>
+<p>Java 生态处理同样问题的工具链：</p>
+<table><thead><tr><th>维度</th><th>BeanBuilder (Scala 3)</th><th>MapStruct</th><th>ModelMapper</th><th>Spring BeanUtils</th></tr></thead><tbody>
+<tr><td>机制</td><td>语言内建宏，内联生成代码</td><td>APT 编译期生成实现类</td><td>运行时反射</td><td>运行时反射</td></tr>
+<tr><td>编译期检查</td><td>✅ 字段名/类型/缺失全查</td><td>✅ 字段名/类型</td><td>❌ 运行时才错</td><td>❌ 运行时才错</td></tr>
+<tr><td>目标模型</td><td>不可变 case class（直接构造）</td><td>Java Bean（setter）</td><td>Java Bean</td><td>Java Bean</td></tr>
+<tr><td>转换能力</td><td>类型转换/Option/集合/嵌套/多源合并/additions</td><td>类型转换/嵌套/集合</td><td>灵活但隐式</td><td>仅同名同类型</td></tr>
+<tr><td>性能</td><td>零反射，内联</td><td>零反射，生成类</td><td>反射，慢</td><td>反射，慢</td></tr>
+<tr><td>使用方式</td><td>直接调用 <code>build[T](src)</code></td><td>声明 mapper 接口 + 注解</td><td>配置式</td><td>调用式</td></tr>
+</tbody></table>
+<p>四个关键差异：</p>
+<ol>
+<li><strong>模型假设不同</strong>：MapStruct/ModelMapper 面向可变 Java Bean（setter、无参构造），BeanBuilder 面向不可变 case class——后者与
+ADT/immutable 建模（见 #4）一致，目标类型不需要 setter；</li>
+<li><strong>编译期检查的深度</strong>：MapStruct 与 BeanBuilder 都能编译期报错，但 MapStruct 的错误定位在生成代码里（APT 阶段），BeanBuilder
+的错误直接指向调用点；ModelMapper/BeanUtils 则是"运行时才错"——类型改了漏改映射 = 线上事故；</li>
+<li><strong>零框架依赖</strong>：BeanBuilder 是语言特性（宏），不引入注解处理器、不生成额外类；MapStruct 需要 APT 配置、生成代码要纳入构建；</li>
+<li><strong>多源合并与 additions</strong>：BeanBuilder 原生支持（一个目标从多个源组装 + 显式覆盖），MapStruct 需要逐字段 <code>@Mapping</code> 或
+<code>@AfterMapping</code> 处理。</li>
+</ol>
+<p>一句话：MapStruct 是 Java 生态"编译期安全映射"的最优解，而 BeanBuilder 把这个能力以语言内建的方式给了 Scala 3——且因为 case
+class 不可变，它服务的模型层（ADT）比 Java Bean 更接近业务语义。这是"宏生成代码"在业务层的落点。</p>
+<h2 id="batch-zhi-xing-ce-lue-de-bian-yi-qi-zhong-xie">Batch：执行策略的编译期重写</h2>
+<p>前面几种 DSL 用法都是"用户写 DSL 文本/类型，宏校验或生成代码"。Batch 展示了另一种方式：
+<strong>用户写普通函数，宏在编译期分析函数结构，重写执行策略</strong>：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; 用户写的是最自然的形式: 一条数据 → 一条 SQL (普通函数, 不是批处理语法)
+val batch = conn.createMySqlBatch[User] { u =&gt;
+  val name = u.name.toUpperCase()          &#x2F;&#x2F; 函数体可以自由计算
+  sql&quot;insert into users set name = ${name}, age = ${u.age}, email = ${u.email}&quot;
+}
+users.foreach(batch.addBatch)
+batch.close()
+</code></pre>
+<p>宏在编译期对这个函数做了什么：</p>
+<ol>
+<li><strong>提取 SQL 结构</strong>：分析函数体，拿到表名、列名、参数位——预编译 PreparedStatement，<code>addBatch</code> 时只计算参数值，不再重复构建
+SQL（消除"每次 addBatch 重新插值"的运行时开销）；</li>
+<li><strong>语法转换</strong>：<code>createMySqlBatch</code> 把 <code>insert into t set a = ?, b = ?</code>（可读性好，但 MySQL JDBC 不支持批处理）在编译期转成
+<code>insert into t(a, b) values(?, ?)</code>（批处理要求的形式）—— <strong>语法转换在编译期完成，运行时零成本</strong>；</li>
+<li><strong>执行策略重写</strong>：逐条执行的语义被重写为批量执行（配合 <code>rewriteBatchedStatements=true</code> 获得真实性能提升）。</li>
+</ol>
+<p>用户全程无感——写的是"一条数据怎么变成一条 SQL"的自然代码，宏把它编译成"高效批量执行 N 条"的执行计划。 <strong>DSL
+的三种使用方式至此齐全：文本校验（<code>SQL""</code>）、代码生成（BeanBuilder）、执行策略重写（Batch）——共同点是"
+把运行时成本与运行时错误前移到编译期"。</strong></p>
+<h2 id="hong-yu-ai-huan-jue-lan-jie-qi">宏与 AI：幻觉拦截器</h2>
+<p>这是 AI 时代被低估的维度：AI 生成的 SQL 是幻觉重灾区——编造不存在的表名、字段名，运行时才炸。而编译期 SQL 检查（<code>SQL""</code>
+宏）把这类幻觉在编译时拦住。 <strong>宏让"AI 生成 + 编译期校验"成为闭环</strong>，这比"生成 + 人工 Review"可靠一个量级。这也正是"强类型适合
+AI"的延伸：强类型语言用类型约束拦住幻觉，而宏进一步把约束从类型扩展到业务规则（租户条件、表结构）—— <strong>约束越多，AI
+的发挥空间被框得越准，幻觉越少</strong>。</p>
+<h1 id="4-oo-yu-fp">4. OO 与 FP</h1>
+<h2 id="tu-ling-ji-vs-lyan-suan">图灵机 vs λ演算</h2>
+<p>计算有两个模型。命令式编程的根隐喻是"图灵机模型"：程序 = 控制流 +
+共享内存。控制流的复杂性和数据流的复杂性相互纠缠——某个数据的当前状态依赖于之前的执行流程，复杂的控制流让数据流难以证明正确，一旦出错就蔓延放大。</p>
+<p>另一个是 λ演算（Alonzo Church，1930 年建立，比图灵机理论早 6 年——Church 正是 Turing 的老师）。它的核心只有三行：</p>
+<pre><code>E = x        -- 变量
+  | λx.E     -- 函数抽象
+  | (E1 E2)  -- 函数调用
+</code></pre>
+<p>图灵机与 λ演算已被证明计算能力等价，但编程体验截然不同：图灵机模型是"共享内存 + 跳转"，λ模型是"函数组合 + 数据流"。函数式编程的核心是
+<strong>简单数据流</strong>——请求参数流经一个个纯函数，不断产生新数据，直到达成结果。简单数据流有两种形态：pipeline（管道：每个 step
+是一个函数，首尾相接，如 <code>cat log | awk | sort | uniq -c</code>）与 DAG（单向无环：有分支有汇聚，但绝不形成回路）——
+<strong>数据一旦形成回路，复杂性就回来了</strong>。数据流单向无环，逻辑可以自我证明，这是 FP
+相对命令式最本质的优势。我在<a href="https://wangzaixiang.github.io/blog/applied-function-progamming/">《应用函数式编程》</a>中有完整的讨论。</p>
+<h2 id="yi-jing-zhi-dong-shu-ju-yu-xing-wei-fen-chi">以静制动：数据与行为分离</h2>
+<p>商业系统中，数据结构（实体、数据库结构）是相对稳定的，行为则是高度不稳定的——随业务、时间、空间不断变化。OOP
+把数据与行为强行绑定，一个订单类会为了发邮件、发短信、打印而不断膨胀；而 ADT 让数据保持封闭、稳定，行为通过函数独立演化——数据以静制动，行为动而不乱。OOP
+的另一重问题是继承：现实中很少有真正的 is-a 关系，更多的是 has-a——大部份继承都是错误的设计，所以 Rust/Go
+干脆不再提供继承，改用组合。这也是我在 ADT 建模实践中的核心体会。</p>
+<h2 id="fen-ceng-gui-ze-ceng-fp-ji-chu-she-shi-ceng-ming-ling-shi">分层：规则层 FP，基础设施层命令式</h2>
+<p>不是风格之争，是分层之争。商业软件的逻辑分三层：</p>
+<table><thead><tr><th>层</th><th>本质</th><th>最佳风格</th></tr></thead><tbody>
+<tr><td>领域规则层（定价、促销、税务、库存分配）</td><td>纯计算</td><td>FP：纯函数 + ADT + 穷尽匹配</td></tr>
+<tr><td>流程层（订单流转、审批、对账）</td><td>状态机</td><td>ADT 状态机，非法迁移编译期不可写</td></tr>
+<tr><td>基础设施层（CRUD、事务、集成）</td><td>副作用</td><td>命令式，承认副作用</td></tr>
+</tbody></table>
+<p>最脏、最贵、最易错的部分（业务规则）用 FP 保护；最机械的部分（CRUD/事务）用命令式，别让抽象妨碍干活。</p>
+<p>这里有一个要诚实面对的悖论： <strong>"以数据库为核心"意味着状态源是共享可变的外部世界</strong>。库存数在数据库里，几十个并发事务在改它——immutable
+只保护进程内视图，数据库层的仲裁者是行锁和事务隔离级别。FP 的纯度在这个系统里做不到，也不该做。FP 的价值在于
+<strong>把最复杂的纯计算部分与副作用隔离</strong>，而不是消灭副作用。</p>
+<h2 id="ji-suan-jie-shi-mo-xing-ge-chi-fu-zuo-yong-de-luo-di-fang-fa">计算-解释模型：隔离副作用的落地方法</h2>
+<p>"把纯计算与副作用隔离"怎么落地？我在 FP 实践中用的是 <strong>计算-解释模型</strong>：每个服务拆成三段——fetch（只读数据）、logic（纯函数计算，产出
+ActionModel）、interpret（执行副作用，把计算结果落地）：</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">def service(request: Request): Response =
+  val initial = fetch(request)        &#x2F;&#x2F; 只读: 取数据
+  val action  = logic(initial)        &#x2F;&#x2F; 纯函数: 计算要做什么
+  interpret(action)                   &#x2F;&#x2F; 副作用: 统一落地
+</code></pre>
+<p>三条实践约定（完整讨论见<a href="https://wangzaixiang.github.io/blog/applied-function-progamming/">《应用函数式编程》</a>）：</p>
+<ol>
+<li><strong>副作用聚合</strong>：逻辑计算保持纯函数，副作用集中到 interpret，取代散落在业务逻辑各处的 IO——服务的目的性明确，业务逻辑可复用、可单测；</li>
+<li><strong>命名约定</strong>：有副作用的方法用 <code>doXXX</code> 命名，混合方法（串联计算与解释）作为服务最外层并标注 <code>@effect</code>，代码中的副作用块用
+<code>DoEffects!</code> 标记——让"哪里在改世界"一眼可见；</li>
+<li><strong>解释的简单性</strong>：避免在 interpret 里依赖 insert 返回的自增 ID（改为先取全局 ID 再显式赋值）、避免依赖 update 命中数（在
+fetch 阶段先检查存在性）—— <strong>解释阶段只落地，不决策</strong>。</li>
+</ol>
+<p>这个模型与 #5 的 Direct Style 天然契合：<code>withTransaction</code> 块就是 interpret
+的载体，逻辑保持纯函数，副作用在事务边界内落地——代码层的副作用从"四处散落"变成"一处聚合"。</p>
+<h1 id="5-direct-style-yu-effect-monad">5. Direct Style 与 Effect Monad</h1>
+<h2 id="effect-system-de-shui">Effect System 的税</h2>
+<p>ZIO / Cats Effect 这类 effect system，我明确不采用。CRUD + 事务密集型的商业应用，effect 的收益（类型化错误、可组合性）接近零，成本却真实存在：每个
+DB 调用包进 IO、组合子切碎业务逻辑、调用栈失真、团队要先学 monad。</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">&#x2F;&#x2F; Effect System (ZIO): 一个促销应用要穿过 service、flatMap、类型错误通道
+def applyPromo(p: Promotion, id: OrderId): ZIO[OrderRepo &amp; Pricing, PricingError, Money] =
+  for
+    order &lt;- ZIO.service[OrderRepo].flatMap(_.load(id))
+    base  &lt;- ZIO.service[Pricing].flatMap(_.basePrice(order))
+    _     &lt;- ZIO.logInfo(s&quot;applying $p&quot;)
+  yield p.discount(base)
+
+&#x2F;&#x2F; Direct Style: 就是业务需求本身的样子 (wsql 真实 API)
+def applyPromo(p: Promotion, id: OrderId): Money =
+  dataSource.withTransaction { conn =&gt;
+    val order = conn.row[Order](sql&quot;SELECT * FROM orders WHERE id = $id&quot;).get
+    val base  = pricing.basePrice(order)
+    log.info(s&quot;applying $p&quot;)
+    p.discount(base)
+  }
+</code></pre>
+<h2 id="bu-bi-yin-wei-fp-er-mi-lian-monad">不必因为 FP 而迷恋 Monad</h2>
+<p>FP 的核心价值是纯函数、不可变、简单数据流、副作用隔离—— <strong>这些都不需要 monad</strong>。Monad 只是 FP
+生态中处理特定问题（副作用顺序、可失败性、状态传递）的一种工具，不是 FP 本身。</p>
+<p>很多人引入 ZIO/Cats Effect 的心理动机是"FP 就应该用 monad"——但这是把"工具"当成了"信仰"。实际业务里：</p>
+<ul>
+<li><strong>纯函数、不可变、表达式风格（见 #2）、简单数据流（见 #4）——这些 FP 核心收益，Direct Style 全都能拿到</strong>，一条不少；</li>
+<li>monad 解决的"副作用顺序与组合"问题，在 CRUD + 事务密集的商业软件里，用 <code>withTransaction</code> 块 + 顺序代码表达得更直接（见下节）；</li>
+<li>monad 的税（学习曲线、组合子、调用栈失真、调试困难）是真实的，而它的收益（类型化错误、可组合性）在大多数业务代码里用不到。</li>
+</ul>
+<p>我的判断：FP 是一种思维方式和建模原则，monad 只是其中一种实现手段。 <strong>在商业软件里，FP 的精神（数据流清晰、副作用隔离）用
+Direct Style 表达，比用 monad 表达更贴合业务</strong>——这也是我在 wsql
+中的实践选择。除非你的领域真的是"可组合的计算管道"（解析器、流处理、协议栈），否则 monad 的收益撑不起它的成本。</p>
+<h2 id="shi-wu-shi-kuai">事务是块</h2>
+<p>Direct Style 里，事务就是块——<code>withTransaction { ... }</code> 一个块就是事务，异常自动回滚。一个反直觉的事实是：Direct Style 正是
+Rails 和 Odoo 的默认风格（<code>transaction do ... end</code>），FP 爱好者的 Direct Style 与动态语言 ERP 的实践殊途同归：
+<strong>都让业务代码看起来像普通代码</strong>，区别只是我们用类型系统把动态语言丢掉的那部分正确性保障补了回来。</p>
+<pre data-lang="scala" class="language-scala "><code class="language-scala" data-lang="scala">def createOrder(userId: UserId, items: List[CartItem]): Order =
+  dataSource.withTransaction { conn =&gt;
+    val price = pricing.compute(items)   &#x2F;&#x2F; 纯函数: 促销 + 税务 + 舍入
+    val order = Order.create(userId, price) &#x2F;&#x2F; ADT
+    conn.executeUpdate(
+      sql&quot;insert into orders(id, customer_id, total) values(${order.id}, $userId, ${order.total})&quot;)
+    stock.allocate(conn, order)          &#x2F;&#x2F; 同一事务
+    order
+  }
+</code></pre>
+<h2 id="virtual-threads-direct-style-de-bing-fa-da-an">Virtual Threads：Direct Style 的并发答案</h2>
+<p>Direct Style 过去被嫌弃"阻塞线程"，Java 21+ 的 Virtual Threads 让这个理由消失了：阻塞变廉价，一请求一线程一事务的经典模型重新拥有高并发。JDK
+24（JEP 491）修复了 synchronized pinning 后，这个问题彻底干净。</p>
+<p>于是 Scala 3 + Virtual Threads 成为 JVM 上这个领域逻辑最自洽的组合：类型系统给正确性，Direct Style 给可读性，Virtual
+Threads 给并发，JDBC 生态现成可用。</p>
+<h1 id="6-orm-or-orm-less">6. ORM or ORM-less</h1>
+<h2 id="orm-yu-adt-de-chong-tu">ORM 与 ADT 的冲突</h2>
+<p>FP + ADT + immutable 与 ORM 必然冲突：ORM 的实体是可变、可空、带隐式 dirty tracking 和懒加载代理的，与不可变 ADT 直接矛盾。而且
+ERP 的现实是：读路径全是复杂聚合（报表、对账），写路径全是事务——恰好是 ORM 最弱的两个区域。</p>
+<table><thead><tr><th>ORM 的机制</th><th>与 FP/ADT 的冲突</th></tr></thead><tbody>
+<tr><td>实体 mutable、setter</td><td>与 immutable ADT 直接矛盾</td></tr>
+<tr><td>Dirty tracking</td><td>副作用隐藏，行为不可预测</td></tr>
+<tr><td>会话/Session</td><td>隐式全局状态，测试要 mock 一片</td></tr>
+<tr><td>懒加载代理</td><td>运行时才炸（LazyInitializationException）</td></tr>
+<tr><td>复杂查询</td><td>终究掉头写原生 SQL——ORM 白背了对象图</td></tr>
+</tbody></table>
+<h2 id="sql-dang-yi-deng-dsl-wsql-shi-zheng">SQL 当一等 DSL：wsql 实证</h2>
+<p>替代品不是没有，是更好： <strong>SQL 当一等 DSL</strong>，类型类 + 宏做映射，显式行映射为 ADT（见 #3 的 <code>loadOrder</code> 示例）。映射由宏生成、零反射；可空列用
+<code>T|Null</code>/<code>Option</code> 显式建模（见 #1 的 null 安全）；事务是块（见 #5）——数据访问层与领域模型的隔离由类型系统保证，而不是靠框架魔法。</p>
+<h2 id="duo-zu-hu-shu-ju-fang-wen-db-schema-gong-xiang-biao">多租户数据访问：DB + schema + 共享表</h2>
+<p>SaaS 化的商业软件，多租户隔离是架构核心。我的设计主张是混合模式： <strong>DB + schema + 共享表</strong>。</p>
+<ul>
+<li><strong>instance</strong> 是物理资源单位：大客户独占，小微客户共享；</li>
+<li><strong>schema</strong> 是容量单元和迁移单元：一组租户放一个 schema，扩容/迁移以 schema 为粒度整体搬迁（逻辑复制 + 映射切换，零停机）；</li>
+<li><strong>tenant_id 是安全隔离单元</strong>：同一 schema 内多租户数据共存，靠 tenant_id 列区分——这是唯一的隔离边界。</li>
+</ul>
+<p>关键收益： <strong>schema 数量与租户数量解耦</strong>。schema 按容量开（比如每 100
+租户一个），租户从几百到几万，表总量可控，autovacuum、统计信息、备份等维护成本不会随租户数线性膨胀。</p>
+<p>但代价是： <strong>隔离责任全部压在 tenant_id 上</strong>。漏写 tenant_id 条件 = 同一 schema 内跨租户泄露。这不能靠人肉自觉，必须分层强制：</p>
+<ol>
+<li><strong>连接路由层</strong>：tenant_id → (instance, schema)，连接时设置 search_path（资源定位，错即显式失败）；</li>
+<li><strong>数据库兜底层</strong>：PostgreSQL RLS，事务开始时 <code>SET LOCAL app.current_tenant = ?</code>，policy 强制行级过滤——应用层漏了也挡得住；</li>
+<li><strong>编译期防线</strong>：静态 SQL 在宏层面检查多租户表必须带租户谓词（见 #3）。</li>
+</ol>
+<p>一个关键的安全语义：<code>SET LOCAL</code> 只作用于当前事务，事务结束自动清空—— <strong>事务边界就是租户边界</strong>
+，连接池复用零风险。而"未设置租户"必须是安全失败（读空/写拒），而不是全量访问。MySQL 没有原生的 RLS，共享表模式只能靠应用层强制——这是
+MySQL 在 SaaS 多租户场景的一个真实短板。</p>
+<h1 id="ai-shi-dai-de-zhong-xin-ping-gu">AI 时代的重新评估</h1>
+<p>回到 21CTO 那篇文章的框架，重新评估这个领域的语言：</p>
+<p><strong>1. 训练语料</strong>。文章说"AI 准确率依赖训练语料"——这条标准指向的是 Java/C#，不是 Go。GitHub 上 Java/C# 的业务代码语料是 Go
+的几十倍，AI 生成 Spring/JPA 代码的准确率远高于生成 Go 的 CRUD + 规则代码。Scala 的语料虽然少，但 Direct Style + SQL 插值的
+API 形状贴近 MyBatis/JDBC 主流写法，AI 生成业务层代码时可以参照主流语料。</p>
+<p><strong>2. 反馈闭环</strong>。Go 的秒级编译确实无敌，但 Scala 3 的编译速度（虽慢于 Go/Java）在可接受范围，且宏集中在少量基建代码上，业务层的反馈时延影响有限。</p>
+<p><strong>3. 表达力与 AI 拟合的张力</strong>。一个诚实的判断：表达力越强的语言（运算符重载、自定义 DSL），AI 越难拟合——同样逻辑的合法写法太多样。Scala
+3 在这条轴上是"人类生产力顶配、AI 拟合度中等"。这是必须接受的权衡： <strong>你用表达力换业务可读性，代价是 AI 生成时多花一点
+Review 成本。</strong></p>
+<p>（编译期检查作为 AI 幻觉拦截器，已在 #3 详述。）</p>
+<h1 id="jie-lun-jue-ce-kuang-jia">结论：决策框架</h1>
+<p>回到最初的问题：AI 时代的商业软件，选什么语言？</p>
+<p>我的回答是： <strong>语言之争在这个领域有个被严重低估的维度——编译期能替你拦多少业务错误。</strong> 在这个维度上，Scala 3
+是唯一拉满的（宏 + 类型系统 + ADT + Direct Style + Virtual Threads），C# 凭借 decimal 原生和成熟生态拿到约 90% 的收益，Kotlin
+是 JVM 存量团队的务实替代。</p>
+<pre><code>选择 Scala 3 + Direct Style + Virtual Threads 的决策框架:
+✓ 系统生命周期 10 年以上, 正确性 &gt; 开发速度 (商业软件天然如此)
+✓ 团队有 1-2 个能写宏的核心维护者 (宏是基建, 业务层不需要会宏)
+✓ 业务规则复杂密集 (促销&#x2F;税务&#x2F;库存——商业软件天然如此)
+✓ 接受&quot;基建自己造&quot; (自研数据访问层, 而非依赖生态)
+
+否则 → C#&#x2F;Kotlin 拿 90% 收益, 同样是合理的选择
+</code></pre>
+<p>剩下的问题不是"Scala 3 行不行"，而是"你的团队愿不愿意为 10 年的正确性付招聘和生态的税"。而 AI 时代的到来，正在降低这笔税：AI
+可以补齐业务层的大量编码工作，让团队的核心竞争力从"写代码的人数"转向"架构定义与编译期不变式设计的能力"——这恰恰是宏、ADT、类型系统这些工具的主场。</p>
+<p>最后，回到我那句话：我可能是有偏见的。但二十年的商业软件生涯告诉我，
+<strong>这个领域的胜负手从来不是语言的性能，而是语言能帮你把多少错误挡在编译期之外</strong>——而这，正是 Scala 3 的用武之地。</p>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/best-coding-harness/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/explore-rust-pin/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

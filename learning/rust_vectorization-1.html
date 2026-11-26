@@ -1,0 +1,494 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>compiler vectorization - learning</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-6a75639e.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-ee0f8769.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                        <a href="/" class="icon-button"> Home </a>
+                    </div>
+
+                    <h1 class="menu-title">learning</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <p>本篇分析一下 rust 语言的编译期自动向量化的特性。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[inline(never)]
+pub fn select(v1: &amp;[i32], v2: &amp;[i32], result: &amp;mut [bool]) {
+    assert!(v1.len() == v2.len() &amp;&amp; v1.len() == result.len());
+    for i in 0..v1.len() {
+        if v1[i] &gt; v2[i] {
+            result[i] = true
+        } else {
+            result[i] = false
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<ol>
+<li>%rdi : %rsi  v1.ptr() : v1.len()</li>
+<li>%rdx : %rcx  v2.ptr() : v2.len()</li>
+<li>%r8  : %r9   result.ptr() : result.len()</li>
+</ol>
+<pre><code class="language-asm">LCPI6_0:
+	.quad	72340172838076673   -- 0x01010101_01010101  // 8 个 1
+	.section	__TEXT,__text,regular,pure_instructions
+	.p2align	4, 0x90
+__ZN5l_asm5demo16select17h43db37ec056aed21E:
+	.cfi_startproc
+	cmp	rsi, rcx    -- v1.len() == v2.len()
+	jne	LBB6_10
+	cmp	rsi, r9     -- v1.len() == result.len()
+	jne	LBB6_10
+	test	rsi, rsi  -- v1.len() == 0
+	je	LBB6_9
+	cmp	rsi, 32     -- v1.len() &gt;= 32
+	jae	LBB6_5
+	xor	eax, eax
+	jmp	LBB6_8     -- 少于32时，直接循环处理 
+LBB6_5:
+	mov	rax, rsi
+	and	rax, -32    -- rax = rsi &amp; -32
+	xor	ecx, ecx
+	vpbroadcastq	ymm0, qword ptr [rip + LCPI6_0]  -- ymm0: 32x8
+	.p2align	4, 0x90
+LBB6_6:
+	vmovdqu	ymm1, ymmword ptr [rdi + 4*rcx]       -- ymm1..ymm4 加载 32 个 i32 from v1
+	vmovdqu	ymm2, ymmword ptr [rdi + 4*rcx + 32]
+	vmovdqu	ymm3, ymmword ptr [rdi + 4*rcx + 64]
+	vmovdqu	ymm4, ymmword ptr [rdi + 4*rcx + 96]
+	
+	vpcmpgtd	ymm1, ymm1, ymmword ptr [rdx + 4*rcx]
+	-- ymm1:8x32 = [ c0, c1, ..., c7 ]
+	 
+	vpcmpgtd	ymm2, ymm2, ymmword ptr [rdx + 4*rcx + 32] 
+	-- ymm2:8x32 = [ c8, c9, ..., c15]
+	 
+	vpcmpgtd	ymm3, ymm3, ymmword ptr [rdx + 4*rcx + 64]  
+	-- ymm3: 8x32 = [ c16, c17, ..., c23]
+	
+	vpackssdw	ymm1, ymm1, ymm2  
+	-- ymm1: 16x16 = [ c0, c1, ..., c15] 
+	
+	vpcmpgtd	ymm2, ymm4, ymmword ptr [rdx + 4*rcx + 96]
+	vpackssdw	ymm2, ymm3, ymm2  -- ym2 = 16..31, 【i16, 16]
+	-- ymm2: 16x16 = [c16, c17, ..., c31]
+	
+	vpermq	ymm2, ymm2, 216 -- 0b11_01_10_00
+	-- ymm2: 16x16 = [ c16, c17, c18, c19, c24, c25, c26, c27, c20, c21, c22, c23, c28, c29, c30, c31]
+	-- vpermq 分析有些问题
+	vpermq	ymm1, ymm1, 216
+	-- ymm1: 16x16 = [ c0, c1, c2, c3,    c8, c9, c10, c11,   c4, c5, c6, c7,   c12, c13, c14, c15]
+	
+	vpacksswb	ymm1, ymm1, ymm2
+	-- ymm1: 32x8 = [ c0, c1, c2, c3 ,  c8, c9, c10, c11,   c4, c5, c6, c7,   c12, c13, c14, c15,
+	            c16, c17, c18, c19, c24, c25, c26, c27, c20, c21, c22, c23, c28, c29, c30, c31] -- 32x8
+	vpermq	ymm1, ymm1, 216
+	-- ymm1: 32x8 = [ c0, c1, c2, c3,   c8, c9, c10, c11,  c16, c17, c18, c19,  c24, c25, c26, c27,
+	  .......]
+	  
+	vpand	ymm1, ymm1, ymm0
+	
+	vmovdqu	ymmword ptr [r8 + rcx], ymm1
+	add	rcx, 32      --  一次循环处理完32个整数
+	cmp	rax, rcx
+	jne	LBB6_6
+	cmp	rax, rsi
+	je	LBB6_9
+	.p2align	4, 0x90
+LBB6_8:
+	mov	ecx, dword ptr [rdi + 4*rax]
+	cmp	ecx, dword ptr [rdx + 4*rax]
+	setg	byte ptr [r8 + rax]
+	lea	rcx, [rax + 1]
+	mov	rax, rcx
+	cmp	rsi, rcx
+	jne	LBB6_8
+LBB6_9:
+	vzeroupper
+	ret
+LBB6_10:
+	push	rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset rbp, -16
+	mov	rbp, rsp
+	.cfi_def_cfa_register rbp
+	lea	rdi, [rip + l___unnamed_3]
+	lea	rdx, [rip + l___unnamed_4]
+	mov	esi, 66
+	call	__ZN4core9panicking5panic17h2a3e12572053020cE
+	.cfi_endproc
+</code></pre>
+<p>从这段代码来看，在 +avx2 特性下，编译期生成了使用 256 bit 寄存器的代码，一次循环可以处理 32 个 i32 数据。
+而如果在 +avx512f 特性下，编译期生成了使用 512bit 的代码， 一次循环可以处理 64 个 i32 数据。
+实际性能如何？需要找一台支持 AVX512 指令集的机器来做一下测试。</p>
+<h2 id="调整"><a class="header" href="#调整">调整</a></h2>
+<ol>
+<li>修改为 i32 与 i16 的比较:
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::simd::i8x1;
+
+#[inline(never)]
+pub fn select(v1: &amp;[i32], v2: &amp;[i16], result: &amp;mut [bool]) {
+    assert!(v1.len() == v2.len() &amp;&amp; v1.len() == result.len());
+    for i in 0..v1.len() {
+        if v1[i] &gt; (v2[i] as i32) {
+            result[i] = true
+        } else {
+            result[i] = false
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+在 +avx2 特性下，可以使用 vpmovsxwd 指令在读取 v2 的数据时，一次将 8 个 i16 读取并转换为 8 个 i32，然后再进行比较。
+<pre><code class="language-asm"></code></pre>
+</li>
+<li>修改 <code>v1[i]</code> 为一个 <code>v1.get(i)</code> 时，生成代码？<br>此时，load 数据这一块可能会无法使用 SIMD 指令集，可能需要多次获取数据后，再拼装为一个 SIMD 寄存器。</li>
+<li>在 OLAP 向量计算中，如果采用代码生成的方式，相比解释表达式，并分派给多个模版方法，肯定会有性能上的提升：
+<ul>
+<li>多个运算间，可以复用寄存器</li>
+<li>是否可以采用 LLVM 来做这个的代码生成？</li>
+<li>尝试阅读 LLVM IR 代码，评估后续通过生成 LLVM IR 的方式来执行的可能行。</li>
+</ul>
+</li>
+</ol>
+<h2 id="llvm-ir-阅读"><a class="header" href="#llvm-ir-阅读">LLVM-IR 阅读</a></h2>
+<pre><code>; l_asm::demo1::select
+; Function Attrs: noinline uwtable
+define internal fastcc void @_ZN5l_asm5demo16select17h43db37ec056aed21E(
+    ptr noalias nocapture noundef nonnull readonly align 4 %v1.0, i64 noundef %v1.1,
+    ptr noalias nocapture noundef nonnull readonly align 4 %v2.0, i64 noundef %v2.1,
+    ptr noalias nocapture noundef nonnull writeonly align 1 %result.0, i64 noundef %result.1) unnamed_addr #0 {
+start:
+  %_4 = icmp eq i64 %v1.1, %v2.1
+  %_7 = icmp eq i64 %v1.1, %result.1
+  %or.cond = and i1 %_4, %_7  -- i1: bit
+  br i1 %or.cond, label %bb5.preheader.split, label %bb4  -- br type iftrue ifalse
+
+bb5.preheader.split:                              ; preds = %start
+  %_218.not = icmp eq i64 %v1.1, 0
+  br i1 %_218.not, label %bb15, label %bb13.preheader
+
+bb13.preheader:                                   ; preds = %bb5.preheader.split
+  %min.iters.check = icmp ult i64 %v1.1, 32       -- unsigned less than
+  br i1 %min.iters.check, label %bb13.preheader17, label %vector.ph
+
+vector.ph:                                        ; preds = %bb13.preheader
+  %n.vec = and i64 %v1.1, -32
+  br label %vector.body
+
+vector.body:                                      ; preds = %vector.body, %vector.ph
+  %index = phi i64 [ 0, %vector.ph ], [ %index.next, %vector.body ]  -- TODO? what is phi
+  %0 = getelementptr inbounds [0 x i32], ptr %v1.0, i64 0, i64 %index  -- %0 = %v1.0
+  %1 = getelementptr inbounds i32, ptr %0, i64 8                       -- %1 = %0 + 32byte
+  %2 = getelementptr inbounds i32, ptr %0, i64 16
+  %3 = getelementptr inbounds i32, ptr %0, i64 24
+  %wide.load = load &lt;8 x i32&gt;, ptr %0, align 4                          -- 8x32 from v1
+  %wide.load10 = load &lt;8 x i32&gt;, ptr %1, align 4
+  %wide.load11 = load &lt;8 x i32&gt;, ptr %2, align 4
+  %wide.load12 = load &lt;8 x i32&gt;, ptr %3, align 4
+  
+  %4 = getelementptr inbounds [0 x i32], ptr %v2.0, i64 0, i64 %index
+  %5 = getelementptr inbounds i32, ptr %4, i64 8
+  %6 = getelementptr inbounds i32, ptr %4, i64 16
+  %7 = getelementptr inbounds i32, ptr %4, i64 24
+  %wide.load13 = load &lt;8 x i32&gt;, ptr %4, align 4                        -- 8x32 from v1
+  %wide.load14 = load &lt;8 x i32&gt;, ptr %5, align 4
+  %wide.load15 = load &lt;8 x i32&gt;, ptr %6, align 4
+  %wide.load16 = load &lt;8 x i32&gt;, ptr %7, align 4
+  
+  %8 = icmp sgt &lt;8 x i32&gt; %wide.load, %wide.load13                   -- signed greater than
+  %9 = icmp sgt &lt;8 x i32&gt; %wide.load10, %wide.load14
+  %10 = icmp sgt &lt;8 x i32&gt; %wide.load11, %wide.load15
+  %11 = icmp sgt &lt;8 x i32&gt; %wide.load12, %wide.load16
+  
+  %12 = zext &lt;8 x i1&gt; %8 to &lt;8 x i8&gt;                                 -- zero extend 8x1 to 8x8
+  %13 = zext &lt;8 x i1&gt; %9 to &lt;8 x i8&gt;
+  %14 = zext &lt;8 x i1&gt; %10 to &lt;8 x i8&gt;
+  %15 = zext &lt;8 x i1&gt; %11 to &lt;8 x i8&gt;
+  
+  %16 = getelementptr inbounds [0 x i8], ptr %result.0, i64 0, i64 %index
+  %17 = getelementptr inbounds i8, ptr %16, i64 8
+  %18 = getelementptr inbounds i8, ptr %16, i64 16
+  %19 = getelementptr inbounds i8, ptr %16, i64 24
+  
+  store &lt;8 x i8&gt; %12, ptr %16, align 1                               -- store 8x8 to result
+  store &lt;8 x i8&gt; %13, ptr %17, align 1
+  store &lt;8 x i8&gt; %14, ptr %18, align 1
+  store &lt;8 x i8&gt; %15, ptr %19, align 1
+  
+  %index.next = add nuw i64 %index, 32
+  %20 = icmp eq i64 %index.next, %n.vec
+  br i1 %20, label %middle.block, label %vector.body, !llvm.loop !17  -- TODO what's !llvm.loop !17
+
+middle.block:                                     ; preds = %vector.body
+  %cmp.n = icmp eq i64 %n.vec, %v1.1
+  br i1 %cmp.n, label %bb15, label %bb13.preheader17
+
+bb13.preheader17:                                 ; preds = %bb13.preheader, %middle.block
+  %iter.sroa.0.09.ph = phi i64 [ 0, %bb13.preheader ], [ %n.vec, %middle.block ]
+  br label %bb13
+
+bb4:                                              ; preds = %start
+; call core::panicking::panic
+  tail call void @_ZN4core9panicking5panic17h2a3e12572053020cE(ptr noalias noundef nonnull readonly align 1 @alloc_882a6b32f40210455571ae125dfbea95, i64 noundef 66, ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_649ca88820fbe63b563e38f24e967ee7) #12
+  unreachable
+
+bb15:                                             ; preds = %bb13, %middle.block, %bb5.preheader.split
+  ret void
+
+bb13:                                             ; preds = %bb13.preheader17, %bb13
+  %iter.sroa.0.09 = phi i64 [ %_0.i, %bb13 ], [ %iter.sroa.0.09.ph, %bb13.preheader17 ]
+  %_0.i = add nuw i64 %iter.sroa.0.09, 1
+  %21 = getelementptr inbounds [0 x i32], ptr %v1.0, i64 0, i64 %iter.sroa.0.09
+  %_13 = load i32, ptr %21, align 4, !noundef !4
+  %22 = getelementptr inbounds [0 x i32], ptr %v2.0, i64 0, i64 %iter.sroa.0.09
+  %_15 = load i32, ptr %22, align 4, !noundef !4
+  %_12 = icmp sgt i32 %_13, %_15
+  %spec.select = zext i1 %_12 to i8
+  %23 = getelementptr inbounds [0 x i8], ptr %result.0, i64 0, i64 %iter.sroa.0.09
+  store i8 %spec.select, ptr %23, align 1
+  %exitcond.not = icmp eq i64 %_0.i, %v1.1
+  br i1 %exitcond.not, label %bb15, label %bb13, !llvm.loop !20
+}
+</code></pre>
+<p>对照 <a href="https://llvm.org/docs/LangRef.html#phi-instruction">LLVM-IR 文档</a>， 还是比较好理解的， 相比 x86 汇编，LLVM-IR 在 SIMD
+上的可读性显然要高太多。如果理解了 LLVM-IR，并掌握了生成 LLVM-IR 后再通过 LLVM 生成机器码，然后再通过 JIT 的方式执行，那么，在 OLAP 中未尝
+不是一种更好的替代模版特化的方式。</p>
+<ol>
+<li>对于较为复杂的表达式，例如 a &gt; b &amp;&amp; c + d &gt; e, 特化的方式，基本上每个运算符都是一次函数调用，这里是4次调用，且每次函数调用涉及到类型组合，
+需要特化的函数版本会非常的多。</li>
+<li>使用 LLVM-IR，这个表达式可以直接优化为 1个函数调用，然后通过 LLVM 优化器，生成最优的机器码。内部可能会减少不必要的 Load/Store 过程，减少
+中间向量的生成和内存占用。</li>
+</ol>
+<p>JIT 参考资料：</p>
+<ol>
+<li><a href="https://createlang.rs/01_calculator/basic_llvm.html">Create Your Own Programming Language with Rust</a></li>
+<li><a href="https://llvm.org/docs/tutorial/BuildingAJIT1.html">Building a JIT</a></li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="rust_prefaces.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="rust_sugars.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="rust_prefaces.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="rust_sugars.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-025d9952.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

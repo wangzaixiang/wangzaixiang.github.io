@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>Explore Rust Pin：自引用、Future 与编译器的攻防 | 程序人生</title>
+<meta name="description" content="从自引用类型的悬空指针出发，逐层拆解 Pin 的设计意图：为什么 !Copy 还不够？Pin&lt;&amp;T&gt; 是多余的么？pin! 宏的遮蔽在防什么？以及 &amp;pin 的未来形态。">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/explore-rust-pin/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="Explore Rust Pin：自引用、Future 与编译器的攻防">
+  <meta name="twitter:description" content="从自引用类型的悬空指针出发，逐层拆解 Pin 的设计意图：为什么 !Copy 还不够？Pin&lt;&amp;T&gt; 是多余的么？pin! 宏的遮蔽在防什么？以及 &amp;pin 的未来形态。">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="Explore Rust Pin：自引用、Future 与编译器的攻防">
+  <meta property="og:description" content="从自引用类型的悬空指针出发，逐层拆解 Pin 的设计意图：为什么 !Copy 还不够？Pin&lt;&amp;T&gt; 是多余的么？pin! 宏的遮蔽在防什么？以及 &amp;pin 的未来形态。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/explore-rust-pin/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="Explore Rust Pin：自引用、Future 与编译器的攻防">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/explore-rust-pin/"
+      },
+      "headline": "Explore Rust Pin：自引用、Future 与编译器的攻防",
+      "image": ,
+      "datePublished": "2026-07-24",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "Explore Rust Pin：自引用、Future 与编译器的攻防"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Explore Rust Pin：自引用、Future 与编译器的攻防",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "从自引用类型的悬空指针出发，逐层拆解 Pin 的设计意图：为什么 !Copy 还不够？Pin&lt;&amp;T&gt; 是多余的么？pin! 宏的遮蔽在防什么？以及 &amp;pin 的未来形态。"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Explore Rust Pin",
+            "item": "https://wangzaixiang.github.io/blog/explore-rust-pin/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#wen-ti-zi-yin-yong-lei-xing-bei-yi-dong-hou-zhi-zhen-xuan-kong">问题：自引用类型被移动后，指针悬空</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#wei-shen-me-jie-yong-jian-cha-qi-mei-lan-zhu">为什么借用检查器没拦住？</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#pin-de-he-xin-ji-zhi">Pin 的核心机制</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#zhui-wen-yi-wei-shen-me-copy-huan-bu-gou">追问一：为什么 !Copy 还不够？</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#zhui-wen-er-pin-t-shi-duo-yu-de-ma">追问二：Pin&lt;&amp;T&gt; 是多余的吗？</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#zhui-wen-san-pin-hong-de-zhe-bi-zai-fang-shen-me">追问三：pin! 宏的遮蔽在防什么？</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#zhui-wen-si-pin-future-async-de-an-quan-ji-shi">追问四：Pin + Future = async 的安全基石</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#zhui-wen-wu-ji-ran-mut-bei-feng-si-liao-zen-me-xiu-gai-zi-duan">追问五：既然 &amp;mut 被封死了，怎么修改字段？</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#pin-project-zuo-liao-shen-me">pin_project 做了什么</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#an-quan-yuan-li">安全原理</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#zhan-wang-pin-pin-cong-ku-dao-yu-yan-de-sheng-ji">展望：&amp;pin——Pin 从库到语言的升级</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#yong-pin-de-lei-xing-ge-zhong-xin-li-jie-pin">用 &amp;pin 的类型格重新理解 Pin</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/explore-rust-pin/#zong-jie">总结</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>Explore Rust Pin：自引用、Future 与编译器的攻防</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+              <a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/"> ⇦ Previous </a>
+              
+
+              
+<p><small>Posted July 24, 2026&nbsp;&hyphen;&nbsp;<strong>14&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/temp/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <p>Rust 的 <code>Pin</code> 是一个让很多人望而生畏的概念。和其他语言特性不同，Pin 不是"学了就能用"——它解决的问题在日常代码中很少出现，
+但又是 <code>async</code> 生态的基石。这篇文章试图从最根本的问题出发，把 Pin 的设计一层层拆开。</p>
+<h2 id="wen-ti-zi-yin-yong-lei-xing-bei-yi-dong-hou-zhi-zhen-xuan-kong">问题：自引用类型被移动后，指针悬空</h2>
+<p>假设你有这样一个结构体：</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">struct SelfRef {
+    data: String,
+    ptr: *const String,   &#x2F;&#x2F; 指向 self.data 的裸指针
+}
+
+impl SelfRef {
+    fn new(s: String) -&gt; SelfRef {
+        let mut sr = SelfRef { data: s, ptr: std::ptr::null() };
+        sr.ptr = &amp;sr.data as *const String;
+        sr
+    }
+}
+</code></pre>
+<p>创建后直接使用——正常：</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">let sr = SelfRef::new(&quot;hello&quot;.to_string());
+sr.print();  &#x2F;&#x2F; ptr points to: hello  ✅
+</code></pre>
+<p>但移动之后：</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">let sr = SelfRef::new(&quot;hello&quot;.to_string());
+let sr2 = sr;   &#x2F;&#x2F; 移动！栈上字节被拷贝到 sr2，sr 失效
+sr2.print();    &#x2F;&#x2F; ptr 仍指向 sr 的旧地址 → 悬空！
+</code></pre>
+<div class="mermaid">
+    ```mermaid
+graph LR
+    subgraph 移动前
+        A[&quot;sr @ 0x1000&lt;br&#x2F;&gt;data: &#x27;hello&#x27;&lt;br&#x2F;&gt;ptr: → 0x1000&quot;]
+    end
+    subgraph 移动后
+        B[&quot;sr2 @ 0x2000&lt;br&#x2F;&gt;data: &#x27;hello&#x27;&lt;br&#x2F;&gt;ptr: → 0x1000 ❌&quot;]
+    end
+    A --&gt;|&quot;memcpy&quot;| B
+```
+</div>
+<p><strong>移动 = memcpy。</strong> 对于普通类型（<code>i32</code>、<code>Vec</code>、<code>String</code>）这没问题——堆数据不跟着栈地址走。但自引用类型的指针指向的是<strong>栈上地址</strong>，memcpy 后地址全变了。</p>
+<h2 id="wei-shen-me-jie-yong-jian-cha-qi-mei-lan-zhu">为什么借用检查器没拦住？</h2>
+<p>因为裸指针 <code>*const String</code> 绕过了借用检查器。安全 Rust 中你无法同时持有 <code>&amp;self</code> 和 <code>&amp;mut self.data</code>——借用检查器会报错。
+但 <code>unsafe</code> 裸指针不受此限制。而现实中最大的自引用类型来源是<strong>编译器生成的 <code>async</code> Future</strong>：</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">async fn example() {
+    let local = String::from(&quot;hello&quot;);
+    do_something(&amp;local).await;  &#x2F;&#x2F; Future 内部持有对 local 的引用
+}
+</code></pre>
+<p>编译器生成的匿名 Future 结构体包含了 <code>local</code> 和对 <code>local</code> 的引用——这就是自引用。这正是 <strong>Future 通常 <code>!Unpin</code></strong> 的原因。</p>
+<h2 id="pin-de-he-xin-ji-zhi">Pin 的核心机制</h2>
+<p>Pin 的承诺很简单：<strong>被 Pin 包裹的值，不会再被安全代码移动。</strong></p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">use std::pin::Pin;
+
+let value = SelfRef::new(&quot;hello&quot;.to_string());
+let pinned = Pin::new(&amp;mut value);  &#x2F;&#x2F; 注意：这只能在 Unpin 类型上调用！
+</code></pre>
+<p>这里有三个概念要分清楚：</p>
+<table><thead><tr><th>概念</th><th>含义</th></tr></thead><tbody>
+<tr><td><code>Pin&lt;P&gt;</code></td><td>一个"钉住"的包装，保证所指向的值不能移动</td></tr>
+<tr><td><code>Unpin</code></td><td>auto trait，标记此类型移动是安全的；Pin 对它透明</td></tr>
+<tr><td><code>!Unpin</code></td><td>此类型移动不安全；Pin 真正的保护对象</td></tr>
+</tbody></table>
+<p><code>Unpin</code> 的命名很反直觉——它其实不是"解除 Pin"，而是"Pin-proof"（防钉的）。大多数类型（<code>i32</code>、<code>String</code>、<code>Vec&lt;T&gt;</code>）都是 <code>Unpin</code> 的，
+因为移动它们不会产生悬空指针。Pin 包裹它们什么也不改变。只有自引用类型才 <code>!Unpin</code>。</p>
+<p>Pin 的 API 设计是巧妙的不对称：</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">&#x2F;&#x2F; 仅对 Unpin 类型可用 —— 安全
+impl&lt;P: Deref&lt;Target: Unpin&gt;&gt; Pin&lt;P&gt; {
+    pub fn new(pointer: P) -&gt; Pin&lt;P&gt;;
+    pub fn get_mut(self: Pin&lt;&amp;mut P&gt;) -&gt; &amp;mut T;
+}
+
+&#x2F;&#x2F; 所有类型都能用 —— 但不安全或只读
+impl&lt;P: Deref&gt; Pin&lt;P&gt; {
+    pub unsafe fn new_unchecked(pointer: P) -&gt; Pin&lt;P&gt;;
+    pub fn as_ref(&amp;self) -&gt; Pin&lt;&amp;P::Target&gt;;
+}
+</code></pre>
+<p><strong><code>get_mut</code> 对 <code>!Unpin</code> 封死</strong>——因为一旦拿到 <code>&amp;mut T</code>，你就可以 <code>mem::swap</code> 把整块内存换走。</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">&#x2F;&#x2F; 栈上 Pin
+let v = pin!(MyFuture::new());     &#x2F;&#x2F; 1.68+ 稳定
+
+&#x2F;&#x2F; 堆上 Pin（最常用）
+let v = Box::pin(MyFuture::new()); &#x2F;&#x2F; Box 保证堆地址不变
+</code></pre>
+<h2 id="zhui-wen-yi-wei-shen-me-copy-huan-bu-gou">追问一：为什么 <code>!Copy</code> 还不够？</h2>
+<p>这里有一个容易被忽略的点。<code>!Unpin</code> 的类型必然是 <code>!Copy</code> 的，而 <code>!Copy</code> 已经阻止了通过 <code>&amp;T</code> 的移动。那为什么还需要 Pin？</p>
+<p><strong>因为 <code>&amp;mut</code> 比 <code>&amp;T</code> 危险得多：</strong></p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">let mut a = SelfRef::new(&quot;hello&quot;.to_string());
+let mut b = SelfRef::new(&quot;world&quot;.to_string());
+
+&#x2F;&#x2F; 安全 Rust！编译器完全允许！
+std::mem::swap(&amp;mut a, &amp;mut b);
+&#x2F;&#x2F; a 和 b 的字节完全交换
+&#x2F;&#x2F; a.ptr 仍指向 b 原来的栈地址 → 悬空
+</code></pre>
+<pre><code>                  &amp;T              &amp;mut
+!Copy 是否阻止？  ✅ 阻止           ❌ 不阻止（swap 不需要 Copy）
+Pin 是否阻止？    N&#x2F;A 不需要        ✅ 封死 get_mut
+</code></pre>
+<p><strong>Pin 的本质不是阻止普通移动，而是剥夺 <code>&amp;mut</code> 造成的"原地交换/替换"能力。</strong>
+整个 Pin 体系的运行时价值浓缩于一处：对 <code>!Unpin</code> 类型的 <code>Pin&lt;&amp;mut T&gt;</code>，不给 <code>get_mut</code>。</p>
+<h2 id="zhui-wen-er-pin-t-shi-duo-yu-de-ma">追问二：<code>Pin&lt;&amp;T&gt;</code> 是多余的吗？</h2>
+<p>如果你看到 <code>&amp;T</code>，它已经阻止了 swap/replace——不需要 Pin。那 <code>Pin&lt;&amp;T&gt;</code> 还有什么价值？</p>
+<p><strong>答案：类型系统的 plumbing，没有额外的运行时安全保障。</strong></p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">&#x2F;&#x2F; as_ref 保持 Pin 链不断
+let p_mut: Pin&lt;&amp;mut MyFuture&gt; = ...;
+let p_ref: Pin&lt;&amp;MyFuture&gt; = p_mut.as_ref();  &#x2F;&#x2F; Pin → Pin
+let raw:   &amp;MyFuture      = p_ref.get_ref(); &#x2F;&#x2F; Pin → &amp;T，降级
+</code></pre>
+<p><code>Pin&lt;&amp;T&gt;</code> 的存在是为了：</p>
+<ol>
+<li><strong>API 一致性</strong>——<code>as_ref()</code> 保持 Pin 包装，让下游泛型代码统一处理 <code>Pin&lt;impl Deref&gt;</code></li>
+<li><strong>契约标记</strong>——签名中写出 <code>Pin&lt;&amp;dyn Future&gt;</code>，类型层面告知"这个值是被钉住的"</li>
+<li><strong>防止降级后回不去</strong>——如果 <code>as_ref</code> 直接返回 <code>&amp;T</code>，再想回到 <code>Pin</code> 就得 unsafe</li>
+</ol>
+<p>但在运行时，<code>Pin&lt;&amp;T&gt;</code> 和 <code>&amp;T</code> 的行为完全一样。<code>Pin::get_ref()</code> 就是设计师给你开的"降级"后门。</p>
+<h2 id="zhui-wen-san-pin-hong-de-zhe-bi-zai-fang-shen-me">追问三：<code>pin!</code> 宏的遮蔽在防什么？</h2>
+<p><code>pin!</code> 的实现技巧是<strong>变量遮蔽</strong>：</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">macro_rules! pin {
+    ($x:expr) =&gt; {{
+        let mut __value = $x;                                &#x2F;&#x2F; (1)
+        let __value = unsafe { Pin::new_unchecked(&amp;mut __value) }; &#x2F;&#x2F; (2) 遮蔽！
+        __value
+    }};
+}
+</code></pre>
+<p>不禁要问：既然 <code>Pin&lt;&amp;mut T&gt;</code> 持有了 <code>&amp;mut</code>，借用检查器已经阻止了通过原始变量移动，遮蔽还有什么用？</p>
+<p><strong>遮蔽封死的是 Pin 生命周期之外的路径：</strong></p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">&#x2F;&#x2F; 路径一：Pin drop 后，原始变量复活
+let mut v = MyFuture::new();
+{
+    let p = unsafe { Pin::new_unchecked(&amp;mut v) };
+} &#x2F;&#x2F; p drop，&amp;mut 归还 → v 又可以访问了！如果传给了需要 Pin 的上下文 → UB
+
+&#x2F;&#x2F; 路径二：unsafe 中取裸指针绕开
+let ptr = &amp;raw const v;
+unsafe { ptr.read(); }  &#x2F;&#x2F; 编译器不管
+</code></pre>
+<p><strong>遮蔽将原始绑定从命名空间中消除。</strong> 这是一种纵深防御：不是靠生命周期分析来保证安全，而是靠类型系统级别的不可达来消除旁路。</p>
+<h2 id="zhui-wen-si-pin-future-async-de-an-quan-ji-shi">追问四：Pin + Future = async 的安全基石</h2>
+<p>看 <code>Future::poll</code> 的真实签名：</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">pub trait Future {
+    type Output;
+    fn poll(self: Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context&lt;&#x27;_&gt;) -&gt; Poll&lt;Self::Output&gt;;
+    &#x2F;&#x2F;         ^^^^^^^^^^^^^^^^ 不是 &amp;mut self
+}
+</code></pre>
+<p>如果 poll 接受普通的 <code>&amp;mut self</code>，调用方可以：</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">mem::swap(&amp;mut future_a, &amp;mut future_b);  &#x2F;&#x2F; 两个 Future 的状态全部错乱
+</code></pre>
+<p><code>Pin&lt;&amp;mut Self&gt;</code> 封死这条路——这是 async 生态不自毁的前提。</p>
+<h2 id="zhui-wen-wu-ji-ran-mut-bei-feng-si-liao-zen-me-xiu-gai-zi-duan">追问五：既然 <code>&amp;mut</code> 被封死了，怎么修改字段？</h2>
+<p>这是 Pin 最实用的拷问。<code>Pin&lt;&amp;mut Self&gt;</code> 不给 <code>get_mut</code>，但 <code>Future::poll</code> 中你必然需要更新内部状态。矛盾怎么解？</p>
+<p>答案是<strong>结构投影（Struct Projection）</strong>——字段本身不参与自引用的部分，可以安全拿到 <code>&amp;mut</code>。
+只需要向编译器证明"这个字段的 <code>&amp;mut</code> 不会导致整体被移动"。</p>
+<h3 id="pin-project-zuo-liao-shen-me"><code>pin_project</code> 做了什么</h3>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">use pin_project::pin_project;
+
+#[pin_project]
+struct MyFuture&lt;F: Future&gt; {
+    counter: usize,           &#x2F;&#x2F; 普通字段，可以 &amp;mut
+    #[pin]
+    inner: F,                 &#x2F;&#x2F; !Unpin 字段，需要 Pin 投影
+}
+
+impl&lt;F: Future&gt; Future for MyFuture&lt;F&gt; {
+    type Output = ();
+    fn poll(self: Pin&lt;&amp;mut Self&gt;, cx: &amp;mut Context&lt;&#x27;_&gt;) -&gt; Poll&lt;()&gt; {
+        let this = self.project();
+
+        *this.counter += 1;          &#x2F;&#x2F; ✅ &amp;mut usize，随意修改
+        this.inner.poll(cx)          &#x2F;&#x2F; ✅ Pin&lt;&amp;mut F&gt;，递归钉住
+    }
+}
+</code></pre>
+<p><code>#[pin_project]</code> 宏展开后生成的核心签名：</p>
+<pre data-lang="rust" class="language-rust "><code class="language-rust" data-lang="rust">impl&lt;F: Future&gt; MyFuture&lt;F&gt; {
+    fn project&lt;&#x27;a&gt;(self: Pin&lt;&amp;&#x27;a mut Self&gt;) -&gt; Projection&lt;&#x27;a, F&gt;;
+    fn project_ref&lt;&#x27;a&gt;(self: Pin&lt;&amp;&#x27;a Self&gt;) -&gt; ProjectionRef&lt;&#x27;a, F&gt;;
+}
+
+struct Projection&lt;&#x27;a, F: Future&gt; {
+    pub counter: &amp;&#x27;a mut usize,        &#x2F;&#x2F; 普通字段 → &amp;mut
+    pub inner: Pin&lt;&amp;&#x27;a mut F&gt;,         &#x2F;&#x2F; #[pin] 字段 → 保持 Pin
+}
+</code></pre>
+<table><thead><tr><th>原始字段</th><th><code>project()</code> 得到</th><th>能否修改</th></tr></thead><tbody>
+<tr><td><code>counter: usize</code></td><td><code>&amp;'a mut usize</code></td><td>✅ 随意改</td></tr>
+<tr><td><code>#[pin] inner: F</code></td><td><code>Pin&lt;&amp;'a mut F&gt;</code></td><td>✅ 调用 <code>poll</code> 等 Pin 方法</td></tr>
+</tbody></table>
+<h3 id="an-quan-yuan-li">安全原理</h3>
+<p><code>project()</code> 同时借用了结构体的所有字段，但返回的是<strong>结构化借用</strong>——Rust 允许对不同字段同时持有 <code>&amp;mut</code>。
+<code>pin_project</code> 额外保证了拿普通字段的 <code>&amp;mut</code> 不会意外调用 <code>mem::swap</code> 等方法把整个结构体换走
+（确保你在字段访问的上下文中不会对 <code>Self</code> 做整体操作）。</p>
+<p>本质上<code>pin_project</code> 把两件事自动化了：</p>
+<ol>
+<li><strong>普通字段</strong>：unsafe <code>get_unchecked_mut</code> → 安全 <code>&amp;mut</code></li>
+<li><strong><code>#[pin]</code> 字段</strong>：unsafe 重建 <code>Pin&lt;&amp;mut Field&gt;</code> → 安全 Pin 投影</li>
+</ol>
+<p>开发者面对的是安全接口，unsafe 被限制在宏生成的代码内——审查负担从"整个 poll 方法"缩小到"宏本身的一次性信任"。</p>
+<h2 id="zhan-wang-pin-pin-cong-ku-dao-yu-yan-de-sheng-ji">展望：<code>&amp;pin</code>——Pin 从库到语言的升级</h2>
+<p>目前 Pin 是<strong>库层面</strong>的设计：<code>Pin&lt;P&gt;</code> 是一个包装类型，依赖 trait 门禁和 unsafe 契约。
+Rust 团队正在探索把 Pin 提升为<strong>语言层面的原生引用类型</strong>：</p>
+<pre><code>现状（库）：                        愿景（语言）：
+Pin&lt;&amp;mut T&gt;                        &amp;pin mut T
+Pin&lt;&amp;T&gt;                            &amp;pin T
+</code></pre>
+<div class="mermaid">
+    ```mermaid
+graph TD
+    mut[&quot;&amp;mut T&lt;br&#x2F;&gt;读写+swap&quot;]
+    pinmut[&quot;&amp;pin mut T&lt;br&#x2F;&gt;读写（不能 swap）&quot;]
+    ref[&quot;&amp;T&lt;br&#x2F;&gt;只读&quot;]
+    pinref[&quot;&amp;pin T&lt;br&#x2F;&gt;只读+pin标记&quot;]
+
+    mut --&gt; pinmut
+    mut --&gt; ref
+    pinmut --&gt; pinref
+    pinref --&gt; ref
+```
+</div>
+<p>在 <code>&amp;pin</code> 世界里，不需要 <code>#[pin]</code> 标注，不需要 <code>pin_project</code> 宏——编译器看类型就知道哪些字段需要 Pin 投影。
+<code>&amp;mut → &amp;pin mut</code> 是安全的、自动的降级（放弃 swap 能力即可）。Unpin 类型下，四者完全等价。</p>
+<h3 id="yong-pin-de-lei-xing-ge-zhong-xin-li-jie-pin">用 <code>&amp;pin</code> 的类型格重新理解 Pin</h3>
+<p>回头看 Pin 的 API 设计——为什么 <code>Pin::new</code> 只对 <code>Unpin</code> 类型可用？为什么 <code>get_mut</code> 对 <code>!Unpin</code> 封死？
+在 <code>&amp;pin</code> 的类型偏序格下，这些设计变得一目了然：</p>
+<ul>
+<li><strong><code>Pin::new</code></strong> 本质是从 <code>&amp;mut T</code> 构造 <code>&amp;pin mut T</code>——对于 <code>Unpin</code> 类型两者等价，所以安全；对于 <code>!Unpin</code> 类型需要放弃 swap 能力，必须 unsafe 确认。</li>
+<li><strong><code>Pin::get_mut</code></strong> 本质是从 <code>&amp;pin mut T</code> 取回 <code>&amp;mut T</code>——Unpin 下两者等价故安全；<code>!Unpin</code> 下不可逆（恢复 swap 能力意味着破坏钉住承诺），所以 unsafe。</li>
+<li><strong><code>Pin&lt;&amp;T&gt;</code></strong> 本质是 <code>&amp;pin T</code>——对于只读引用，钉不钉完全没区别，这就是为什么 <code>Pin::get_ref()</code> 直接返回 <code>&amp;T</code>。</li>
+</ul>
+<p>整个 <code>Pin&lt;P&gt;</code> 的 API 体系，就是一张能力格用 trait 门禁和 unsafe 契约<strong>模拟</strong>出来的。而 <code>&amp;pin</code> 将这张格直接编码进了类型系统。</p>
+<p>不过 <code>&amp;pin</code> 仍在 Nightly 实验阶段（<code>#![feature(pin_ergonomics)]</code>）。核心阻塞点是 borrowck 语义：
+<code>&amp;pin mut</code> 的效果在引用归还后仍然延续——打过 <code>&amp;pin mut</code> 的栈位置，之后也永久不能移动。这和传统 borrow 的直觉有冲突。
+最早 2027 年才有可能稳定。</p>
+<h2 id="zong-jie">总结</h2>
+<ol>
+<li><strong>Pin 解决的是自引用类型的移动安全问题</strong>——移动 = memcpy，自引用指针悬空。</li>
+<li><strong>Pin 真正要堵的漏洞是 <code>&amp;mut</code> 的 swap</strong>——<code>!Copy</code> 只能防 <code>&amp;T</code>，防不了 <code>mem::swap(&amp;mut a, &amp;mut b)</code>。</li>
+<li><strong>整个 Pin 的运行时价值浓缩于一处</strong>：<code>!Unpin</code> + <code>Pin&lt;&amp;mut T&gt;</code> → 不给 <code>get_mut</code>。其余都是类型 plumbing。</li>
+<li><strong><code>pin!</code> 的遮蔽是纵深防御</strong>——消除 Pin 生命周期之外的旁路攻击面。</li>
+<li><strong>Pin 是"防君子不防小人"</strong>——<code>unsafe get_unchecked_mut</code> 可以绕开，但规范了审查边界：你只需要审查那几个 unsafe 调用点。</li>
+<li><strong><code>&amp;pin</code> 代表未来方向</strong>——把 Pin 从库契约升级为编译器类型规则。</li>
+</ol>
+<p>Rust 的 Pin 学习曲线高，核心原因是它同时涉及自引用、移动语义、unsafe 契约三个概念。但一旦理解它只做一件事——<strong>用类型系统剥夺 <code>&amp;mut</code> 的 swap 能力</strong>——整个设计就清晰了。</p>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+          <a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/"> ⇦ Previous </a>
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/temp/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>

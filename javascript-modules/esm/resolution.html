@@ -1,0 +1,1601 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>模块解析机制 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="模块解析机制"><a class="header" href="#模块解析机制">模块解析机制</a></h1>
+<p>模块解析（Module Resolution）是ES模块系统中的核心机制，决定了当你写下<code>import './module.js'</code>时，JavaScript引擎如何找到并加载正确的模块文件。本章将深入探讨各种解析规则、配置方式和最佳实践。</p>
+<h2 id="es模块执行的四个阶段"><a class="header" href="#es模块执行的四个阶段">ES模块执行的四个阶段</a></h2>
+<p>ES模块系统的执行过程严格按照以下四个阶段进行，这是ES模块规范的核心：</p>
+<h3 id="1-解析阶段parse-phase"><a class="header" href="#1-解析阶段parse-phase">1. 解析阶段（Parse Phase）</a></h3>
+<p><strong>目标</strong>: 静态分析模块代码，识别所有的导入和导出声明</p>
+<pre><code class="language-javascript">// 在这个阶段，引擎会分析：
+import { utils, config } from './utils.js';     // ← 导入声明
+import defaultExport from './helper.js';        // ← 默认导入
+import * as api from './api.js';               // ← 命名空间导入
+
+export const myVar = 'value';                  // ← 导出声明
+export { helperFunc };                         // ← 重新导出
+export default class MyClass {};               // ← 默认导出
+
+// 在解析阶段，以下代码不会执行：
+console.log('这行代码在解析阶段不会执行');
+</code></pre>
+<p><strong>关键特征</strong>：</p>
+<ul>
+<li>静态分析，不执行代码</li>
+<li>构建模块依赖图</li>
+<li>识别所有import/export声明</li>
+<li>验证语法正确性</li>
+</ul>
+<h3 id="2-加载阶段load-phase"><a class="header" href="#2-加载阶段load-phase">2. 加载阶段（Load Phase）</a></h3>
+<p><strong>目标</strong>: 根据模块标识符获取所有依赖模块的源代码</p>
+<pre><code class="language-javascript">// 假设模块依赖关系：
+// main.js → utils.js → config.js
+// main.js → api.js → shared.js
+
+// 加载阶段会递归获取所有模块的源码：
+/*
+加载顺序（深度优先）：
+1. 开始加载 main.js
+2. 发现依赖 utils.js，开始加载
+3. 发现 utils.js 依赖 config.js，开始加载
+4. config.js 无依赖，加载完成
+5. 回到 utils.js，加载完成
+6. 发现依赖 api.js，开始加载
+7. 发现 api.js 依赖 shared.js，开始加载
+8. shared.js 无依赖，加载完成
+9. 回到 api.js，加载完成
+10. 回到 main.js，加载完成
+*/
+</code></pre>
+<p><strong>关键特征</strong>：</p>
+<ul>
+<li>递归加载所有依赖</li>
+<li>网络请求或文件系统读取</li>
+<li>深度优先遍历依赖图</li>
+<li>处理循环依赖检测</li>
+</ul>
+<h3 id="3-链接阶段link-phase"><a class="header" href="#3-链接阶段link-phase">3. 链接阶段（Link Phase）</a></h3>
+<p><strong>目标</strong>: 创建模块记录，建立导入导出绑定，验证模块完整性</p>
+<pre><code class="language-javascript">// utils.js
+export let count = 0;
+export function increment() { count++; }
+
+// main.js  
+import { count, increment } from './utils.js';
+
+// 在链接阶段：
+// 1. 为每个模块创建模块记录（Module Record）
+// 2. 验证 main.js 中的 { count, increment } 在 utils.js 中确实存在
+// 3. 建立实时绑定（Live Binding）
+// 4. 检查是否有未解析的导入
+</code></pre>
+<p><strong>链接过程详细步骤</strong>：</p>
+<pre><code class="language-javascript">// 1. 创建模块环境记录
+ModuleRecord {
+  environment: ModuleEnvironmentRecord,
+  namespace: ModuleNamespace,
+  status: 'linking'
+}
+
+// 2. 验证导入导出匹配
+main.js imports: ['count', 'increment']
+utils.js exports: ['count', 'increment'] ✓
+
+// 3. 建立绑定关系
+main.count ──→ utils.count (live binding)
+main.increment ──→ utils.increment (live binding)
+</code></pre>
+<p><strong>关键特征</strong>：</p>
+<ul>
+<li>创建模块环境记录</li>
+<li>验证导入导出一致性</li>
+<li>建立实时绑定关系</li>
+<li>检测未解析的引用</li>
+</ul>
+<h3 id="4-求值阶段evaluate-phase"><a class="header" href="#4-求值阶段evaluate-phase">4. 求值阶段（Evaluate Phase）</a></h3>
+<p><strong>目标</strong>: 按拓扑顺序执行模块代码，初始化导出值</p>
+<pre><code class="language-javascript">// 执行顺序遵循依赖关系，无依赖的模块先执行
+
+// config.js (无依赖，最先执行)
+console.log('1. config.js 执行');
+export const API_URL = 'https://api.example.com';
+
+// utils.js (依赖 config.js)
+import { API_URL } from './config.js';
+console.log('2. utils.js 执行');
+export const client = createClient(API_URL);
+
+// main.js (依赖 utils.js)
+import { client } from './utils.js';
+console.log('3. main.js 执行');
+client.connect();
+</code></pre>
+<p><strong>求值特征</strong>：</p>
+<pre><code class="language-javascript">// 拓扑排序确定执行顺序
+依赖图: main.js → utils.js → config.js
+执行顺序: config.js → utils.js → main.js
+
+// 循环依赖处理
+// 如果 A ←→ B 循环依赖，按照遇到的顺序执行
+// 未初始化的绑定在求值完成前可能是 undefined
+</code></pre>
+<p><strong>关键特征</strong>：</p>
+<ul>
+<li>按拓扑顺序执行代码</li>
+<li>初始化导出值</li>
+<li>处理循环依赖</li>
+<li>建立实时绑定关系</li>
+</ul>
+<h2 id="阶段间的关系"><a class="header" href="#阶段间的关系">阶段间的关系</a></h2>
+<pre><code class="language-mermaid">graph TD
+    A[Parse Phase&lt;br/&gt;静态分析] --&gt; B[Load Phase&lt;br/&gt;获取源码]
+    B --&gt; C[Link Phase&lt;br/&gt;建立绑定]
+    C --&gt; D[Evaluate Phase&lt;br/&gt;执行代码]
+    
+    A --&gt; A1[构建依赖图]
+    B --&gt; B1[递归加载依赖]
+    C --&gt; C1[验证导入导出]
+    D --&gt; D1[按顺序执行]
+</code></pre>
+<h2 id="实际示例演示"><a class="header" href="#实际示例演示">实际示例演示</a></h2>
+<pre><code class="language-javascript">// 创建测试文件来观察各个阶段
+// main.js
+console.log('=== main.js 开始执行 ===');
+import { helper } from './helper.js';
+console.log('helper imported:', helper);
+export const mainValue = 'from-main';
+
+// helper.js  
+console.log('=== helper.js 开始执行 ===');
+import { config } from './config.js';
+console.log('config imported:', config);
+export const helper = 'helper-value';
+
+// config.js
+console.log('=== config.js 开始执行 ===');
+export const config = 'config-value';
+
+// 执行结果将显示求值阶段的顺序：
+// === config.js 开始执行 ===
+// === helper.js 开始执行 ===  
+// config imported: config-value
+// === main.js 开始执行 ===
+// helper imported: helper-value
+</code></pre>
+<p>这四个阶段的严格执行保证了ES模块的静态分析能力、依赖管理和循环依赖处理的可靠性。</p>
+<h2 id="与ecmascript规范的对应关系"><a class="header" href="#与ecmascript规范的对应关系">与ECMAScript规范的对应关系</a></h2>
+<p>上述四阶段模型完全符合ECMAScript规范（ES2015+ 15.2.1节）中定义的模块处理流程：</p>
+<h3 id="规范中的核心操作"><a class="header" href="#规范中的核心操作">规范中的核心操作</a></h3>
+<ol>
+<li>
+<p><strong>ParseModule(sourceText)</strong> ↔ <strong>解析阶段</strong></p>
+<ul>
+<li>解析源码为抽象语法树</li>
+<li>提取导入导出声明</li>
+<li>创建模块记录（Source Text Module Record）</li>
+</ul>
+</li>
+<li>
+<p><strong>HostResolveImportedModule()</strong> ↔ <strong>加载阶段</strong></p>
+<ul>
+<li>解析模块标识符</li>
+<li>递归加载依赖模块</li>
+<li>实现定义的具体加载机制</li>
+</ul>
+</li>
+<li>
+<p><strong>ModuleDeclarationInstantiation()</strong> ↔ <strong>链接阶段</strong></p>
+<ul>
+<li>创建模块环境记录</li>
+<li>建立导入导出绑定</li>
+<li>验证所有依赖的可解析性</li>
+</ul>
+</li>
+<li>
+<p><strong>ModuleEvaluation()</strong> ↔ <strong>求值阶段</strong></p>
+<ul>
+<li>按依赖顺序递归求值</li>
+<li>执行模块代码</li>
+<li>初始化绑定值</li>
+</ul>
+</li>
+</ol>
+<h3 id="规范保证的特性"><a class="header" href="#规范保证的特性">规范保证的特性</a></h3>
+<pre><code class="language-javascript">// ECMAScript规范确保的行为特征：
+
+// 1. 幂等性 - 同一模块多次加载返回相同实例
+const mod1 = await import('./module.js');
+const mod2 = await import('./module.js');
+console.log(mod1 === mod2); // true
+
+// 2. 循环依赖检测 - ResolveExport算法防止无限递归
+// 规范中的伪代码：
+// If module and r.[[module]] are the same Module Record 
+// and SameValue(exportName, r.[[exportName]]) is true, then
+//   Assert: this is a circular import request.
+//   Return null.
+
+// 3. 静态结构 - 所有绑定在链接阶段确定
+// 动态导入在运行时进行，但仍遵循四阶段流程
+</code></pre>
+<p>这种规范化的处理流程是ES模块相对于其他模块系统的核心优势。</p>
+<h2 id="三类模块标识符"><a class="header" href="#三类模块标识符">三类模块标识符</a></h2>
+<h3 id="1-相对路径解析"><a class="header" href="#1-相对路径解析">1. 相对路径解析</a></h3>
+<pre><code class="language-javascript">// 文件结构：
+// src/
+//   ├── components/
+//   │   ├── Button.js
+//   │   ├── Input.js
+//   │   └── shared/
+//   │       └── utils.js
+//   ├── pages/
+//   │   ├── Home.js
+//   │   └── About.js
+//   └── app.js
+
+// 在 src/app.js 中
+import { Button } from './components/Button.js';        // 相对路径：同级子目录
+import { Home } from './pages/Home.js';               // 相对路径：同级子目录
+
+// 在 src/components/Button.js 中
+import { Input } from './Input.js';                   // 相对路径：同级文件
+import { utils } from './shared/utils.js';           // 相对路径：子目录
+import { config } from '../config.js';               // 相对路径：父目录
+
+// 在 src/components/shared/utils.js 中
+import { Button } from '../Button.js';               // 相对路径：父目录中的文件
+import { Home } from '../../pages/Home.js';          // 相对路径：祖父目录
+</code></pre>
+<h3 id="2-绝对路径和包导入"><a class="header" href="#2-绝对路径和包导入">2. 绝对路径和包导入</a></h3>
+<pre><code class="language-javascript">// 绝对路径（从项目根目录开始）
+import { utils } from '/src/utils/helpers.js';
+
+// Node.js 内置模块
+import { readFile } from 'fs/promises';
+import { join } from 'path';
+import { EventEmitter } from 'events';
+
+// npm 包导入
+import React from 'react';                    // 包的主入口
+import { useState } from 'react';             // 包的命名导出
+import lodash from 'lodash';                  // 整个包
+import { debounce } from 'lodash';            // 包的部分导入
+
+// 作用域包（Scoped Packages）
+import { parse } from '@babel/parser';
+import { transform } from '@babel/core';
+import { Button } from '@company/ui-components';
+
+// 子路径导入
+import { format } from 'date-fns/format';     // 包的子模块
+import { isValid } from 'date-fns/isValid';
+</code></pre>
+<h3 id="3-裸模块标识符-bare-specifiers"><a class="header" href="#3-裸模块标识符-bare-specifiers">3. 裸模块标识符 (Bare Specifiers)</a></h3>
+<p>裸模块标识符是不以 <code>./</code>、<code>../</code> 或 <code>/</code> 开头的模块标识符，主要用于导入 npm 包或内置模块：</p>
+<pre><code class="language-javascript">// 内置模块
+import { readFile } from 'fs/promises';
+import { join } from 'path';
+import { EventEmitter } from 'events';
+
+// npm 包导入
+import React from 'react';                    // 包的默认导出
+import { useState, useEffect } from 'react';  // 包的命名导出
+import lodash from 'lodash';                  // 整个包
+import { debounce } from 'lodash/debounce';   // 包的子模块
+
+// 作用域包 (Scoped Packages)
+import { parse } from '@babel/parser';
+import { transform } from '@babel/core';
+import { Button } from '@company/ui-components';
+
+// 子路径导入
+import { format } from 'date-fns/format';     // 包的子模块
+import { isValid } from 'date-fns/isValid';
+import utils from 'my-package/utils';         // 自定义子路径
+</code></pre>
+<p><strong>裸模块标识符的解析特点</strong>：</p>
+<pre><code class="language-javascript">// 1. 优先级顺序
+// Node.js 环境中的解析顺序：
+// 1) 核心模块（如 'fs', 'path', 'http'）
+// 2) node_modules 中的包
+// 3) 全局安装的包（较少使用）
+
+// 2. 包入口解析
+// 按以下顺序查找包的入口：
+// - package.json 中的 "exports" 字段（现代方式）
+// - package.json 中的 "module" 字段（ES模块入口）
+// - package.json 中的 "main" 字段（传统入口）
+// - index.js 文件（默认约定）
+
+// 3. 子路径解析
+import { helper } from 'my-package/utils';    // 解析为 node_modules/my-package/utils.js
+import config from 'my-package/config.json';  // 解析为 node_modules/my-package/config.json
+
+// 4. 作用域包解析
+import { component } from '@company/ui';      // 解析为 node_modules/@company/ui/
+</code></pre>
+<p><strong>不同环境中的裸模块标识符</strong>：</p>
+<pre><code class="language-javascript">// Node.js 环境
+import fs from 'fs';                    // ✅ 内置模块
+import express from 'express';          // ✅ npm包
+
+// 浏览器环境（原生）
+import fs from 'fs';                    // ❌ 浏览器不支持
+import express from 'express';          // ❌ 需要Import Maps或构建工具
+
+// 浏览器环境（使用Import Maps）
+// &lt;script type="importmap"&gt;
+// {
+//   "imports": {
+//     "lodash": "https://cdn.skypack.dev/lodash",
+//     "react": "https://esm.sh/react@18"
+//   }
+// }
+// &lt;/script&gt;
+import lodash from 'lodash';            // ✅ 通过Import Maps解析
+import React from 'react';             // ✅ 通过Import Maps解析
+
+// 构建工具环境（Webpack/Vite等）
+import lodash from 'lodash';            // ✅ 构建时解析
+import utils from '@/utils';           // ✅ 通过别名配置
+</code></pre>
+<h2 id="nodejs-中的模块解析"><a class="header" href="#nodejs-中的模块解析">Node.js 中的模块解析</a></h2>
+<h3 id="1-解析算法"><a class="header" href="#1-解析算法">1. 解析算法</a></h3>
+<p>Node.js 使用复杂的解析算法来查找模块：</p>
+<pre><code class="language-javascript">// Node.js 模块解析步骤示例
+// 当导入 'my-package' 时
+
+// 1. 检查内置模块
+import { readFile } from 'fs/promises';  // fs 是内置模块，直接返回
+
+// 2. 如果不是内置模块，查找 node_modules
+// 按以下顺序查找：
+// ./node_modules/my-package/
+// ../node_modules/my-package/
+// ../../node_modules/my-package/
+// ... 一直到文件系统根目录
+
+// 3. 在包目录中解析主入口
+// 按优先级查找：
+// - package.json 中的 "exports" 字段
+// - package.json 中的 "main" 字段
+// - index.js
+// - index.json
+// - index.node
+</code></pre>
+<h3 id="2-packagejson-的-exports-字段"><a class="header" href="#2-packagejson-的-exports-字段">2. package.json 的 exports 字段</a></h3>
+<pre><code class="language-json">{
+  "name": "my-library",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/esm/utils.js",
+      "require": "./dist/cjs/utils.js"
+    },
+    "./components/*": {
+      "import": "./dist/esm/components/*.js",
+      "require": "./dist/cjs/components/*.js"
+    },
+    "./package.json": "./package.json"
+  }
+}
+</code></pre>
+<pre><code class="language-javascript">// 使用上述配置的导入示例
+import MyLibrary from 'my-library';           // 解析到 ./dist/esm/index.js
+import { helper } from 'my-library/utils';    // 解析到 ./dist/esm/utils.js
+import { Button } from 'my-library/components/Button';  // 解析到 ./dist/esm/components/Button.js
+</code></pre>
+<h3 id="3-条件导出"><a class="header" href="#3-条件导出">3. 条件导出</a></h3>
+<pre><code class="language-json">{
+  "exports": {
+    ".": {
+      "node": "./dist/node/index.js",
+      "browser": "./dist/browser/index.js",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "development": "./src/index.js",
+      "production": "./dist/prod/index.js",
+      "default": "./dist/esm/index.js"
+    }
+  }
+}
+</code></pre>
+<h2 id="浏览器中的模块解析"><a class="header" href="#浏览器中的模块解析">浏览器中的模块解析</a></h2>
+<h3 id="1-基本规则"><a class="header" href="#1-基本规则">1. 基本规则</a></h3>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Browser Module Resolution&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;script type="module"&gt;
+        // 相对路径必须明确指定扩展名
+        import { utils } from './utils.js';           // ✅ 正确
+        // import { utils } from './utils';           // ❌ 在浏览器中会失败
+        
+        // 绝对路径
+        import { config } from '/js/config.js';       // ✅ 从网站根目录
+        
+        // 完整URL
+        import { library } from 'https://cdn.skypack.dev/lodash';  // ✅ CDN导入
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3 id="2-import-maps"><a class="header" href="#2-import-maps">2. Import Maps</a></h3>
+<p>Import Maps 允许在浏览器中配置模块解析：</p>
+<pre><code class="language-html">&lt;script type="importmap"&gt;
+{
+  "imports": {
+    "react": "https://esm.sh/react@18",
+    "react-dom": "https://esm.sh/react-dom@18",
+    "lodash": "https://cdn.skypack.dev/lodash",
+    "lodash/": "https://cdn.skypack.dev/lodash/",
+    "@company/": "/js/packages/company/",
+    "utils/": "/js/utils/"
+  },
+  "scopes": {
+    "/js/legacy/": {
+      "react": "https://esm.sh/react@17"
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;script type="module"&gt;
+    // 现在可以使用裸模块说明符
+    import React from 'react';                    // 解析到 https://esm.sh/react@18
+    import { debounce } from 'lodash';           // 解析到 https://cdn.skypack.dev/lodash
+    import { merge } from 'lodash/merge';        // 解析到 https://cdn.skypack.dev/lodash/merge
+    import { Button } from '@company/ui';        // 解析到 /js/packages/company/ui
+    import { helper } from 'utils/helper.js';    // 解析到 /js/utils/helper.js
+&lt;/script&gt;
+</code></pre>
+<h3 id="3-动态-import-maps"><a class="header" href="#3-动态-import-maps">3. 动态 Import Maps</a></h3>
+<pre><code class="language-javascript">// dynamic-import-maps.js
+
+function createImportMap(dependencies) {
+    const importMap = {
+        imports: {}
+    };
+    
+    Object.entries(dependencies).forEach(([name, url]) =&gt; {
+        importMap.imports[name] = url;
+    });
+    
+    const script = document.createElement('script');
+    script.type = 'importmap';
+    script.textContent = JSON.stringify(importMap);
+    document.head.appendChild(script);
+}
+
+// 根据环境动态配置
+const isDevelopment = location.hostname === 'localhost';
+const dependencies = isDevelopment ? {
+    'react': '/node_modules/react/index.js',
+    'lodash': '/node_modules/lodash/lodash.js'
+} : {
+    'react': 'https://cdn.skypack.dev/react',
+    'lodash': 'https://cdn.skypack.dev/lodash'
+};
+
+createImportMap(dependencies);
+</code></pre>
+<p><strong>动态 Import Maps 的重要限制</strong>：</p>
+<pre><code class="language-javascript">// 关键原则：Import Maps 只影响未来的导入，不影响已加载的模块
+
+// 1. 模块缓存机制
+console.log('=== 演示模块缓存和 Import Maps 的交互 ===');
+
+// 首先加载一个模块
+import('https://cdn.skypack.dev/lodash').then(lodash1 =&gt; {
+    console.log('第一次加载 lodash:', lodash1.default.VERSION);
+    
+    // 然后添加 Import Map（对已加载的模块无效）
+    const importMap = {
+        imports: {
+            'lodash': 'https://esm.sh/lodash@4.17.20'  // 不同的URL
+        }
+    };
+    
+    const script = document.createElement('script');
+    script.type = 'importmap';
+    script.textContent = JSON.stringify(importMap);
+    document.head.appendChild(script);
+    
+    // 再次使用相同URL导入 - 返回缓存的模块
+    import('https://cdn.skypack.dev/lodash').then(lodash2 =&gt; {
+        console.log('相同URL再次导入:', lodash2.default.VERSION);
+        console.log('是同一个对象:', lodash1 === lodash2); // true
+    });
+    
+    // 使用裸模块标识符导入 - 使用新的 Import Map
+    import('lodash').then(lodash3 =&gt; {
+        console.log('通过Import Map导入:', lodash3.default.VERSION);
+        console.log('与第一次不同:', lodash1 !== lodash3); // 可能是true
+    });
+});
+
+// 2. 安全的动态配置模式
+class SafeImportMapManager {
+    constructor() {
+        this.loadedModules = new Set();
+        this.importMapInstalled = false;
+    }
+    
+    // 检查是否可以安全添加 Import Map
+    canAddImportMap() {
+        // Import Maps 必须在任何模块导入之前定义
+        return !this.importMapInstalled &amp;&amp; this.loadedModules.size === 0;
+    }
+    
+    // 安全添加 Import Map
+    addImportMap(dependencies) {
+        if (!this.canAddImportMap()) {
+            console.warn('Cannot add Import Map: modules already loaded or Import Map already exists');
+            return false;
+        }
+        
+        const importMap = { imports: dependencies };
+        const script = document.createElement('script');
+        script.type = 'importmap';
+        script.textContent = JSON.stringify(importMap);
+        document.head.appendChild(script);
+        
+        this.importMapInstalled = true;
+        return true;
+    }
+    
+    // 跟踪模块加载
+    async importModule(specifier) {
+        const module = await import(specifier);
+        this.loadedModules.add(specifier);
+        return module;
+    }
+}
+
+// 使用示例
+const importManager = new SafeImportMapManager();
+
+// 在应用启动时配置
+if (importManager.canAddImportMap()) {
+    importManager.addImportMap({
+        'react': 'https://esm.sh/react@18',
+        'lodash': 'https://cdn.skypack.dev/lodash'
+    });
+}
+
+// 3. 模块热更新的替代方案
+class ModuleVersionManager {
+    constructor() {
+        this.moduleCache = new Map();
+        this.versionCounter = 0;
+    }
+    
+    // 通过版本化URL绕过模块缓存
+    async loadFreshModule(baseUrl) {
+        this.versionCounter++;
+        const versionedUrl = `${baseUrl}?v=${this.versionCounter}&amp;t=${Date.now()}`;
+        
+        try {
+            const module = await import(versionedUrl);
+            this.moduleCache.set(baseUrl, { module, url: versionedUrl, timestamp: Date.now() });
+            return module;
+        } catch (error) {
+            console.error(`Failed to load fresh module from ${baseUrl}:`, error);
+            throw error;
+        }
+    }
+    
+    // 获取缓存的模块信息
+    getCachedModule(baseUrl) {
+        return this.moduleCache.get(baseUrl);
+    }
+    
+    // 清理过期缓存
+    clearExpiredCache(maxAge = 300000) { // 5分钟
+        const now = Date.now();
+        for (const [url, info] of this.moduleCache.entries()) {
+            if (now - info.timestamp &gt; maxAge) {
+                this.moduleCache.delete(url);
+            }
+        }
+    }
+}
+
+// 4. 实际应用场景
+// 场景1：开发环境 vs 生产环境
+if (typeof window !== 'undefined') {
+    const isDev = window.location.hostname === 'localhost';
+    
+    // 只在页面加载最开始配置Import Map
+    if (!document.querySelector('script[type="importmap"]')) {
+        const dependencies = isDev ? {
+            'react': '/node_modules/react/index.js',
+            'react-dom': '/node_modules/react-dom/index.js'
+        } : {
+            'react': 'https://esm.sh/react@18.2.0',
+            'react-dom': 'https://esm.sh/react-dom@18.2.0'
+        };
+        
+        const script = document.createElement('script');
+        script.type = 'importmap';
+        script.textContent = JSON.stringify({ imports: dependencies });
+        document.head.appendChild(script);
+    }
+}
+</code></pre>
+<p><strong>核心要点</strong>：</p>
+<ol>
+<li>
+<p><strong>模块缓存优先级最高</strong>: 已经通过特定URL加载的模块会被永久缓存，Import Maps无法改变这些模块的解析结果</p>
+</li>
+<li>
+<p><strong>Import Maps只影响新的解析</strong>: 只有尚未解析过的模块标识符才会应用Import Maps规则</p>
+</li>
+<li>
+<p><strong>时机关键</strong>: Import Maps必须在任何使用相关模块标识符的import语句执行之前定义</p>
+</li>
+<li>
+<p><strong>绕过缓存的方法</strong>:</p>
+<ul>
+<li>使用版本化URL (<code>module.js?v=1.0.1</code>)</li>
+<li>添加时间戳 (<code>module.js?t=${Date.now()}</code>)</li>
+<li>使用动态import的module reload技术</li>
+</ul>
+</li>
+</ol>
+<h3 id="浏览器-module-map-api"><a class="header" href="#浏览器-module-map-api">浏览器 Module Map API</a></h3>
+<p><strong>简短回答：浏览器目前没有提供直接访问 Module Map 的标准API。</strong></p>
+<pre><code class="language-javascript">// ❌ 不存在的API
+// console.log(window.moduleMap);           // undefined
+// console.log(document.moduleCache);       // undefined
+// console.log(navigator.loadedModules);    // undefined
+
+// ❌ 不存在的方法
+// window.clearModuleCache();               // TypeError
+// document.reloadModule('lodash');         // TypeError
+
+// Module Map 是浏览器内部的实现细节，不暴露给开发者
+</code></pre>
+<p><strong>Module Map 的内部机制</strong>：</p>
+<pre><code class="language-javascript">// 浏览器内部类似这样的结构（简化示例，实际更复杂）
+/*
+InternalModuleMap = {
+  'https://cdn.skypack.dev/lodash': {
+    status: 'evaluated',
+    module: ModuleRecord { ... },
+    namespace: { default: lodash, ... },
+    timestamp: 1640995200000
+  },
+  'https://esm.sh/react@18': {
+    status: 'evaluated', 
+    module: ModuleRecord { ... },
+    namespace: { default: React, ... },
+    timestamp: 1640995201000
+  }
+}
+*/
+
+// 开发者无法直接访问这个内部结构
+</code></pre>
+<p><strong>间接观察 Module Map 的方法</strong>：</p>
+<pre><code class="language-javascript">// 1. 通过性能和行为推断
+class ModuleMapObserver {
+    constructor() {
+        this.loadTimes = new Map();
+        this.loadedModules = new Set();
+    }
+    
+    async observeModuleLoad(specifier) {
+        const startTime = performance.now();
+        
+        try {
+            const module = await import(specifier);
+            const endTime = performance.now();
+            const loadTime = endTime - startTime;
+            
+            // 第一次加载通常较慢（网络请求）
+            // 后续加载很快（缓存命中）
+            if (loadTime &lt; 1) { // 小于1ms通常是缓存命中
+                console.log(`📦 ${specifier} - 缓存命中 (${loadTime.toFixed(2)}ms)`);
+                this.loadedModules.add(specifier);
+            } else {
+                console.log(`🌐 ${specifier} - 网络加载 (${loadTime.toFixed(2)}ms)`);
+            }
+            
+            this.loadTimes.set(specifier, loadTime);
+            return module;
+        } catch (error) {
+            console.error(`❌ ${specifier} - 加载失败:`, error);
+            throw error;
+        }
+    }
+    
+    // 检查模块是否可能已缓存
+    isProbablyCached(specifier) {
+        const loadTime = this.loadTimes.get(specifier);
+        return loadTime !== undefined &amp;&amp; loadTime &lt; 1;
+    }
+    
+    // 获取加载统计
+    getLoadStats() {
+        const cached = Array.from(this.loadTimes.entries())
+            .filter(([_, time]) =&gt; time &lt; 1).length;
+        const total = this.loadTimes.size;
+        
+        return {
+            total,
+            cached,
+            networkLoaded: total - cached,
+            cacheHitRate: total &gt; 0 ? (cached / total * 100).toFixed(2) + '%' : '0%'
+        };
+    }
+}
+
+// 使用示例
+const observer = new ModuleMapObserver();
+
+// 第一次加载
+await observer.observeModuleLoad('https://cdn.skypack.dev/lodash');
+// 输出: 🌐 https://cdn.skypack.dev/lodash - 网络加载 (245.67ms)
+
+// 第二次加载
+await observer.observeModuleLoad('https://cdn.skypack.dev/lodash'); 
+// 输出: 📦 https://cdn.skypack.dev/lodash - 缓存命中 (0.23ms)
+
+console.log(observer.getLoadStats());
+// 输出: { total: 2, cached: 1, networkLoaded: 1, cacheHitRate: '50.00%' }
+</code></pre>
+<p><strong>Module Map 调试技巧</strong>：</p>
+<pre><code class="language-javascript">// 2. Chrome DevTools 中的模块调试
+// 在 Chrome DevTools 中可以通过以下方式观察模块:
+
+// Sources → Page → (no domain) → 查看已加载的模块
+// Network → 过滤 "JS" 查看模块网络请求
+// Application → Frames → 查看模块依赖图
+
+// 3. 自定义模块加载跟踪
+class ModuleLoadTracker {
+    constructor() {
+        this.modules = new Map();
+        this.originalImport = window.eval('import'); // 保存原始import
+        this.setupInterception();
+    }
+    
+    setupInterception() {
+        // 注意：这种方法在实际中不可行，因为import是语法关键字
+        // 这里只是演示概念
+        
+        // 实际中可以通过重写动态import
+        const originalDynamicImport = window.__dynamicImportHandler__;
+        if (originalDynamicImport) {
+            window.__dynamicImportHandler__ = async (specifier) =&gt; {
+                console.log(`🔍 尝试导入: ${specifier}`);
+                const result = await originalDynamicImport(specifier);
+                this.modules.set(specifier, {
+                    timestamp: Date.now(),
+                    exports: Object.keys(result)
+                });
+                return result;
+            };
+        }
+    }
+    
+    getLoadedModules() {
+        return Array.from(this.modules.keys());
+    }
+    
+    getModuleInfo(specifier) {
+        return this.modules.get(specifier);
+    }
+}
+
+// 4. 使用 Performance Observer 监控模块加载
+if ('PerformanceObserver' in window) {
+    const moduleObserver = new PerformanceObserver((list) =&gt; {
+        for (const entry of list.getEntries()) {
+            if (entry.entryType === 'navigation' || entry.entryType === 'resource') {
+                if (entry.name.includes('.js') || entry.name.includes('.mjs')) {
+                    console.log(`📊 模块资源: ${entry.name}`);
+                    console.log(`   - 开始时间: ${entry.startTime}ms`);
+                    console.log(`   - 持续时间: ${entry.duration}ms`);
+                    console.log(`   - 传输大小: ${entry.transferSize} bytes`);
+                }
+            }
+        }
+    });
+    
+    moduleObserver.observe({ 
+        entryTypes: ['navigation', 'resource'] 
+    });
+}
+</code></pre>
+<p><strong>为什么浏览器不暴露 Module Map API？</strong></p>
+<pre><code class="language-javascript">// 1. 安全考虑
+// 暴露Module Map可能导致安全问题：
+// - 恶意脚本可能清除关键模块
+// - 可能绕过同源策略检查
+// - 敏感信息泄露
+
+// 2. 性能考虑  
+// - Module Map操作可能很昂贵
+// - 暴露内部结构可能影响引擎优化
+// - 避免开发者意外破坏模块系统
+
+// 3. 标准化复杂性
+// - 不同浏览器实现差异
+// - API设计的复杂性
+// - 向后兼容性问题
+
+// 4. 替代方案存在
+// 开发者可以通过其他方式实现类似功能：
+class UserLandModuleRegistry {
+    constructor() {
+        this.registry = new Map();
+        this.importWrapper = this.createImportWrapper();
+    }
+    
+    createImportWrapper() {
+        return async (specifier) =&gt; {
+            if (this.registry.has(specifier)) {
+                console.log(`📦 从用户注册表获取: ${specifier}`);
+                return this.registry.get(specifier);
+            }
+            
+            console.log(`🌐 动态导入: ${specifier}`);
+            const module = await import(specifier);
+            this.registry.set(specifier, module);
+            return module;
+        };
+    }
+    
+    // 用户可控的模块管理
+    register(specifier, module) {
+        this.registry.set(specifier, module);
+    }
+    
+    unregister(specifier) {
+        return this.registry.delete(specifier);
+    }
+    
+    has(specifier) {
+        return this.registry.has(specifier);
+    }
+    
+    clear() {
+        this.registry.clear();
+    }
+    
+    list() {
+        return Array.from(this.registry.keys());
+    }
+}
+
+// 使用用户层模块注册表
+const moduleRegistry = new UserLandModuleRegistry();
+const dynamicImport = moduleRegistry.importWrapper;
+
+// 这样可以实现类似Module Map的功能
+await dynamicImport('https://cdn.skypack.dev/lodash');
+console.log('已注册模块:', moduleRegistry.list());
+</code></pre>
+<p><strong>未来可能的发展</strong>：</p>
+<pre><code class="language-javascript">// 虽然目前没有标准API，但可能的未来方向：
+
+// 1. Module Reflection API (提案阶段)
+// if ('moduleReflection' in window) {
+//     const loadedModules = window.moduleReflection.getLoadedModules();
+//     const moduleInfo = window.moduleReflection.getModuleInfo(specifier);
+//     const canClear = window.moduleReflection.canClearModule(specifier);
+// }
+
+// 2. Performance API 扩展
+// if ('getEntriesByType' in performance) {
+//     const moduleEntries = performance.getEntriesByType('module');
+//     // 获取模块性能指标
+// }
+
+// 3. 开发者工具集成
+// 更好的DevTools集成，提供模块依赖可视化
+</code></pre>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>❌ <strong>没有直接API</strong>: 浏览器不提供访问Module Map的标准API</li>
+<li>🔍 <strong>间接观察</strong>: 可通过性能监控、加载时间等方式推断</li>
+<li>🛠️ <strong>替代方案</strong>: 开发者可以构建用户层的模块管理系统</li>
+<li>🔒 <strong>安全设计</strong>: 这是有意的设计选择，出于安全和性能考虑</li>
+<li>🚀 <strong>未来发展</strong>: 可能会有专门的Module Reflection API</li>
+</ul>
+<h2 id="构建工具中的模块解析"><a class="header" href="#构建工具中的模块解析">构建工具中的模块解析</a></h2>
+<h3 id="1-webpack-解析配置"><a class="header" href="#1-webpack-解析配置">1. Webpack 解析配置</a></h3>
+<pre><code class="language-javascript">// webpack.config.js
+module.exports = {
+    resolve: {
+        // 模块查找目录
+        modules: ['node_modules', 'src'],
+        
+        // 文件扩展名
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+        
+        // 别名配置
+        alias: {
+            '@': path.resolve(__dirname, 'src'),
+            '@components': path.resolve(__dirname, 'src/components'),
+            '@utils': path.resolve(__dirname, 'src/utils'),
+            '@assets': path.resolve(__dirname, 'src/assets')
+        },
+        
+        // 主字段
+        mainFields: ['browser', 'module', 'main'],
+        
+        // 主文件名
+        mainFiles: ['index', 'main'],
+        
+        // 条件导出
+        conditionNames: ['import', 'module', 'browser', 'default']
+    }
+};
+
+// 使用别名的导入示例
+// 代替: import { Button } from '../../../components/Button.js'
+import { Button } from '@components/Button.js';
+
+// 代替: import { helper } from '../../../utils/helper.js'
+import { helper } from '@utils/helper.js';
+</code></pre>
+<h3 id="2-vite-解析配置"><a class="header" href="#2-vite-解析配置">2. Vite 解析配置</a></h3>
+<pre><code class="language-javascript">// vite.config.js
+import { defineConfig } from 'vite';
+import path from 'path';
+
+export default defineConfig({
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, 'src'),
+            '@components': path.resolve(__dirname, 'src/components'),
+            '@utils': path.resolve(__dirname, 'src/utils')
+        },
+        extensions: ['.js', '.ts', '.jsx', '.tsx', '.json'],
+        conditions: ['import', 'module', 'browser', 'default'],
+        mainFields: ['module', 'jsnext:main', 'jsnext']
+    }
+});
+</code></pre>
+<h3 id="3-typescript-解析配置"><a class="header" href="#3-typescript-解析配置">3. TypeScript 解析配置</a></h3>
+<pre><code class="language-json">// tsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@utils/*": ["src/utils/*"],
+      "@types/*": ["src/types/*"]
+    },
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  }
+}
+</code></pre>
+<h2 id="模块解析的高级用法"><a class="header" href="#模块解析的高级用法">模块解析的高级用法</a></h2>
+<h3 id="1-条件解析"><a class="header" href="#1-条件解析">1. 条件解析</a></h3>
+<pre><code class="language-javascript">// platform-specific.js
+
+// 根据平台加载不同的实现
+const platform = process.platform;
+
+let fileSystem;
+switch (platform) {
+    case 'win32':
+        fileSystem = await import('./fs/windows.js');
+        break;
+    case 'darwin':
+        fileSystem = await import('./fs/macos.js');
+        break;
+    case 'linux':
+        fileSystem = await import('./fs/linux.js');
+        break;
+    default:
+        fileSystem = await import('./fs/generic.js');
+}
+
+export default fileSystem.default;
+</code></pre>
+<h3 id="2-版本化模块"><a class="header" href="#2-版本化模块">2. 版本化模块</a></h3>
+<pre><code class="language-javascript">// versioned-modules.js
+
+class ModuleVersionManager {
+    constructor() {
+        this.versions = new Map();
+    }
+    
+    async loadVersion(moduleName, version) {
+        const versionKey = `${moduleName}@${version}`;
+        
+        if (this.versions.has(versionKey)) {
+            return this.versions.get(versionKey);
+        }
+        
+        try {
+            // 尝试加载指定版本
+            const module = await import(`./modules/${moduleName}/v${version}/index.js`);
+            this.versions.set(versionKey, module);
+            return module;
+        } catch (error) {
+            console.warn(`Failed to load ${versionKey}, trying latest`);
+            return this.loadLatest(moduleName);
+        }
+    }
+    
+    async loadLatest(moduleName) {
+        const latestKey = `${moduleName}@latest`;
+        
+        if (this.versions.has(latestKey)) {
+            return this.versions.get(latestKey);
+        }
+        
+        const module = await import(`./modules/${moduleName}/latest/index.js`);
+        this.versions.set(latestKey, module);
+        return module;
+    }
+    
+    async loadCompatible(moduleName, semverRange) {
+        // 简化的语义版本兼容性检查
+        const availableVersions = await this.getAvailableVersions(moduleName);
+        const compatibleVersion = this.findCompatibleVersion(availableVersions, semverRange);
+        
+        if (compatibleVersion) {
+            return this.loadVersion(moduleName, compatibleVersion);
+        }
+        
+        throw new Error(`No compatible version found for ${moduleName}@${semverRange}`);
+    }
+    
+    async getAvailableVersions(moduleName) {
+        // 实际实现中可能需要查询API或文件系统
+        return ['1.0.0', '1.1.0', '1.2.0', '2.0.0'];
+    }
+    
+    findCompatibleVersion(versions, range) {
+        // 简化的语义版本匹配逻辑
+        return versions.find(version =&gt; this.satisfies(version, range));
+    }
+    
+    satisfies(version, range) {
+        // 实际实现中应使用专业的semver库
+        return version.startsWith(range.replace('^', '').split('.')[0]);
+    }
+}
+
+// 使用示例
+const versionManager = new ModuleVersionManager();
+
+// 加载特定版本
+const moduleV1 = await versionManager.loadVersion('my-library', '1.0.0');
+
+// 加载兼容版本
+const moduleCompat = await versionManager.loadCompatible('my-library', '^1.0.0');
+</code></pre>
+<h3 id="3-模块解析中间件"><a class="header" href="#3-模块解析中间件">3. 模块解析中间件</a></h3>
+<pre><code class="language-javascript">// resolution-middleware.js
+
+class ModuleResolutionMiddleware {
+    constructor() {
+        this.middlewares = [];
+    }
+    
+    use(middleware) {
+        this.middlewares.push(middleware);
+    }
+    
+    async resolve(specifier, context = {}) {
+        let result = { specifier, context };
+        
+        for (const middleware of this.middlewares) {
+            result = await middleware(result.specifier, result.context) || result;
+        }
+        
+        return result.specifier;
+    }
+}
+
+// 中间件示例
+const aliasMiddleware = (aliases) =&gt; (specifier, context) =&gt; {
+    for (const [alias, target] of Object.entries(aliases)) {
+        if (specifier.startsWith(alias)) {
+            return {
+                specifier: specifier.replace(alias, target),
+                context
+            };
+        }
+    }
+};
+
+const environmentMiddleware = (specifier, context) =&gt; {
+    if (specifier.includes('{{env}}')) {
+        return {
+            specifier: specifier.replace('{{env}}', process.env.NODE_ENV || 'development'),
+            context
+        };
+    }
+};
+
+const loggingMiddleware = (specifier, context) =&gt; {
+    console.log(`Resolving: ${specifier}`);
+    // 不修改specifier，只是记录日志
+};
+
+// 使用中间件
+const resolver = new ModuleResolutionMiddleware();
+
+resolver.use(aliasMiddleware({
+    '@/': './src/',
+    '@components/': './src/components/',
+    '@utils/': './src/utils/'
+}));
+
+resolver.use(environmentMiddleware);
+resolver.use(loggingMiddleware);
+
+// 解析模块
+const resolvedPath = await resolver.resolve('@components/Button');
+// 输出: Resolving: ./src/components/Button
+</code></pre>
+<h2 id="解析性能优化"><a class="header" href="#解析性能优化">解析性能优化</a></h2>
+<h3 id="1-缓存机制"><a class="header" href="#1-缓存机制">1. 缓存机制</a></h3>
+<pre><code class="language-javascript">// resolution-cache.js
+
+class ResolutionCache {
+    constructor(options = {}) {
+        this.cache = new Map();
+        this.maxSize = options.maxSize || 1000;
+        this.ttl = options.ttl || 300000; // 5分钟
+    }
+    
+    get(specifier) {
+        const entry = this.cache.get(specifier);
+        
+        if (!entry) {
+            return null;
+        }
+        
+        if (Date.now() - entry.timestamp &gt; this.ttl) {
+            this.cache.delete(specifier);
+            return null;
+        }
+        
+        return entry.resolved;
+    }
+    
+    set(specifier, resolved) {
+        if (this.cache.size &gt;= this.maxSize) {
+            // 删除最旧的条目
+            const oldestKey = this.cache.keys().next().value;
+            this.cache.delete(oldestKey);
+        }
+        
+        this.cache.set(specifier, {
+            resolved,
+            timestamp: Date.now()
+        });
+    }
+    
+    clear() {
+        this.cache.clear();
+    }
+    
+    size() {
+        return this.cache.size;
+    }
+}
+
+const resolutionCache = new ResolutionCache({ maxSize: 500, ttl: 600000 });
+
+async function resolveWithCache(specifier) {
+    // 检查缓存
+    const cached = resolutionCache.get(specifier);
+    if (cached) {
+        return cached;
+    }
+    
+    // 执行实际解析
+    const resolved = await actualResolve(specifier);
+    
+    // 缓存结果
+    resolutionCache.set(specifier, resolved);
+    
+    return resolved;
+}
+</code></pre>
+<h3 id="2-预解析"><a class="header" href="#2-预解析">2. 预解析</a></h3>
+<pre><code class="language-javascript">// pre-resolution.js
+
+class ModulePreResolver {
+    constructor() {
+        this.preresolved = new Map();
+    }
+    
+    // 预解析常用模块
+    async preresolveCommonModules(modules) {
+        const promises = modules.map(async (specifier) =&gt; {
+            try {
+                const resolved = await this.resolve(specifier);
+                this.preresolved.set(specifier, resolved);
+            } catch (error) {
+                console.warn(`Failed to preresolve ${specifier}:`, error);
+            }
+        });
+        
+        await Promise.all(promises);
+    }
+    
+    async resolve(specifier) {
+        // 检查预解析结果
+        if (this.preresolved.has(specifier)) {
+            return this.preresolved.get(specifier);
+        }
+        
+        // 执行实际解析
+        return this.actualResolve(specifier);
+    }
+    
+    async actualResolve(specifier) {
+        // 实际的解析逻辑
+        return new Promise((resolve) =&gt; {
+            setTimeout(() =&gt; resolve(`resolved:${specifier}`), 10);
+        });
+    }
+}
+
+// 在应用启动时预解析常用模块
+const preresolver = new ModulePreResolver();
+
+await preresolver.preresolveCommonModules([
+    'react',
+    'lodash',
+    '@company/ui-components',
+    './utils/helpers.js'
+]);
+</code></pre>
+<h2 id="常见问题和解决方案"><a class="header" href="#常见问题和解决方案">常见问题和解决方案</a></h2>
+<h3 id="1-路径解析问题"><a class="header" href="#1-路径解析问题">1. 路径解析问题</a></h3>
+<pre><code class="language-javascript">// 问题：深层嵌套的相对路径
+// ❌ 难以维护
+import { utils } from '../../../utils/helpers.js';
+import { Button } from '../../../../components/Button.js';
+
+// 解决方案1：使用绝对路径（如果工具支持）
+import { utils } from '/src/utils/helpers.js';
+import { Button } from '/src/components/Button.js';
+
+// 解决方案2：使用路径别名
+import { utils } from '@utils/helpers.js';
+import { Button } from '@components/Button.js';
+
+// 解决方案3：创建桶文件
+// src/index.js
+export * from './utils/helpers.js';
+export * from './components/Button.js';
+
+// 在其他文件中
+import { utils, Button } from '@/index.js';
+</code></pre>
+<h3 id="2-循环依赖解析"><a class="header" href="#2-循环依赖解析">2. 循环依赖解析</a></h3>
+<pre><code class="language-javascript">// 检测循环依赖的工具
+class CircularDependencyDetector {
+    constructor() {
+        this.visiting = new Set();
+        this.visited = new Set();
+        this.dependencies = new Map();
+    }
+    
+    addDependency(from, to) {
+        if (!this.dependencies.has(from)) {
+            this.dependencies.set(from, new Set());
+        }
+        this.dependencies.get(from).add(to);
+    }
+    
+    detectCycles() {
+        const cycles = [];
+        
+        for (const module of this.dependencies.keys()) {
+            if (!this.visited.has(module)) {
+                const cycle = this.dfs(module, []);
+                if (cycle) {
+                    cycles.push(cycle);
+                }
+            }
+        }
+        
+        return cycles;
+    }
+    
+    dfs(module, path) {
+        if (this.visiting.has(module)) {
+            // 找到循环
+            const cycleStart = path.indexOf(module);
+            return path.slice(cycleStart).concat(module);
+        }
+        
+        if (this.visited.has(module)) {
+            return null;
+        }
+        
+        this.visiting.add(module);
+        path.push(module);
+        
+        const deps = this.dependencies.get(module) || new Set();
+        for (const dep of deps) {
+            const cycle = this.dfs(dep, [...path]);
+            if (cycle) {
+                return cycle;
+            }
+        }
+        
+        this.visiting.delete(module);
+        this.visited.add(module);
+        
+        return null;
+    }
+}
+
+// 使用示例
+const detector = new CircularDependencyDetector();
+detector.addDependency('A', 'B');
+detector.addDependency('B', 'C');
+detector.addDependency('C', 'A'); // 循环依赖
+
+const cycles = detector.detectCycles();
+console.log('Detected cycles:', cycles); // [['A', 'B', 'C', 'A']]
+</code></pre>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>模块解析机制是ES模块系统的重要组成部分，理解其工作原理有助于：</p>
+<ul>
+<li>✅ <strong>正确组织项目结构</strong>: 合理的路径设计和别名配置</li>
+<li>✅ <strong>优化构建配置</strong>: 配置适当的解析规则提升构建性能</li>
+<li>✅ <strong>调试导入问题</strong>: 快速定位和解决模块找不到的问题</li>
+<li>✅ <strong>设计可重用模块</strong>: 创建易于导入和使用的模块接口</li>
+<li>✅ <strong>性能优化</strong>: 通过缓存和预解析提升解析性能</li>
+</ul>
+<p>掌握模块解析机制，能够帮助你构建更加健壮和高效的模块化应用。</p>
+<hr>
+<p><strong>下一章</strong>: <a href="./hot-module-reload.html">热模块重载</a> →</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../esm/dynamic-import.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../esm/hot-module-reload.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../esm/dynamic-import.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../esm/hot-module-reload.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

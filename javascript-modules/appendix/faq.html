@@ -1,0 +1,1265 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>常见问题解答 - JavaScript 模块化开发指南</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="深入理解 JavaScript 模块系统：从基础概念到现代工具链">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-689596af.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-73575c54.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">JavaScript 模块化开发指南</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="常见问题解答"><a class="header" href="#常见问题解答">常见问题解答</a></h1>
+<p>本章汇总了JavaScript模块化开发中最常遇到的问题和解决方案，帮助开发者快速解决实际开发中的困惑。</p>
+<h2 id="基础概念问题"><a class="header" href="#基础概念问题">基础概念问题</a></h2>
+<h3 id="q1-es模块和commonjs有什么区别"><a class="header" href="#q1-es模块和commonjs有什么区别">Q1: ES模块和CommonJS有什么区别？</a></h3>
+<p><strong>A:</strong> 主要区别包括：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>特性</th><th>ES模块 (ESM)</th><th>CommonJS (CJS)</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>语法</strong></td><td><code>import</code>/<code>export</code></td><td><code>require()</code>/<code>module.exports</code></td></tr>
+<tr><td><strong>加载时机</strong></td><td>编译时静态分析</td><td>运行时动态加载</td></tr>
+<tr><td><strong>Tree Shaking</strong></td><td>支持</td><td>不支持</td></tr>
+<tr><td><strong>循环依赖</strong></td><td>更好处理</td><td>可能有问题</td></tr>
+<tr><td><strong>顶层await</strong></td><td>支持</td><td>不支持</td></tr>
+<tr><td><strong>浏览器支持</strong></td><td>原生支持</td><td>需要打包</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-javascript">// ES模块
+import { functionA } from './moduleA.js';
+export const functionB = () =&gt; {};
+
+// CommonJS
+const { functionA } = require('./moduleA.js');
+module.exports = { functionB: () =&gt; {} };
+</code></pre>
+<h3 id="q2-什么时候使用动态导入"><a class="header" href="#q2-什么时候使用动态导入">Q2: 什么时候使用动态导入？</a></h3>
+<p><strong>A:</strong> 动态导入适用于以下场景：</p>
+<pre><code class="language-javascript">// 1. 代码分割和懒加载
+const loadChart = async () =&gt; {
+  const { Chart } = await import('./chart-library.js');
+  return new Chart();
+};
+
+// 2. 条件性模块加载
+if (user.hasFeature('advanced')) {
+  const advanced = await import('./advanced-features.js');
+  advanced.initialize();
+}
+
+// 3. 运行时模块选择
+const getTranslator = async (language) =&gt; {
+  return await import(`./translators/${language}.js`);
+};
+
+// 4. 降级和错误处理
+try {
+  const modernModule = await import('./modern-features.js');
+  return modernModule.default;
+} catch {
+  const fallback = await import('./fallback.js');
+  return fallback.default;
+}
+</code></pre>
+<h3 id="q3-如何解决循环依赖问题"><a class="header" href="#q3-如何解决循环依赖问题">Q3: 如何解决循环依赖问题？</a></h3>
+<p><strong>A:</strong> 解决循环依赖的几种方法：</p>
+<h4 id="方法1-重新设计模块结构"><a class="header" href="#方法1-重新设计模块结构">方法1: 重新设计模块结构</a></h4>
+<pre><code class="language-javascript">// 问题：A依赖B，B依赖A
+// moduleA.js
+import { functionB } from './moduleB.js';
+export const functionA = () =&gt; functionB();
+
+// moduleB.js  
+import { functionA } from './moduleA.js'; // 循环依赖
+export const functionB = () =&gt; functionA();
+
+// 解决：提取公共依赖
+// shared.js
+export const sharedFunction = () =&gt; {};
+
+// moduleA.js
+import { sharedFunction } from './shared.js';
+export const functionA = () =&gt; sharedFunction();
+
+// moduleB.js
+import { sharedFunction } from './shared.js';
+export const functionB = () =&gt; sharedFunction();
+</code></pre>
+<h4 id="方法2-使用依赖注入"><a class="header" href="#方法2-使用依赖注入">方法2: 使用依赖注入</a></h4>
+<pre><code class="language-javascript">// moduleA.js
+export class ServiceA {
+  constructor(serviceB) {
+    this.serviceB = serviceB;
+  }
+  
+  doSomething() {
+    return this.serviceB.helper();
+  }
+}
+
+// moduleB.js
+export class ServiceB {
+  constructor(serviceA) {
+    this.serviceA = serviceA;
+  }
+  
+  helper() {
+    return 'result';
+  }
+}
+
+// container.js
+import { ServiceA } from './moduleA.js';
+import { ServiceB } from './moduleB.js';
+
+const serviceB = new ServiceB();
+const serviceA = new ServiceA(serviceB);
+serviceB.serviceA = serviceA; // 如果需要的话
+</code></pre>
+<h3 id="q4-tree-shaking不工作怎么办"><a class="header" href="#q4-tree-shaking不工作怎么办">Q4: Tree Shaking不工作怎么办？</a></h3>
+<p><strong>A:</strong> 确保Tree Shaking正常工作的检查清单：</p>
+<pre><code class="language-javascript">// 1. 使用ES模块语法
+// ✅ 正确
+export const functionA = () =&gt; {};
+export const functionB = () =&gt; {};
+
+// ❌ 错误 - 会导致整个对象被包含
+export default {
+  functionA: () =&gt; {},
+  functionB: () =&gt; {}
+};
+
+// 2. 避免副作用
+// ❌ 有副作用的模块
+console.log('Module loaded'); // 副作用
+export const pureFunction = () =&gt; {};
+
+// ✅ 纯模块
+export const pureFunction = () =&gt; {};
+
+// 3. 正确配置package.json
+{
+  "name": "my-package",
+  "sideEffects": false, // 标记为无副作用
+  // 或者指定有副作用的文件
+  "sideEffects": ["./src/polyfills.js", "*.css"]
+}
+
+// 4. 打包工具配置
+// webpack.config.js
+module.exports = {
+  mode: 'production', // 启用Tree Shaking
+  optimization: {
+    usedExports: true,
+    sideEffects: false
+  }
+};
+</code></pre>
+<h2 id="构建和工具问题"><a class="header" href="#构建和工具问题">构建和工具问题</a></h2>
+<h3 id="q5-模块解析失败怎么办"><a class="header" href="#q5-模块解析失败怎么办">Q5: 模块解析失败怎么办？</a></h3>
+<p><strong>A:</strong> 常见的模块解析问题和解决方案：</p>
+<pre><code class="language-javascript">// 1. 文件扩展名问题
+// ❌ 错误
+import utils from './utils'; // 缺少扩展名
+
+// ✅ 正确
+import utils from './utils.js';
+
+// 2. 相对路径问题
+// ❌ 错误
+import utils from 'utils'; // 应该是相对路径
+
+// ✅ 正确
+import utils from './utils.js';
+import utils from '../shared/utils.js';
+
+// 3. Node.js模块解析配置
+// package.json
+{
+  "type": "module", // 启用ES模块
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js"
+    }
+  }
+}
+
+// 4. TypeScript路径映射
+// tsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@/components/*": ["components/*"]
+    }
+  }
+}
+</code></pre>
+<h3 id="q6-如何调试模块加载问题"><a class="header" href="#q6-如何调试模块加载问题">Q6: 如何调试模块加载问题？</a></h3>
+<p><strong>A:</strong> 调试模块加载的方法：</p>
+<pre><code class="language-javascript">// 1. 使用浏览器开发者工具
+// 在Network面板查看模块加载情况
+// 在Sources面板设置断点
+
+// 2. Node.js调试
+// 启用模块加载跟踪
+node --trace-warnings --experimental-loader ./my-loader.js app.js
+
+// 3. 添加调试日志
+const originalImport = window.__import__ || import;
+window.__import__ = function(specifier) {
+  console.log('Loading module:', specifier);
+  return originalImport(specifier)
+    .then(module =&gt; {
+      console.log('Module loaded:', specifier, module);
+      return module;
+    })
+    .catch(error =&gt; {
+      console.error('Module load failed:', specifier, error);
+      throw error;
+    });
+};
+
+// 4. 使用Webpack Bundle Analyzer
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+module.exports = {
+  plugins: [
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'server',
+      openAnalyzer: true
+    })
+  ]
+};
+</code></pre>
+<h3 id="q7-如何优化构建性能"><a class="header" href="#q7-如何优化构建性能">Q7: 如何优化构建性能？</a></h3>
+<p><strong>A:</strong> 构建性能优化策略：</p>
+<pre><code class="language-javascript">// 1. 启用并行构建
+// webpack.config.js
+const os = require('os');
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: [
+          {
+            loader: 'thread-loader',
+            options: {
+              workers: os.cpus().length - 1
+            }
+          },
+          'babel-loader'
+        ]
+      }
+    ]
+  }
+};
+
+// 2. 缓存配置
+module.exports = {
+  cache: {
+    type: 'filesystem',
+    cacheDirectory: path.resolve(__dirname, '.webpack-cache')
+  }
+};
+
+// 3. 减少解析范围
+module.exports = {
+  resolve: {
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+    extensions: ['.js', '.jsx'] // 只包含必要的扩展名
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        include: path.resolve(__dirname, 'src'), // 限制处理范围
+        exclude: /node_modules/
+      }
+    ]
+  }
+};
+
+// 4. 使用更快的工具
+// vite.config.js
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  esbuild: {
+    target: 'es2020'
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom']
+  }
+});
+</code></pre>
+<h2 id="兼容性问题"><a class="header" href="#兼容性问题">兼容性问题</a></h2>
+<h3 id="q8-如何在nodejs中同时支持esm和commonjs"><a class="header" href="#q8-如何在nodejs中同时支持esm和commonjs">Q8: 如何在Node.js中同时支持ESM和CommonJS？</a></h3>
+<p><strong>A:</strong> 创建双模式包的方法：</p>
+<pre><code class="language-javascript">// 1. 使用条件导出
+// package.json
+{
+  "name": "my-package",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  }
+}
+
+// 2. 源码示例
+// src/index.js (共同源码)
+export function myFunction() {
+  return 'Hello World';
+}
+
+// 构建脚本生成两个版本
+// dist/index.mjs (ESM版本)
+export function myFunction() {
+  return 'Hello World';
+}
+
+// dist/index.cjs (CommonJS版本)
+function myFunction() {
+  return 'Hello World';
+}
+module.exports = { myFunction };
+
+// 3. 动态检测环境
+// utils.js
+const isESM = typeof module === 'undefined';
+
+if (isESM) {
+  // ESM环境
+  export { myFunction };
+} else {
+  // CommonJS环境  
+  module.exports = { myFunction };
+}
+</code></pre>
+<h3 id="q9-如何处理第三方库的模块兼容性"><a class="header" href="#q9-如何处理第三方库的模块兼容性">Q9: 如何处理第三方库的模块兼容性？</a></h3>
+<p><strong>A:</strong> 处理第三方库兼容性问题：</p>
+<pre><code class="language-javascript">// 1. 使用打包工具转换
+// webpack.config.js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /node_modules\/problematic-package/,
+        use: 'babel-loader'
+      }
+    ]
+  }
+};
+
+// 2. 创建包装模块
+// wrappers/old-library.js
+import oldLibrary from 'old-commonjs-library';
+
+// 包装成ESM接口
+export const { functionA, functionB } = oldLibrary;
+export default oldLibrary;
+
+// 3. 使用动态导入处理异步加载
+const loadLibrary = async () =&gt; {
+  try {
+    // 尝试ESM版本
+    return await import('modern-library');
+  } catch {
+    // 降级到CommonJS版本
+    const lib = await import('old-library');
+    return lib.default || lib;
+  }
+};
+
+// 4. 配置模块解析别名
+// webpack.config.js
+module.exports = {
+  resolve: {
+    alias: {
+      'problematic-lib': path.resolve(__dirname, 'src/wrappers/problematic-lib.js')
+    }
+  }
+};
+</code></pre>
+<h3 id="q10-如何在浏览器中处理模块兼容性"><a class="header" href="#q10-如何在浏览器中处理模块兼容性">Q10: 如何在浏览器中处理模块兼容性？</a></h3>
+<p><strong>A:</strong> 浏览器模块兼容性处理：</p>
+<pre><code class="language-html">&lt;!-- 1. 现代浏览器和旧浏览器分别处理 --&gt;
+&lt;script type="module" src="modern.js"&gt;&lt;/script&gt;
+&lt;script nomodule src="legacy.js"&gt;&lt;/script&gt;
+
+&lt;!-- 2. 动态检测和加载 --&gt;
+&lt;script&gt;
+  if ('noModule' in HTMLScriptElement.prototype) {
+    // 支持ES模块的现代浏览器
+    import('./modern-app.js').then(app =&gt; app.init());
+  } else {
+    // 旧浏览器加载打包后的版本
+    const script = document.createElement('script');
+    script.src = 'legacy-app.js';
+    document.head.appendChild(script);
+  }
+&lt;/script&gt;
+
+&lt;!-- 3. 使用importmap处理模块映射 --&gt;
+&lt;script type="importmap"&gt;
+{
+  "imports": {
+    "react": "https://esm.sh/react@18",
+    "react-dom": "https://esm.sh/react-dom@18"
+  }
+}
+&lt;/script&gt;
+&lt;script type="module"&gt;
+  import React from 'react';
+  import ReactDOM from 'react-dom';
+&lt;/script&gt;
+</code></pre>
+<h2 id="性能优化问题"><a class="header" href="#性能优化问题">性能优化问题</a></h2>
+<h3 id="q11-如何减少模块加载时间"><a class="header" href="#q11-如何减少模块加载时间">Q11: 如何减少模块加载时间？</a></h3>
+<p><strong>A:</strong> 模块加载性能优化：</p>
+<pre><code class="language-javascript">// 1. 预加载关键模块
+// 在HTML中预加载
+&lt;link rel="modulepreload" href="./critical-module.js"&gt;
+
+// 在JavaScript中预加载
+const preloadModule = (url) =&gt; {
+  const link = document.createElement('link');
+  link.rel = 'modulepreload';
+  link.href = url;
+  document.head.appendChild(link);
+};
+
+// 2. 代码分割优化
+// 路由级分割
+const HomePage = lazy(() =&gt; import('./pages/HomePage'));
+const AboutPage = lazy(() =&gt; import('./pages/AboutPage'));
+
+// 功能级分割
+const loadFeature = async (featureName) =&gt; {
+  const features = {
+    charts: () =&gt; import('./features/charts'),
+    editor: () =&gt; import('./features/editor')
+  };
+  return features[featureName]?.();
+};
+
+// 3. 打包优化
+// webpack.config.js
+module.exports = {
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+        common: {
+          minChunks: 2,
+          chunks: 'all',
+          enforce: true
+        }
+      }
+    }
+  }
+};
+
+// 4. 使用CDN和缓存
+// 配置长期缓存
+module.exports = {
+  output: {
+    filename: '[name].[contenthash].js',
+    chunkFilename: '[name].[contenthash].chunk.js'
+  }
+};
+</code></pre>
+<h3 id="q12-如何监控模块加载性能"><a class="header" href="#q12-如何监控模块加载性能">Q12: 如何监控模块加载性能？</a></h3>
+<p><strong>A:</strong> 模块性能监控方法：</p>
+<pre><code class="language-javascript">// 1. 使用Performance API
+const modulePerformance = new Map();
+
+const originalImport = window.import || import;
+window.import = function(specifier) {
+  const startTime = performance.now();
+  
+  return originalImport(specifier).then(module =&gt; {
+    const loadTime = performance.now() - startTime;
+    modulePerformance.set(specifier, {
+      loadTime,
+      timestamp: Date.now(),
+      size: JSON.stringify(module).length
+    });
+    
+    // 发送性能数据
+    if (window.analytics) {
+      window.analytics.track('module_loaded', {
+        module: specifier,
+        loadTime,
+        size: JSON.stringify(module).length
+      });
+    }
+    
+    return module;
+  });
+};
+
+// 2. 监控Core Web Vitals
+const observer = new PerformanceObserver((list) =&gt; {
+  for (const entry of list.getEntries()) {
+    if (entry.entryType === 'largest-contentful-paint') {
+      console.log('LCP:', entry.startTime);
+    }
+  }
+});
+
+observer.observe({ entryTypes: ['largest-contentful-paint'] });
+
+// 3. 模块加载瀑布图分析
+const analyzeModuleLoading = () =&gt; {
+  const entries = performance.getEntriesByType('resource');
+  const moduleEntries = entries.filter(entry =&gt; 
+    entry.name.includes('.js') || entry.name.includes('.mjs')
+  );
+  
+  console.table(moduleEntries.map(entry =&gt; ({
+    name: entry.name,
+    duration: entry.duration,
+    transferSize: entry.transferSize,
+    startTime: entry.startTime
+  })));
+};
+</code></pre>
+<h2 id="调试和测试问题"><a class="header" href="#调试和测试问题">调试和测试问题</a></h2>
+<h3 id="q13-如何测试模块化代码"><a class="header" href="#q13-如何测试模块化代码">Q13: 如何测试模块化代码？</a></h3>
+<p><strong>A:</strong> 模块化代码测试策略：</p>
+<pre><code class="language-javascript">// 1. 单元测试
+// math.js
+export const add = (a, b) =&gt; a + b;
+export const multiply = (a, b) =&gt; a * b;
+
+// math.test.js
+import { add, multiply } from './math.js';
+
+describe('Math utilities', () =&gt; {
+  test('add function', () =&gt; {
+    expect(add(2, 3)).toBe(5);
+  });
+  
+  test('multiply function', () =&gt; {
+    expect(multiply(2, 3)).toBe(6);
+  });
+});
+
+// 2. 模拟(Mock)外部依赖
+// api.js
+export const fetchUser = async (id) =&gt; {
+  const response = await fetch(`/api/users/${id}`);
+  return response.json();
+};
+
+// userService.test.js
+import { fetchUser } from './api.js';
+jest.mock('./api.js');
+
+const mockFetchUser = fetchUser as jest.MockedFunction&lt;typeof fetchUser&gt;;
+
+test('user service', async () =&gt; {
+  mockFetchUser.mockResolvedValue({ id: 1, name: 'John' });
+  
+  const user = await fetchUser(1);
+  expect(user.name).toBe('John');
+});
+
+// 3. 测试动态导入
+test('dynamic import', async () =&gt; {
+  const module = await import('./utils.js');
+  expect(typeof module.utilFunction).toBe('function');
+});
+
+// 4. 集成测试
+// app.test.js
+import { JSDOM } from 'jsdom';
+
+const dom = new JSDOM('&lt;!DOCTYPE html&gt;&lt;div id="app"&gt;&lt;/div&gt;');
+global.window = dom.window;
+global.document = window.document;
+
+import('./app.js').then(app =&gt; {
+  app.init();
+  // 测试应用初始化后的状态
+});
+</code></pre>
+<h3 id="q14-如何处理模块中的错误"><a class="header" href="#q14-如何处理模块中的错误">Q14: 如何处理模块中的错误？</a></h3>
+<p><strong>A:</strong> 模块错误处理最佳实践：</p>
+<pre><code class="language-javascript">// 1. 静态导入错误处理
+// 使用try-catch包装使用模块的代码
+try {
+  import('./risky-module.js').then(module =&gt; {
+    module.dangerousFunction();
+  });
+} catch (error) {
+  console.error('Module error:', error);
+}
+
+// 2. 动态导入错误处理
+const loadModuleWithFallback = async (modulePath, fallbackPath) =&gt; {
+  try {
+    return await import(modulePath);
+  } catch (error) {
+    console.warn(`Failed to load ${modulePath}, using fallback:`, error);
+    return await import(fallbackPath);
+  }
+};
+
+// 3. 模块内部错误处理
+// robust-module.js
+class ModuleError extends Error {
+  constructor(message, code) {
+    super(message);
+    this.name = 'ModuleError';
+    this.code = code;
+  }
+}
+
+export const riskyFunction = (input) =&gt; {
+  try {
+    if (!input) {
+      throw new ModuleError('Input is required', 'MISSING_INPUT');
+    }
+    // 危险操作
+    return processInput(input);
+  } catch (error) {
+    // 记录错误
+    console.error('Function failed:', error);
+    
+    // 重新抛出包装后的错误
+    if (error instanceof ModuleError) {
+      throw error;
+    } else {
+      throw new ModuleError('Processing failed', 'PROCESSING_ERROR');
+    }
+  }
+};
+
+// 4. 全局错误处理
+window.addEventListener('unhandledrejection', (event) =&gt; {
+  if (event.reason?.code === 'MODULE_LOAD_ERROR') {
+    // 处理模块加载错误
+    console.error('Module load failed:', event.reason);
+    event.preventDefault();
+  }
+});
+</code></pre>
+<h2 id="部署和生产问题"><a class="header" href="#部署和生产问题">部署和生产问题</a></h2>
+<h3 id="q15-如何优化生产环境的模块加载"><a class="header" href="#q15-如何优化生产环境的模块加载">Q15: 如何优化生产环境的模块加载？</a></h3>
+<p><strong>A:</strong> 生产环境优化策略：</p>
+<pre><code class="language-javascript">// 1. 启用压缩和优化
+// webpack.config.js
+const TerserPlugin = require('terser-webpack-plugin');
+
+module.exports = {
+  mode: 'production',
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true, // 移除console.log
+            drop_debugger: true // 移除debugger
+          }
+        }
+      })
+    ]
+  }
+};
+
+// 2. 配置缓存策略
+// 服务器配置示例
+app.use('/static', express.static('public', {
+  maxAge: '1y', // 静态资源缓存1年
+  etag: true,
+  lastModified: true
+}));
+
+// 3. 使用Service Worker缓存模块
+// sw.js
+const CACHE_NAME = 'modules-v1';
+const urlsToCache = [
+  '/dist/main.js',
+  '/dist/vendor.js',
+  '/dist/runtime.js'
+];
+
+self.addEventListener('install', (event) =&gt; {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) =&gt; cache.addAll(urlsToCache))
+  );
+});
+
+self.addEventListener('fetch', (event) =&gt; {
+  if (event.request.url.includes('.js')) {
+    event.respondWith(
+      caches.match(event.request)
+        .then((response) =&gt; response || fetch(event.request))
+    );
+  }
+});
+
+// 4. HTTP/2 Server Push
+// 服务器配置
+app.get('/', (req, res) =&gt; {
+  // 推送关键模块
+  res.push('/dist/critical.js', {
+    response: { 'content-type': 'application/javascript' }
+  });
+  
+  res.send(indexHTML);
+});
+</code></pre>
+<h3 id="q16-如何处理模块版本更新"><a class="header" href="#q16-如何处理模块版本更新">Q16: 如何处理模块版本更新？</a></h3>
+<p><strong>A:</strong> 模块版本管理策略：</p>
+<pre><code class="language-javascript">// 1. 版本化文件名
+// webpack.config.js
+module.exports = {
+  output: {
+    filename: '[name].[contenthash].js',
+    chunkFilename: '[name].[contenthash].chunk.js'
+  }
+};
+
+// 2. 版本检查和热更新
+class ModuleVersionManager {
+  constructor() {
+    this.currentVersion = this.getCurrentVersion();
+    this.checkInterval = 30000; // 30秒检查一次
+  }
+  
+  getCurrentVersion() {
+    return document.querySelector('meta[name="app-version"]')?.content;
+  }
+  
+  async checkForUpdates() {
+    try {
+      const response = await fetch('/api/version');
+      const { version } = await response.json();
+      
+      if (version !== this.currentVersion) {
+        this.handleVersionUpdate(version);
+      }
+    } catch (error) {
+      console.error('Version check failed:', error);
+    }
+  }
+  
+  handleVersionUpdate(newVersion) {
+    // 通知用户有新版本
+    if (confirm('新版本可用，是否刷新页面？')) {
+      window.location.reload();
+    }
+  }
+  
+  startVersionChecking() {
+    setInterval(() =&gt; this.checkForUpdates(), this.checkInterval);
+  }
+}
+
+// 3. 渐进式更新
+const updateModule = async (moduleName) =&gt; {
+  try {
+    // 预加载新版本
+    const newModule = await import(`./modules/${moduleName}.js?v=${Date.now()}`);
+    
+    // 平滑切换
+    if (window.modules?.[moduleName]) {
+      // 调用旧模块的清理函数
+      window.modules[moduleName].cleanup?.();
+    }
+    
+    // 更新模块引用
+    window.modules = window.modules || {};
+    window.modules[moduleName] = newModule;
+    
+    // 初始化新模块
+    newModule.init?.();
+    
+  } catch (error) {
+    console.error(`Failed to update module ${moduleName}:`, error);
+  }
+};
+</code></pre>
+<h2 id="其他常见问题"><a class="header" href="#其他常见问题">其他常见问题</a></h2>
+<h3 id="q17-如何在模块间共享数据"><a class="header" href="#q17-如何在模块间共享数据">Q17: 如何在模块间共享数据？</a></h3>
+<p><strong>A:</strong> 模块间数据共享方案：</p>
+<pre><code class="language-javascript">// 1. 使用共享状态模块
+// store.js
+class Store {
+  constructor() {
+    this.state = {};
+    this.listeners = [];
+  }
+  
+  setState(updates) {
+    this.state = { ...this.state, ...updates };
+    this.listeners.forEach(listener =&gt; listener(this.state));
+  }
+  
+  getState() {
+    return this.state;
+  }
+  
+  subscribe(listener) {
+    this.listeners.push(listener);
+    return () =&gt; {
+      this.listeners = this.listeners.filter(l =&gt; l !== listener);
+    };
+  }
+}
+
+export const store = new Store();
+
+// moduleA.js
+import { store } from './store.js';
+
+export const updateData = (data) =&gt; {
+  store.setState({ moduleAData: data });
+};
+
+// moduleB.js
+import { store } from './store.js';
+
+const unsubscribe = store.subscribe((state) =&gt; {
+  console.log('State updated:', state.moduleAData);
+});
+
+// 2. 使用事件系统
+// eventBus.js
+class EventBus {
+  constructor() {
+    this.events = {};
+  }
+  
+  on(event, callback) {
+    if (!this.events[event]) {
+      this.events[event] = [];
+    }
+    this.events[event].push(callback);
+  }
+  
+  emit(event, data) {
+    if (this.events[event]) {
+      this.events[event].forEach(callback =&gt; callback(data));
+    }
+  }
+  
+  off(event, callback) {
+    if (this.events[event]) {
+      this.events[event] = this.events[event].filter(cb =&gt; cb !== callback);
+    }
+  }
+}
+
+export const eventBus = new EventBus();
+
+// 3. 使用全局命名空间
+// globals.js
+window.APP_GLOBALS = window.APP_GLOBALS || {
+  config: {},
+  cache: new Map(),
+  utils: {}
+};
+
+export default window.APP_GLOBALS;
+</code></pre>
+<h3 id="q18-如何处理大型模块的加载"><a class="header" href="#q18-如何处理大型模块的加载">Q18: 如何处理大型模块的加载？</a></h3>
+<p><strong>A:</strong> 大型模块加载优化：</p>
+<pre><code class="language-javascript">// 1. 模块分割
+// 将大模块拆分成小块
+// chart-module/index.js
+export const loadBasicChart = () =&gt; import('./basic-chart.js');
+export const loadAdvancedChart = () =&gt; import('./advanced-chart.js');
+export const loadD3Chart = () =&gt; import('./d3-chart.js');
+
+// 2. 流式加载
+class StreamingModuleLoader {
+  async loadModuleInChunks(modulePath, chunkSize = 1024 * 64) {
+    const response = await fetch(modulePath);
+    const reader = response.body?.getReader();
+    
+    if (!reader) {
+      throw new Error('Streaming not supported');
+    }
+    
+    let code = '';
+    let done = false;
+    
+    while (!done) {
+      const { value, done: readerDone } = await reader.read();
+      done = readerDone;
+      
+      if (value) {
+        code += new TextDecoder().decode(value);
+        
+        // 显示加载进度
+        this.updateProgress(code.length, response.headers.get('content-length'));
+      }
+    }
+    
+    // 执行代码
+    const blob = new Blob([code], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    const module = await import(url);
+    URL.revokeObjectURL(url);
+    
+    return module;
+  }
+  
+  updateProgress(loaded, total) {
+    const progress = (loaded / total) * 100;
+    console.log(`Loading progress: ${progress.toFixed(1)}%`);
+  }
+}
+
+// 3. 分优先级加载
+const loadModulesByPriority = async () =&gt; {
+  // 高优先级模块
+  const criticalModules = [
+    import('./core.js'),
+    import('./ui.js')
+  ];
+  
+  await Promise.all(criticalModules);
+  
+  // 中优先级模块
+  const importantModules = [
+    import('./features.js'),
+    import('./analytics.js')
+  ];
+  
+  Promise.all(importantModules);
+  
+  // 低优先级模块（空闲时加载）
+  requestIdleCallback(() =&gt; {
+    import('./optional-features.js');
+    import('./dev-tools.js');
+  });
+};
+</code></pre>
+<h3 id="q19-如何实现模块的热重载"><a class="header" href="#q19-如何实现模块的热重载">Q19: 如何实现模块的热重载？</a></h3>
+<p><strong>A:</strong> 模块热重载实现：</p>
+<pre><code class="language-javascript">// 1. 基础热重载检测
+if (module.hot) {
+  module.hot.accept('./my-module.js', () =&gt; {
+    // 模块更新时的回调
+    console.log('Module updated');
+    
+    // 重新导入更新的模块
+    import('./my-module.js').then(newModule =&gt; {
+      // 更新应用状态
+      updateApplication(newModule);
+    });
+  });
+}
+
+// 2. 自定义热重载系统
+class HotReloadManager {
+  constructor() {
+    this.modules = new Map();
+    this.watchers = new Map();
+  }
+  
+  register(modulePath, module) {
+    this.modules.set(modulePath, module);
+    
+    if (this.isDevelopment()) {
+      this.watchModule(modulePath);
+    }
+  }
+  
+  async watchModule(modulePath) {
+    // 使用WebSocket或其他方式监听文件变化
+    const ws = new WebSocket(`ws://localhost:3001/hmr`);
+    
+    ws.addEventListener('message', async (event) =&gt; {
+      const { type, path } = JSON.parse(event.data);
+      
+      if (type === 'update' &amp;&amp; path === modulePath) {
+        await this.reloadModule(modulePath);
+      }
+    });
+  }
+  
+  async reloadModule(modulePath) {
+    try {
+      // 清除模块缓存
+      delete window.moduleCache?.[modulePath];
+      
+      // 重新导入模块
+      const newModule = await import(`${modulePath}?t=${Date.now()}`);
+      
+      // 更新模块引用
+      this.modules.set(modulePath, newModule);
+      
+      // 触发更新事件
+      this.emit('moduleUpdated', { path: modulePath, module: newModule });
+      
+    } catch (error) {
+      console.error('Hot reload failed:', error);
+    }
+  }
+  
+  isDevelopment() {
+    return process.env.NODE_ENV === 'development';
+  }
+}
+
+// 3. React组件热重载
+// 使用React Fast Refresh
+if (module.hot) {
+  module.hot.accept('./MyComponent.jsx', () =&gt; {
+    // React Fast Refresh会自动处理组件更新
+  });
+}
+</code></pre>
+<p>这些FAQ涵盖了JavaScript模块化开发中最常遇到的问题。遇到具体问题时，建议先查看相关工具的官方文档，然后参考这些解决方案进行调试和优化。</p>
+<hr>
+<p><strong>下一章</strong>: <a href="references.html">参考资源</a> →</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../appendix/tools-comparison.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../appendix/references.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../appendix/tools-comparison.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../appendix/references.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

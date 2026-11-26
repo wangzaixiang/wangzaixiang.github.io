@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    div.mermaid {
+      width: 0;
+    }
+</style>
+
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://wangzaixiang.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://wangzaixiang.github.io/main.css">
+
+
+
+  
+  
+  
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>我心目中最佳的 Coding Harness | 程序人生</title>
+<meta name="description" content="从「AI 擅长生成、却不擅长修改」的现象出发，提出 LLM + IDE + Notepad 三层架构：让 LLM 操作结构化事实，而不是操作字节">
+<link rel="canonical" href="https://wangzaixiang.github.io/blog/best-coding-harness/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://wangzaixiang.github.io/doks.png">
+  
+  <meta name="twitter:title" content="我心目中最佳的 Coding Harness">
+  <meta name="twitter:description" content="从「AI 擅长生成、却不擅长修改」的现象出发，提出 LLM + IDE + Notepad 三层架构：让 LLM 操作结构化事实，而不是操作字节">
+  <meta name="twitter:site" content="@wangzaixiang">
+  <meta name="twitter:creator" content="@wangzaixiang">
+  
+  <meta property="og:title" content="我心目中最佳的 Coding Harness">
+  <meta property="og:description" content="从「AI 擅长生成、却不擅长修改」的现象出发，提出 LLM + IDE + Notepad 三层架构：让 LLM 操作结构化事实，而不是操作字节">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wangzaixiang.github.io/blog/best-coding-harness/">
+
+  
+    <meta property="og:image" content="https://wangzaixiang.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="我心目中最佳的 Coding Harness">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/ichunyun">
+  <meta property="article:author" content="https://www.facebook.com/ichunyun">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/blog/best-coding-harness/"
+      },
+      "headline": "我心目中最佳的 Coding Harness",
+      "image": ,
+      "datePublished": "2026-08-14",
+      "dateModified": "",
+      "author": {
+        "@type": "Organization",
+        "name": "我心目中最佳的 Coding Harness"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "我心目中最佳的 Coding Harness",
+        
+        "logo": {
+          "@type": "ImageObject",
+          "url": "/logo-doks.png"
+        }
+        
+      },
+      "description": "从「AI 擅长生成、却不擅长修改」的现象出发，提出 LLM + IDE + Notepad 三层架构：让 LLM 操作结构化事实，而不是操作字节"
+    }
+    </script>
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://wangzaixiang.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Blog",
+            "item": "https://wangzaixiang.github.io/blog/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Best Coding Harness",
+            "item": "https://wangzaixiang.github.io/blog/best-coding-harness/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://wangzaixiang.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://wangzaixiang.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://wangzaixiang.github.io/favicon-16x16.png">
+  
+
+
+  
+
+</head>
+
+  
+
+<body class="blog single">
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://wangzaixiang.github.io">程序人生</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/wangzaixiang"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/wangzaixiang/"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item blog active">
+							<a class="nav-link" href="https://wangzaixiang.github.io/blog/">Blog</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/monthly/">Monthly</a>
+						</li>
+					
+						<li class="nav-item">
+							<a class="nav-link" href="https://wangzaixiang.github.io/thoughts/">Thoughts</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row justify-content-center">
+      
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#bei-jing-ai-shan-chang-sheng-cheng-que-bu-shan-chang-xiu-gai">背景：AI 擅长生成，却不擅长修改</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#wei-shen-me-yin-wei-agent-zai-cao-zuo-notepad-er-bu-shi-ide">为什么：因为 Agent 在操作 Notepad，而不是 IDE</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#he-xin-yin-yu-llm-ide-notepad">核心隐喻：LLM + IDE + Notepad</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#llm-jue-ce-ceng">LLM：决策层</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#ide-yu-yi-zeng-qiang-ceng">IDE：语义增强层</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#notepad-dou-di-ceng">Notepad：兜底层</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#wu-ge-she-ji-yuan-ze">五个设计原则</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#1-ren-zhi-xia-chen">1. 认知下沉</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#2-yu-yi-xie-cong-zi-fu-chuan-ti-huan-dao-fu-hao-gai-xie">2. 语义「写」：从「字符串替换」到「符号改写」</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#3-yun-xing-shi-yan-bu-shi-pa">3. 运行时「验」不是「爬」</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#4-dou-di-ji-su-hua-bu-shi-fei-qi">4. 兜底极速化，不是废弃</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#5-ceng-jian-yi-zhi-xing-san-ceng-gong-xiang-yi-ge-shi-shi-lai-yuan">5. 层间一致性：三层共享一个「事实来源」</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#zhu-liu-coding-agent-zuo-dao-na-yi-ceng-liao">主流 Coding Agent 做到哪一层了</a></li>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#li-xiang-de-harness-xu-yao-na-xie-ide-neng-li">理想的 Harness 需要哪些 IDE 能力</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#du-dai-ma-li-jie">读：代码理解</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#xie-dai-ma-xiu-gai">写：代码修改</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#yan-dai-ma-yan-zheng">验：代码验证</a></li>
+  											
+  											<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#guan-xi-quan-ju-ying-xiang-mian">关系：全局影响面</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://wangzaixiang.github.io/blog/best-coding-harness/#jie-lun">结论</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <div class="col-md-12 col-lg-10 col-xxl-12">
+
+
+
+        <article>
+          <div class="blog-header">
+            <h1>我心目中最佳的 Coding Harness</h1>
+            <nav style="display: flex; justify-content: space-between">
+              
+
+              
+<p><small>Posted August 14, 2026 by <a class="stretched-link position-relative" href="https://wangzaixiang.github.io/authors/wangzx/">wangzx</a>&nbsp;&hyphen;&nbsp;<strong>20&nbsp;min read</strong></small></p>
+
+
+              
+              <a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/"> Next ⇨ </a>
+              
+            </nav>
+
+          </div>
+          
+          <h1 id="bei-jing-ai-shan-chang-sheng-cheng-que-bu-shan-chang-xiu-gai">背景：AI 擅长生成，却不擅长修改</h1>
+<p>在<a href="https://wangzaixiang.github.io/blog/vibe-coding-2/">《Vibe Coding 实践记录》</a>里，我记录过一个观察，现在看来越发清晰：</p>
+<blockquote>
+<p>AI 非常适合于代码的生成，却不一定适合于代码的修改，尤其是大范围的代码修改。</p>
+</blockquote>
+<p>大范围重构时，AI 的表现会急转直下：大量代码错误、大量单元测试失效，它会陷入「改一处、坏十处、再改、再坏」的循环，token
+烧得飞快，目标却越来越远。那时我的结论是「 <strong>与其让 AI 修复这些代码，不如大刀阔斧地重写</strong>」。</p>
+<p>但为什么？AI 明明能「写」出几百行新代码，却「改」不动一个跨文件的符号重命名？这两件事的难度差，本质不在 AI 的能力，而在它手里的工具。</p>
+<h1 id="wei-shen-me-yin-wei-agent-zai-cao-zuo-notepad-er-bu-shi-ide">为什么：因为 Agent 在操作 Notepad，而不是 IDE</h1>
+<p>拆开现在大多数 coding agent 的工具箱，底层就三样：<code>read</code>（读文件）、<code>search</code>（正则搜索）、<code>edit</code>（文本替换）。配上 <code>bash</code>
+，就是一台能敲键盘的记事本。</p>
+<p><strong>Notepad 模式的本质，是让 LLM 操作字节、行号、正则匹配——而不是操作符号、类型、调用关系。</strong></p>
+<p>这带来两个直接缺陷：</p>
+<ol>
+<li>
+<p><strong>太耗时、太耗 token。</strong> 改一个 2000 行的文件，AI 要先把整个文件读进上下文才能定位要改的那几行；查一个符号被谁引用，它要
+<code>search</code> 命中、再逐个 <code>read</code> 上下文、再人工判断哪些是「同名不同符号」的误报。每多一层间接，就多一轮 tool call、多一块 token。</p>
+</li>
+<li>
+<p><strong>重构的稳定性差。</strong> 文本替换是「点对点」的：改一个函数名，<code>search</code> 只能给出文本匹配，漏掉间接引用、误伤同名符号、改不完
+re-export 和别名 import。跨文件重构在文本层是「猜」，在语义层才是「算」。</p>
+</li>
+</ol>
+<p>而人类程序员从来不用记事本改大型代码——我们用的是 IDE。IDE 的核心不是「好看」，是 <strong>语义索引</strong>：你改一个符号，IDE 靠 language
+server 精确找出所有引用、联动改完 re-export 和 barrel 文件、顺带告诉你哪些调用方会受影响。</p>
+<p>所以问题的答案很朴素： <strong>最有效的 coding harness，应该让 LLM 操作 IDE，而不是操作 Notepad。</strong></p>
+<h1 id="he-xin-yin-yu-llm-ide-notepad">核心隐喻：LLM + IDE + Notepad</h1>
+<p>但「用 IDE 替代 Notepad」是错的。正确的架构不是替代，是叠加——三层，各司其职：</p>
+<table><thead><tr><th>层</th><th>角色</th><th>成本</th><th>精度</th></tr></thead><tbody>
+<tr><td><strong>LLM</strong></td><td>决策：理解意图、规划、判断</td><td>最贵、最慢、最易错</td><td>语义理解</td></tr>
+<tr><td><strong>IDE</strong></td><td>增强：符号解析、原子改写、运行时真相</td><td>便宜、快</td><td>机械精确</td></tr>
+<tr><td><strong>Notepad</strong></td><td>兜底：文本读写，永不失效</td><td>最便宜</td><td>字节级</td></tr>
+</tbody></table>
+<p>三层的分工有一条总原则，一句话：</p>
+<blockquote>
+<p><strong>能下沉到便宜层的认知工作，绝不让 LLM 做。</strong></p>
+</blockquote>
+<p>LLM 只做「语义层也给不了的判断」；harness 负责读、写、验里所有机械的部分。这条原则贯穿了下面每一个设计决策。</p>
+<h2 id="llm-jue-ce-ceng">LLM：决策层</h2>
+<p>LLM 的本职是理解「用户要什么」、规划「怎么做」、判断「做到什么程度算对」。它是三层里唯一有「语义理解」的一层，也是唯一该为「想错了」负责的一层。</p>
+<p>它不该被浪费在：读文件全文来定位、正则搜引用、逐行数 UTF-16 偏移、单步调试。这些是机械工作，机械工作该由机器做。</p>
+<h2 id="ide-yu-yi-zeng-qiang-ceng">IDE：语义增强层</h2>
+<p>IDE 层的能力边际很广——基础重构、代码调试、语义分析——但它不是一块铁板，而是一条 <strong>语义深度的光谱</strong>：</p>
+<table><thead><tr><th>深度</th><th>模型操作什么</th><th>代表能力</th></tr></thead><tbody>
+<tr><td>token/字节</td><td>行号、文本</td><td>str_replace / grep</td></tr>
+<tr><td>语法</td><td>AST 节点</td><td>tree-sitter / ast-grep</td></tr>
+<tr><td>符号</td><td>引用、定义</td><td>LSP references / rename</td></tr>
+<tr><td>关系</td><td>caller/callee、类型、数据流</td><td>call graph / 影响面</td></tr>
+<tr><td>运行时</td><td>变量值、栈帧、goroutine</td><td>DAP</td></tr>
+</tbody></table>
+<p>真正的分水岭不在「有没有 LSP」，而在「IDE 层是让 LLM 操作结构化事实，还是让 LLM 拿着结构化工具继续爬」。</p>
+<p>多数号称支持 LSP 的 harness 做的是后者：给 LLM 一个 <code>references</code> 工具，让它自己一步步递归查询。这不是语义增强，这是 <strong>给
+Notepad 加了个放大镜</strong>。前者是让 harness 预计算影响面、把「这个改动波及 N 个调用方」直接喂进上下文——LLM 查询语义索引应该是 O
+(1) 的读，而不是 O (N) 的爬。</p>
+<h2 id="notepad-dou-di-ceng">Notepad：兜底层</h2>
+<p>永远有「没有 language server / 未索引 / 未保存」的文件，语义层失效时不能整体崩。所以兜底层不是被废弃，而是要 <strong>极速化</strong>：</p>
+<ul>
+<li>文本搜索、glob、find 进程内执行，零 fork-exec；</li>
+<li>文件缓存按 mtime 键控，改了才失效；</li>
+<li>结构化摘要——read 一个文件，返回的是声明骨架而非全文。</li>
+</ul>
+<p>Notepad 层的目标不是「够用」，是「快得让兜底不再疼痛」。</p>
+<h1 id="wu-ge-she-ji-yuan-ze">五个设计原则</h1>
+<p>三层堆在一起不会自动变最佳。真正决定成败的是下面五个决策，每一个都对应一个常见的「假语义增强」陷阱。</p>
+<h2 id="1-ren-zhi-xia-chen">1. 认知下沉</h2>
+<p>能由便宜层做的，绝不让 LLM 做。这是总原则，其余四条是它的推论。</p>
+<p>影响范围评估是「读」，读该由 harness 用 CPU 预计算，而不是让 LLM 用 turn 和 token 爬 call graph。CPU 便宜、快、可缓存；LLM 的
+turn 贵、慢、易断。</p>
+<h2 id="2-yu-yi-xie-cong-zi-fu-chuan-ti-huan-dao-fu-hao-gai-xie">2. 语义「写」：从「字符串替换」到「符号改写」</h2>
+<p>改源代码最忌讳 sed 式的字符串替换——它做的是「点对点」的模式匹配，不感知语义：改一个函数名，同名注释、字符串字面量、无关变量全被误伤；正则的边界
+case 一旦漏掉，就是一次误伤；跨文件更无从谈起，sed 根本没有「哪些是同一个符号」的概念。</p>
+<p>所以写操作本身也有一条从「易错到精确」的谱系：</p>
+<table><thead><tr><th>方式</th><th>匹配什么</th><th>风险</th></tr></thead><tbody>
+<tr><td>sed / str_replace</td><td>字符串模式</td><td>误伤同名、漏掉间接引用</td></tr>
+<tr><td>ast-grep</td><td>AST 节点</td><td>结构精确，语义仍可能漂移</td></tr>
+<tr><td>symbol rename</td><td>符号 + 引用关系</td><td>语义精确，需 willRenameFiles 联动</td></tr>
+<tr><td>graph 搜索 + 点位修改</td><td>影响面 + 精确位置</td><td>先定位后修改，最精确</td></tr>
+</tbody></table>
+<p>越往右，一次操作动的点越多，出错要回滚的也越多——所以原子性不是可选项，是前提：</p>
+<ul>
+<li>symbol rename 走 <code>willRenameFiles</code> 联动 re-export/barrel/别名；</li>
+<li>ast 改写 staged 预览（propose → resolve 才落盘）；</li>
+<li>影响面评估先基于 call graph 搜索出精确点位，再逐点修改。</li>
+</ul>
+<p><strong>一次操作、全局一致、不落半截。</strong></p>
+<h2 id="3-yun-xing-shi-yan-bu-shi-pa">3. 运行时「验」不是「爬」</h2>
+<p>DAP 如果被设计成「让 LLM 逐步单步调试」，那还是让 LLM 爬。正确形态是：LLM 提假设，harness 用 DAP 验证，返回结构化事实。</p>
+<pre><code>agent 猜: 空指针
+→ harness attach 读那一帧
+→ 返回: x = null，来源第 N 行
+</code></pre>
+<p>这是「下沉」原则在调试场景的落地：单步是机械的，该由 harness 做；判断「为什么 null」才是 LLM 该做的。</p>
+<h2 id="4-dou-di-ji-su-hua-bu-shi-fei-qi">4. 兜底极速化，不是废弃</h2>
+<p>没有 language server 的语言、项目、文件类型永远存在。语义层失效时，兜底层就是全部。把 grep/glob/find 做到进程内、把 read
+做成摘要、把编辑锚点做成内容哈希—— <strong>兜底层的质量决定语义层失效时的下限。</strong></p>
+<h2 id="5-ceng-jian-yi-zhi-xing-san-ceng-gong-xiang-yi-ge-shi-shi-lai-yuan">5. 层间一致性：三层共享一个「事实来源」</h2>
+<p>这是最容易被忽略、也最致命的一点：Notepad 改文件、IDE 改符号、LLM 看上下文，三者必须指向 <strong>同一个文件状态</strong>。</p>
+<p>否则出现「文本层以为改了、语义层索引还是旧的」的不一致——LLM 基于旧索引做 rename，落盘后才发现文件已经被别的操作改过。维护层间一致性靠两样东西：</p>
+<ul>
+<li><strong>mtime 键控缓存</strong>：语义索引跟随文件 mtime 失效；</li>
+<li><strong>内容哈希锚点</strong>：文本层检测「编辑后文件状态漂移」。</li>
+</ul>
+<p>没有这两样，三层之间的不一致会吃掉语义层带来的全部收益。</p>
+<h1 id="zhu-liu-coding-agent-zuo-dao-na-yi-ceng-liao">主流 Coding Agent 做到哪一层了</h1>
+<p>把光谱当标尺，横向看目前主流的 coding agent，结论是：<strong>底座几乎清一色还是 Notepad，语义层普遍处于「起步、缺失、或靠第三方补丁」的状态。</strong></p>
+<table><thead><tr><th>agent</th><th>Notepad 兜底</th><th>语法(AST)</th><th>符号(LSP)</th><th>关系(call graph)</th><th>运行时(DAP)</th></tr></thead><tbody>
+<tr><td>Claude Code</td><td>✅</td><td>—</td><td>⚠️ 起步</td><td>❌</td><td>❌</td></tr>
+<tr><td>Codex CLI</td><td>✅</td><td>—</td><td>⚠️ 需求</td><td>❌</td><td>❌</td></tr>
+<tr><td>Gemini CLI</td><td>✅</td><td>—</td><td>⚠️ 靠补丁</td><td>❌</td><td>❌</td></tr>
+<tr><td>Aider</td><td>✅</td><td>⚠️ tree-sitter</td><td>❌</td><td>❌</td><td>❌</td></tr>
+<tr><td>Cursor</td><td>✅</td><td>✅</td><td>✅</td><td>⚠️</td><td>⚠️</td></tr>
+<tr><td>omp</td><td>✅</td><td>✅ ast-grep</td><td>✅ 14 op</td><td>⚠️</td><td>✅ 28 op</td></tr>
+<tr><td>dsh</td><td>✅</td><td>❌</td><td>⚠️ 只读</td><td>❌</td><td>❌</td></tr>
+</tbody></table>
+<p>图例：✅ 原生支持；⚠️ 部分 / 起步 / 靠补丁；❌ 无；— 不适用。下表基于公开信息（issue、文档、社区工具），具体能力随版本快速变化，标注的是方向而非精确边界。</p>
+<p>几个值得单独说的点：</p>
+<ol>
+<li>
+<p><strong>Claude Code 的 LSP 是「刚起步且不完整」的。</strong> 它现在有 built-in LSP，但覆盖的是基础导航（<code>findReferences</code> 一类）；<code>rename</code>、call
+hierarchy、code actions 这些真正能「改符号」和「看影响面」的操作，至今仍是社区里的高票 feature request。换句话说，它读得到符号，改不动符号。</p>
+</li>
+<li>
+<p><strong>Codex CLI 的 LSP 集成还停在 feature request 阶段</strong>（社区有 auto-detect + auto-install 的明确诉求），原生语义导航尚未成为底座。</p>
+</li>
+<li>
+<p><strong>Aider 的 repo map 是「符号级，不是语义级」。</strong> tree-sitter 提取出函数和类的名字给模型，这省了 token，但既不解析引用关系、也不支持 rename——
+它是语法层，不是符号层。</p>
+</li>
+<li>
+<p><strong>Serena 和 Graphify 的存在，是最有力的论据。</strong> 这两个专门给 LLM 补语义层的第三方工具，恰好对应光谱上两级不同的空白：</p>
+<ul>
+<li><strong>Serena 补「符号级」</strong>：spin up 真实的 language server（Pyright、rust-analyzer 等），通过 MCP 把 symbol-level 的 references /
+rename 暴露给 Claude Code、Codex、Gemini CLI、Cursor 等客户端；</li>
+<li><strong>Graphify 补「关系级」</strong>：用 tree-sitter + NetworkX 把整个项目（代码、文档、论文、图）建成可查询的知识图谱，支持 caller/callee
+和 PR impact analysis，让模型用更少的 context 理解代码库结构。</li>
+</ul>
+<p>一个社区要专门造两个「补丁」去给主流 agent 补 LSP 和 call graph——这件事本身就说明：<strong>「缺语义层」是行业共识，且主流还没做透。</strong></p>
+<p>也值得点破 Graphify 的精度边界：它建图靠 tree-sitter（语法级），不是 compiler 级语义，所以它的 caller/callee 是静态近似——这恰好印证了前面那句话，关系级是最容易被做坏的一层，一张没有边类型和置信度的图，对模型的价值是打折的。</p>
+</li>
+<li>
+<p><strong>极少数把语义层真正做进去的，是 omp。</strong> 14 个 LSP 操作 + rename 联动 <code>willRenameFiles</code> + ast-grep 结构化改写，再叠加 28 个 DAP
+操作的真调试器——它把「符号级 + 运行时级」兑现了；「关系级」仍要靠 references 手动推 caller，还是半成品。</p>
+</li>
+<li>
+<p><strong>dsh 是「有看没有改」的反例。</strong> 它有 LSP 能力缝，但只有 4 个只读操作，且显式拒绝 <code>workspace/applyEdit</code>——模型能查影响面，改符号本身还得退回文本替换。</p>
+</li>
+</ol>
+<p>把这些摊开看，分水岭不是「有没有 LSP」，而是两点：<strong>语义「写」能不能落地（rename 而非 references）</strong>，以及<strong>运行时「验」能不能落地（DAP 而非
+print）</strong>。前者决定重构稳不稳，后者决定修 bug 快不快——而这两点，恰好是大多数主流 agent 还没补齐的两块。</p>
+<h1 id="li-xiang-de-harness-xu-yao-na-xie-ide-neng-li">理想的 Harness 需要哪些 IDE 能力</h1>
+<p>IDE 的核心资产不是 UI，是三样东西：<strong>语义索引（读）、原子重构（写）、验证反馈（验）</strong>。harness 要搬的是这三样，不是高亮和 minimap。下面结合
+JetBrains 和 VS Code 的能力，整理出清单。</p>
+<h2 id="du-dai-ma-li-jie">读：代码理解</h2>
+<table><thead><tr><th>IDE 能力</th><th>JetBrains</th><th>VS Code</th><th>对 LLM 的价值</th></tr></thead><tbody>
+<tr><td>Go to Definition / Type / Implementation</td><td>✅</td><td>✅</td><td>精确定位，替代 grep 猜</td></tr>
+<tr><td>Find All References</td><td>✅</td><td>✅</td><td>影响面评估的底子</td></tr>
+<tr><td>Call Hierarchy（caller/callee）</td><td>✅ 强项</td><td>⚠️ 弱</td><td>重构影响范围的核心，文本做不到</td></tr>
+<tr><td>Type Hierarchy（继承树）</td><td>✅ 强项</td><td>⚠️ 弱</td><td>多态 / 接口影响面</td></tr>
+<tr><td>Hover / 推断类型</td><td>✅</td><td>✅</td><td>结构化「这段是什么类型」</td></tr>
+<tr><td>结构大纲</td><td>✅</td><td>✅</td><td>省 token 的声明摘要</td></tr>
+<tr><td>依赖分析（DSM）</td><td>✅ 强项</td><td>⚠️</td><td>模块级影响面</td></tr>
+</tbody></table>
+<h2 id="xie-dai-ma-xiu-gai">写：代码修改</h2>
+<table><thead><tr><th>IDE 能力</th><th>JetBrains</th><th>VS Code</th><th>对 LLM 的价值</th></tr></thead><tbody>
+<tr><td>Rename（语义重命名）</td><td>✅</td><td>✅</td><td>跨文件联动，不落半截</td></tr>
+<tr><td>Extract Method / Variable / Field</td><td>✅</td><td>✅</td><td>结构性重构一步到位</td></tr>
+<tr><td>Inline（内联）</td><td>✅</td><td>✅</td><td>反向提取</td></tr>
+<tr><td>Change Signature</td><td>✅ 强项</td><td>⚠️</td><td>改签名联动所有调用方</td></tr>
+<tr><td>Move（移动 + 联动 import）</td><td>✅</td><td>✅</td><td>移文件自动改引用</td></tr>
+<tr><td>Safe Delete</td><td>✅ 强项</td><td>❌</td><td>确认无引用才删，避免删出坑</td></tr>
+<tr><td>自动导入 / organize imports</td><td>✅</td><td>✅</td><td>补 import、清理 import</td></tr>
+<tr><td>结构性搜索替换（AST 而非文本）</td><td>✅ 强项</td><td>❌</td><td>精确批量改写</td></tr>
+<tr><td>生成代码（ctor / getter / override）</td><td>✅</td><td>✅</td><td>样板代码</td></tr>
+</tbody></table>
+<h2 id="yan-dai-ma-yan-zheng">验：代码验证</h2>
+<table><thead><tr><th>IDE 能力</th><th>JetBrains</th><th>VS Code</th><th>对 LLM 的价值</th></tr></thead><tbody>
+<tr><td>实时诊断（编译 / lint 错误）</td><td>✅</td><td>✅</td><td>改完立刻知道对不对</td></tr>
+<tr><td>Quick Fix（诊断 → 修复一步）</td><td>✅</td><td>✅</td><td>「报错 → 修」闭环</td></tr>
+<tr><td>调试器（断点 / 单步 / 变量 / 栈帧 / evaluate）</td><td>✅</td><td>✅</td><td>修 bug 从「猜」到「读」</td></tr>
+<tr><td>运行测试 + 失败定位</td><td>✅</td><td>✅</td><td>回归验证</td></tr>
+<tr><td>性能剖析（profiler）</td><td>✅</td><td>⚠️</td><td>性能 bug 定位</td></tr>
+<tr><td>覆盖率</td><td>✅</td><td>✅</td><td>补测试的靶向</td></tr>
+</tbody></table>
+<h2 id="guan-xi-quan-ju-ying-xiang-mian">关系：全局影响面</h2>
+<table><thead><tr><th>IDE 能力</th><th>JetBrains</th><th>VS Code</th><th>对 LLM 的价值</th></tr></thead><tbody>
+<tr><td>Call Graph / Data Flow</td><td>✅ 强项</td><td>⚠️</td><td>影响范围评估，动手前知道波及谁</td></tr>
+<tr><td>依赖矩阵（DSM）</td><td>✅ 强项</td><td>❌</td><td>模块级耦合</td></tr>
+<tr><td>Inspections（成百上千条规则）</td><td>✅ 强项</td><td>⚠️</td><td>代码质量审查</td></tr>
+<tr><td>代码索引</td><td>✅</td><td>✅</td><td>一切语义能力的底座</td></tr>
+</tbody></table>
+<p>图例：✅ 原生具备；⚠️ 弱 / 部分；❌ 缺失；「强项」表示该 IDE 的招牌能力。</p>
+<p>把四张表摊开，一个关键结论浮现：<strong>VS Code 定义的 LSP + DAP 两个协议，覆盖了「读」和「验」的大部分，却覆盖不了「写」的高杠杆项，也覆盖不了「关系」的全部。</strong>
+具体说，Change Signature、Safe Delete、结构性搜索替换这三样「大范围重构」的利器，LSP 至今没有标准化；Call Graph / 影响面的预计算，LSP 的
+<code>callHierarchy</code> 也只够一半。</p>
+<p>所以理想的 harness 不能只做一个「LSP 客户端 + DAP 客户端」，还要自己补两块：</p>
+<ol>
+<li><strong>LSP 没标准化的写操作</strong>：Change Signature、Safe Delete、结构搜索替换——靠 ast-grep + 引用分析 + 守卫自己实现；</li>
+<li><strong>关系级的预计算</strong>：Call Graph / 影响面摘要——靠 language server 的 <code>callHierarchy</code> 只够一半，另一半要 harness 自己建图、缓存、排序，再喂给模型。</li>
+</ol>
+<p>这正是前面说的「认知下沉」：<strong>把机械的留给机器，把判断的留给 LLM</strong>——而这份清单，就是机器该替 LLM 做的全部机械工作。</p>
+<h1 id="jie-lun">结论</h1>
+<p>「AI 擅长生成、不擅长修改」不是 AI 的固有能力边界，而是当前工具形态的边界。当 agent 手里只有 Notepad，它自然只能在「重写」和「硬改」之间二选一；当
+agent 手里有了 IDE 的语义索引和原子改写能力，「修改」和「生成」才会回到同一条难度曲线上。</p>
+<p>我心目中最佳的 coding harness，就是把这个隐喻做对： <strong>让 LLM 以 Notepad 为底、以 IDE 为增强、以运行时为验证</strong>
+。三层齐全不稀奇，稀奇的是分对工、维护好层间一致性、并坚持「认知下沉」——把机械的留给机器，把判断的留给 LLM。</p>
+<p>这才是「让 LLM 操作 IDE」的真正含义：不是给它 IDE 的按钮，而是给它 IDE 的 <strong>语义</strong>。</p>
+
+        </article>
+
+        <nav style="display: flex; justify-content: space-between">
+          
+
+          
+          <a href="https://wangzaixiang.github.io/blog/ai-era-language-choice/"> Next ⇨ </a>
+          
+        </nav>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+					    <!--
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+						-->
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://wangzaixiang.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://wangzaixiang.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://wangzaixiang.github.io/js/search.js" defer></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script type="module">
+    let elems = document.querySelectorAll("div.mermaid");
+    elems.forEach(function(it) {
+      it.innerHTML = it.innerHTML.replace("```mermaid", "").replace("```", "");
+    });
+    let theme = document.querySelector("body").classList.contains("dark") ? "dark" : "default";
+    mermaid.initialize({startOnLoad: false, theme});
+    await mermaid.run( { querySelector: '.mermaid' } );
+    elems.forEach( it => it.style.width = "80%" );
+  </script>
+</body>
+</html>
